@@ -261,6 +261,10 @@ catalogs:
 importers:
 
   .:
+    dependencies:
+      overmind-gpl-fixture:
+        specifier: file:tools/fixtures/gpl
+        version: file:tools/fixtures/gpl
     devDependencies:
       '@commitlint/cli':
         specifier: 'catalog:'
@@ -1917,6 +1921,9 @@ packages:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
     engines: {node: '>= 0.8.0'}
 
+  overmind-gpl-fixture@file:tools/fixtures/gpl:
+    resolution: {directory: tools/fixtures/gpl, type: directory}
+
   p-limit@3.1.0:
     resolution: {integrity: sha512-TYOanM3wGwNGsZN2cVTYPArw454xnXj5qmWF1bEoAc4+cU/ol7GVh7odevjp1FNHduHc3KZMcFduxU5Xc6uJRQ==}
     engines: {node: '>=10'}
@@ -3569,6 +3576,8 @@ snapshots:
       prelude-ls: 1.2.1
       type-check: 0.4.0
       word-wrap: 1.2.5
+
+  overmind-gpl-fixture@file:tools/fixtures/gpl: {}
 
   p-limit@3.1.0:
     dependencies:

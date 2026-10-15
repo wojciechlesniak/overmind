@@ -79,5 +79,8 @@
     "vitest": "catalog:",
     "yaml": "catalog:",
     "zod": "catalog:"
+  },
+  "dependencies": {
+    "overmind-gpl-fixture": "file:tools/fixtures/gpl"
   }
 }
