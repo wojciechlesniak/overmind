@@ -6,7 +6,7 @@ kind: infra
 size: M
 priority: P0
 mvp: true
-status: in_progress
+status: done
 depends_on: [OVE_SETUP001, OVE_SETUP002]
 soft_depends_on: [OVE_SETUP008]
 provides: ["lib:eslint-config", "lib:eslint-config-extension-dir", "lib:prettier-config"]
@@ -97,13 +97,13 @@ Layer: tooling. `eslint.config.mjs` (loader, tiny, stable) + `eslint.config.d/*.
 
 ## 11. Acceptance criteria
 
-- [ ] `pnpm lint` and `pnpm format:check` pass on the skeleton with zero warnings.
-- [ ] Given a fixture with `eval("1")`, `any`, an unawaited promise, `JSON.parse` in a non-boundary file, `// @ts-ignore`, `it.only`, each is reported by lint (one fixture per rule).
-- [ ] Given a new file `eslint.config.d/zzz.mjs` exporting `[]`, lint still passes; given one that throws, lint fails.
-- [ ] `pnpm ls eslint typescript-eslint typescript` shows eslint 10.12.0, typescript-eslint 8.71.2, typescript 6.0.3 with no peer warnings.
-- [ ] `eslint-plugin-jsx-a11y` is absent and OVE_SETUP008 documents why.
-- [ ] A `.tsx` fixture with a missing hook dependency fails lint in `packages/ui-kit` and passes in `packages/domain` (rule not applied there).
-- [ ] Time of `pnpm lint` on the skeleton recorded and below 60 s.
+- [x] `pnpm lint` and `pnpm format:check` pass on the skeleton with zero warnings.
+- [x] Given a fixture with `eval("1")`, `any`, an unawaited promise, `JSON.parse` in a non-boundary file, `// @ts-ignore`, `it.only`, each is reported by lint (one fixture per rule).
+- [x] Given a new file `eslint.config.d/zzz.mjs` exporting `[]`, lint still passes; given one that throws, lint fails.
+- [x] `pnpm ls eslint typescript-eslint typescript` shows eslint 10.12.0, typescript-eslint 8.71.2, typescript 6.0.3 with no peer warnings.
+- [x] `eslint-plugin-jsx-a11y` is absent and OVE_SETUP008 documents why.
+- [x] A `.tsx` fixture with a missing hook dependency fails lint in `packages/ui-kit` and passes in `packages/domain` (rule not applied there).
+- [x] Time of `pnpm lint` on the skeleton recorded and below 60 s.
 
 ## 12. Test plan
 
@@ -126,3 +126,5 @@ Parallel with SETUP004/005/008..012. Hotspots: `eslint.config.mjs` (stable after
 - Node and JSX fixture tests now explicitly await Node test promises. JSON/YAML configuration input is parsed and validated once in `tools/test-support/json.parse-boundary.ts`; `yaml` (ISC) and `zod` (MIT) are catalog-pinned development dependencies. This replaces unchecked JSON and brittle YAML text matching. OVE-008 owns the complete dependency register.
 - Existing TypeScript configurations receive formatting-only updates so the new repository-wide format gate passes. Existing Polish documentation and task material remain with their documentation owners. Minimal CODEOWNERS entries cover the lint policy as required here; OVE_OSS003 extends that file later.
 - Global ESLint ignores occupy their own config object, so emitted `.tsbuild` declarations are excluded even after compilation. A regression test verifies that composition does not disable critical rules.
+
+- Final independent Standards and Spec re-reviews have zero remaining findings. Two suppression bypasses were fixed with parsed-comment handling and regression tests before merge. The final clean-checkout suite passes 20 tests, typecheck, lint, format check and dependency audit. Lint completes well below 60 seconds.
