@@ -108,8 +108,11 @@ The Owner explicitly declined license additions and a temporary MPL exception.
 The original allow-list and empty exceptions are preserved. Actual development
 dependencies violate it, so `licenses` and `ci-success` must remain red and this
 task must not merge. See the declined proposal and `pnpm check:licenses` for the
-exact package/version decisions. No scratch PR or hardware result is claimed
-until its actual run is linked in the implementation PR.
+exact package/version decisions. Negative hosted probes are linked in PR #934:
+#935 (failed test), #936 (lint), #937 (explicit GPL denial), #938 (high production
+advisories); all are closed without merge. Their corresponding gates and aggregate
+failed. The baseline license failure was independently present. Boundary-check,
+fork-run and physical-isolation evidence remain outstanding.
 
 ## Adding a job
 
