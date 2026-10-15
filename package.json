@@ -14,8 +14,8 @@
     "dev:tauri": "pnpm --filter @overmind/desktop tauri dev",
     "build": "pnpm -r --if-present run build",
     "typecheck": "tsc -b",
-    "lint": "eslint . --max-warnings 0",
-    "lint:fix": "eslint . --fix --max-warnings 0",
+    "lint": "eslint . --max-warnings 0 && node tools/eslint/check-disable-reasons.mjs",
+    "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
@@ -47,14 +47,22 @@
     "task:next": "tsx tools/tasks/next.ts"
   },
   "devDependencies": {
+    "@eslint/js": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@types/semver": "catalog:",
     "eslint": "catalog:",
+    "eslint-config-prettier": "catalog:",
+    "eslint-plugin-react-hooks": "catalog:",
+    "eslint-plugin-react-refresh": "catalog:",
+    "globals": "catalog:",
+    "prettier": "catalog:",
     "semver": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
-    "typescript-eslint": "catalog:"
+    "typescript-eslint": "catalog:",
+    "yaml": "catalog:",
+    "zod": "catalog:"
   }
 }

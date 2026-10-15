@@ -1,0 +1,10 @@
+export default {
+  printWidth: 100,
+  singleQuote: false,
+  semi: true,
+  trailingComma: "all",
+  arrowParens: "always",
+  endOfLine: "lf",
+  proseWrap: "preserve",
+  overrides: [{ files: "*.md", options: { proseWrap: "preserve" } }],
+};

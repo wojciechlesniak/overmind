@@ -1,14 +1,8 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "test/**/*"
-  ],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "test/**/*"],
   "compilerOptions": {
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
   "references": [
     {

@@ -1,0 +1,12 @@
+**/node_modules/**
+**/.tsbuild/**
+**/dist/**
+**/coverage/**
+**/storybook-static/**
+apps/desktop/src-tauri/target/**
+apps/desktop/src-tauri/binaries/**
+pnpm-lock.yaml
+tasks/**
+docs/**
+**/*.generated.ts
+GLOSSARY.md

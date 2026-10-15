@@ -1,16 +1,8 @@
 {
   "extends": "../tsconfig.base.json",
-  "include": [
-    "**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    ".tsbuild",
-    "**/fixtures/**"
-  ],
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", ".tsbuild", "**/fixtures/**"],
   "compilerOptions": {
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   }
 }
