@@ -21,9 +21,15 @@ import { findMissingDisableReasons } from "./check-disable-reasons.mjs";
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const require = createRequire(import.meta.url);
 const cli = resolve(require.resolve("eslint/package.json"), "../bin/eslint.js");
+let probeSequence = 0;
 
 async function lintProbe(path: string, source: string): Promise<string[]> {
-  const filePath = resolve(root, path);
+  // Project-service snapshots may retain a previous version of a reused path.
+  // Give each negative case its own file so its type information is independent.
+  const filePath = resolve(
+    root,
+    path.replace(/(?=\.(?:test\.)?tsx?$)/u, `-${String(probeSequence++)}`),
+  );
   assert.equal(existsSync(filePath), false);
   writeFileSync(filePath, source);
   try {

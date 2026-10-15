@@ -78,7 +78,7 @@ it("configuration guards use the Git diff and strict mode rejects absent foundat
     writeFileSync(resolve(fixture, "lefthook.yml"), "pre-commit: {}\n");
     git(["add", "lefthook.yml"]);
     git(["commit", "--quiet", "-m", "chore: change hooks"]);
-    const head = git(["rev-parse", "HEAD"]).trim();
+    let head = git(["rev-parse", "HEAD"]).trim();
     const eventPath = resolve(fixture, "event.json");
     const check = (labels: string[]) => {
       writeFileSync(
@@ -100,6 +100,15 @@ it("configuration guards use the Git diff and strict mode rejects absent foundat
     expect(check([]).stderr).toContain("require config-change");
     expect(check(["config-change"]).stderr).toContain("require hooks-change");
     expect(check(["config-change", "hooks-change"]).status).toBe(0);
+    writeFileSync(
+      resolve(fixture, "eslint.config.mjs"),
+      'export default [{rules:{"no-eval":"off"}}];\n',
+    );
+    git(["add", "eslint.config.mjs"]);
+    git(["commit", "--quiet", "-m", "chore: change lint policy"]);
+    head = git(["rev-parse", "HEAD"]).trim();
+    expect(check(["config-change", "hooks-change"]).stderr).toContain("require lint-config-change");
+    expect(check(["config-change", "hooks-change", "lint-config-change"]).status).toBe(0);
     expect(run("architecture.ts", { CI_STRICT_TOOLS: "true" }).status).not.toBe(0);
     const bootstrap = run("architecture.ts", { CI_STRICT_TOOLS: "false" });
     expect(bootstrap.status).toBe(0);

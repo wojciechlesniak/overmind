@@ -65,6 +65,8 @@ paths for failed checks or unavailable audits.
 
 `config-change` is required for protected workflow, hook, lint, test, license and
 binary pin configuration changes; hook configuration also needs `hooks-change`.
+ESLint configuration edits also require `lint-config-change`, preserving the
+OVE_SETUP003 approval rule for severity downgrades without brittle diff parsing.
 Maintainers must inspect the diff before labeling. This is a merge guard, not an
 immutable trust boundary: a PR can edit its workflow. OVE_SETUP018 must configure
 required checks and reviewer/maintainer controls. Its required check is

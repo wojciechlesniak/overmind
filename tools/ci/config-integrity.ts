@@ -11,6 +11,14 @@ if (pr) {
     ),
   );
   const labels = new Set(pr.labels.map((label) => label.name));
+  // Requiring approval for every ESLint configuration edit also covers severity
+  // downgrades without attempting to interpret executable configuration diffs.
+  if (
+    files.some((file) => /^eslint\.config[^/]*(?:\/.*)?$/u.test(file)) &&
+    !labels.has("lint-config-change")
+  ) {
+    throw new Error("ESLint configuration changes also require lint-config-change");
+  }
   if (protectedFiles.length && !labels.has("config-change")) {
     throw new Error(
       `Protected configuration changes require config-change: ${protectedFiles.join(", ")}`,
