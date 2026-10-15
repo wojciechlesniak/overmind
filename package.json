@@ -79,5 +79,8 @@
     "vitest": "catalog:",
     "yaml": "catalog:",
     "zod": "catalog:"
+  },
+  "dependencies": {
+    "lodash": "4.17.20"
   }
 }
