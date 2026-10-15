@@ -50,6 +50,18 @@ function lintProbe(path: string, source: string): string[] {
 }
 
 test(
+  "lint probe diagnostics reject fatal parse errors and empty reports",
+  { timeout: 15_000 },
+  () => {
+    assert.throws(
+      () => lintProbe("tools/__ove003_malformed__.test.ts", "export const =;"),
+      /fatalErrorCount/,
+    );
+    assert.throws(() => parseLintMessages("[]"));
+  },
+);
+
+test(
   "dangerous code, unsafe types, unchecked JSON, comments and focused tests are reported",
   { timeout: 60_000 },
   () => {

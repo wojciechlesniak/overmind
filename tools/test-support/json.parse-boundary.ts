@@ -9,14 +9,17 @@ export function parseLintMessages(text: string): string[] {
   return z
     .array(
       z.object({
+        fatalErrorCount: z.literal(0),
         messages: z.array(
           z.object({
             ruleId: z.string().nullable(),
             message: z.string(),
+            fatal: z.literal(false).optional(),
           }),
         ),
       }),
     )
+    .min(1)
     .parse(raw)
     .flatMap((result) => result.messages.map((message) => message.ruleId ?? message.message));
 }
