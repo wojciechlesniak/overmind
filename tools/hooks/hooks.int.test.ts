@@ -117,6 +117,17 @@ it("real commits format and stage fixes, enforce messages, block keys and work i
       expect(f.git("reset", "HEAD", "--", filename).status).toBe(0);
       rmSync(join(f.repo, filename));
     }
+    writeFileSync(join(f.repo, "expanded.json"), `[${"0,".repeat(399999)}0]`);
+    expect(f.git("add", "expanded.json").status).toBe(0);
+    const expanded = f.git("commit", "-m", message);
+    expect(
+      expanded.status,
+      expanded.stdout + expanded.stderr + f.git("cat-file", "-s", ":expanded.json").stdout,
+    ).not.toBe(0);
+    expect(expanded.stdout + expanded.stderr).toContain("Files exceed 1 MiB");
+    expect(Number(f.git("cat-file", "-s", ":expanded.json").stdout)).toBeGreaterThan(1024 * 1024);
+    expect(f.git("reset", "HEAD", "--", "expanded.json").status).toBe(0);
+    rmSync(join(f.repo, "expanded.json"));
     writeFileSync(join(f.repo, "large.bin"), Buffer.alloc(1024 * 1024 + 1));
     expect(f.git("add", "large.bin").status).toBe(0);
     writeFileSync(join(f.repo, "large.bin"), "small unstaged edit");

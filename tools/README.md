@@ -67,8 +67,10 @@ under `tasks/` and `docs/`) and secret filenames, including `.env.example`.
 Use another filename for checked-in environment documentation. Formatting
 runs before ESLint fixes on shared paths to avoid concurrent writes; both
 re-stage their fixed paths. Finish unstaged edits before staging a file for
-commit, since `stage_fixed` stages the complete fixed file. Independent file
-checks run in parallel. Task validation starts when OVE_SETUP013 supplies it.
+commit, since `stage_fixed` stages the complete fixed file. A second staged-size
+gate in commit-msg runs after Lefthook finishes pre-commit restaging, so
+formatter expansion cannot bypass the limit. Filename and task checks run in
+parallel. Task validation starts when OVE_SETUP013 supplies it.
 `lefthook-secrets.yml` is already an extension point for OVE_SETUP007; Lefthook
 permits it to be absent until then.
 

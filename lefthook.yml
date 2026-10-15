@@ -25,7 +25,11 @@ pre-commit:
       glob: "tasks/**"
       run: if [ -f tools/tasks/lint.ts ]; then pnpm check:tasks --staged; fi
 commit-msg:
+  piped: true
   jobs:
+    # Lefthook defers stage_fixed until pre-commit finishes; recheck the final index here.
+    - name: final-staged-size
+      run: node tools/hooks/no-large-files.mjs -- {staged_files}
     - name: commitlint
       run: pnpm exec commitlint --edit {1}
 pre-push:
