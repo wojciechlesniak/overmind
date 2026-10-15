@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: in_progress
+status: done
 depends_on: [OVE_SETUP001]
 soft_depends_on: [OVE_SETUP008]
 provides: ["lib:tsconfig-base", "lib:ts-project-references"]
@@ -98,13 +98,13 @@ Layer: build configuration. `tsconfig.base.json` at root; one `tsconfig.json` pe
 
 ## 11. Acceptance criteria
 
-- [ ] `pnpm ls typescript -r --depth 0` shows exactly one version, `6.0.3`.
-- [ ] `pnpm typecheck` passes on the skeleton and a second run does nothing (incremental).
-- [ ] Given a file in `packages/domain/src` that references `process.env`, when `pnpm typecheck` runs, then it fails.
-- [ ] Given `packages/domain/src` importing `@overmind/application`, then typecheck fails with unresolved module (not referenced).
-- [ ] Guard tests 10(a), (b), (c) pass and fail correctly when TypeScript is temporarily set to 7.0.2 (verified once, not committed).
-- [ ] `apps/desktop` and `ui-kit` compile a sample `.tsx` with `jsx: react-jsx`.
-- [ ] No `// @ts-ignore` exists in the repository.
+- [x] `pnpm ls typescript -r --depth 0` shows exactly one version, `6.0.3`.
+- [x] `pnpm typecheck` passes on the skeleton and a second run does nothing (incremental).
+- [x] Given a file in `packages/domain/src` that references `process.env`, when `pnpm typecheck` runs, then it fails.
+- [x] Given `packages/domain/src` importing `@overmind/application`, then typecheck fails with unresolved module (not referenced).
+- [x] Guard tests 10(a), (b), (c) pass and fail correctly when TypeScript is temporarily set to 7.0.2 (verified once, not committed).
+- [x] `apps/desktop` and `ui-kit` compile a sample `.tsx` with `jsx: react-jsx`.
+- [x] No `// @ts-ignore` exists in the repository.
 
 ## 12. Test plan
 
