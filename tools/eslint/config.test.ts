@@ -13,7 +13,7 @@ import { tmpdir } from "node:os";
 import { resolve, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createRequire } from "node:module";
-import { test } from "node:test";
+import { test } from "vitest";
 import { ESLint } from "eslint";
 import { z } from "zod";
 import { findMissingDisableReasons } from "./check-disable-reasons.mjs";
@@ -36,25 +36,29 @@ async function lintProbe(path: string, source: string): Promise<string[]> {
   }
 }
 
-await test("dangerous code, unsafe types, unchecked JSON, comments and focused tests are reported", async () => {
-  const cases = [
-    ["export const value = eval('1');", "no-eval"],
-    ["export const value = new Function('return 1');", "no-new-func"],
-    ["export const value: any = 1;", "@typescript-eslint/no-explicit-any"],
-    ["Promise.resolve(1);", "@typescript-eslint/no-floating-promises"],
-    ["export const value = JSON.parse('{}');", "no-restricted-syntax"],
-    ["// @ts-ignore\nexport const value = missing;", "@typescript-eslint/ban-ts-comment"],
-    [
-      "import { test } from 'node:test'; await test.only('x', () => {});",
-      "overmind/no-focused-tests",
-    ],
-  ] as const;
-  for (const [source, rule] of cases) {
-    assert.ok((await lintProbe("tools/__ove003_probe__.test.ts", source)).includes(rule), rule);
-  }
-});
+test(
+  "dangerous code, unsafe types, unchecked JSON, comments and focused tests are reported",
+  { timeout: 30_000 },
+  async () => {
+    const cases = [
+      ["export const value = eval('1');", "no-eval"],
+      ["export const value = new Function('return 1');", "no-new-func"],
+      ["export const value: any = 1;", "@typescript-eslint/no-explicit-any"],
+      ["Promise.resolve(1);", "@typescript-eslint/no-floating-promises"],
+      ["export const value = JSON.parse('{}');", "no-restricted-syntax"],
+      ["// @ts-ignore\nexport const value = missing;", "@typescript-eslint/ban-ts-comment"],
+      [
+        "import { test } from 'node:test'; await test.only('x', () => {});",
+        "overmind/no-focused-tests",
+      ],
+    ] as const;
+    for (const [source, rule] of cases) {
+      assert.ok((await lintProbe("tools/__ove003_probe__.test.ts", source)).includes(rule), rule);
+    }
+  },
+);
 
-await test("React hook dependency rules apply only to the UI projects", async () => {
+test("React hook dependency rules apply only to the UI projects", async () => {
   const source =
     "import { useEffect } from 'react'; export function Component({ value }: { value: string }) { useEffect(() => { void value; }, []); return null; }";
   assert.ok(
@@ -69,39 +73,43 @@ await test("React hook dependency rules apply only to the UI projects", async ()
   );
 });
 
-await test("config extensions load automatically and throwing or escaping modules fail closed", () => {
-  const moduleFile = resolve(root, "eslint.config.d/zzz-ove003-probe.mjs");
-  const fixture = mkdtempSync(join(tmpdir(), "overmind-eslint-external-"));
-  assert.equal(existsSync(moduleFile), false);
-  const run = () =>
-    spawnSync(process.execPath, [cli, "tools/src/index.ts"], {
-      cwd: root,
-      encoding: "utf8",
-      timeout: 30_000,
-    });
-  try {
-    writeFileSync(moduleFile, "export default [];\n");
-    assert.equal(run().status, 0);
-    writeFileSync(moduleFile, "throw new Error('OVE003_IMPORT_FAILURE');\n");
-    const thrown = run();
-    assert.notEqual(thrown.status, 0);
-    assert.match(thrown.stderr, /OVE003_IMPORT_FAILURE/);
-    unlinkSync(moduleFile);
-    const external = join(fixture, "external.mjs");
-    writeFileSync(external, "export default [];\n");
-    symlinkSync(external, moduleFile);
-    const escaped = run();
-    assert.notEqual(escaped.status, 0);
-    assert.match(escaped.stderr, /escapes the repository/);
-  } finally {
-    if (existsSync(moduleFile)) {
+test(
+  "config extensions load automatically and throwing or escaping modules fail closed",
+  { timeout: 30_000 },
+  () => {
+    const moduleFile = resolve(root, "eslint.config.d/zzz-ove003-probe.mjs");
+    const fixture = mkdtempSync(join(tmpdir(), "overmind-eslint-external-"));
+    assert.equal(existsSync(moduleFile), false);
+    const run = () =>
+      spawnSync(process.execPath, [cli, "tools/src/index.ts"], {
+        cwd: root,
+        encoding: "utf8",
+        timeout: 30_000,
+      });
+    try {
+      writeFileSync(moduleFile, "export default [];\n");
+      assert.equal(run().status, 0);
+      writeFileSync(moduleFile, "throw new Error('OVE003_IMPORT_FAILURE');\n");
+      const thrown = run();
+      assert.notEqual(thrown.status, 0);
+      assert.match(thrown.stderr, /OVE003_IMPORT_FAILURE/);
       unlinkSync(moduleFile);
+      const external = join(fixture, "external.mjs");
+      writeFileSync(external, "export default [];\n");
+      symlinkSync(external, moduleFile);
+      const escaped = run();
+      assert.notEqual(escaped.status, 0);
+      assert.match(escaped.stderr, /escapes the repository/);
+    } finally {
+      if (existsSync(moduleFile)) {
+        unlinkSync(moduleFile);
+      }
+      rmSync(fixture, { recursive: true, force: true });
     }
-    rmSync(fixture, { recursive: true, force: true });
-  }
-});
+  },
+);
 
-await test("only real ESLint suppression comments require a reason", () => {
+test("only real ESLint suppression comments require a reason", () => {
   assert.equal(
     findMissingDisableReasons("// eslint-disable-next-line no-console\nconsole.log(1);").length,
     1,
@@ -145,7 +153,7 @@ await test("only real ESLint suppression comments require a reason", () => {
   execFileSync(process.execPath, ["tools/eslint/check-disable-reasons.mjs"], { cwd: root });
 });
 
-await test("test files still reject explicit any and permit non-null assertions", async () => {
+test("test files still reject explicit any and permit non-null assertions", async () => {
   const source = "export const values: string[] = []; export const first = values[0]!;";
   assert.ok(
     !(await lintProbe("tools/__ove003_probe__.test.ts", source)).includes(
@@ -159,7 +167,7 @@ await test("test files still reject explicit any and permit non-null assertions"
   );
 });
 
-await test("critical rules survive config composition and generated build outputs remain ignored", async () => {
+test("critical rules survive config composition and generated build outputs remain ignored", async () => {
   const engine = new ESLint({ cwd: root });
   const schema = z.object({ rules: z.record(z.string(), z.array(z.unknown())) });
   const config = schema.parse(await engine.calculateConfigForFile("tools/src/index.ts"));
@@ -177,7 +185,7 @@ await test("critical rules survive config composition and generated build output
   assert.equal(await engine.calculateConfigForFile("tools/example.generated.ts"), undefined);
 });
 
-await test("rule overrides between modules are surfaced for review", async (context) => {
+test("rule overrides between modules are surfaced for review", async () => {
   const schema = z.object({
     default: z.array(z.object({ rules: z.record(z.string(), z.unknown()).optional() }).loose()),
   });
@@ -192,7 +200,7 @@ await test("rule overrides between modules are surfaced for review", async (cont
       for (const rule of Object.keys(config.rules ?? {})) {
         const previous = ownerByRule.get(rule);
         if (previous !== undefined && previous !== name) {
-          context.diagnostic(`Rule override: ${rule}, ${previous} -> ${name}`);
+          console.warn(`Rule override: ${rule}, ${previous} -> ${name}`);
         }
         ownerByRule.set(rule, name);
       }

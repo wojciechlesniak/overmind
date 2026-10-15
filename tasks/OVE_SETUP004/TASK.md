@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: [OVE_SETUP001, OVE_SETUP002]
 soft_depends_on: [OVE_SETUP008]
 provides: ["lib:vitest-workspace", "lib:vitest-shared-config", "lib:coverage-thresholds"]
@@ -94,13 +94,13 @@ Layer: tooling. Root config and shared module at repository root; per-package co
 
 ## 11. Acceptance criteria
 
-- [ ] `pnpm test` runs all 17 projects and passes; the report lists each project name.
-- [ ] `pnpm test:coverage` fails when a threshold is lowered artificially in a throw-away branch for `packages/domain` (verified once).
-- [ ] Given a test calling `fetch("https://example.com")`, then it fails with the "Network access is forbidden" message.
-- [ ] Given a test that leaves an unhandled rejection, the run fails.
-- [ ] `ui-kit` and `desktop` tests run in jsdom with jest-dom matchers; `domain` tests run in Node (asserted by a smoke test reading `typeof document`).
-- [ ] `TZ` is `UTC` inside tests (asserted).
-- [ ] `vitest run --shard=1/2` and `2/2` together run every test once.
+- [x] `pnpm test` runs all 17 projects and passes; the report lists each project name.
+- [x] `pnpm test:coverage` fails when a threshold is lowered artificially in a throw-away branch for `packages/domain` (verified once).
+- [x] Given a test calling `fetch("https://example.com")`, then it fails with the "Network access is forbidden" message.
+- [x] Given a test that leaves an unhandled rejection, the run fails.
+- [x] `ui-kit` and `desktop` tests run in jsdom with jest-dom matchers; `domain` tests run in Node (asserted by a smoke test reading `typeof document`).
+- [x] `TZ` is `UTC` inside tests (asserted).
+- [x] `vitest run --shard=1/2` and `2/2` together run every test once.
 
 ## 12. Test plan
 
@@ -115,3 +115,14 @@ Parallel with SETUP003/005/008..012. Hotspots: `vitest.shared.ts` (owned here; a
 - ASSUMPTION: thresholds per layer as stated; the Owner may raise them. Nothing below 70% is accepted for any package.
 - ASSUMPTION: jsdom (not happy-dom) for fidelity with Testing Library; revisit if slow.
 - ASSUMPTION: Vitest browser mode is not used; component rendering in a real browser is Storybook/Playwright (OVE_TEST004, OVE_TEST005).
+
+### Implementation notes (2026-10-15)
+
+- Vitest 5 does not support coverage options in individual project configs. Each config therefore exports its shared layer threshold, and the root creates one native coverage glob threshold per package. This preserves independent package gates; an unimported domain function is proven to fail its own threshold. The original acceptance wording about lowering a threshold is interpreted as verifying a failing gate, since lowering a threshold would make it easier.
+- Tests are excluded from production TypeScript projects and checked by `tsconfig.tests.json` after `tsc -b`. This prevents Vitest Node/DOM declarations from leaking into pure domain source. A separate append-only ESLint module selects test typing without disabling any rules. Existing negative domain I/O tests remain required.
+- The Node bootstrap tests migrate to Vitest, including their explicit typed assertions and security cases. Subprocess meta-tests have explicit local timeouts while the shared default remains 5000 ms.
+- The fetch guard is installed before test-module import and before each test. Only explicit loopback opt-in is allowed, reset between tests; requests are normalised once and redirects are refused. This is a fetch guard, not OS-level network isolation.
+- DOM setup is selected from the actual test environment, including file-level jsdom overrides in Node-default packages. An api-client regression verifies matchers, cleanup, browser stubs and the fetch guard in that mode.
+- Vitest 5 fails when a project filter matches no project even with passWithNoTests. A separate initial `overmind-int` project supports the explicitly empty integration command; normal units discover exactly 17 projects and exclude integration files.
+- Testing Library requires `@testing-library/dom` as a peer; exact 10.4.2 is added to the catalog rather than weakening peer checks. React/React DOM, DOM declarations, Vitest, V8 coverage, Vite and jsdom are development tooling here. Their values, licenses and alternatives follow the matrix in OVE-008; that task owns the complete dependency register. No release-age, peer, build or coverage policy is weakened.
+- The current source consists of excluded entry-point placeholders, so the coverage report has 0 instrumentable product statements. It is not evidence of tested product features. Meta-tests explicitly prove threshold failure with an untested source file.

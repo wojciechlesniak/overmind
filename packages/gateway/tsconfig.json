@@ -11,5 +11,6 @@
     {
       "path": "../contracts"
     }
-  ]
+  ],
+  "exclude": ["**/*.test.ts", "**/*.test.tsx", "test/**"]
 }

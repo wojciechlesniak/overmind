@@ -15,5 +15,6 @@
     {
       "path": "../../packages/ui-kit"
     }
-  ]
+  ],
+  "exclude": ["**/*.test.ts", "**/*.test.tsx", "test/**"]
 }

@@ -4,7 +4,7 @@ import { existsSync, readdirSync, unlinkSync, writeFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
-import { test } from "node:test";
+import { test } from "vitest";
 import { satisfies } from "semver";
 import { readJsonRecord } from "./test-support/json.parse-boundary.ts";
 
@@ -39,7 +39,7 @@ const directoryByName = new Map(
   manifests.map((path) => [string(readObject(path)["name"]), dirname(path)]),
 );
 
-await test("installed TypeScript satisfies the actual typescript-eslint peer range; TypeScript 7 fails", () => {
+test("installed TypeScript satisfies the actual typescript-eslint peer range; TypeScript 7 fails", () => {
   const version = string(readObject(require.resolve("typescript/package.json"))["version"]);
   const range = string(
     object(readObject(require.resolve("typescript-eslint/package.json"))["peerDependencies"])[
@@ -54,7 +54,7 @@ await test("installed TypeScript satisfies the actual typescript-eslint peer ran
   });
 });
 
-await test("every project reference exactly matches the manifest graph and the solution includes all packages", () => {
+test("every project reference exactly matches the manifest graph and the solution includes all packages", () => {
   for (const manifestPath of manifests) {
     const directory = dirname(manifestPath);
     const manifest = readObject(manifestPath);
@@ -77,7 +77,7 @@ await test("every project reference exactly matches the manifest graph and the s
   );
 });
 
-await test("base configuration enables every required strictness and syntax guard without path aliases", () => {
+test("base configuration enables every required strictness and syntax guard without path aliases", () => {
   const options = object(readObject(resolve(root, "tsconfig.base.json"))["compilerOptions"]);
   for (const flag of [
     "strict",
@@ -135,13 +135,17 @@ function expectDiagnostic(content: string, code: string): void {
   });
 }
 
-await test("domain compilation denies process, fetch and a dependency pointing to application", () => {
-  expectDiagnostic("export const value = process.env;\n", "TS2591|TS2580|TS2304");
-  expectDiagnostic('export const value = fetch("https://example.com");\n', "TS2304");
-  expectDiagnostic('import "@overmind/application";\n', "TS2307|TS2882");
-});
+test(
+  "domain compilation denies process, fetch and a dependency pointing to application",
+  { timeout: 30_000 },
+  () => {
+    expectDiagnostic("export const value = process.env;\n", "TS2591|TS2580|TS2304");
+    expectDiagnostic('export const value = fetch("https://example.com");\n', "TS2304");
+    expectDiagnostic('import "@overmind/application";\n', "TS2307|TS2882");
+  },
+);
 
-await test("both UI projects compile JSX through react-jsx", () => {
+test("both UI projects compile JSX through react-jsx", { timeout: 30_000 }, () => {
   for (const directory of ["apps/desktop", "packages/ui-kit"]) {
     withSource(
       `${directory}/src/__ove002_jsx__.tsx`,

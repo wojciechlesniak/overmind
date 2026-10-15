@@ -4,10 +4,10 @@ import { existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { test } from "node:test";
+import { test } from "vitest";
 import { readManifest } from "./test-support/json.parse-boundary.ts";
 
-await test("an unreviewed dependency postinstall is blocked before it can write a file", () => {
+test("an unreviewed dependency postinstall is blocked before it can write a file", () => {
   const fixture = mkdtempSync(join(tmpdir(), "overmind-build-denial-"));
   try {
     const packageDirectory = join(fixture, "package");
