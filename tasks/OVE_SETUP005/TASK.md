@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: done
+status: in_progress
 depends_on: [OVE_SETUP001, OVE_SETUP003]
 soft_depends_on: [OVE_SETUP004, OVE_SETUP008]
 provides: ["lib:git-hooks", "lib:commit-conventions"]
@@ -119,3 +119,4 @@ Parallel with SETUP004/008/009..013. Hotspot: `lefthook.yml` is owned here; OVE_
 - Syntax, scopes, limits, emoji, body and task references are machine checked. Imperative wording and explanatory quality remain review responsibilities, documented alongside accepted examples. Co-author attribution is permitted.
 - Review correction: the large-file guard measures Git index blobs with shell-free Git plumbing, never working-tree bytes. Integration tests cover an oversized staged blob with a small unstaged edit and the inverse.
 - Lefthook defers stage_fixed until pre-commit finishes, so commit-msg repeats staged-size verification before commitlint after all restaging. A compact JSON array regression proves that formatter expansion beyond 1 MiB is blocked.
+- Post-merge hook validation exposed inherited Git environment variables redirecting temporary-repository commands to the caller repository. Fixture subprocess environments now remove all GIT_* selections and isolate global/system configuration. Regression proves parent config and index remain byte-identical under hostile inherited selections.
