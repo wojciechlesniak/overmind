@@ -6,7 +6,7 @@ kind: infra
 size: M
 priority: P0
 mvp: true
-status: todo
+status: in_progress
 depends_on: [OVE_SETUP001, OVE_SETUP002]
 soft_depends_on: [OVE_SETUP008]
 provides: ["lib:eslint-config", "lib:eslint-config-extension-dir", "lib:prettier-config"]
@@ -118,3 +118,11 @@ Parallel with SETUP004/005/008..012. Hotspots: `eslint.config.mjs` (stable after
 - ASSUMPTION: no `eslint-plugin-import-x` (boundaries are ARCH002's; import order not enforced; Prettier plus consistent-type-imports suffice). Reconsider if import sorting causes review churn.
 - ASSUMPTION: accessibility lint is not available for ESLint 10; if `eslint-plugin-jsx-a11y` adds ESLint 10 support, adopt it through OVE_SETUP008's upgrade process.
 - ASSUMPTION: `strictTypeChecked` from day one; if noise is excessive, relax individual rules with a reason, not the preset.
+
+### Implementation notes (2026-10-15)
+
+- The existing typescript-eslint 8.71.1 pin follows the Owner decision to update later. Zod 4.6.6 is likewise the preceding compatible release admitted by the unchanged 72-hour release-age policy. No age exceptions are introduced.
+- ESLint 10 rejects `no-console: [error, {allow: []}]`; the equivalent valid `no-console: error` forbids every console method. Prettier is last, retaining `curly: all`, which its generic preset disables even though that setting is compatible.
+- Node and JSX fixture tests now explicitly await Node test promises. JSON/YAML configuration input is parsed and validated once in `tools/test-support/json.parse-boundary.ts`; `yaml` (ISC) and `zod` (MIT) are catalog-pinned development dependencies. This replaces unchecked JSON and brittle YAML text matching. OVE-008 owns the complete dependency register.
+- Existing TypeScript configurations receive formatting-only updates so the new repository-wide format gate passes. Existing Polish documentation and task material remain with their documentation owners. Minimal CODEOWNERS entries cover the lint policy as required here; OVE_OSS003 extends that file later.
+- Global ESLint ignores occupy their own config object, so emitted `.tsbuild` declarations are excluded even after compilation. A regression test verifies that composition does not disable critical rules.
