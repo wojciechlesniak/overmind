@@ -1,0 +1,15 @@
+{
+  "name": "@overmind/desktop",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@overmind/api-client": "workspace:*",
+    "@overmind/contracts": "workspace:*",
+    "@overmind/ui-kit": "workspace:*"
+  }
+}

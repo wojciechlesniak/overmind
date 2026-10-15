@@ -1,0 +1,16 @@
+{
+  "name": "@overmind/adapter-keychain-macos",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@overmind/application": "workspace:*",
+    "@overmind/contracts": "workspace:*",
+    "@overmind/domain": "workspace:*"
+  }
+}
