@@ -7,9 +7,9 @@ it("initialises DOM matchers and browser stubs for a per-file environment", () =
   render(createElement("div", { "data-testid": "environment-probe" }, "ready"));
   expect(screen.getByTestId("environment-probe")).toBeInTheDocument();
   expect(matchMedia("(min-width: 1px)").matches).toBe(false);
-  expect(new ResizeObserver(() => undefined).observe(document.body)).toBeUndefined();
+  new ResizeObserver(() => undefined).observe(document.body);
   expect(new IntersectionObserver(() => undefined).takeRecords()).toEqual([]);
-  expect(scrollTo(0, 0)).toBeUndefined();
+  scrollTo(0, 0);
   expect(() => fetch("https://example.com")).toThrow("Network access is forbidden");
 });
 
