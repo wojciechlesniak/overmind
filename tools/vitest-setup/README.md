@@ -9,7 +9,7 @@ The fail-closed regression adds an unimported domain function and verifies that
 its own threshold fails (lowering a threshold, as phrased in the original task,
 would make a gate easier rather than fail it).
 
-Node and jsdom use isolated forks, UTC, C.UTF-8, no global test API, no retries,
+Node and Happy DOM use isolated forks, UTC, C.UTF-8, no global test API, no retries,
 and no fetch access by default. Import and call `allowLocalhost()` inside the
 specific test that needs a local fake server. Only exact loopback hosts and
 HTTP(S) are permitted, credentials are forbidden, and redirects are rejected
@@ -17,8 +17,11 @@ so a local server cannot redirect a request to the internet. Permission resets
 between tests. This is a fetch guard, not an OS-level network sandbox.
 
 DOM setup follows the actual test environment, including per-file
-`// @vitest-environment jsdom` overrides in Node-default packages. Such files
+`// @vitest-environment happy-dom` overrides in Node-default packages. Such files
 receive the same matchers, automatic cleanup and browser stubs as UI projects.
+Happy DOM replaces jsdom under the Owner's license-compatible tooling request.
+Script evaluation and external script/style/image/iframe loading are disabled;
+real-browser behavior is verified by the Playwright owner tasks.
 
 Production packages exclude test files so importing Vitest types cannot grant
 Node/DOM globals to domain source. `tsc -b` still validates every production

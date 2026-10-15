@@ -17,6 +17,9 @@ pre-commit:
             glob: "*.{ts,tsx,mjs}"
             run: pnpm exec eslint --fix --max-warnings 0 -- {staged_files}
             stage_fixed: true
+          - name: react-lint
+            glob: "*.tsx"
+            run: pnpm exec oxlint --disable-nested-config --config .oxlintrc.json --deny-warnings -- {staged_files}
     - name: no-large-files
       run: node tools/hooks/no-large-files.mjs -- {staged_files}
     - name: no-forbidden-files

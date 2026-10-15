@@ -19,6 +19,25 @@ it("fails closed on absent, invalid and denied SPDX expressions", () => {
     "MIT AND GPL-3.0-only",
     "MIT WITH Classpath-exception-2.0",
     "GPL-2.0+",
+    "MIT OR unknown",
+    "MIT OR",
+    "MIT AND",
+    "MIT Apache-2.0",
+    "(MIT OR ISC",
+    "MIT) OR ISC",
+    "MIT OR (ISC AND)",
+    "mit",
+    "MIT WITH unknown",
+    "MIT OR MIT WITH",
+    "MIT WITH OR ISC",
+    "MIT WITH (Classpath-exception-2.0)",
+    "MIT++ OR ISC",
+    "MIT-0",
+    "CC-BY-3.0",
+    "CC-BY-4.0",
+    "(".repeat(33) + "MIT" + ")".repeat(33),
+    "MIT OR ".repeat(200) + "MIT",
+    "MIT" + " ".repeat(8192),
   ]) {
     expect(check(license), license).toBe(false);
   }
@@ -29,6 +48,11 @@ it("evaluates alternatives, conjunctions and parentheses using SPDX grammar", ()
     "MIT OR GPL-3.0-only",
     "(MIT AND ISC) OR GPL-3.0-only",
     "Apache-2.0 AND MIT",
+    "MIT OR LicenseRef-Proprietary",
+    "MIT OR DocumentRef-vendor:LicenseRef-Proprietary",
+    "GPL-3.0-only AND MIT OR ISC",
+    "MIT OR MIT WITH Classpath-exception-2.0",
+    "MIT OR GPL-2.0+",
   ]) {
     expect(check(license), license).toBe(true);
   }

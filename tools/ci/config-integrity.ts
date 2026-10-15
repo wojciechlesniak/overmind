@@ -6,7 +6,7 @@ if (pr) {
     encoding: "utf8",
   }).split("\0");
   const protectedFiles = files.filter((file) =>
-    /^(?:lefthook(?:-secrets)?\.yml|commitlint\.config\.mjs|eslint\.config[^/]*(?:\/.*)?|vitest(?:\.shared|\.ci\.config)\.ts|\.github\/actionlint\.yaml|\.github\/workflows\/.*|\.github\/actions\/.*|deny\.toml|\.gitleaks\.toml|tools\/pinned-bin\/lock\.json|tools\/check-licenses\/(?:allowlist|exceptions)\.json|tools\/commitlint\/.*)$/u.test(
+    /^(?:lefthook(?:-secrets)?\.yml|commitlint\.config\.mjs|eslint\.config[^/]*(?:\/.*)?|\.oxlintrc\.json|vitest(?:\.shared|\.ci\.config)\.ts|\.github\/actionlint\.yaml|\.github\/workflows\/.*|\.github\/actions\/.*|deny\.toml|\.gitleaks\.toml|tools\/pinned-bin\/lock\.json|tools\/check-licenses\/(?:allowlist|exceptions)\.json|tools\/commitlint\/.*)$/u.test(
       file,
     ),
   );
@@ -14,7 +14,9 @@ if (pr) {
   // Requiring approval for every ESLint configuration edit also covers severity
   // downgrades without attempting to interpret executable configuration diffs.
   if (
-    files.some((file) => /^eslint\.config[^/]*(?:\/.*)?$/u.test(file)) &&
+    files.some(
+      (file) => /^eslint\.config[^/]*(?:\/.*)?$/u.test(file) || file === ".oxlintrc.json",
+    ) &&
     !labels.has("lint-config-change")
   ) {
     throw new Error("ESLint configuration changes also require lint-config-change");

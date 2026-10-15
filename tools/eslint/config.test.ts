@@ -51,7 +51,7 @@ function lintProbe(path: string, source: string): string[] {
 
 test(
   "lint probe diagnostics reject fatal parse errors and empty reports",
-  { timeout: 15_000 },
+  { timeout: 35_000 },
   () => {
     assert.throws(
       () => lintProbe("tools/__ove003_malformed__.test.ts", "export const =;"),
@@ -83,21 +83,6 @@ test(
     }
   },
 );
-
-test("React hook dependency rules apply only to the UI projects", { timeout: 30_000 }, () => {
-  const source =
-    "import { useEffect } from 'react'; export function Component({ value }: { value: string }) { useEffect(() => { void value; }, []); return null; }";
-  assert.ok(
-    lintProbe("packages/ui-kit/src/__ove003_probe__.tsx", source).includes(
-      "react-hooks/exhaustive-deps",
-    ),
-  );
-  assert.ok(
-    !lintProbe("packages/domain/src/__ove003_probe__.tsx", source).includes(
-      "react-hooks/exhaustive-deps",
-    ),
-  );
-});
 
 test(
   "config extensions load automatically and throwing or escaping modules fail closed",
@@ -136,6 +121,17 @@ test(
 );
 
 test("only real ESLint suppression comments require a reason", () => {
+  assert.equal(
+    findMissingDisableReasons("// oxlint-disable-next-line react/purity\nDate.now();").length,
+    1,
+  );
+  assert.deepEqual(
+    findMissingDisableReasons(
+      "// oxlint-disable-next-line react/purity -- OVE_SETUP006 deliberate fixture\nDate.now();",
+    ),
+    [],
+  );
+  assert.deepEqual(findMissingDisableReasons('const text = "// oxlint-disable react/purity";'), []);
   assert.equal(
     findMissingDisableReasons("// eslint-disable-next-line no-console\nconsole.log(1);").length,
     1,

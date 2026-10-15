@@ -4,6 +4,18 @@ import { z } from "zod";
 
 const recordSchema = z.record(z.string(), z.unknown());
 const strings = z.record(z.string(), z.string());
+export function parseReactLintReport(text: string): string[] {
+  const raw: unknown = JSON.parse(text);
+  return z
+    .object({
+      number_of_files: z.number().int().positive(),
+      diagnostics: z.array(
+        z.object({ code: z.string().min(1), severity: z.enum(["warning", "error"]) }),
+      ),
+    })
+    .parse(raw)
+    .diagnostics.map((diagnostic) => diagnostic.code);
+}
 export function parseLintMessages(text: string): string[] {
   const raw: unknown = JSON.parse(text);
   return z

@@ -105,14 +105,24 @@ Release OVE_SETUP014 must require successful isolation on the exact release SHA;
 missing runners or harnesses must block it.
 
 The Owner explicitly declined license additions and a temporary MPL exception.
-The original allow-list and empty exceptions are preserved. Actual development
-dependencies violate it, so `licenses` and `ci-success` must remain red and this
-task must not merge. See the declined proposal and `pnpm check:licenses` for the
-exact package/version decisions. Negative hosted probes are linked in PR #934:
+The original allow-list and empty exceptions are preserved. The Owner subsequently
+requested compatible dependency replacements; see
+`tasks/_proposals/OVE_SETUP006-license-compatible-tooling.md`. The current license
+check passes without exclusions or metadata rewriting. The unresolved isolation
+admission proposal and boundary/fork/hardware evidence still prevent declaring
+all task acceptance complete. Negative hosted probes are linked in PR #934:
 #935 (failed test), #936 (lint), #937 (explicit GPL denial), #938 (high production
 advisories); all are closed without merge. Their corresponding gates and aggregate
 failed. The baseline license failure was independently present. Boundary-check,
 fork-run and physical-isolation evidence remain outstanding.
+
+React code checks run through `pnpm lint:react` (also included in `pnpm lint`
+and the staged TSX hook). ESLint 10 retains the strict TypeScript and other checks;
+Oxlint supplies 14 explicit hooks/compiler rules for the two UI packages. Its
+config requires both configuration approval labels, and nested configs are disabled.
+Both ESLint and Oxlint suppression directives need a reason. DOM tests use Happy
+DOM with script evaluation, external script/style/image/iframe loads and filesystem
+HTTP requests disabled. Real-browser testing remains owned by Playwright tasks.
 
 ## Adding a job
 
