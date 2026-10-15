@@ -6,12 +6,13 @@ kind: infra
 size: M
 priority: P0
 mvp: true
-status: todo
+status: in_progress
 depends_on: [OVE_SETUP001, OVE_SETUP002, OVE_SETUP003, OVE_SETUP004, OVE_SETUP005]
 soft_depends_on: [OVE_SETUP008, OVE_SETUP013, OVE_SETUP021]
 provides: ["lib:ci-pipeline", "lib:ci-setup-action", "lib:license-check", "lib:ci-required-check", "lib:pinned-bin"]
 needs: []
 owns:
+  - .github/actionlint.yaml
   - .github/workflows/ci.yml
   - .github/workflows/isolation.yml
   - .github/workflows/nightly.yml
@@ -21,6 +22,8 @@ owns:
   - tools/check-workflows.test.ts
   - deny.toml
   - docs/engineering/ci.md
+  - tools/ci/**
+  - vitest.ci.config.ts
 reads: ["package.json", "pnpm-workspace.yaml", ".nvmrc", "lefthook.yml"]
 design: none
 design_source: ""
@@ -139,3 +142,13 @@ After SETUP001..005. Parallel with SETUP007, 008, 009..013. Hotspot: `ci.yml` (o
 - ASSUMPTION: merge queue may not be available for the repository plan; the label-gated PR run plus the post-merge run on `main` plus the release gate cover the same risk.
 - Question for the Owner: whether to use `step-security/harden-runner` (egress allow-list) on hosted jobs; default is no extra third-party action.
 - Question for the Owner: who maintains the self-hosted Mac (assumption: the Owner's spare Mac).
+
+### Implementation notes (2026-10-15)
+
+- The repository default branch is master. CI includes master, main and DEVELOP pushes; trusted cache saving and nightly selection follow the actual default-branch context rather than silently targeting a nonexistent main branch.
+- Shards use vitest.ci.config.ts to collect partial coverage; test-merge uses the unchanged root thresholds on merged native blobs. A real subprocess regression proves untested domain code fails only the final merged gate. Subprocess reports are isolated from parent coverage. pnpm 12 script arguments are passed directly, avoiding a literal extra --.
+- GitHub's July 2026 self-repository syntax ($/.github/actions/setup) avoids loading an action from mutable checkout state. Zizmor enforces the original files. A narrow actionlint compatibility adapter translates only this local uses spelling in temporary input because actionlint 1.7.12 predates the syntax; no lint rules are disabled.
+- CI helpers live in tools/ci and the shard config is a separate root file; these additive ownership paths are recorded above. PR title validation reuses commit rules with a title-only body exemption; actual commit policy is unchanged.
+- PR-controlled workflow YAML cannot secure its own self-hosted admission. Automatic PR/queue isolation is replaced provisionally by explicit maintainer workflow_dispatch from the trusted default branch with a PR number, after successful hosted CI. A workflow_run design was rejected by zizmor's high-severity dangerous-trigger rule and removed rather than suppressed. The gate checks write permissions and fresh labels, including isolate-<head SHA> to prevent reusing an approval with a backdated or same-second push. Forks and obsolete heads are denied. Default-branch definitions must be promoted before this handler can operate. This behavioral difference requires review and is not represented as a completed automatic-PR acceptance criterion. OVE_SETUP021 must enforce runner access to the trusted workflow, or use a private coordinator; an unrestricted public personal-repository runner is not provisioned here.
+- The Owner declined developer license additions and the proposed MPL exception. The original allow-list and empty exceptions remain unchanged; check:licenses and merge remain blocked by the actual existing development dependencies. The proposal records the declined scope; this task is not marked complete.
+- Node SPDX parser 4.0.0 and its types 4.0.0 avoid a bespoke incomplete expression parser. They are MIT, catalog-pinned development dependencies; transitive SPDX exception data is reported as CC-BY-3.0 and is also denied by the unchanged policy. OVE_SETUP008 owns the complete dependency register.

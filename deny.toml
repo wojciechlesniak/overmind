@@ -1,0 +1,21 @@
+[advisories]
+yanked = "deny"
+
+[licenses]
+confidence-threshold = 0.95
+allow = [
+  "Apache-2.0", "MIT", "ISC", "BSD-2-Clause", "BSD-3-Clause", "0BSD",
+  "BlueOak-1.0.0", "CC0-1.0", "Python-2.0", "Unlicense", "Unicode-3.0", "Zlib",
+]
+# MPL-2.0 is intentionally absent until a named, reviewed crate exception exists.
+exceptions = []
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = []

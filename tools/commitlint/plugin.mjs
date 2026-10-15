@@ -29,7 +29,10 @@ export function taskReference(parsed, _when, branch) {
     ? [references.length === 1 && references[0] === task, `footer must contain Refs: ${task}`]
     : [references.length > 0, "include a Refs: OVE_XXXNNN footer when a task applies"];
 }
-export function commitPolicy(parsed) {
+export function commitPolicy(parsed, when = "always", options = {}) {
+  if (when !== "always") {
+    return [false, "commit policy supports only always"];
+  }
   if (parsed.scope && !areaScopes().includes(parsed.scope)) {
     return [false, "scope must be one area from tasks/PLAN.md, deps or release"];
   }
@@ -52,7 +55,7 @@ export function commitPolicy(parsed) {
   const body = paragraphs
     .flatMap((paragraph) => paragraph.split(/\r?\n/u))
     .filter((line) => line.trim() && !/^(?:[\w-]+|BREAKING CHANGE): /u.test(line));
-  if (["feat", "fix", "security"].includes(parsed.type) && !body.length) {
+  if (!options.titleOnly && ["feat", "fix", "security"].includes(parsed.type) && !body.length) {
     return [false, "feat, fix and security require a body explaining why"];
   }
   if (

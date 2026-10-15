@@ -6,3 +6,11 @@
 /commitlint.config.mjs @wojciechlesniak
 /tools/hooks/ @wojciechlesniak
 /tools/commitlint/ @wojciechlesniak
+# CI policy and pinned executable supply chain (OVE_SETUP006).
+/.github/workflows/ @wojciechlesniak
+/.github/actions/ @wojciechlesniak
+/tools/pinned-bin/ @wojciechlesniak
+/tools/check-licenses/ @wojciechlesniak
+/tools/ci/ @wojciechlesniak
+/deny.toml @wojciechlesniak
+/.github/actionlint.yaml @wojciechlesniak

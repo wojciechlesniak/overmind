@@ -9,7 +9,11 @@ type RuleResult = [boolean, string?];
 export function areaScopes(): string[];
 export function currentBranch(): string;
 export function taskReference(parsed: ParsedCommit, when: string, branch: string): RuleResult;
-export function commitPolicy(parsed: ParsedCommit): RuleResult;
+export function commitPolicy(
+  parsed: ParsedCommit,
+  when?: string,
+  options?: { titleOnly?: boolean },
+): RuleResult;
 declare const plugin: {
   rules: { "task-reference": typeof taskReference; "commit-policy": typeof commitPolicy };
 };

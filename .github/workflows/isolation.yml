@@ -1,0 +1,108 @@
+name: Isolation
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+  merge_group: {}
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Same-repository PR number, or empty for the current default branch
+        required: false
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != format('refs/heads/{0}', github.event.repository.default_branch) }}
+defaults:
+  run:
+    shell: bash
+jobs:
+  gate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    # Read-only API access verifies the selected PR and its latest hosted CI run.
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: read
+    outputs:
+      allowed: ${{ steps.check.outputs.allowed || 'false' }}
+      sha: ${{ steps.check.outputs.sha }}
+    steps:
+      # PR/queue YAML is untrusted. A maintainer dispatches the default-branch
+      # definition with a PR number after hosted CI and SHA-bound approval.
+      - if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
+        run: |
+          set -euo pipefail
+          echo 'A maintainer must dispatch the trusted default-branch workflow with the approved PR number.'
+      - if: github.event_name != 'pull_request' && github.event_name != 'merge_group'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - if: github.event_name != 'pull_request' && github.event_name != 'merge_group'
+        uses: $/.github/actions/setup
+      - id: check
+        if: github.event_name != 'pull_request' && github.event_name != 'merge_group'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          pnpm exec tsx tools/ci/isolation-gate.ts
+  escape:
+    needs: gate
+    if: needs.gate.outputs.allowed == 'true' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
+    # OVE_SETUP021 must enforce trusted-workflow runner access and ephemeral disposal.
+    runs-on: [self-hosted, macOS, ARM64, overmind-macos26] # zizmor: ignore[self-hosted-runner] -- OVE_SETUP006 requires a dedicated ephemeral macOS 26 host for Apple container; hosted gate admits approved same-repository SHA only.
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - id: policy
+        run: |
+          set -euo pipefail
+          cp tools/ci/isolation-cleanup.mjs "$RUNNER_TEMP/overmind-isolation-cleanup.mjs"
+          digest="$(shasum -a 256 "$RUNNER_TEMP/overmind-isolation-cleanup.mjs" | cut -d ' ' -f 1)"
+          echo "sha256=$digest" >> "$GITHUB_OUTPUT"
+          container --version
+          version="$(sw_vers -productVersion)"
+          [[ "${version%%.*}" -ge 26 ]]
+          [[ "$(uname -m)" == arm64 ]]
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.gate.outputs.sha }}
+          persist-credentials: false
+      - uses: $/.github/actions/setup
+      - run: |
+          set -euo pipefail
+          pnpm test:escape
+      - if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: escape-evidence
+          path: |
+            escape-evidence/
+            !escape-evidence/**/.env*
+          retention-days: 7
+          if-no-files-found: error
+      - if: always()
+        env:
+          EXPECTED_CLEANUP_SHA: ${{ steps.policy.outputs.sha256 }}
+        run: |
+          set -euo pipefail
+          cleanup="$RUNNER_TEMP/overmind-isolation-cleanup.mjs"
+          if [[ ! -f "$cleanup" || -z "$EXPECTED_CLEANUP_SHA" ]]; then
+            container system stop
+            exit 1
+          fi
+          actual="$(shasum -a 256 "$cleanup" | cut -d ' ' -f 1)"
+          if [[ "$actual" != "$EXPECTED_CLEANUP_SHA" ]]; then
+            container system stop
+            exit 1
+          fi
+          node "$cleanup"
