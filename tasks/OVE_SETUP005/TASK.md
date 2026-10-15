@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: in_progress
+status: done
 depends_on: [OVE_SETUP001, OVE_SETUP003]
 soft_depends_on: [OVE_SETUP004, OVE_SETUP008]
 provides: ["lib:git-hooks", "lib:commit-conventions"]
