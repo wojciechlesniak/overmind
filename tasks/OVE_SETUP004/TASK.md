@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: in_progress
+status: done
 depends_on: [OVE_SETUP001, OVE_SETUP002]
 soft_depends_on: [OVE_SETUP008]
 provides: ["lib:vitest-workspace", "lib:vitest-shared-config", "lib:coverage-thresholds"]
@@ -94,13 +94,13 @@ Layer: tooling. Root config and shared module at repository root; per-package co
 
 ## 11. Acceptance criteria
 
-- [ ] `pnpm test` runs all 17 projects and passes; the report lists each project name.
-- [ ] `pnpm test:coverage` fails when a threshold is lowered artificially in a throw-away branch for `packages/domain` (verified once).
-- [ ] Given a test calling `fetch("https://example.com")`, then it fails with the "Network access is forbidden" message.
-- [ ] Given a test that leaves an unhandled rejection, the run fails.
-- [ ] `ui-kit` and `desktop` tests run in jsdom with jest-dom matchers; `domain` tests run in Node (asserted by a smoke test reading `typeof document`).
-- [ ] `TZ` is `UTC` inside tests (asserted).
-- [ ] `vitest run --shard=1/2` and `2/2` together run every test once.
+- [x] `pnpm test` runs all 17 projects and passes; the report lists each project name.
+- [x] `pnpm test:coverage` fails when a threshold is lowered artificially in a throw-away branch for `packages/domain` (verified once).
+- [x] Given a test calling `fetch("https://example.com")`, then it fails with the "Network access is forbidden" message.
+- [x] Given a test that leaves an unhandled rejection, the run fails.
+- [x] `ui-kit` and `desktop` tests run in jsdom with jest-dom matchers; `domain` tests run in Node (asserted by a smoke test reading `typeof document`).
+- [x] `TZ` is `UTC` inside tests (asserted).
+- [x] `vitest run --shard=1/2` and `2/2` together run every test once.
 
 ## 12. Test plan
 
