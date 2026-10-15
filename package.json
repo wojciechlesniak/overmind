@@ -1,0 +1,52 @@
+{
+  "name": "overmind",
+  "private": true,
+  "version": "0.0.0",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22.22.2 <23",
+    "pnpm": ">=12.11.2 <13"
+  },
+  "packageManager": "pnpm@12.11.2+sha512.25a51652a196785af5f28bda6dfe8dc582ebefa4ac1d180221ce1390231c5fb76637822ea4b6e4633ce74acdcb0a77f725af11bad38177fdeddaee818a955cb9",
+  "scripts": {
+    "dev": "node --import tsx tools/dev/run.ts",
+    "dev:tauri": "pnpm --filter @overmind/desktop tauri dev",
+    "build": "pnpm -r --if-present run build",
+    "typecheck": "tsc -b",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "pnpm --filter @overmind/desktop run test:e2e",
+    "test:visual": "pnpm --filter @overmind/desktop run test:visual",
+    "test:escape": "tsx tools/escape-tests/run.ts",
+    "storybook": "pnpm --filter @overmind/ui-kit run storybook",
+    "build:storybook": "pnpm --filter @overmind/ui-kit run build:storybook",
+    "check:boundaries": "tsx tools/check-boundaries/run.ts",
+    "check:licenses": "tsx tools/check-licenses/run.ts",
+    "check:deps": "tsx tools/deps-policy/run.ts",
+    "check:tasks": "tsx tools/tasks/lint.ts",
+    "check:owns": "tsx tools/tasks/check-owns.ts",
+    "check:docs": "tsx tools/docs-check/run.ts",
+    "check:headers": "tsx tools/check-headers/run.ts",
+    "check:contracts": "tsx tools/gen-contracts/check-additive.ts",
+    "gen:contracts": "tsx tools/gen-contracts/run.ts",
+    "gen:task-index": "tsx tools/tasks/gen-index.ts",
+    "audit": "pnpm audit --audit-level=high --prod",
+    "sbom": "tsx tools/sbom/generate.ts",
+    "package:engine": "tsx tools/package-engine/run.ts",
+    "check": "pnpm run typecheck && pnpm run lint && pnpm run test && pnpm run check:boundaries && pnpm run check:deps",
+    "prepare": "if [ -f lefthook.yml ]; then lefthook install; fi",
+    "task:claim": "tsx tools/tasks/claim.ts",
+    "task:finish": "tsx tools/tasks/finish.ts",
+    "task:status": "tsx tools/tasks/status.ts",
+    "task:next": "tsx tools/tasks/next.ts"
+  },
+  "devDependencies": {
+    "tsx": "catalog:"
+  }
+}

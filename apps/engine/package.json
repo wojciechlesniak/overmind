@@ -1,0 +1,26 @@
+{
+  "name": "@overmind/engine",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@overmind/adapter-herdr": "workspace:*",
+    "@overmind/adapter-keychain-macos": "workspace:*",
+    "@overmind/adapter-notifications-macos": "workspace:*",
+    "@overmind/adapter-providers": "workspace:*",
+    "@overmind/adapter-sandbox-macos": "workspace:*",
+    "@overmind/adapter-sqlite": "workspace:*",
+    "@overmind/adapter-telegram": "workspace:*",
+    "@overmind/api-client": "workspace:*",
+    "@overmind/application": "workspace:*",
+    "@overmind/contracts": "workspace:*",
+    "@overmind/domain": "workspace:*",
+    "@overmind/gateway": "workspace:*",
+    "@overmind/ui-kit": "workspace:*",
+    "@overmind/workflow-runtime": "workspace:*"
+  }
+}
