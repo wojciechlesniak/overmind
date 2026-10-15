@@ -12,6 +12,7 @@ function approved() {
     pr: {
       number: 1,
       state: "open",
+      draft: false,
       head: { sha, repo: { full_name: "owner/repo" } },
       base: { repo: { full_name: "owner/repo" } },
       labels: [{ name: "run-isolation" }, { name: `isolate-${sha}` }],
@@ -37,6 +38,22 @@ function approved() {
 it("only current same-repository heads with fresh writer-applied bound labels are admitted", () => {
   const input = approved();
   expect(approveIsolation(input).allowed).toBe(true);
+  expect(approveIsolation({ ...input, pr: { ...input.pr, draft: true } }).allowed).toBe(false);
+  expect(
+    approveIsolation({
+      ...input,
+      events: [
+        ...input.events,
+        {
+          id: 3,
+          event: "unlabeled",
+          created_at: "2026-10-15T12:00:00Z",
+          actor: { login: "owner" },
+          label: { name: "run-isolation" },
+        },
+      ],
+    }).allowed,
+  ).toBe(false);
   expect(
     approveIsolation({
       ...input,

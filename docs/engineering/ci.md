@@ -31,7 +31,7 @@ measurements of hosted Actions. The target for a typical PR is 12 minutes.
 | desktop-e2e | `pnpm test:e2e && pnpm test:visual` in the digest-pinned Playwright image | 2–6 min | harness-owned evidence |
 | ci-success | `CI_NEEDS='<job-result JSON>' CI_FULL=true pnpm exec tsx tools/ci/success.ts`; add `CI_RUST=true` / `CI_DESKTOP=true` for planned conditional jobs | <1 min | aggregate result |
 | isolation/gate | Trusted default-branch dispatch, described below | <1 min | approved SHA or denied admission |
-| isolation/escape | `container --version`, macOS >=26/arm64, `pnpm test:escape`; always `node tools/ci/isolation-cleanup.mjs` | <=30 min | `escape-evidence`, 7 days, excludes `.env*` |
+| isolation/escape | Revalidate approval, assert macOS >=26/arm64, then `pnpm test:escape`; cleanup uses captured absolute executables and `node tools/ci/isolation-cleanup.mjs /absolute/path/to/container` | <=30 min | `escape-evidence`, 7 days, excludes `.env*` |
 | nightly/audit | Same Node/Rust audit commands | 1–3 min | logs |
 | nightly/report | On failure only: opens/updates `ci: audit failure` through `gh issue` | <1 min | issue with workflow-run link |
 
@@ -92,10 +92,27 @@ the same-repository PR number after successful hosted CI. The current PR must ha
 both `run-isolation` and `isolate-<full head SHA>` labels, freshly applied by a
 writer. The gate checks actor permissions, repository, open state, current SHA,
 successful CI, label actors and timestamps. Forks and stale approvals fail closed.
+Approval requires every full hosted job to succeed exactly once; the cheap Draft
+aggregate is insufficient. Drafts and zero/invalid PR numbers are rejected.
+The latest label event includes removals, the PR is refreshed after reading its
+history, and the trusted gate runs again after runner queueing before head checkout.
 An empty PR number tests the default-branch SHA. Default-branch policy must first
-be promoted before this mechanism is usable. Cleanup is copied from that trusted
-branch and checksum-checked before always-run cleanup; only `ovm-ci-*` resources
-are removed, followed by `container system stop`.
+be promoted before this mechanism is usable. Root must stage the trusted-branch
+cleanup at `/opt/overmind-ci/isolation-cleanup.mjs` (root-owned mode 0555, protected
+parents). Preflight checks its hash against the trusted checkout; always-run
+cleanup rechecks that hash. Job-writable staging is rejected to prevent replacement
+between hashing and execution. Only `ovm-ci-*` resources
+are removed, followed by `container system stop`. Node and the container executable
+are captured before head execution and must resolve through root-owned paths with
+no group/other write permission, including all parent directories. Effective write
+access is also denied for each component, covering macOS ACL grants. SETUP021 must
+provision them accordingly; a writable tool cache fails preflight. Cleanup resets
+shell/Node options, uses absolute system hash tools in an empty environment and
+launches the captured Node/container paths with only the captured HOME and a system
+PATH. Test-controlled PATH, RUNNER_TEMP and language options cannot redirect it.
+This in-job cleanup is defense in depth. Root-controlled teardown and ephemeral
+disposal in SETUP021 remain the boundary against hostile background processes or
+a compromised job account; a same-user cleanup script cannot provide that boundary.
 
 This manual admission differs from the requested automatic labeled-PR/queue run.
 The security rationale and unresolved acceptance are recorded in
@@ -115,6 +132,14 @@ all task acceptance complete. Negative hosted probes are linked in PR #934:
 advisories); all are closed without merge. Their corresponding gates and aggregate
 failed. The baseline license failure was independently present. Boundary-check,
 fork-run and physical-isolation evidence remain outstanding.
+
+On 2026-10-15 the Owner confirmed no dedicated CI Mac is available. GitHub's
+[hosted-runner reference](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)
+lists macOS 26 but explicitly excludes nested virtualization on arm64, so changing
+the runner label does not establish Apple container support. The acceptance ordering
+conflict and a proposed staged resolution are recorded in
+`tasks/_proposals/OVE_SETUP006-acceptance-sequence.md`; it is not approved and does
+not authorize a merge or replace real escape evidence with fake tests.
 
 React code checks run through `pnpm lint:react` (also included in `pnpm lint`
 and the staged TSX hook). ESLint 10 retains the strict TypeScript and other checks;

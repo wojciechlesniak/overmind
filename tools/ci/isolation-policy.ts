@@ -1,5 +1,35 @@
 import type { IsolationPR, LabelEvent } from "./isolation.parse-boundary.ts";
 const writers = new Set(["admin", "maintain", "write"]);
+/** A green Draft aggregate deliberately omits these full checks. */
+export function fullHostedChecksPassed(
+  jobs: readonly { name: string; status: string; conclusion: string | null }[],
+): boolean {
+  const required = [
+    "plan",
+    "format-lint",
+    "typecheck",
+    "test (1)",
+    "test (2)",
+    "test (3)",
+    "test-merge",
+    "build",
+    "architecture",
+    "licenses",
+    "audit",
+    "commits",
+    "config-integrity",
+    "workflow-lint",
+    "ci-success",
+  ];
+  return required.every((name) => {
+    const matches = jobs.filter((job) => job.name === name);
+    return (
+      matches.length === 1 &&
+      matches[0]?.status === "completed" &&
+      matches[0].conclusion === "success"
+    );
+  });
+}
 export function writer(permission: string | undefined): boolean {
   return Boolean(permission && writers.has(permission));
 }
@@ -15,6 +45,7 @@ export function approveIsolation(input: {
   const { pr, repository, sha, events, permissions } = input;
   if (
     pr.state !== "open" ||
+    pr.draft ||
     pr.head.repo?.full_name !== repository ||
     pr.base.repo.full_name !== repository
   ) {
@@ -34,12 +65,15 @@ export function approveIsolation(input: {
       return { allowed: false, reason: "Exact-head isolation approval is missing" };
     }
     const event = events
-      .filter((item) => item.event === "labeled" && item.label?.name === name)
+      .filter(
+        (item) =>
+          (item.event === "labeled" || item.event === "unlabeled") && item.label?.name === name,
+      )
       .reduce<LabelEvent | undefined>(
         (latest, item) => (!latest || item.id > latest.id ? item : latest),
         undefined,
       );
-    if (!event?.actor || !writer(permissions[event.actor.login])) {
+    if (event?.event !== "labeled" || !event.actor || !writer(permissions[event.actor.login])) {
       return { allowed: false, reason: "Label was not applied by a writer" };
     }
     if (Date.parse(event.created_at) < Date.parse(input.committedAt)) {

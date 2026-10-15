@@ -1,9 +1,8 @@
 import { spawnSync } from "node:child_process";
-import { resolve } from "node:path";
+import { realpathSync } from "node:fs";
+import { isAbsolute } from "node:path";
 import { pathToFileURL } from "node:url";
-export function cleanup(
-  run = (args) => spawnSync("container", args, { encoding: "utf8", shell: false }),
-) {
+export function cleanup(run) {
   let failed = false;
   for (const [list, remove] of [
     [
@@ -33,6 +32,14 @@ export function cleanup(
   const stopped = run(["system", "stop"]);
   return !failed && !stopped.error && stopped.status === 0;
 }
-if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
-  process.exitCode = cleanup() ? 0 : 1;
+if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) {
+  const executable = process.argv[2] ?? "";
+  if (!isAbsolute(executable)) {
+    throw new Error("An absolute trusted container executable is required");
+  }
+  process.exitCode = cleanup((args) =>
+    spawnSync(executable, args, { encoding: "utf8", shell: false }),
+  )
+    ? 0
+    : 1;
 }

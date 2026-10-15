@@ -8,7 +8,7 @@ import {
   role,
   commit,
 } from "./isolation.parse-boundary.ts";
-import { approveIsolation, writer } from "./isolation-policy.ts";
+import { approveIsolation, fullHostedChecksPassed, writer } from "./isolation-policy.ts";
 const event = readIsolationEvent();
 const repository = event.repository.full_name;
 const branch = event.repository.default_branch;
@@ -25,7 +25,8 @@ async function approvePR(number: string, actor: string, actorRole: string) {
   if (
     pr.head.repo?.full_name !== repository ||
     pr.base.repo.full_name !== repository ||
-    pr.state !== "open"
+    pr.state !== "open" ||
+    pr.draft
   ) {
     return { allowed: false, sha: "", reason: "Forked, closed or foreign PR" };
   }
@@ -48,6 +49,31 @@ async function approvePR(number: string, actor: string, actorRole: string) {
     .sort((a, b) => b.id - a.id)[0];
   if (latest?.conclusion !== "success") {
     return { allowed: false, sha: "", reason: "Current PR head has no successful hosted CI run" };
+  }
+  const jobs = [];
+  for (let page = 1; page <= 20; page++) {
+    const batch = await githubAPI(
+      `/repos/${repository}/actions/runs/${String(latest.id)}/jobs?filter=latest&per_page=100&page=${String(page)}`,
+      z.object({
+        jobs: z.array(
+          z.object({
+            name: z.string(),
+            status: z.string(),
+            conclusion: z.string().nullable(),
+          }),
+        ),
+      }),
+    );
+    jobs.push(...batch.jobs);
+    if (batch.jobs.length < 100) {
+      break;
+    }
+    if (page === 20) {
+      throw new Error("Hosted CI job list exceeds review limit");
+    }
+  }
+  if (!fullHostedChecksPassed(jobs)) {
+    return { allowed: false, sha: "", reason: "Full hosted CI checks did not all succeed" };
   }
   const events = [];
   for (let page = 1; page <= 20; page++) {
@@ -84,13 +110,16 @@ async function approvePR(number: string, actor: string, actorRole: string) {
     }
   }
   const head = await githubAPI(`/repos/${repository}/commits/${sha}`, commit);
+  // Refresh after reading history so a changed head, closure or removed label
+  // cannot be authorized from the earlier snapshot.
+  const currentPR = await githubAPI(`/repos/${repository}/pulls/${number}`, isolationPR);
   return {
     ...approveIsolation({
       repository,
       sha,
       actor,
       permissions,
-      pr,
+      pr: currentPR,
       events,
       committedAt: head.commit.committer.date,
     }),
@@ -110,7 +139,10 @@ if (
     const actorRole = await permission(actor);
     if (writer(actorRole)) {
       const number = event.inputs?.pr_number;
-      if (kind === "workflow_dispatch" && number && Number(number) > 0) {
+      if (kind === "workflow_dispatch" && number) {
+        if (Number(number) <= 0) {
+          throw new Error("Isolation PR number must be positive");
+        }
         const result = await approvePR(String(Number(number)), actor, actorRole);
         allowed = result.allowed;
         sha = result.sha;

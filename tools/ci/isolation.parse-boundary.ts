@@ -5,6 +5,7 @@ const repository = z.object({ full_name: z.string().regex(/^[\w.-]+\/[\w.-]+$/u)
 export const isolationPR = z.object({
   number: z.number().int().positive(),
   state: z.string(),
+  draft: z.boolean(),
   head: z.object({ sha, repo: repository.nullable() }),
   base: z.object({ repo: repository }),
   labels: z.array(z.object({ name: z.string() })),

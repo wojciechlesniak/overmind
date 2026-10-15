@@ -3,4 +3,4 @@ interface CommandResult {
   stdout: string;
   error?: Error;
 }
-export function cleanup(run?: (args: string[]) => CommandResult): boolean;
+export function cleanup(run: (args: string[]) => CommandResult): boolean;

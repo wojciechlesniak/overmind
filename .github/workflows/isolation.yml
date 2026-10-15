@@ -54,6 +54,11 @@ jobs:
           pnpm exec tsx tools/ci/isolation-gate.ts
   escape:
     needs: gate
+    # Recheck current approval through read-only metadata after runner queueing.
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: read
     if: needs.gate.outputs.allowed == 'true' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
     # OVE_SETUP021 must enforce trusted-workflow runner access and ephemeral disposal.
     runs-on: [self-hosted, macOS, ARM64, overmind-macos26] # zizmor: ignore[self-hosted-runner] -- OVE_SETUP006 requires a dedicated ephemeral macOS 26 host for Apple container; hosted gate admits approved same-repository SHA only.
@@ -63,13 +68,36 @@ jobs:
         with:
           ref: ${{ github.event.repository.default_branch }}
           persist-credentials: false
-      - id: policy
+      - uses: $/.github/actions/setup
+      - id: recheck
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          cp tools/ci/isolation-cleanup.mjs "$RUNNER_TEMP/overmind-isolation-cleanup.mjs"
-          digest="$(shasum -a 256 "$RUNNER_TEMP/overmind-isolation-cleanup.mjs" | cut -d ' ' -f 1)"
+          pnpm exec tsx tools/ci/isolation-gate.ts
+      - id: policy
+        env:
+          APPROVED_SHA: ${{ needs.gate.outputs.sha }}
+          CURRENT_SHA: ${{ steps.recheck.outputs.sha }}
+          CURRENT_ALLOWED: ${{ steps.recheck.outputs.allowed }}
+        run: |
+          set -euo pipefail
+          [[ "$CURRENT_ALLOWED" == true && "$CURRENT_SHA" == "$APPROVED_SHA" ]]
+          node_path="$(node tools/ci/isolation-trusted-tools.mjs "$(command -v node)")"
+          container_path="$(node tools/ci/isolation-trusted-tools.mjs "$(command -v container)")"
+          [[ "$HOME" == /* && "$HOME" != *$'\n'* && "$HOME" != *$'\r'* ]]
+          # Root provisions this immutable file from the trusted default branch.
+          # Job-writable staging would permit a hash-to-execution race.
+          cleanup="$(node tools/ci/isolation-trusted-tools.mjs /opt/overmind-ci/isolation-cleanup.mjs)"
+          digest="$(/usr/bin/shasum -a 256 "$cleanup" | /usr/bin/cut -d ' ' -f 1)"
+          expected="$(/usr/bin/shasum -a 256 tools/ci/isolation-cleanup.mjs | /usr/bin/cut -d ' ' -f 1)"
+          [[ "$digest" == "$expected" ]]
           echo "sha256=$digest" >> "$GITHUB_OUTPUT"
-          container --version
+          echo "node=$node_path" >> "$GITHUB_OUTPUT"
+          echo "container=$container_path" >> "$GITHUB_OUTPUT"
+          echo "cleanup=$cleanup" >> "$GITHUB_OUTPUT"
+          echo "home=$HOME" >> "$GITHUB_OUTPUT"
+          "$container_path" --version
           version="$(sw_vers -productVersion)"
           [[ "${version%%.*}" -ge 26 ]]
           [[ "$(uname -m)" == arm64 ]]
@@ -91,18 +119,37 @@ jobs:
           retention-days: 7
           if-no-files-found: error
       - if: always()
+        shell: /bin/bash --noprofile --norc -e -o pipefail {0}
         env:
           EXPECTED_CLEANUP_SHA: ${{ steps.policy.outputs.sha256 }}
+          TRUSTED_NODE: ${{ steps.policy.outputs.node }}
+          TRUSTED_CONTAINER: ${{ steps.policy.outputs.container }}
+          TRUSTED_CLEANUP: ${{ steps.policy.outputs.cleanup }}
+          TRUSTED_HOME: ${{ steps.policy.outputs.home }}
+          PATH: /usr/bin:/bin:/usr/sbin:/sbin
+          BASH_ENV: /dev/null
+          ENV: /dev/null
+          NODE_OPTIONS: ""
+          NODE_PATH: ""
         run: |
           set -euo pipefail
-          cleanup="$RUNNER_TEMP/overmind-isolation-cleanup.mjs"
-          if [[ ! -f "$cleanup" || -z "$EXPECTED_CLEANUP_SHA" ]]; then
-            container system stop
+          if [[ -z "$TRUSTED_CONTAINER" || -z "$TRUSTED_NODE" || -z "$TRUSTED_HOME" ]]; then
+            echo 'Trusted cleanup preflight did not complete.' >&2
             exit 1
           fi
-          actual="$(shasum -a 256 "$cleanup" | cut -d ' ' -f 1)"
+          stop_container() {
+            /usr/bin/env -i HOME="$TRUSTED_HOME" PATH=/usr/bin:/bin:/usr/sbin:/sbin "$TRUSTED_CONTAINER" system stop
+          }
+          if [[ ! -f "$TRUSTED_CLEANUP" || -z "$EXPECTED_CLEANUP_SHA" ]]; then
+            stop_container
+            exit 1
+          fi
+          if ! actual="$(/usr/bin/env -i PATH=/usr/bin:/bin /usr/bin/shasum -a 256 "$TRUSTED_CLEANUP" | /usr/bin/env -i PATH=/usr/bin:/bin /usr/bin/cut -d ' ' -f 1)"; then
+            stop_container
+            exit 1
+          fi
           if [[ "$actual" != "$EXPECTED_CLEANUP_SHA" ]]; then
-            container system stop
+            stop_container
             exit 1
           fi
-          node "$cleanup"
+          /usr/bin/env -i HOME="$TRUSTED_HOME" PATH=/usr/bin:/bin:/usr/sbin:/sbin "$TRUSTED_NODE" "$TRUSTED_CLEANUP" "$TRUSTED_CONTAINER"
