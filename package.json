@@ -47,6 +47,14 @@
     "task:next": "tsx tools/tasks/next.ts"
   },
   "devDependencies": {
-    "tsx": "catalog:"
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@types/semver": "catalog:",
+    "eslint": "catalog:",
+    "semver": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
   }
 }

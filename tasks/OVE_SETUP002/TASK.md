@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: in_progress
 depends_on: [OVE_SETUP001]
 soft_depends_on: [OVE_SETUP008]
 provides: ["lib:tsconfig-base", "lib:ts-project-references"]
@@ -119,3 +119,15 @@ Runs in parallel with SETUP003/004/005/008..012. Conflict hotspots: none beyond 
 - ASSUMPTION: target ES2023 (Node 22 supports it; WebKit in Tauri on macOS 26 is current). Raise when Node 24 is adopted.
 - ASSUMPTION: `erasableSyntaxOnly` is on from day one; decision to relax requires an ADR.
 - Question for the Owner: whether to adopt TypeScript 7 (native compiler) once typescript-eslint supports it; tracked in OVE_SETUP008 upgrade rules.
+
+### Implementation notes (2026-10-15)
+
+- The compiler guards require `typescript-eslint` metadata before OVE-003 adds its lint configuration. This task therefore consumes the catalog-pinned `typescript-eslint` and its `eslint` peer as development tools, without implementing OVE-003. Their published peer range was verified with `npm view typescript-eslint@8.71.2 peerDependencies`.
+- Node and JSX compilation tests require the catalog-pinned `@types/node`, `@types/react` and `@types/react-dom`. These are development-only declarations; no runtime React dependency is introduced.
+- `semver@7.8.5` (ISC) and `@types/semver@7.8.0` (MIT) are test-only dependencies for evaluating the actual linter peer range. Reusing the standard range parser avoids a custom, incomplete semver implementation. Exact versions were verified with the npm registry on 2026-10-15. OVE-008 owns the complete dependency register.
+- The tools project excludes fixture directories containing deliberately invalid source. Negative compiler tests create isolated, short-lived source files with overwrite protection and remove them in `finally`; they do not weaken the production configuration.
+- Existing bootstrap tests are adjusted to permit future catalog additions and obey `noPropertyAccessFromIndexSignature`; all package-edge checks remain exact.
+
+### Current validation blocker
+
+The required typescript-eslint 8.71.2 family was published on 2026-10-12 around 17:08-17:12 UTC. The existing 4320-minute release-age policy rejects installation until 2026-10-15 around 17:12 UTC (19:12 Europe/Warsaw). No policy exception has been applied. Type checking, its incremental second run, exact project-reference checks, negative domain I/O/dependency tests, JSX tests, seven bootstrap/security regression tests and the currently installed dependency audit passed before restoring the final dependency manifest. The compiler/linter peer test, final lockfile generation, clean installation and final review remain pending this prerequisite. The task is not complete and must not merge in this state.
