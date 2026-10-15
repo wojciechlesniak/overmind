@@ -86,6 +86,7 @@ it("actual cleanup step ignores hostile PATH, shell/Node/Perl options and altere
         shellArgs.map((arg) => (arg === "{0}" ? script : arg)),
         {
           encoding: "utf8",
+          timeout: 10000,
           env: {
             ...isolatedGitEnvironment(),
             BASH_ENV: injected,
@@ -119,4 +120,5 @@ it("actual cleanup step ignores hostile PATH, shell/Node/Perl options and altere
   } finally {
     rmSync(fixture, { recursive: true, force: true });
   }
-});
+  // Two bounded external shell/Node runs can exceed Vitest's 5s default under load.
+}, 25000);
