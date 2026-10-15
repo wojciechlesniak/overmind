@@ -78,7 +78,7 @@ wrapper translates only local `uses` lines in temporary input. Zizmor checks the
 original files with no security rule disabled. The single self-hosted-runner
 finding is explicitly acknowledged because real Apple container tests require it.
 
-## Isolation admission and outstanding acceptance
+## Isolation admission and staged operational acceptance
 
 Do not provision an unrestricted self-hosted runner for this public personal repo.
 OVE_SETUP021 must enforce access restricted to the trusted workflow (for example
@@ -114,8 +114,8 @@ This in-job cleanup is defense in depth. Root-controlled teardown and ephemeral
 disposal in SETUP021 remain the boundary against hostile background processes or
 a compromised job account; a same-user cleanup script cannot provide that boundary.
 
-This manual admission differs from the requested automatic labeled-PR/queue run.
-The security rationale and unresolved acceptance are recorded in
+The Owner accepted manual trusted admission in place of direct automatic PR/queue
+execution on 2026-10-15. The security rationale is recorded in
 `tasks/_proposals/OVE_SETUP006-trusted-isolation-trigger.md`. A `workflow_run`
 alternative was rejected by zizmor's high-severity dangerous-trigger check.
 Release OVE_SETUP014 must require successful isolation on the exact release SHA;
@@ -125,9 +125,9 @@ The Owner explicitly declined license additions and a temporary MPL exception.
 The original allow-list and empty exceptions are preserved. The Owner subsequently
 requested compatible dependency replacements; see
 `tasks/_proposals/OVE_SETUP006-license-compatible-tooling.md`. The current license
-check passes without exclusions or metadata rewriting. The unresolved isolation
-admission proposal and boundary/fork/hardware evidence still prevent declaring
-all task acceptance complete. Negative hosted probes are linked in PR #934:
+check passes without exclusions or metadata rewriting. The accepted foundation sequence keeps actual
+boundary/fork/hardware evidence mandatory in ARCH002, SETUP018 and SETUP021 +
+TEST007 respectively; those later tasks remain unfinished until it exists. Negative hosted probes are linked in PR #934:
 #935 (failed test), #936 (lint), #937 (explicit GPL denial), #938 (high production
 advisories); all are closed without merge. Their corresponding gates and aggregate
 failed. The baseline license failure was independently present. Boundary-check,
@@ -137,9 +137,10 @@ On 2026-10-15 the Owner confirmed no dedicated CI Mac is available. GitHub's
 [hosted-runner reference](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)
 lists macOS 26 but explicitly excludes nested virtualization on arm64, so changing
 the runner label does not establish Apple container support. The acceptance ordering
-conflict and a proposed staged resolution are recorded in
-`tasks/_proposals/OVE_SETUP006-acceptance-sequence.md`; it is not approved and does
-not authorize a merge or replace real escape evidence with fake tests.
+conflict and the Owner-approved staged resolution are recorded in
+`tasks/_proposals/OVE_SETUP006-acceptance-sequence.md`; it authorizes foundation acceptance while
+preserving later operational criteria. It does not replace real escape evidence
+with fake tests.
 
 React code checks run through `pnpm lint:react` (also included in `pnpm lint`
 and the staged TSX hook). ESLint 10 retains the strict TypeScript and other checks;

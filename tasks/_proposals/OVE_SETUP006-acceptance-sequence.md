@@ -1,6 +1,6 @@
 # SETUP006 acceptance sequence
 
-Status: proposed, not approved. Original acceptance and merge block remain in force.
+Status: accepted by the Owner on 2026-10-15: "Zatwierdzam etapowy odbiór i dalszą pracę". This is the authoritative acceptance sequence for SETUP006; operational isolation and release safeguards remain mandatory.
 
 ## Why completion currently stalls
 
@@ -17,7 +17,7 @@ excludes nested virtualization. That is not evidence that Apple container can ru
 there. Registering the Owner's daily-use Mac as an unrestricted public runner does
 not satisfy the runner threat model and is not proposed.
 
-## Concrete proposed acceptance change
+## Approved acceptance change
 
 1. Complete SETUP006 against its foundation deliverables: full hosted CI, license
    and advisory gates, real negative test/lint/GPL/advisory PRs, pinning/injection
@@ -44,10 +44,10 @@ not satisfy the runner threat model and is not proposed.
    for the exact release commit. Missing runner/harness/evidence blocks release.
    The later isolation/security implementation cannot be marked done without it.
 
-If approved, update TASK006 and the named owner tasks to record these acceptance
-responsibilities, re-run Standards and Spec reviews against the approved scope,
-merge only after all foundation checks pass, then start SETUP007 from the updated
-DEVELOP. Until approval, leave TASK006 in_review, PR934 Draft and issue6 open.
+TASK006 and the named owner tasks record these responsibilities. Re-run Standards
+and Spec reviews against this approved scope and merge only after all foundation
+checks pass, then start SETUP007 from the updated DEVELOP. Approval of this
+sequence is not evidence that any deferred operational test has run.
 
 No license exception, install-policy bypass, suppressed workflow security finding,
 weakened product escape assertion, paid service purchase or machine registration is

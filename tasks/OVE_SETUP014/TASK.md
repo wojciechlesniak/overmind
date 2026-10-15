@@ -101,6 +101,8 @@ CI/CD and release scripts only: `.github/workflows/release.yml`, `tools/release/
 
 ## 11. Acceptance criteria
 
+- [ ] Real escape evidence for the exact release commit is mandatory; a successful hosted-only isolation gate with escape skipped must fail release verification.
+
 - [ ] A dry run on a PR branch (workflow_dispatch) produces an ad-hoc signed dmg artifact and passes `verify-bundle` in ad-hoc mode.
 - [ ] A real tagged release (rc) by the Owner produces a notarized, stapled dmg whose `spctl --assess` and `stapler validate` succeed on a clean Mac.
 - [ ] Every Mach-O in the bundle is signed with the same Team ID, hardened runtime and timestamp; entitlements are exactly the allowed set (test with a deliberately added forbidden entitlement in a dry run: pipeline fails).
@@ -125,3 +127,10 @@ Can start once OVE_SETUP010 and 017 exist; parallel with OVE_SETUP015 and 018. H
 3. ASSUMPTION: GitHub-hosted `macos-15` arm64 for building; no hosted macOS 26 needed for building (SDK targets 26 via Xcode of the image; verify minimumSystemVersion behaviour).
 4. ASSUMPTION: Tauri performs signing/notarization of the `.app` from environment variables; if the pinned version does not, use explicit `codesign`/`notarytool` steps.
 5. Open question: publish the Homebrew cask in a separate repository later.
+
+
+### Owner-approved acceptance sequencing (2026-10-15)
+
+The accepted SETUP006 staged foundation delivery does not waive release isolation. A workflow conclusion of success can mean a hosted gate denied/skipped the escape job. Verify successful real escape execution and matching evidence for the exact release SHA, not merely isolation.yml conclusion success. Missing runner, harness, artifacts or an inconclusive/failed escape result blocks release.
+
+Source: tasks/_proposals/OVE_SETUP006-acceptance-sequence.md.
