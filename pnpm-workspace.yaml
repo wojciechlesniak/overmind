@@ -33,7 +33,7 @@ catalog:
   "eslint-plugin-react-refresh": "0.5.7"
   "globals": "17.13.0"
   "jsdom": "30.1.2"
-  "lefthook": "2.2.2"
+  "lefthook": "2.2.1"
   "markdownlint-cli2": "0.23.3"
   "playwright": "1.64.0"
   "prettier": "3.9.10"
@@ -51,6 +51,7 @@ catalog:
 # pnpm 12 uses allowBuilds instead of onlyBuiltDependencies. No builds are allowed.
 allowBuilds:
   esbuild: false
+  lefthook: false
 strictDepBuilds: true
 minimumReleaseAge: 4320
 engineStrict: true

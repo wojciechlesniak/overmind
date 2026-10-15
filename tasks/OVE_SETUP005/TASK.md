@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: in_progress
 depends_on: [OVE_SETUP001, OVE_SETUP003]
 soft_depends_on: [OVE_SETUP004, OVE_SETUP008]
 provides: ["lib:git-hooks", "lib:commit-conventions"]
@@ -110,3 +110,10 @@ Parallel with SETUP004/008/009..013. Hotspot: `lefthook.yml` is owned here; OVE_
 - ASSUMPTION: `Co-Authored-By` trailers are permitted; the Owner may forbid them (herdr forbids AI co-author lines). A change would be one extra commitlint rule.
 - ASSUMPTION: no `commit-msg` signing requirement locally; signed commits are a repository ruleset decision (OVE_SETUP018).
 - ASSUMPTION: `security` is an allowed type in addition to the Conventional set so security fixes are searchable.
+
+### Implementation notes (2026-10-15)
+
+- Lefthook 2.2.2 was published on 2026-10-13 and fails the unchanged 72-hour release-age gate. The previous mature patch 2.2.1 is pinned, following the Owner's preference to update later. Its implicit postinstall is explicitly denied; the packaged platform binary is used by our CI-aware prepare, so no dependency build script is enabled.
+- Pre-commit runs independent checks in parallel, with formatting and ESLint fixes in a sequential nested group to avoid writes racing on shared staged files. Both retain stage_fixed. The optional secrets extension is wired before OVE_SETUP007 supplies its file.
+- The original skeleton's supply-chain test now asserts every declared build permission is false, including Lefthook. This preserves its security invariant as the deny list grows. Root dependencies/scripts and CODEOWNERS receive the necessary tooling additions; tools/README.md is append-only.
+- Syntax, scopes, limits, emoji, body and task references are machine checked. Imperative wording and explanatory quality remain review responsibilities, documented alongside accepted examples. Co-author attribution is permitted.
