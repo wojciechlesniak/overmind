@@ -11,5 +11,6 @@
     {
       "path": "../domain"
     }
-  ]
+  ],
+  "exclude": ["**/*.test.ts", "**/*.test.tsx", "test/**"]
 }

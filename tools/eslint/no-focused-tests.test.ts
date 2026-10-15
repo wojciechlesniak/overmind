@@ -1,8 +1,8 @@
 import { RuleTester } from "eslint";
-import { test } from "node:test";
+import { test } from "vitest";
 import rule from "./no-focused-tests.mjs";
 
-await test("focused tests are forbidden and skips require an immediately preceding task reference", () => {
+test("focused tests are forbidden and skips require an immediately preceding task reference", () => {
   const tester = new RuleTester({
     languageOptions: { ecmaVersion: "latest", sourceType: "module" },
   });

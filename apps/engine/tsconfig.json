@@ -47,5 +47,6 @@
     {
       "path": "../../packages/workflow-runtime"
     }
-  ]
+  ],
+  "exclude": ["**/*.test.ts", "**/*.test.tsx", "test/**"]
 }
