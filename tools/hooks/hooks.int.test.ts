@@ -13,6 +13,7 @@ import {
 import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import { expect, it } from "vitest";
+import { isolatedGitEnvironment } from "./git-test-environment.ts";
 
 const source = resolve(import.meta.dirname, "../..");
 const lefthook = resolve(source, "node_modules/.bin/lefthook");
@@ -56,7 +57,7 @@ function fixture() {
     writeFileSync(join(repo, ".gitignore"), "node_modules\n");
     symlinkSync(join(source, "node_modules"), join(repo, "node_modules"), "dir");
     const env = {
-      ...process.env,
+      ...isolatedGitEnvironment(),
       CI: "false",
       LEFTHOOK: "1",
       LEFTHOOK_EXCLUDE: "",

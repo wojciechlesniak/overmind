@@ -107,3 +107,11 @@ the packaged platform binary is invoked by our explicit, CI-aware prepare.
 Commitlint CLI and its Conventional config 21.2.3 (MIT) provide the standard
 parser and rules instead of a second commit parser. The two local rules add
 branch references and project policy. OVE_SETUP008 owns the dependency register.
+
+Git test fixtures must use `isolatedGitEnvironment()` from
+`tools/hooks/git-test-environment.ts` for subprocesses. Git hooks export
+repository/index/object/config selections: inheriting them while running
+`git init` in a temporary folder can modify the caller's repository instead.
+The fixture environment removes all `GIT_*` values and disables external Git
+configuration. Commands that intentionally inspect the active repository
+(such as the commit rule and staged-size guard) retain their normal environment.

@@ -1,4 +1,5 @@
 import { expect, it } from "vitest";
+import { isolatedGitEnvironment } from "../hooks/git-test-environment.ts";
 import { spawnSync } from "node:child_process";
 import { resolve } from "node:path";
 import { areaScopes, commitPolicy, taskReference, currentBranch } from "./plugin.mjs";
@@ -64,6 +65,7 @@ it("checks the real commitlint parser and built-in rules", () => {
     spawnSync(resolve(import.meta.dirname, "../../node_modules/.bin/commitlint"), [], {
       cwd: resolve(import.meta.dirname, "../.."),
       input: header + suffix,
+      env: isolatedGitEnvironment(),
       encoding: "utf8",
     });
   for (const header of [
