@@ -17,13 +17,14 @@ import { test } from "vitest";
 import { ESLint } from "eslint";
 import { z } from "zod";
 import { findMissingDisableReasons } from "./check-disable-reasons.mjs";
+import { parseLintMessages } from "../test-support/json.parse-boundary.ts";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const require = createRequire(import.meta.url);
 const cli = resolve(require.resolve("eslint/package.json"), "../bin/eslint.js");
 let probeSequence = 0;
 
-async function lintProbe(path: string, source: string): Promise<string[]> {
+function lintProbe(path: string, source: string): string[] {
   // Project-service snapshots may retain a previous version of a reused path.
   // Give each negative case its own file so its type information is independent.
   const filePath = resolve(
@@ -33,10 +34,16 @@ async function lintProbe(path: string, source: string): Promise<string[]> {
   assert.equal(existsSync(filePath), false);
   writeFileSync(filePath, source);
   try {
-    const results = await new ESLint({ cwd: root }).lintFiles([filePath]);
-    return results.flatMap((result) =>
-      result.messages.map((message) => message.ruleId ?? message.message),
-    );
+    // Each CLI process gets a fresh project service, including the newly created
+    // file in its configured project without stale filesystem/type snapshots.
+    const result = spawnSync(process.execPath, [cli, filePath, "--format", "json"], {
+      cwd: root,
+      encoding: "utf8",
+      timeout: 30_000,
+    });
+    assert.equal(result.error, undefined);
+    assert.ok(result.status === 0 || result.status === 1, result.stderr);
+    return parseLintMessages(result.stdout);
   } finally {
     unlinkSync(filePath);
   }
@@ -44,8 +51,8 @@ async function lintProbe(path: string, source: string): Promise<string[]> {
 
 test(
   "dangerous code, unsafe types, unchecked JSON, comments and focused tests are reported",
-  { timeout: 30_000 },
-  async () => {
+  { timeout: 60_000 },
+  () => {
     const cases = [
       ["export const value = eval('1');", "no-eval"],
       ["export const value = new Function('return 1');", "no-new-func"],
@@ -59,21 +66,22 @@ test(
       ],
     ] as const;
     for (const [source, rule] of cases) {
-      assert.ok((await lintProbe("tools/__ove003_probe__.test.ts", source)).includes(rule), rule);
+      const messages = lintProbe("tools/__ove003_probe__.test.ts", source);
+      assert.ok(messages.includes(rule), `${rule}: ${messages.join(", ")}`);
     }
   },
 );
 
-test("React hook dependency rules apply only to the UI projects", async () => {
+test("React hook dependency rules apply only to the UI projects", { timeout: 30_000 }, () => {
   const source =
     "import { useEffect } from 'react'; export function Component({ value }: { value: string }) { useEffect(() => { void value; }, []); return null; }";
   assert.ok(
-    (await lintProbe("packages/ui-kit/src/__ove003_probe__.tsx", source)).includes(
+    lintProbe("packages/ui-kit/src/__ove003_probe__.tsx", source).includes(
       "react-hooks/exhaustive-deps",
     ),
   );
   assert.ok(
-    !(await lintProbe("packages/domain/src/__ove003_probe__.tsx", source)).includes(
+    !lintProbe("packages/domain/src/__ove003_probe__.tsx", source).includes(
       "react-hooks/exhaustive-deps",
     ),
   );
@@ -159,19 +167,23 @@ test("only real ESLint suppression comments require a reason", () => {
   execFileSync(process.execPath, ["tools/eslint/check-disable-reasons.mjs"], { cwd: root });
 });
 
-test("test files still reject explicit any and permit non-null assertions", async () => {
-  const source = "export const values: string[] = []; export const first = values[0]!;";
-  assert.ok(
-    !(await lintProbe("tools/__ove003_probe__.test.ts", source)).includes(
-      "@typescript-eslint/no-non-null-assertion",
-    ),
-  );
-  assert.ok(
-    (await lintProbe("tools/__ove003_probe__.ts", source)).includes(
-      "@typescript-eslint/no-non-null-assertion",
-    ),
-  );
-});
+test(
+  "test files still reject explicit any and permit non-null assertions",
+  { timeout: 30_000 },
+  () => {
+    const source = "export const values: string[] = []; export const first = values[0]!;";
+    assert.ok(
+      !lintProbe("tools/__ove003_probe__.test.ts", source).includes(
+        "@typescript-eslint/no-non-null-assertion",
+      ),
+    );
+    assert.ok(
+      lintProbe("tools/__ove003_probe__.ts", source).includes(
+        "@typescript-eslint/no-non-null-assertion",
+      ),
+    );
+  },
+);
 
 test("critical rules survive config composition and generated build outputs remain ignored", async () => {
   const engine = new ESLint({ cwd: root });

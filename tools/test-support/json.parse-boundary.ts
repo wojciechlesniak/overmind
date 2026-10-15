@@ -4,6 +4,22 @@ import { z } from "zod";
 
 const recordSchema = z.record(z.string(), z.unknown());
 const strings = z.record(z.string(), z.string());
+export function parseLintMessages(text: string): string[] {
+  const raw: unknown = JSON.parse(text);
+  return z
+    .array(
+      z.object({
+        messages: z.array(
+          z.object({
+            ruleId: z.string().nullable(),
+            message: z.string(),
+          }),
+        ),
+      }),
+    )
+    .parse(raw)
+    .flatMap((result) => result.messages.map((message) => message.ruleId ?? message.message));
+}
 const manifestSchema = z.object({
   name: z.string(),
   version: z.string(),
