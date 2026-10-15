@@ -6,7 +6,7 @@ kind: infra
 size: M
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: []
 soft_depends_on: [OVE_SETUP008]
 provides: ["lib:monorepo-skeleton", "lib:root-scripts", "lib:version-catalog"]
@@ -113,14 +113,14 @@ Layer: repository infrastructure. Files at repo root and inside each package roo
 
 ## 11. Acceptance criteria
 
-- [ ] Given a clean clone with Node 22.23.3 and corepack, when `corepack enable && pnpm install --frozen-lockfile` runs, then it succeeds with no warnings.
-- [ ] Given Node 20 or 24, when `pnpm install` runs, then it fails because of `engine-strict`.
-- [ ] `pnpm -r exec node -e "process.exit(0)"` visits all 17 workspace packages (2 apps, 7 libraries, 7 adapters and `tools`; count asserted by a test).
-- [ ] Every internal dependency edge matches requirement 5 exactly (asserted by a unit test that reads all manifests).
-- [ ] A unit test asserts that every `scripts` key listed in requirement 3 exists in root `package.json`.
-- [ ] A unit test asserts that no `package.json` contains a version range symbol (`^ ~ * latest`) outside `engines`/`peerDependencies`, and that all external dependency specifiers are `catalog:`.
-- [ ] `pnpm-lock.yaml` is committed and `git status` is clean after `pnpm install`.
-- [ ] `.gitignore` rejects `foo.p12`, `.env.local`, `target/` (checked with `git check-ignore`).
+- [x] Given a clean clone with Node 22.23.3 and corepack, when `corepack enable && pnpm install --frozen-lockfile` runs, then it succeeds with no warnings.
+- [x] Given Node 20 or 24, when `pnpm install` runs, then it fails because of `engine-strict`.
+- [x] `pnpm -r exec node -e "process.exit(0)"` visits all 17 workspace packages (2 apps, 7 libraries, 7 adapters and `tools`; count asserted by a test).
+- [x] Every internal dependency edge matches requirement 5 exactly (asserted by a unit test that reads all manifests).
+- [x] A unit test asserts that every `scripts` key listed in requirement 3 exists in root `package.json`.
+- [x] A unit test asserts that no `package.json` contains a version range symbol (`^ ~ * latest`) outside `engines`/`peerDependencies`, and that all external dependency specifiers are `catalog:`.
+- [x] `pnpm-lock.yaml` is committed and `git status` is clean after `pnpm install`.
+- [x] `.gitignore` rejects `foo.p12`, `.env.local`, `target/` (checked with `git check-ignore`).
 
 ## 12. Test plan
 
