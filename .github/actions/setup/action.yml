@@ -15,7 +15,10 @@ runs:
       run: |
         set -euo pipefail
         store_path="$(pnpm store path --silent)"
-        [[ "$store_path" == /* && "$store_path" != *$'\n'* ]]
+        if [[ "$store_path" != /* || "$store_path" == *$'\n'* ]]; then
+          echo 'pnpm returned an invalid store path' >&2
+          exit 1
+        fi
         echo "path=$store_path" >> "$GITHUB_OUTPUT"
     - id: cache
       uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
