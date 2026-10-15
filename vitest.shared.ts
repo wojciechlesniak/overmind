@@ -32,12 +32,7 @@ export function sharedConfig(options: {
       pool: "forks" as const,
       passWithNoTests: false,
       retry: 0,
-      setupFiles: [
-        resolve(root, "tools/vitest-setup/setup-node.ts"),
-        ...(options.environment === "jsdom"
-          ? [resolve(root, "tools/vitest-setup/setup-dom.ts")]
-          : []),
-      ],
+      setupFiles: [resolve(root, "tools/vitest-setup/setup-node.ts")],
       env: { TZ: "UTC", LANG: "C.UTF-8" },
     },
   };

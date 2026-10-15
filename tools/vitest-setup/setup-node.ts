@@ -41,3 +41,6 @@ beforeEach(() => {
 afterEach(() => {
   localhostAllowed = false;
 });
+if (typeof document !== "undefined") {
+  await import("./setup-dom.ts");
+}

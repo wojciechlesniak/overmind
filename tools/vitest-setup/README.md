@@ -16,6 +16,10 @@ HTTP(S) are permitted, credentials are forbidden, and redirects are rejected
 so a local server cannot redirect a request to the internet. Permission resets
 between tests. This is a fetch guard, not an OS-level network sandbox.
 
+DOM setup follows the actual test environment, including per-file
+`// @vitest-environment jsdom` overrides in Node-default packages. Such files
+receive the same matchers, automatic cleanup and browser stubs as UI projects.
+
 Production packages exclude test files so importing Vitest types cannot grant
 Node/DOM globals to domain source. `tsc -b` still validates every production
 project, then `tsconfig.tests.json` checks test/config source with Node/DOM
