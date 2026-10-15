@@ -46,6 +46,13 @@ untested domain code and verifies that collection passes but merged coverage fai
 Current product packages contain placeholder barrels; 0/0 coverage does not prove
 product behavior. Unit tests deny network access by default.
 
+The root runner limits concurrent test-file workers to two, including within each
+CI shard. Tooling regressions launch real compilers/package managers; an automatic
+CPU-sized worker pool caused competing subprocess timeouts on the local host.
+The same full suite passed with two workers. Fork isolation, zero retries and all
+assertions/coverage thresholds are unchanged; see
+`tasks/_proposals/OVE_SETUP006-test-worker-budget.md` for the measured comparison.
+
 ## Permissions and configuration
 
 Every workflow defaults to `contents: read`, pinned runner images, explicit
