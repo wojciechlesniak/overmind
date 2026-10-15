@@ -1,30 +1,21 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import ts from "typescript";
+import tseslint from "typescript-eslint";
 
 export function findMissingDisableReasons(source, fileName = "source.ts") {
-  const scanner = ts.createScanner(
-    ts.ScriptTarget.Latest,
-    false,
-    fileName.endsWith(".tsx") ? ts.LanguageVariant.JSX : ts.LanguageVariant.Standard,
-    source,
-  );
+  const { ast } = tseslint.parser.parseForESLint(source, {
+    filePath: fileName,
+    loc: true,
+    range: true,
+    comment: true,
+    jsx: true,
+  });
   const failures = [];
-  for (let token = scanner.scan(); token !== ts.SyntaxKind.EndOfFileToken; token = scanner.scan()) {
-    if (
-      token !== ts.SyntaxKind.SingleLineCommentTrivia &&
-      token !== ts.SyntaxKind.MultiLineCommentTrivia
-    ) {
-      continue;
-    }
-    const comment = scanner.getTokenText();
-    if (
-      /^\/(?:\/|\*)\s*eslint-disable(?:-next-line|-line)?\b/.test(comment) &&
-      !/--\s*\S/.test(comment)
-    ) {
-      const line = source.slice(0, scanner.getTokenPos()).split("\n").length;
-      failures.push(`${fileName}:${line}: eslint-disable requires -- reason`);
+  for (const comment of ast.comments ?? []) {
+    const content = comment.value.trim();
+    if (/^eslint-disable(?:-next-line|-line)?\b/.test(content) && !/\s--\s+\S/.test(content)) {
+      failures.push(`${fileName}:${comment.loc.start.line}: eslint-disable requires -- reason`);
     }
   }
   return failures;

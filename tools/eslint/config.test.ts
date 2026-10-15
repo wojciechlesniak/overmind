@@ -123,6 +123,25 @@ await test("only real ESLint suppression comments require a reason", () => {
   assert.deepEqual(findMissingDisableReasons("/* eslint-disable no-console */"), [
     "source.ts:1: eslint-disable requires -- reason",
   ]);
+  for (const source of [
+    "const value = 1; const message = `${value}`;\n// eslint-disable-next-line no-console\nconsole.log(value);",
+    "const value = 1; const message = `${value}`;\n/* eslint-disable no-console */",
+    "/* eslint-disable no-eval -- */",
+    "/* eslint-disable no-eval --   \n */",
+    "// eslint-disable no-console --   ",
+  ]) {
+    assert.equal(findMissingDisableReasons(source).length, 1, source);
+  }
+  assert.deepEqual(
+    findMissingDisableReasons(
+      "const value = 1; const message = `literal // eslint-disable ${value}`;",
+    ),
+    [],
+  );
+  assert.deepEqual(
+    findMissingDisableReasons("/* eslint-disable no-eval -- OVE_TEST001 deliberate fixture */"),
+    [],
+  );
   execFileSync(process.execPath, ["tools/eslint/check-disable-reasons.mjs"], { cwd: root });
 });
 
