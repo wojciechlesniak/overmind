@@ -1,8 +1,19 @@
-import { readFileSync, readdirSync } from "node:fs";
+import {
+  readFileSync,
+  readdirSync,
+  mkdtempSync,
+  writeFileSync,
+  rmSync,
+  chmodSync,
+  existsSync,
+} from "node:fs";
+import { spawnSync } from "node:child_process";
+import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { expect, it } from "vitest";
 import { parseActionSteps, parseWorkflow, readWorkflow } from "./ci/workflow.parse-boundary.ts";
 import { actionlintCompatible } from "./ci/workflow-lint.ts";
+import { isolatedGitEnvironment } from "./hooks/git-test-environment.ts";
 const root = resolve(import.meta.dirname, "..");
 function pinned(uses: string): boolean {
   return (
@@ -76,4 +87,35 @@ it("actionlint compatibility only translates the dedicated local uses syntax", (
   expect(actionlintCompatible(source)).toBe(
     "- uses: ./.github/actions/setup\n- uses: attacker/action@main\n  run: echo '$/literal'\n",
   );
+});
+it("setup does not publish a cache path when pnpm fails or returns invalid output", () => {
+  const script = parseActionSteps(
+    readFileSync(resolve(root, ".github/actions/setup/action.yml"), "utf8"),
+  ).find((step) => step.run?.includes("pnpm store path"))?.run;
+  expect(script).toBeDefined();
+  if (!script) {
+    throw new Error("Missing store step");
+  }
+  const fixture = mkdtempSync(resolve(tmpdir(), "overmind-store-step-"));
+  try {
+    const output = resolve(fixture, "output");
+    const pnpm = resolve(fixture, "pnpm");
+    for (const body of ["exit 17", "exit 0", "printf '/store\\n/injected\\n'"]) {
+      writeFileSync(pnpm, `#!/bin/sh\n${body}\n`);
+      chmodSync(pnpm, 0o700);
+      const result = spawnSync("/bin/bash", ["-c", script], {
+        env: { ...isolatedGitEnvironment(), PATH: fixture, GITHUB_OUTPUT: output },
+      });
+      expect(result.status).not.toBe(0);
+      expect(existsSync(output)).toBe(false);
+    }
+    writeFileSync(pnpm, "#!/bin/sh\nprintf '/store\\n'\n");
+    const result = spawnSync("/bin/bash", ["-c", script], {
+      env: { ...isolatedGitEnvironment(), PATH: fixture, GITHUB_OUTPUT: output },
+    });
+    expect(result.status).toBe(0);
+    expect(readFileSync(output, "utf8")).toBe("path=/store\n");
+  } finally {
+    rmSync(fixture, { recursive: true, force: true });
+  }
 });
