@@ -92,11 +92,13 @@ jobs:
           digest="$(/usr/bin/shasum -a 256 "$cleanup" | /usr/bin/cut -d ' ' -f 1)"
           expected="$(/usr/bin/shasum -a 256 tools/ci/isolation-cleanup.mjs | /usr/bin/cut -d ' ' -f 1)"
           [[ "$digest" == "$expected" ]]
-          echo "sha256=$digest" >> "$GITHUB_OUTPUT"
-          echo "node=$node_path" >> "$GITHUB_OUTPUT"
-          echo "container=$container_path" >> "$GITHUB_OUTPUT"
-          echo "cleanup=$cleanup" >> "$GITHUB_OUTPUT"
-          echo "home=$HOME" >> "$GITHUB_OUTPUT"
+          {
+            echo "sha256=$digest"
+            echo "node=$node_path"
+            echo "container=$container_path"
+            echo "cleanup=$cleanup"
+            echo "home=$HOME"
+          } >> "$GITHUB_OUTPUT"
           "$container_path" --version
           version="$(sw_vers -productVersion)"
           [[ "${version%%.*}" -ge 26 ]]
