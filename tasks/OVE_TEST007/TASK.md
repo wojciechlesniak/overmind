@@ -97,6 +97,8 @@ This harness executes hostile behaviour deliberately, so it must itself be conta
 
 ## 11. Acceptance criteria
 
+- [ ] The real harness runs through the restricted trusted isolation workflow on the approved exact commit and produces escape evidence; this is the operational acceptance deferred from SETUP006 and cannot be met by fake/meta-test results.
+
 - [ ] Every ESC family listed in requirement 2 has at least one implemented case with an id, rationale and SR/AC mapping in the catalogue document.
 - [ ] Runner produces verdicts and evidence reports as specified; any `FAIL_*` or non-declared skip returns a non-zero exit code.
 - [ ] Positive controls exist and are required for a green run.
@@ -117,6 +119,13 @@ Can be developed against `FakeSandbox`/`LeakySandbox` before BOX delivers the ad
 
 ## 14. Open questions and assumptions
 
-- ASSUMPTION: GitHub-hosted macOS 26 Apple-silicon runners with nested virtualisation for Apple `container` may not be available; a self-hosted runner is the fallback (`macos-26-arm64`). If neither exists the escape gate runs on a maintainer's machine per release (documented risk; Owner decision).
+- ASSUMPTION: if hosted runners do not support Apple container virtualization, use the restricted dedicated/rented environment from SETUP021 and its trusted admission path. No daily-use or unrestricted maintainer machine is authorized. If no approved environment exists, real escape acceptance and releases remain blocked.
 - ASSUMPTION: BOX chooses between container-per-agent and container-per-Workspace (+ bubblewrap) later; the harness covers both because it tests behaviour through the port; ESC-060 includes the bubblewrap-level separation when the implementation declares `capabilities.perAgentEnv === false`.
 - Open: include a Lima-based job when macOS < 26 support is implemented.
+
+
+### Owner-approved acceptance sequencing (2026-10-15)
+
+The accepted SETUP006 sequence leaves real product escape evidence here and in SETUP021. Integrate the existing pnpm test:escape entry (tools/escape-tests/run.ts) with this task's runner and provide escape-evidence/ for the existing workflow, or coordinate the caller paths explicitly. The real Sandbox adapter and protected runner must exist before this task is done. Retain all attack families, positive controls, inconclusive failures and exact-commit evidence; no foundation fixture substitutes for real kernel execution.
+
+Source: tasks/_proposals/OVE_SETUP006-acceptance-sequence.md.

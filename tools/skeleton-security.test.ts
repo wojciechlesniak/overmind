@@ -42,7 +42,9 @@ test("an unreviewed dependency postinstall is blocked before it can write a file
     writeFileSync(join(projectDirectory, "pnpm-workspace.yaml"), policy);
     const result = spawnSync(
       "corepack",
-      ["pnpm", "install", "--offline", "--reporter=append-only"],
+      // Corepack already selects the integrity-pinned packageManager above.
+      // Avoid a second pnpm self-download requiring registry metadata offline.
+      ["pnpm", "install", "--offline", "--pm-on-fail=ignore", "--reporter=append-only"],
       {
         cwd: projectDirectory,
         encoding: "utf8",

@@ -1,8 +1,17 @@
 # Lint policy changes require the repository Owner's review (OVE_SETUP003).
 /eslint.config.* @wojciechlesniak
 /eslint.config.d/ @wojciechlesniak
+/.oxlintrc.json @wojciechlesniak
 # Local hooks execute repository code on contributor machines (OVE_SETUP005).
 /lefthook.yml @wojciechlesniak
 /commitlint.config.mjs @wojciechlesniak
 /tools/hooks/ @wojciechlesniak
 /tools/commitlint/ @wojciechlesniak
+# CI policy and pinned executable supply chain (OVE_SETUP006).
+/.github/workflows/ @wojciechlesniak
+/.github/actions/ @wojciechlesniak
+/tools/pinned-bin/ @wojciechlesniak
+/tools/check-licenses/ @wojciechlesniak
+/tools/ci/ @wojciechlesniak
+/deny.toml @wojciechlesniak
+/.github/actionlint.yaml @wojciechlesniak

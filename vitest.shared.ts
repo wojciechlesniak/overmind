@@ -13,13 +13,25 @@ const root = import.meta.dirname;
 export function sharedConfig(options: {
   name: string;
   root: string;
-  environment: "node" | "jsdom";
+  environment: "node" | "happy-dom";
 }) {
   return {
     root: options.root,
     test: {
       name: options.name,
       environment: options.environment,
+      environmentOptions: {
+        happyDOM: {
+          settings: {
+            enableJavaScriptEvaluation: false,
+            disableJavaScriptFileLoading: true,
+            enableCSSFileLoading: false,
+            enableImageFileLoading: false,
+            enableIframePageLoading: false,
+            enableFileSystemHttpRequests: false,
+          },
+        },
+      },
       include: ["src/**/*.test.{ts,tsx}", "test/**/*.test.{ts,tsx}"],
       exclude: ["**/*.int.test.ts"],
       globals: false,

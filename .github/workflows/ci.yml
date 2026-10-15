@@ -1,0 +1,356 @@
+name: CI
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+      - labeled
+  push:
+    branches:
+      - main
+      - master
+      - DEVELOP
+  merge_group: {}
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != format('refs/heads/{0}', github.event.repository.default_branch) }}
+defaults:
+  run:
+    shell: bash
+jobs:
+  plan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      base: ${{ steps.plan.outputs.base }}
+      head: ${{ steps.plan.outputs.head }}
+      full: ${{ steps.plan.outputs.full }}
+      rust: ${{ steps.plan.outputs.rust }}
+      desktop: ${{ steps.plan.outputs.desktop }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: $/.github/actions/setup
+      - run: |-
+          set -euo pipefail
+          pnpm exec tsx tools/ci/plan.ts
+        id: plan
+  format-lint:
+    needs:
+      - plan
+    if: needs.plan.result == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: $/.github/actions/setup
+      - run: |-
+          set -euo pipefail
+          pnpm format:check
+          pnpm lint
+  typecheck:
+    needs:
+      - plan
+    if: needs.plan.result == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: $/.github/actions/setup
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        id: tsbuild-cache
+        with:
+          path: "**/.tsbuild"
+          key: tsbuild-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.ref
+            }}
+      - run: |-
+          set -euo pipefail
+          pnpm typecheck
+      - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        if: github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && steps.tsbuild-cache.outputs.cache-hit != 'true'
+        with:
+          path: "**/.tsbuild"
+          key: tsbuild-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.ref }}
+  test:
+    needs:
+      - plan
+    if: needs.plan.outputs.full == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: $/.github/actions/setup
+      - run: >-
+          set -euo pipefail
+
+          pnpm test:coverage --config vitest.ci.config.ts --shard="$SHARD/3"
+          --reporter=blob --reporter=junit --reporter=github-actions
+          --outputFile.junit="test-results/junit-$SHARD.xml"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: tests-${{ matrix.shard }}
+          path: |-
+            .vitest/blob
+            coverage
+            test-results/junit-*.xml
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: error
+    strategy:
+      fail-fast: false
+      matrix:
+        shard:
+          - 1
+          - 2
+          - 3
+    env:
+      SHARD: ${{ matrix.shard }}
+  test-merge:
+    needs:
+      - plan
+      - test
+    if: needs.plan.outputs.full == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: $/.github/actions/setup
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: tests-*
+          path: .
+          merge-multiple: true
+      - run: |-
+          set -euo pipefail
+          pnpm exec vitest run --coverage --merge-reports=.vitest/blob
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: merged-coverage
+          path: coverage
+          retention-days: 7
+          if-no-files-found: error
+  build:
+    needs:
+      - plan
+    if: needs.plan.outputs.full == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: $/.github/actions/setup
+      - run: |-
+          set -euo pipefail
+          pnpm build
+          pnpm --filter @overmind/ui-kit --if-present run build:storybook
+  architecture:
+    needs:
+      - plan
+    if: needs.plan.outputs.full == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: $/.github/actions/setup
+      - run: |-
+          set -euo pipefail
+          pnpm exec tsx tools/ci/architecture.ts
+    env:
+      CI_STRICT_TOOLS: ${{ vars.CI_STRICT_TOOLS }}
+      CI_BRANCH: ${{ github.head_ref || github.ref_name }}
+      CI_BASE: ${{ needs.plan.outputs.base }}
+  licenses:
+    needs:
+      - plan
+    if: needs.plan.outputs.full == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: $/.github/actions/setup
+      - run: >-
+          set -euo pipefail
+
+          pnpm check:licenses
+
+          if [[ -f apps/desktop/src-tauri/Cargo.toml ]]; then
+            tool="$(pnpm exec tsx tools/pinned-bin/install.ts cargo-deny)"
+            "$tool" --manifest-path apps/desktop/src-tauri/Cargo.toml check licenses bans sources
+          fi
+  audit:
+    needs:
+      - plan
+    if: needs.plan.outputs.full == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: $/.github/actions/setup
+      - run: >-
+          set -euo pipefail
+
+          pnpm audit --audit-level=high --prod || { echo "production audit
+          failed or unavailable"; exit 1; }
+
+          pnpm audit --audit-level=critical || { echo "development audit failed
+          or unavailable"; exit 1; }
+
+          if [[ -f apps/desktop/src-tauri/Cargo.lock ]]; then
+            tool="$(pnpm exec tsx tools/pinned-bin/install.ts cargo-audit)"
+            "$tool" audit --file apps/desktop/src-tauri/Cargo.lock
+          fi
+  commits:
+    needs:
+      - plan
+    if: needs.plan.outputs.full == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: $/.github/actions/setup
+      - run: |-
+          set -euo pipefail
+          pnpm exec tsx tools/ci/commits.ts
+    env:
+      CI_BASE: ${{ needs.plan.outputs.base }}
+      CI_HEAD: ${{ needs.plan.outputs.head }}
+  config-integrity:
+    needs:
+      - plan
+    if: needs.plan.outputs.full == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: $/.github/actions/setup
+      - run: |-
+          set -euo pipefail
+          pnpm exec tsx tools/ci/config-integrity.ts
+  workflow-lint:
+    needs:
+      - plan
+    if: needs.plan.outputs.full == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: $/.github/actions/setup
+      - run: >-
+          set -euo pipefail
+
+          pnpm exec tsx tools/ci/workflow-lint.ts
+  rust:
+    needs:
+      - plan
+    if: needs.plan.outputs.full == 'true' && needs.plan.outputs.rust == 'true'
+    runs-on: ${{ vars.MACOS_RUNNER || 'macos-15' }}
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: $/.github/actions/setup
+      - run: >-
+          set -euo pipefail
+
+          test -f rust-toolchain.toml
+
+          cargo fmt --manifest-path apps/desktop/src-tauri/Cargo.toml --check
+
+          cargo clippy --manifest-path apps/desktop/src-tauri/Cargo.toml
+          --all-targets -- -D warnings
+
+          cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml
+  desktop-e2e:
+    needs:
+      - plan
+    if: needs.plan.outputs.full == 'true' && needs.plan.outputs.desktop == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: $/.github/actions/setup
+      - run: |-
+          set -euo pipefail
+          pnpm test:e2e
+          pnpm test:visual
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.0-noble@sha256:06a9939e57531807f8d5fd76ce44b53165ffb7d7501d87ab10e285c20b1e971f
+  ci-success:
+    needs:
+      - plan
+      - format-lint
+      - typecheck
+      - test
+      - test-merge
+      - build
+      - architecture
+      - licenses
+      - audit
+      - commits
+      - config-integrity
+      - workflow-lint
+      - rust
+      - desktop-e2e
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: $/.github/actions/setup
+      - run: |-
+          set -euo pipefail
+          pnpm exec tsx tools/ci/success.ts
+    env:
+      CI_NEEDS: ${{ toJSON(needs) }}
+      CI_FULL: ${{ needs.plan.outputs.full }}
+      CI_RUST: ${{ needs.plan.outputs.rust }}
+      CI_DESKTOP: ${{ needs.plan.outputs.desktop }}

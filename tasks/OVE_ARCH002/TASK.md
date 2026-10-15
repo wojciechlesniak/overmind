@@ -92,6 +92,8 @@ Architecture boundaries are a security control: they keep I/O and platform code 
 
 ## 11. Acceptance criteria
 
+- [ ] A separate scratch PR with a real boundary violation fails the hosted architecture job and ci-success; record the PR/run/diagnostic, then close without merging.
+
 - [ ] `pnpm boundaries` and `pnpm lint` both report every EXPECT line in the fixture workspace and nothing else.
 - [ ] Every required bad case in requirement 6 exists and fails with the stated rule id.
 - [ ] Every required good case passes.
@@ -116,3 +118,10 @@ Can start as soon as ARCH001's `boundaries.json` is merged (a draft JSON is enou
 
 - ASSUMPTION: implementation uses the TypeScript compiler API directly (already a dependency) rather than `dependency-cruiser`; justification: one fewer dependency and full control of subpath/forbidden-global rules. If maintainers prefer dependency-cruiser for the graph report, it can be added as a second opinion later.
 - ASSUMPTION: Rust code under `src-tauri` is out of scope for this check (Cargo workspace rules, `OVE_SETUP010`).
+
+
+### Owner-approved acceptance sequencing (2026-10-15)
+
+The Owner-approved SETUP006 sequence transfers actual boundary-violation scratch evidence here. The existing foundation guard only proves missing-tool orchestration. Integrate the root check:boundaries entry (tools/check-boundaries/run.ts) with tools/boundaries/check.ts, or explicitly coordinate the caller path, so the real checker runs in hosted CI. Record actual failing diagnostics and aggregate rejection.
+
+Source: tasks/_proposals/OVE_SETUP006-acceptance-sequence.md.

@@ -14,8 +14,11 @@ export function findMissingDisableReasons(source, fileName = "source.ts") {
   const failures = [];
   for (const comment of ast.comments ?? []) {
     const content = comment.value.trim();
-    if (/^eslint-disable(?:-next-line|-line)?\b/.test(content) && !/\s--\s+\S/.test(content)) {
-      failures.push(`${fileName}:${comment.loc.start.line}: eslint-disable requires -- reason`);
+    const directive = /^(eslint|oxlint)-disable(?:-next-line|-line)?\b/.exec(content);
+    if (directive && !/\s--\s+\S/.test(content)) {
+      failures.push(
+        `${fileName}:${comment.loc.start.line}: ${directive[1]}-disable requires -- reason`,
+      );
     }
   }
   return failures;

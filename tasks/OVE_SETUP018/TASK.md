@@ -88,6 +88,8 @@ The set of required check names is read from the workflow files by the audit (jo
 
 ## 11. Acceptance criteria
 
+- [ ] A real PR from a separate outside-contributor fork runs hosted CI with a read-only token and no secrets and cannot start a self-hosted isolation job; record actual workflow evidence.
+
 - [ ] `docs/engineering/repository-settings.md` lists every setting in requirements 1-8 with value, rationale and verification command.
 - [ ] `pnpm settings:audit` against a correctly configured repository exits 0; flipping one setting (for example allowing merge commits) makes it exit 1 naming the setting.
 - [ ] The audit sends only GET requests (unit test on the wrapper) and prints no token.
@@ -109,3 +111,10 @@ Parallel with OVE_OSS003. Hotspot: `expected.json` changes whenever a new workfl
 2. Open question: require signed commits? Agents commit through git with their own identities; SSH-signing for agents is possible but adds key management. Default: not required on `task/*`, required on `main` through GitHub's squash-merge verified signature.
 3. Open question: enable GitHub code scanning (CodeQL default setup) and Copilot-like automatic review; decision in OVE_OSS007.
 4. ASSUMPTION: the repository lives under a personal account or an organization with rulesets available; otherwise compensating controls apply.
+
+
+### Owner-approved acceptance sequencing (2026-10-15)
+
+The Owner-approved SETUP006 sequence transfers real outside-contributor fork verification here, after a separate writable fork/account is available. Static workflow checks and mocked gate/API tests are foundation evidence only. Verify the deployed CI/security workflows, actual token permissions and denied self-hosted execution without exposing token or secret values.
+
+Source: tasks/_proposals/OVE_SETUP006-acceptance-sequence.md.

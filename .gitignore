@@ -17,3 +17,7 @@ apps/desktop/src-tauri/resources/
 *.p8
 *.pem
 *.key
+.cache/
+.vitest/
+.vitest-reports/
+escape-evidence/
