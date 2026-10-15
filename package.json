@@ -40,7 +40,7 @@
     "sbom": "tsx tools/sbom/generate.ts",
     "package:engine": "tsx tools/package-engine/run.ts",
     "check": "pnpm run typecheck && pnpm run lint && pnpm run test && pnpm run check:boundaries && pnpm run check:deps",
-    "prepare": "if [ -f lefthook.yml ]; then lefthook install; fi",
+    "prepare": "node tools/hooks/prepare.mjs",
     "task:claim": "tsx tools/tasks/claim.ts",
     "task:finish": "tsx tools/tasks/finish.ts",
     "task:status": "tsx tools/tasks/status.ts",
@@ -48,6 +48,8 @@
     "test:int": "vitest run --config vitest.int.config.ts --project \"*-int\" --passWithNoTests"
   },
   "devDependencies": {
+    "@commitlint/cli": "catalog:",
+    "@commitlint/config-conventional": "catalog:",
     "@eslint/js": "catalog:",
     "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
@@ -63,6 +65,7 @@
     "eslint-plugin-react-refresh": "catalog:",
     "globals": "catalog:",
     "jsdom": "catalog:",
+    "lefthook": "catalog:",
     "prettier": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",

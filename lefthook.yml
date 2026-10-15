@@ -1,0 +1,45 @@
+# hooks are advisory; CI is the gate
+extends:
+  - lefthook-secrets.yml
+pre-commit:
+  parallel: true
+  jobs:
+    - name: style
+      group:
+        piped: true
+        jobs:
+          - name: format
+            glob: "*.{ts,tsx,js,mjs,json,md,yml,yaml,css,html}"
+            exclude: "docs/pl/**"
+            run: pnpm exec prettier --write -- {staged_files}
+            stage_fixed: true
+          - name: lint
+            glob: "*.{ts,tsx,mjs}"
+            run: pnpm exec eslint --fix --max-warnings 0 -- {staged_files}
+            stage_fixed: true
+    - name: no-large-files
+      run: node tools/hooks/no-large-files.mjs -- {staged_files}
+    - name: no-forbidden-files
+      run: node tools/hooks/no-forbidden-files.mjs -- {staged_files}
+    - name: tasks
+      glob: "tasks/**"
+      run: if [ -f tools/tasks/lint.ts ]; then pnpm check:tasks --staged; fi
+commit-msg:
+  piped: true
+  jobs:
+    # Lefthook defers stage_fixed until pre-commit finishes; recheck the final index here.
+    - name: final-staged-size
+      run: node tools/hooks/no-large-files.mjs -- {staged_files}
+    - name: commitlint
+      run: pnpm exec commitlint --edit {1}
+pre-push:
+  piped: true
+  jobs:
+    - name: typecheck
+      run: pnpm typecheck
+    - name: lint
+      run: pnpm lint
+    - name: tests
+      run: pnpm test
+    - name: boundaries
+      run: if [ -f tools/check-boundaries/run.ts ]; then pnpm check:boundaries; fi

@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: [OVE_SETUP001, OVE_SETUP003]
 soft_depends_on: [OVE_SETUP004, OVE_SETUP008]
 provides: ["lib:git-hooks", "lib:commit-conventions"]
@@ -88,14 +88,14 @@ Tooling at the repo root: `lefthook.yml`, `commitlint.config.mjs`; helper code i
 
 ## 11. Acceptance criteria
 
-- [ ] Given a clean checkout, `pnpm install` installs the hooks; `git commit` with an unformatted file results in a formatted commit.
-- [ ] `fix: Handle null` (capital) is rejected; `feat(perm): add policy intersection` with body and `Refs: OVE_PERM001` on branch `task/OVE_PERM001` is accepted.
-- [ ] Given branch `task/OVE_PERM001`, a commit with `Refs: OVE_PERM002` is rejected.
-- [ ] A header containing an emoji is rejected.
-- [ ] Staging `.env.local` or `key.p12` blocks the commit with a clear message.
-- [ ] Hooks run correctly inside a worktree created by `git worktree add ../wt/OVE_X`.
-- [ ] With `CI=true`, `pnpm install` does not modify `.git/hooks`.
-- [ ] `pre-push` runs typecheck, lint and tests in that order and stops at the first failure.
+- [x] Given a clean checkout, `pnpm install` installs the hooks; `git commit` with an unformatted file results in a formatted commit.
+- [x] `fix: Handle null` (capital) is rejected; `feat(perm): add policy intersection` with body and `Refs: OVE_PERM001` on branch `task/OVE_PERM001` is accepted.
+- [x] Given branch `task/OVE_PERM001`, a commit with `Refs: OVE_PERM002` is rejected.
+- [x] A header containing an emoji is rejected.
+- [x] Staging `.env.local` or `key.p12` blocks the commit with a clear message.
+- [x] Hooks run correctly inside a worktree created by `git worktree add ../wt/OVE_X`.
+- [x] With `CI=true`, `pnpm install` does not modify `.git/hooks`.
+- [x] `pre-push` runs typecheck, lint and tests in that order and stops at the first failure.
 
 ## 12. Test plan
 
@@ -110,3 +110,12 @@ Parallel with SETUP004/008/009..013. Hotspot: `lefthook.yml` is owned here; OVE_
 - ASSUMPTION: `Co-Authored-By` trailers are permitted; the Owner may forbid them (herdr forbids AI co-author lines). A change would be one extra commitlint rule.
 - ASSUMPTION: no `commit-msg` signing requirement locally; signed commits are a repository ruleset decision (OVE_SETUP018).
 - ASSUMPTION: `security` is an allowed type in addition to the Conventional set so security fixes are searchable.
+
+### Implementation notes (2026-10-15)
+
+- Lefthook 2.2.2 was published on 2026-10-13 and fails the unchanged 72-hour release-age gate. The previous mature patch 2.2.1 is pinned, following the Owner's preference to update later. Its implicit postinstall is explicitly denied; the packaged platform binary is used by our CI-aware prepare, so no dependency build script is enabled.
+- Pre-commit runs independent checks in parallel, with formatting and ESLint fixes in a sequential nested group to avoid writes racing on shared staged files. Both retain stage_fixed. The optional secrets extension is wired before OVE_SETUP007 supplies its file.
+- The original skeleton's supply-chain test now asserts every declared build permission is false, including Lefthook. This preserves its security invariant as the deny list grows. Root dependencies/scripts and CODEOWNERS receive the necessary tooling additions; tools/README.md is append-only.
+- Syntax, scopes, limits, emoji, body and task references are machine checked. Imperative wording and explanatory quality remain review responsibilities, documented alongside accepted examples. Co-author attribution is permitted.
+- Review correction: the large-file guard measures Git index blobs with shell-free Git plumbing, never working-tree bytes. Integration tests cover an oversized staged blob with a small unstaged edit and the inverse.
+- Lefthook defers stage_fixed until pre-commit finishes, so commit-msg repeats staged-size verification before commitlint after all restaging. A compact JSON array regression proves that formatter expansion beyond 1 MiB is blocked.

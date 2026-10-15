@@ -147,7 +147,9 @@ test("supply-chain settings reject unknown builds, peer conflicts and unsupporte
   }
   assert.equal(workspace.savePrefix, "");
   assert.equal(workspace.verifyDepsBeforeRun, "error");
-  assert.deepEqual(workspace.allowBuilds, { esbuild: false });
+  assert.equal(workspace.allowBuilds["esbuild"], false);
+  assert.equal(workspace.allowBuilds["lefthook"], false);
+  assert.ok(Object.values(workspace.allowBuilds).every((allowed) => !allowed));
   assert.equal(readFileSync(resolve(root, ".npmrc"), "utf8"), "engine-strict=true\n");
 });
 
