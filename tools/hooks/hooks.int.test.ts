@@ -117,6 +117,20 @@ it("real commits format and stage fixes, enforce messages, block keys and work i
       expect(f.git("reset", "HEAD", "--", filename).status).toBe(0);
       rmSync(join(f.repo, filename));
     }
+    writeFileSync(join(f.repo, "large.bin"), Buffer.alloc(1024 * 1024 + 1));
+    expect(f.git("add", "large.bin").status).toBe(0);
+    writeFileSync(join(f.repo, "large.bin"), "small unstaged edit");
+    const oversized = f.git("commit", "-m", message);
+    expect(oversized.status).not.toBe(0);
+    expect(oversized.stdout + oversized.stderr).toContain("Files exceed 1 MiB");
+    expect(f.git("reset", "HEAD", "--", "large.bin").status).toBe(0);
+    rmSync(join(f.repo, "large.bin"));
+    writeFileSync(join(f.repo, "small.bin"), "small staged blob");
+    expect(f.git("add", "small.bin").status).toBe(0);
+    writeFileSync(join(f.repo, "small.bin"), Buffer.alloc(1024 * 1024 + 1));
+    const small = f.git("commit", "-m", message);
+    expect(small.status, small.stdout + small.stderr).toBe(0);
+    expect(f.git("show", "HEAD:small.bin").stdout).toBe("small staged blob");
     const worktree = join(f.root, "worktree");
     expect(f.git("worktree", "add", "-b", "task/OVE_PERM002", worktree).status).toBe(0);
     symlinkSync(join(source, "node_modules"), join(worktree, "node_modules"), "dir");
