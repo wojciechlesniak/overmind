@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: in_progress
+status: done
 depends_on: [OVE_SETUP001, OVE_SETUP003]
 soft_depends_on: [OVE_SETUP004, OVE_SETUP008]
 provides: ["lib:git-hooks", "lib:commit-conventions"]
@@ -88,14 +88,14 @@ Tooling at the repo root: `lefthook.yml`, `commitlint.config.mjs`; helper code i
 
 ## 11. Acceptance criteria
 
-- [ ] Given a clean checkout, `pnpm install` installs the hooks; `git commit` with an unformatted file results in a formatted commit.
-- [ ] `fix: Handle null` (capital) is rejected; `feat(perm): add policy intersection` with body and `Refs: OVE_PERM001` on branch `task/OVE_PERM001` is accepted.
-- [ ] Given branch `task/OVE_PERM001`, a commit with `Refs: OVE_PERM002` is rejected.
-- [ ] A header containing an emoji is rejected.
-- [ ] Staging `.env.local` or `key.p12` blocks the commit with a clear message.
-- [ ] Hooks run correctly inside a worktree created by `git worktree add ../wt/OVE_X`.
-- [ ] With `CI=true`, `pnpm install` does not modify `.git/hooks`.
-- [ ] `pre-push` runs typecheck, lint and tests in that order and stops at the first failure.
+- [x] Given a clean checkout, `pnpm install` installs the hooks; `git commit` with an unformatted file results in a formatted commit.
+- [x] `fix: Handle null` (capital) is rejected; `feat(perm): add policy intersection` with body and `Refs: OVE_PERM001` on branch `task/OVE_PERM001` is accepted.
+- [x] Given branch `task/OVE_PERM001`, a commit with `Refs: OVE_PERM002` is rejected.
+- [x] A header containing an emoji is rejected.
+- [x] Staging `.env.local` or `key.p12` blocks the commit with a clear message.
+- [x] Hooks run correctly inside a worktree created by `git worktree add ../wt/OVE_X`.
+- [x] With `CI=true`, `pnpm install` does not modify `.git/hooks`.
+- [x] `pre-push` runs typecheck, lint and tests in that order and stops at the first failure.
 
 ## 12. Test plan
 
