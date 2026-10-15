@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: [OVE_SETUP001]
 soft_depends_on: [OVE_SETUP008]
 provides: ["lib:tsconfig-base", "lib:ts-project-references"]
@@ -98,13 +98,13 @@ Layer: build configuration. `tsconfig.base.json` at root; one `tsconfig.json` pe
 
 ## 11. Acceptance criteria
 
-- [ ] `pnpm ls typescript -r --depth 0` shows exactly one version, `6.0.3`.
-- [ ] `pnpm typecheck` passes on the skeleton and a second run does nothing (incremental).
-- [ ] Given a file in `packages/domain/src` that references `process.env`, when `pnpm typecheck` runs, then it fails.
-- [ ] Given `packages/domain/src` importing `@overmind/application`, then typecheck fails with unresolved module (not referenced).
-- [ ] Guard tests 10(a), (b), (c) pass and fail correctly when TypeScript is temporarily set to 7.0.2 (verified once, not committed).
-- [ ] `apps/desktop` and `ui-kit` compile a sample `.tsx` with `jsx: react-jsx`.
-- [ ] No `// @ts-ignore` exists in the repository.
+- [x] `pnpm ls typescript -r --depth 0` shows exactly one version, `6.0.3`.
+- [x] `pnpm typecheck` passes on the skeleton and a second run does nothing (incremental).
+- [x] Given a file in `packages/domain/src` that references `process.env`, when `pnpm typecheck` runs, then it fails.
+- [x] Given `packages/domain/src` importing `@overmind/application`, then typecheck fails with unresolved module (not referenced).
+- [x] Guard tests 10(a), (b), (c) pass and fail correctly when TypeScript is temporarily set to 7.0.2 (verified once, not committed).
+- [x] `apps/desktop` and `ui-kit` compile a sample `.tsx` with `jsx: react-jsx`.
+- [x] No `// @ts-ignore` exists in the repository.
 
 ## 12. Test plan
 
@@ -119,3 +119,15 @@ Runs in parallel with SETUP003/004/005/008..012. Conflict hotspots: none beyond 
 - ASSUMPTION: target ES2023 (Node 22 supports it; WebKit in Tauri on macOS 26 is current). Raise when Node 24 is adopted.
 - ASSUMPTION: `erasableSyntaxOnly` is on from day one; decision to relax requires an ADR.
 - Question for the Owner: whether to adopt TypeScript 7 (native compiler) once typescript-eslint supports it; tracked in OVE_SETUP008 upgrade rules.
+
+### Implementation notes (2026-10-15)
+
+- The compiler guards require `typescript-eslint` metadata before OVE-003 adds its lint configuration. This task therefore consumes the catalog-pinned `typescript-eslint` and its `eslint` peer as development tools, without implementing OVE-003. Their published peer range was verified with `npm view typescript-eslint@8.71.2 peerDependencies`.
+- Node and JSX compilation tests require the catalog-pinned `@types/node`, `@types/react` and `@types/react-dom`. These are development-only declarations; no runtime React dependency is introduced.
+- `semver@7.8.5` (ISC) and `@types/semver@7.8.0` (MIT) are test-only dependencies for evaluating the actual linter peer range. Reusing the standard range parser avoids a custom, incomplete semver implementation. Exact versions were verified with the npm registry on 2026-10-15. OVE-008 owns the complete dependency register.
+- The tools project excludes fixture directories containing deliberately invalid source. Negative compiler tests create isolated, short-lived source files with overwrite protection and remove them in `finally`; they do not weaken the production configuration.
+- Existing bootstrap tests are adjusted to permit future catalog additions and obey `noPropertyAccessFromIndexSignature`; all package-edge checks remain exact.
+
+### Owner-directed version selection (2026-10-15)
+
+The Owner chose to use an earlier compatible version now and update later. `typescript-eslint@8.71.1` has the same published TypeScript peer range (`>=4.8.4 <6.1.0`) and ESLint 10 support as 8.71.2. The catalog uses 8.71.1; the 4320-minute release-age requirement and all other security policies are unchanged. The references to 8.71.2 in the original task describe the planned version; this explicit Owner-directed selection takes precedence. Upgrade remains governed by OVE-008.

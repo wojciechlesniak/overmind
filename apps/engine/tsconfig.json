@@ -1,0 +1,57 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "test/**/*"
+  ],
+  "compilerOptions": {
+    "types": [
+      "node"
+    ]
+  },
+  "references": [
+    {
+      "path": "../../packages/adapters/herdr"
+    },
+    {
+      "path": "../../packages/adapters/keychain-macos"
+    },
+    {
+      "path": "../../packages/adapters/notifications-macos"
+    },
+    {
+      "path": "../../packages/adapters/providers"
+    },
+    {
+      "path": "../../packages/adapters/sandbox-macos"
+    },
+    {
+      "path": "../../packages/adapters/sqlite"
+    },
+    {
+      "path": "../../packages/adapters/telegram"
+    },
+    {
+      "path": "../../packages/api-client"
+    },
+    {
+      "path": "../../packages/application"
+    },
+    {
+      "path": "../../packages/contracts"
+    },
+    {
+      "path": "../../packages/domain"
+    },
+    {
+      "path": "../../packages/gateway"
+    },
+    {
+      "path": "../../packages/ui-kit"
+    },
+    {
+      "path": "../../packages/workflow-runtime"
+    }
+  ]
+}

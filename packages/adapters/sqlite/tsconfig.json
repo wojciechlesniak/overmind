@@ -1,0 +1,24 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "test/**/*"
+  ],
+  "compilerOptions": {
+    "types": [
+      "node"
+    ]
+  },
+  "references": [
+    {
+      "path": "../../application"
+    },
+    {
+      "path": "../../contracts"
+    },
+    {
+      "path": "../../domain"
+    }
+  ]
+}
