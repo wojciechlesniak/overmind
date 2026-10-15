@@ -32,6 +32,10 @@ it("fails closed on absent, invalid and denied SPDX expressions", () => {
     "MIT WITH OR ISC",
     "MIT WITH (Classpath-exception-2.0)",
     "MIT++ OR ISC",
+    "MIT OR GPL-2.0 +",
+    "MIT OR LicenseRef-Proprietary+",
+    "MIT OR GPL-2.0+WITH Classpath-exception-2.0",
+    "GPL-2.0+OR MIT",
     "MIT-0",
     "CC-BY-3.0",
     "CC-BY-4.0",
@@ -53,6 +57,8 @@ it("evaluates alternatives, conjunctions and parentheses using SPDX grammar", ()
     "GPL-3.0-only AND MIT OR ISC",
     "MIT OR MIT WITH Classpath-exception-2.0",
     "MIT OR GPL-2.0+",
+    "MIT OR GPL-2.0+ WITH Classpath-exception-2.0",
+    "(MIT)AND(ISC)",
   ]) {
     expect(check(license), license).toBe(true);
   }
