@@ -1081,3 +1081,14 @@ Renovate validator44.155.1 passed --strict --no-global in an isolated temporary
 Node24.21.0 runtime, with install scripts disabled and no project dependencies
 added. Its optional native RE2 build remains disabled; it uses its own JavaScript
 regex fallback for validation. The project runtime and pins remain Node22.
+
+Project policy inputs are fail-closed: the workspace and package.json pnpm policy
+objects reject unknown keys, including permissions, dangerouslyAllowAllBuilds and
+minimumReleaseAgeExclude. New build permissions require an explicitly supported
+schema plus a register justification; no release-age exclusion is authorized.
+Project .npmrc permits only engine-strict=true and the official npm registry
+(including scoped mappings); implicit .pnpmfile.cjs/.mjs hooks are rejected without
+execution. Global user settings and command-line overrides are outside this
+repository-file checker and remain subject to the controlled CI install process.
+The supported Cargo Tauri declarations require =MAJOR.MINOR.PATCH, including inline
+tables: a bare Cargo version is a caret range and cannot prove a matching minor.

@@ -39,3 +39,10 @@ project dependency or redistributed application component. It falls back to its
 JavaScript regex implementation because its optional native RE2 build is denied;
 all configured regexes avoid backreferences/lookarounds. Schema/repository validation
 passes. Actual update execution remains the external App's operational responsibility.
+
+Independent review found and corrected two input-validation gaps before merge:
+unknown pnpm policy keys now fail closed, including build-permission and release-age
+bypasses, and Cargo Tauri pins require the exact = prefix. Real CLI negative cases
+also cover package.json pnpm overrides, npmrc bypasses and implicit pnpm hook files;
+the fixture hook is never executed. No actual install/build permission or age
+exception was added.

@@ -103,3 +103,48 @@ it("rejects unsafe inputs and policy changes before any dependency/network execu
     rmSync(outside, { recursive: true, force: true });
   }
 }, 60000);
+
+it("actual CLI rejects unreviewed build, age, hook and Cargo range bypasses", () => {
+  const directory = fixture();
+  try {
+    const workspacePath = resolve(directory, "pnpm-workspace.yaml");
+    const originalWorkspace = readFileSync(workspacePath, "utf8");
+    for (const fragment of [
+      "permissions: { esbuild: { build: true } }",
+      "dangerouslyAllowAllBuilds: true",
+      "minimumReleaseAgeExclude: ['*']",
+    ]) {
+      writeFileSync(workspacePath, originalWorkspace + `\n${fragment}\n`);
+      expect(run(directory).status, fragment).toBe(1);
+    }
+    writeFileSync(workspacePath, originalWorkspace);
+    const packagePath = resolve(directory, "package.json");
+    const originalPackage = readFileSync(packagePath, "utf8");
+    writeFileSync(
+      packagePath,
+      originalPackage.replace(/^\{/u, '{"pnpm":{"dangerouslyAllowAllBuilds":true},'),
+    );
+    expect(run(directory).status).toBe(1);
+    writeFileSync(packagePath, originalPackage);
+    for (const fragment of ["dangerously-allow-all-builds=true", "minimum-release-age=0"]) {
+      writeFileSync(resolve(directory, ".npmrc"), `engine-strict=true\n${fragment}\n`);
+      expect(run(directory).status, fragment).toBe(1);
+    }
+    writeFileSync(resolve(directory, ".npmrc"), "engine-strict=true\n");
+    const hookPath = resolve(directory, ".pnpmfile.mjs");
+    writeFileSync(hookPath, 'throw new Error("must never execute");\n');
+    const hook = run(directory);
+    expect(hook.status).toBe(1);
+    expect(hook.stderr).toContain("Unreviewed pnpm hooks");
+    expect(hook.stderr).not.toContain("must never execute");
+    rmSync(hookPath);
+    for (const version of ['"2.12.3"', '{ version = "2.12.3" }']) {
+      writeFileSync(resolve(directory, "Cargo.toml"), `[dependencies]\ntauri = ${version}\n`);
+      expect(run(directory).status, version).toBe(1);
+    }
+    writeFileSync(resolve(directory, "Cargo.toml"), '[dependencies]\ntauri = "=2.12.3"\n');
+    expect(run(directory).status).toBe(0);
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+}, 60000);

@@ -6,11 +6,13 @@ import { readBinaryLock } from "../pinned-bin/lock.parse-boundary.ts";
 const packageName = z.string().regex(/^(?:@[a-z0-9][a-z0-9._-]*\/)?[a-z0-9][a-z0-9._-]*$/u);
 const specs = z.record(packageName, z.string().min(1).max(1024)).default({});
 const policyMap = z.record(z.string().min(1).max(200), z.string().min(1).max(1024)).default({});
-const adjustments = z.object({
-  overrides: policyMap,
-  patchedDependencies: policyMap,
-  onlyBuiltDependencies: z.array(packageName).default([]),
-});
+const adjustments = z
+  .object({
+    overrides: policyMap,
+    patchedDependencies: policyMap,
+    onlyBuiltDependencies: z.array(packageName).default([]),
+  })
+  .strict();
 const manifest = z.object({
   name: packageName,
   private: z.boolean().default(false),
@@ -20,17 +22,24 @@ const manifest = z.object({
   optionalDependencies: specs,
   pnpm: adjustments.optional(),
 });
-const workspace = adjustments.extend({
-  packages: z
-    .array(z.string().regex(/^(?:[a-z][a-z0-9-]*\/)*[a-z][a-z0-9-]*(?:\/\*)?$/u))
-    .nonempty(),
-  catalog: z.record(packageName, z.string().min(1).max(100)),
-  allowBuilds: z.record(packageName, z.boolean()).default({}),
-  minimumReleaseAge: z.literal(4320),
-  strictDepBuilds: z.literal(true),
-  strictPeerDependencies: z.literal(true),
-  autoInstallPeers: z.literal(false),
-});
+const workspace = adjustments
+  .extend({
+    packages: z
+      .array(z.string().regex(/^(?:[a-z][a-z0-9-]*\/)*[a-z][a-z0-9-]*(?:\/\*)?$/u))
+      .nonempty(),
+    catalog: z.record(packageName, z.string().min(1).max(100)),
+    allowBuilds: z.record(packageName, z.boolean()).default({}),
+    minimumReleaseAge: z.literal(4320),
+    strictDepBuilds: z.literal(true),
+    strictPeerDependencies: z.literal(true),
+    autoInstallPeers: z.literal(false),
+    engineStrict: z.literal(true),
+    savePrefix: z.literal(""),
+    linkWorkspacePackages: z.literal(false),
+    shamefullyHoist: z.literal(false),
+    verifyDepsBeforeRun: z.literal("error"),
+  })
+  .strict();
 function confinedPath(root: string, path: string): string {
   const resolved = realpathSync(resolve(root, path));
   const distance = relative(realpathSync(root), resolved);
@@ -83,6 +92,25 @@ export function readManifests(root: string, patterns: string[]) {
   }
   return [...paths].map((path) => manifest.parse(json(root, path)));
 }
+export function readRegistryPolicy(root: string): void {
+  const lines = readWorkspaceText(root, ".npmrc").split("\n");
+  for (const line of lines.map((item) => item.trim())) {
+    if (!line || /^[#;]/u.test(line)) {
+      continue;
+    }
+    if (
+      line !== "engine-strict=true" &&
+      !/^(?:@[a-z0-9._-]+:)?registry\s*=\s*https:\/\/registry\.npmjs\.org\/?$/u.test(line)
+    ) {
+      throw new Error("Unreviewed project npm configuration is forbidden");
+    }
+  }
+  for (const path of [".pnpmfile.cjs", ".pnpmfile.mjs"]) {
+    if (existsSync(resolve(root, path))) {
+      throw new Error("Unreviewed pnpm hooks are forbidden");
+    }
+  }
+}
 export function readInstalledToolchain(root: string) {
   const typescript = z
     .object({ version: z.string() })
@@ -131,7 +159,7 @@ export function parseTauriVersion(source: string): string | undefined {
       continue;
     }
     const version =
-      /^(?:tauri\s*=\s*)(?:"=?([0-9]+\.[0-9]+\.[0-9]+)"|\{[^\n{}]*\bversion\s*=\s*"=?([0-9]+\.[0-9]+\.[0-9]+)"[^\n{}]*\})\s*(?:#.*)?$/u.exec(
+      /^(?:tauri\s*=\s*)(?:"=([0-9]+\.[0-9]+\.[0-9]+)"|\{[^\n{}]*\bversion\s*=\s*"=([0-9]+\.[0-9]+\.[0-9]+)"[^\n{}]*\})\s*(?:#.*)?$/u.exec(
         line,
       );
     if (!version) {

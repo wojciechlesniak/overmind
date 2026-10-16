@@ -13,12 +13,14 @@ import {
   readInstalledToolchain,
   readManifests,
   readRenovateConfig,
+  readRegistryPolicy,
   readWorkspaceText,
   workspaceFilePath,
 } from "./input.parse-boundary.ts";
 
 export function checkDependencies(root: string, today: string) {
   readRenovateConfig(root);
+  readRegistryPolicy(root);
   const catalog = readCatalog(root);
   const manifests = readManifests(root, catalog.packages);
   const register = parseRegister(readWorkspaceText(root, "docs/dependencies.md"));
@@ -47,23 +49,6 @@ export function checkDependencies(root: string, today: string) {
     exceptions: readExceptions(workspaceFilePath(root, "tools/check-licenses/exceptions.json")),
     today,
   });
-  const registry = readWorkspaceText(root, ".npmrc");
-  if (
-    registry
-      .split("\n")
-      .some(
-        (line) =>
-          /^\s*(?:@[^:]+:)?registry\s*=/u.test(line) &&
-          !/^\s*(?:@[^:]+:)?registry\s*=\s*https:\/\/registry\.npmjs\.org\/?\s*$/u.test(line),
-      )
-  ) {
-    findings.push({
-      rule: "registry",
-      subject: ".npmrc",
-      message: "Only the official npm registry is permitted",
-      level: "error",
-    });
-  }
   return { findings, catalog: catalog.catalog };
 }
 if (process.argv[1] && realpathSync(process.argv[1]) === fileURLToPath(import.meta.url)) {

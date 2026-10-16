@@ -229,13 +229,15 @@ it.each([
 });
 it.each([
   '[dependencies]\ntauri = "=2.12.3"\n',
-  '[dependencies]\ntauri = { version = "2.12.3", features = [] }\n',
+  '[dependencies]\ntauri = { version = "=2.12.3", features = [] }\n',
 ])("reads exact Tauri pins from supported Cargo forms %#", (text) => {
   expect(parseTauriVersion(text)).toBe("2.12.3");
 });
-it.each(['[dependencies]\ntauri = "^2"\n', '[dependencies]\nother = "1.0.0"\n'])(
-  "fails closed on unsupported Cargo pin forms %#",
-  (text) => {
-    expect(() => parseTauriVersion(text)).toThrow();
-  },
-);
+it.each([
+  '[dependencies]\ntauri = "^2"\n',
+  '[dependencies]\ntauri = "2.12.3"\n',
+  '[dependencies]\ntauri = { version = "2.12.3" }\n',
+  '[dependencies]\nother = "1.0.0"\n',
+])("fails closed on unsupported Cargo pin forms %#", (text) => {
+  expect(() => parseTauriVersion(text)).toThrow();
+});
