@@ -1,0 +1,208 @@
+{
+  "verifiedOn": "2026-10-16",
+  "selectionSeed": 8008,
+  "registry": "https://registry.npmjs.org",
+  "rows": [
+    {
+      "command": [
+        "npm",
+        "view",
+        "semver@7.8.5",
+        "version",
+        "peerDependencies",
+        "engines",
+        "license",
+        "--json"
+      ],
+      "output": {
+        "version": "7.8.5",
+        "engines": {
+          "node": ">=10"
+        },
+        "license": "ISC"
+      }
+    },
+    {
+      "command": [
+        "npm",
+        "view",
+        "@testing-library/dom@10.4.2",
+        "version",
+        "peerDependencies",
+        "engines",
+        "license",
+        "--json"
+      ],
+      "output": {
+        "version": "10.4.2",
+        "engines": {
+          "node": ">=18"
+        },
+        "license": "MIT"
+      }
+    },
+    {
+      "command": [
+        "npm",
+        "view",
+        "zod@4.6.6",
+        "version",
+        "peerDependencies",
+        "engines",
+        "license",
+        "--json"
+      ],
+      "output": {
+        "version": "4.6.6",
+        "license": "MIT"
+      }
+    },
+    {
+      "command": [
+        "npm",
+        "view",
+        "@tauri-apps/cli@2.12.2",
+        "version",
+        "peerDependencies",
+        "engines",
+        "license",
+        "--json"
+      ],
+      "output": {
+        "version": "2.12.2",
+        "engines": {
+          "node": ">= 10"
+        },
+        "license": "Apache-2.0 OR MIT"
+      }
+    },
+    {
+      "command": [
+        "npm",
+        "view",
+        "vite@7.3.7",
+        "version",
+        "peerDependencies",
+        "engines",
+        "license",
+        "--json"
+      ],
+      "output": {
+        "version": "7.3.7",
+        "peerDependencies": {
+          "tsx": "^4.8.1",
+          "jiti": ">=1.21.0",
+          "less": "^4.0.0",
+          "sass": "^1.70.0",
+          "yaml": "^2.4.2",
+          "stylus": ">=0.54.8",
+          "terser": "^5.16.0",
+          "sugarss": "^5.0.0",
+          "@types/node": "^20.19.0 || >=22.12.0",
+          "lightningcss": "^1.21.0",
+          "sass-embedded": "^1.70.0"
+        },
+        "engines": {
+          "node": "^20.19.0 || >=22.12.0"
+        },
+        "license": "MIT"
+      }
+    },
+    {
+      "command": [
+        "npm",
+        "view",
+        "oxlint@1.87.0",
+        "version",
+        "peerDependencies",
+        "engines",
+        "license",
+        "--json"
+      ],
+      "output": {
+        "version": "1.87.0",
+        "peerDependencies": {
+          "vite-plus": "*",
+          "oxlint-tsgolint": ">=7.0.2003"
+        },
+        "engines": {
+          "node": "^20.19.0 || >=22.12.0"
+        },
+        "license": "MIT"
+      }
+    },
+    {
+      "command": [
+        "npm",
+        "view",
+        "lefthook@2.2.1",
+        "version",
+        "peerDependencies",
+        "engines",
+        "license",
+        "--json"
+      ],
+      "output": {
+        "version": "2.2.1",
+        "license": "MIT"
+      }
+    },
+    {
+      "command": [
+        "npm",
+        "view",
+        "spdx-license-ids@3.0.24",
+        "version",
+        "peerDependencies",
+        "engines",
+        "license",
+        "--json"
+      ],
+      "output": {
+        "version": "3.0.24",
+        "license": "CC0-1.0"
+      }
+    },
+    {
+      "command": [
+        "npm",
+        "view",
+        "eslint-plugin-boundaries@7.2.0",
+        "version",
+        "peerDependencies",
+        "engines",
+        "license",
+        "--json"
+      ],
+      "output": {
+        "version": "7.2.0",
+        "peerDependencies": {
+          "eslint": ">=6.0.0"
+        },
+        "engines": {
+          "node": ">=18.18"
+        },
+        "license": "MIT"
+      }
+    },
+    {
+      "command": [
+        "npm",
+        "view",
+        "eslint-plugin-react-refresh@0.5.7",
+        "version",
+        "peerDependencies",
+        "engines",
+        "license",
+        "--json"
+      ],
+      "output": {
+        "version": "0.5.7",
+        "peerDependencies": {
+          "eslint": "^9 || ^10"
+        },
+        "license": "MIT"
+      }
+    }
+  ]
+}

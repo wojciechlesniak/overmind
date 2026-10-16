@@ -6,7 +6,7 @@ kind: infra
 size: M
 priority: P0
 mvp: true
-status: todo
+status: in_review
 depends_on: [OVE_SETUP001]
 soft_depends_on: [OVE_SETUP006]
 provides: ["lib:dependency-policy", "lib:dependency-register", "lib:renovate-config"]

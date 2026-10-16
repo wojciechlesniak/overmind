@@ -20,3 +20,8 @@
 /lefthook-secrets.yml @wojciechlesniak
 /tools/secret-scan/ @wojciechlesniak
 /tools/sbom/ @wojciechlesniak
+
+# Dependency policy and update automation configuration (OVE_SETUP008).
+/renovate.json @wojciechlesniak
+/docs/dependencies.md @wojciechlesniak
+/tools/deps-policy/ @wojciechlesniak
