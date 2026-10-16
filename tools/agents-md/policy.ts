@@ -70,7 +70,7 @@ function visibleMarkdown(text: string): { text: string; unsupportedBlocks: boole
       visible.push("");
     } else {
       unsupportedBlocks ||=
-        (Boolean(line.trim()) && /^(?: {4}|\t)/u.test(line)) ||
+        (Boolean(line.trim()) && /^(?: {4}| *\t)/u.test(line)) ||
         /<[A-Za-z/!?]/u.test(withoutInlineCode(line));
       visible.push(line);
     }
@@ -137,6 +137,9 @@ export function checkAgentInstructions(directory: string): string[] {
     }
   } catch {
     errors.push("CLAUDE.md must be the relative symlink AGENTS.md.");
+  }
+  if (/\r(?!\n)/u.test(text)) {
+    errors.push("AGENTS.md supports only LF or CRLF line endings; bare CR is rejected.");
   }
   const lines = text.replace(/\r\n/gu, "\n").replace(/\n$/u, "").split("\n");
   if (lines.length > 200) {

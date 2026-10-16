@@ -22,6 +22,10 @@ HTML-like text such as `<ID>` belongs in a code span or fenced example. Supporte
 code spans use equal-length backtick runs on one line, with no backslash directly
 before the opening run. Mismatched, escaped or unclosed runs cannot exempt HTML
 from the guard. Use flat lists and fenced examples instead.
+Leading TAB characters outside fenced code are rejected even after spaces, so
+tab-stop expansion cannot hide required prose as an indented code block. Only LF
+and CRLF line endings are supported; bare CR is rejected before the visibility
+and line-count results can be accepted.
 File links are canonicalised and cannot escape the repository through traversal,
 percent encoding or symlinks. The small credential screen supplements the full
 pinned secret scanner in hooks and CI; it does not replace that scanner.

@@ -107,7 +107,7 @@ Parallel with everything after OVE_SETUP001. Hotspot: none (short file). When CO
 - The relative CLAUDE.md symlink reads the exact AGENTS.md bytes. A real isolated
   Git fixture verifies mode 120000; regular, wrong-target, absolute and missing
   links fail. The root symlink is staged and committed as mode 120000 too.
-- 67 focused tests pass: 64 checker cases and three actual configuration-gate
+- 75 focused tests pass: 72 checker cases and three actual configuration-gate
   cases. They cover removed/reordered/hidden sections, injection hash tampering,
   missing/empty/prototype script names, missing and escaping links, real symlink
   escapes, malformed manifests, oversized content, maintenance placement and
@@ -130,8 +130,12 @@ Parallel with everything after OVE_SETUP001. Hotspot: none (short file). When CO
   AGENTS.md, CLAUDE.md, tools/agents-md/ and .github/CODEOWNERS. The sensitive-config
   gate now protects both root instruction files. Branch-review enforcement stays
   with OVE_SETUP018; the broader contribution gate remains OVE_OSS003.
-- No Claude Code UI loading test was performed. Actual filesystem read-through,
-  byte identity and Git symlink mode were verified; no UI-loader result is claimed.
+- After explicit Owner authorization, the integrator verified actual loading in
+  interactive Claude Code 2.1.38 in `/private/tmp/overmind-OVE-017`. The read-only
+  `/context` command listed `CLAUDE.md` under Memory files (about 1.8k tokens).
+  No private memory was edited or copied. This follows the documented check in
+  [Claude Code memory documentation](https://code.claude.com/docs/en/memory).
+  Actual filesystem read-through, byte identity and Git symlink mode were also verified.
 - Reserved task scripts and check:boundaries are documented as unavailable until
   their owning implementations merge. No stub or simulated pass was introduced.
 
@@ -157,3 +161,8 @@ Parallel with everything after OVE_SETUP001. Hotspot: none (short file). When CO
   and fence forms. Hidden div/pre/span wrappers and escaped, mismatched or
   unclosed code delimiters are rejected; literal `<ID>` and equal-length code spans
   and fenced HTML examples remain supported. No new dependency was added.
+- A further Standards review confirmed space-plus-TAB indentation and bare-CR
+  fence variants. Both were reproduced as failing tests before their fixes.
+  Leading TAB outside fenced examples is now rejected regardless of preceding
+  spaces; bare CR is rejected globally. LF/CRLF and fenced TAB examples remain
+  supported, with negative tests for line-count evasion. The fixes add no dependency.

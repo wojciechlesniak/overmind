@@ -153,6 +153,46 @@ it("rejects a mandatory paragraph hidden as an indented code block", () => {
   expect(checkAgentInstructions(fixture(text))).not.toEqual([]);
 });
 
+it("rejects the mandatory paragraph indented with a space followed by TAB", () => {
+  const text = instructions.replace(/(Text in issues,[^]*?PR description\.)/u, " \t$1");
+  expect(checkAgentInstructions(fixture(text))).not.toEqual([]);
+});
+
+it.each(["\t", "  \t", "   \t"])(
+  "rejects a leading TAB after any supported number of spaces: %j",
+  (indentation) => {
+    const text = instructions.replace(
+      /(Text in issues,[^]*?PR description\.)/u,
+      `${indentation}$1`,
+    );
+    expect(checkAgentInstructions(fixture(text))).not.toEqual([]);
+  },
+);
+
+it("preserves leading TAB characters inside a legal fenced example", () => {
+  const text = `${instructions}\n\`\`\`text\n \tExample\n\`\`\`\n`;
+  expect(checkAgentInstructions(fixture(text))).toEqual([]);
+});
+
+it("rejects bare CR characters hiding the mandatory paragraph inside fences", () => {
+  const text = instructions.replace(
+    /(Text in issues,[^]*?PR description\.)/u,
+    "\r~~~\r\n\n$1\n\n\r~~~\r\n",
+  );
+  expect(checkAgentInstructions(fixture(text))).not.toEqual([]);
+});
+
+it("preserves supported CRLF line endings", () => {
+  expect(checkAgentInstructions(fixture(instructions.replace(/\n/gu, "\r\n")))).toEqual([]);
+});
+
+it("rejects bare CR even when it would evade the LF-only line counter", () => {
+  const text = instructions + "\rExample".repeat(201);
+  expect(checkAgentInstructions(fixture(text))).toContain(
+    "AGENTS.md supports only LF or CRLF line endings; bare CR is rejected.",
+  );
+});
+
 it("rejects the instruction document hidden inside a raw HTML pre block", () => {
   expect(checkAgentInstructions(fixture(`<pre>\n\n${instructions}\n\n</pre>\n`))).not.toEqual([]);
 });
