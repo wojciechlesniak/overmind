@@ -171,29 +171,44 @@ export function validatePatchPaths(root: string, configuration: z.infer<typeof a
     workspaceFilePath(root, path);
   }
 }
-export function parseTauriVersion(source: string): string | undefined {
-  const sections = source.split(/^\[/mu);
-  for (const section of sections) {
-    if (!/^(?:workspace\.)?dependencies\]\s*$/mu.test(section.split("\n")[0] ?? "")) {
-      continue;
-    }
-    const line = section.split("\n").find((item) => /^tauri\s*=/u.test(item));
-    if (!line) {
-      continue;
-    }
-    // Only these complete, registry-only TOML forms are supported. Requiring the
-    // actual first version field avoids matching suffix keys or nested strings.
-    const version =
-      /^tauri\s*=\s*"=([0-9]+\.[0-9]+\.[0-9]+)"\s*(?:#.*)?$/u.exec(line) ??
-      /^tauri\s*=\s*\{\s*version\s*=\s*"=([0-9]+\.[0-9]+\.[0-9]+)"(?:\s*,\s*(?:features\s*=\s*\[\s*(?:"[a-zA-Z0-9_/-]+"(?:\s*,\s*"[a-zA-Z0-9_/-]+")*)?\s*\]|default-features\s*=\s*(?:true|false)))*\s*\}\s*(?:#.*)?$/u.exec(
-        line,
+export function parseTauriVersion(source: string): string {
+  const versions = new Set<string>();
+  for (const section of source.split(/^\s*\[/mu)) {
+    const [header, ...body] = section.split("\n");
+    if (/\.tauri\]\s*$/u.test(header ?? "")) {
+      throw new Error(
+        "Tauri dependency subtables are unsupported; use an exact inline declaration",
       );
-    if (!version) {
-      throw new Error("Tauri dependency requires a supported exact pin");
     }
-    return version[1];
+    if (
+      !/^(?:.*\.)?(?:dependencies|dev-dependencies|build-dependencies)\]\s*$/u.test(header ?? "")
+    ) {
+      continue;
+    }
+    for (const line of body.map((item) => item.trim()).filter((item) => !item.startsWith("#"))) {
+      if (/\bpackage\s*=\s*["']tauri["']/u.test(line)) {
+        throw new Error("Aliased Tauri declarations are unsupported");
+      }
+      if (!/^(?:tauri|"tauri"|'tauri')\s*=/u.test(line)) {
+        continue;
+      }
+      // The whole supported TOML form must match, including the actual version key.
+      const version =
+        /^tauri\s*=\s*"=([0-9]+\.[0-9]+\.[0-9]+)"\s*(?:#.*)?$/u.exec(line) ??
+        /^tauri\s*=\s*\{\s*version\s*=\s*"=([0-9]+\.[0-9]+\.[0-9]+)"(?:\s*,\s*(?:features\s*=\s*\[\s*(?:"[a-zA-Z0-9_/-]+"(?:\s*,\s*"[a-zA-Z0-9_/-]+")*)?\s*\]|default-features\s*=\s*(?:true|false)))*\s*\}\s*(?:#.*)?$/u.exec(
+          line,
+        );
+      if (!version?.[1]) {
+        throw new Error("Tauri dependency requires a supported exact pin");
+      }
+      versions.add(version[1]);
+    }
   }
-  throw new Error("Cargo manifest has no supported pinned Tauri dependency");
+  const [version] = versions;
+  if (versions.size !== 1 || !version) {
+    throw new Error("Cargo Tauri declarations must provide one consistent exact pin");
+  }
+  return version;
 }
 
 export function readRenovateConfig(root: string) {

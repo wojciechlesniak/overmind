@@ -144,6 +144,13 @@ it("actual CLI rejects unreviewed build, age, hook and Cargo range bypasses", ()
     }
     writeFileSync(resolve(directory, "Cargo.toml"), '[dependencies]\ntauri = "=2.12.3"\n');
     expect(run(directory).status).toBe(0);
+    writeFileSync(
+      resolve(directory, "Cargo.toml"),
+      '[workspace.dependencies]\ntauri = "=2.12.3"\n[dependencies]\ntauri = "=2.13.0"\n',
+    );
+    const conflicting = run(directory);
+    expect(conflicting.status).toBe(1);
+    expect(conflicting.stderr).toContain("one consistent exact pin");
   } finally {
     rmSync(directory, { recursive: true, force: true });
   }
@@ -160,10 +167,12 @@ it("actual CLI rejects non-registry overrides even with a complete justification
       "### react\n\n- Justifies: pnpm.overrides.react\n",
     );
     writeFileSync(registerPath, register);
-    const setOverride = (target: string) => { writeFileSync(
+    const setOverride = (target: string) => {
+      writeFileSync(
         packagePath,
         original.replace(/^\{/u, `{"pnpm":{"overrides":{"react":${JSON.stringify(target)}}},`),
-      ); };
+      );
+    };
     setOverride("19.3.0");
     expect(run(directory).status).toBe(0);
     for (const target of [
@@ -182,13 +191,15 @@ it("actual CLI rejects non-registry overrides even with a complete justification
       registerPath,
       register.replace("pnpm.overrides.react", "pnpm.patchedDependencies.react@19.3.0"),
     );
-    const setPatch = (path: string) => { writeFileSync(
+    const setPatch = (path: string) => {
+      writeFileSync(
         packagePath,
         original.replace(
           /^\{/u,
           `{"pnpm":{"patchedDependencies":{"react@19.3.0":${JSON.stringify(path)}}},`,
         ),
-      ); };
+      );
+    };
     writeFileSync(resolve(directory, "reviewed.patch"), "reviewed fixture patch\n");
     setPatch("reviewed.patch");
     expect(run(directory).status).toBe(0);

@@ -1098,3 +1098,7 @@ targets fail even with a justification. Patch files must be bounded regular file
 inside the workspace. Supported inline Tauri tables place version first and may
 then set features/default-features; alternative dependency sources and unknown
 fields fail rather than being interpreted as proof of a compatible registry pin.
+
+All supported Tauri declarations across workspace, package and target dependency
+sections must agree. Quoted keys, aliases and dependency subtables are unsupported
+and fail closed rather than hiding a second declaration from the minor guard.

@@ -26,7 +26,9 @@ export function checkDependencies(root: string, today: string) {
   const manifests = readManifests(root, catalog.packages);
   validatePatchPaths(root, catalog);
   for (const item of manifests) {
-    if (item.pnpm) {validatePatchPaths(root, item.pnpm);}
+    if (item.pnpm) {
+      validatePatchPaths(root, item.pnpm);
+    }
   }
   const register = parseRegister(readWorkspaceText(root, "docs/dependencies.md"));
   const cargo = ["Cargo.toml", "apps/desktop/src-tauri/Cargo.toml"].filter((path) =>

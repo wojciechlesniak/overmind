@@ -238,6 +238,11 @@ it.each([
   '[dependencies]\ntauri = "2.12.3"\n',
   '[dependencies]\ntauri = { version = "2.12.3" }\n',
   '[dependencies]\nother = "1.0.0"\n',
+  '[workspace.dependencies]\ntauri = "=2.12.3"\n[dependencies]\ntauri = "=2.13.0"\n',
+  '[dependencies]\ntauri = "=2.12.3"\n[target.\'cfg(unix)\'.dependencies]\n  tauri = "=2.13.0"\n',
+  '[dependencies]\ntauri = "=2.12.3"\n[dependencies.tauri]\nversion = "=2.13.0"\n',
+  '[dependencies]\ntauri = "=2.12.3"\nalias = { package = "tauri", version = "=2.13.0" }\n',
+
   '[dependencies]\ntauri = { version = "^2.13", fake-version = "=2.12.3" }\n',
   '[dependencies]\ntauri = { fake-version = "=2.12.3" }\n',
   '[dependencies]\ntauri = { version = "=2.12.3", git = "https://example.invalid/repo" }\n',
