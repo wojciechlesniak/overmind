@@ -15,7 +15,7 @@ Use Node 22.23.3 and pnpm 12.11.2 from the project toolchain, then:
 pnpm install --frozen-lockfile
 node spike/prepare.mjs
 pnpm exec tsx spike/probe.ts
-pnpm exec vitest run spike/adapter.test.ts
+pnpm exec vitest run --config spike/vitest.config.ts
 pnpm exec tsx spike/build.mjs --candidate A
 pnpm exec tsx spike/symbolicate.mjs 0
 python3 spike/platform-probe.py
