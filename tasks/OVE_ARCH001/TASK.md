@@ -6,7 +6,7 @@ kind: docs
 size: M
 priority: P0
 mvp: true
-status: in_progress
+status: in_review
 depends_on: [OVE_SETUP001]
 soft_depends_on: []
 provides: ["doc:architecture", "lib:boundaries-manifest"]
@@ -120,13 +120,13 @@ The architecture document is the home of the trust boundaries: Owner, desktop UI
 
 ## 11. Acceptance criteria
 
-- [ ] `ARCHITECTURE.md` exists with all 14 sections in the specified order and every package of PLAN section 1 appears in the catalogue.
-- [ ] The dependency matrix in the Markdown and `boundaries.json` agree cell by cell (a reviewer can diff them; ARCH002 later automates it).
+- [x] `ARCHITECTURE.md` exists with all 14 sections in the specified order and every package of PLAN section 1 appears in the catalogue.
+- [x] The dependency matrix in the Markdown and `boundaries.json` agree cell by cell (a reviewer can diff them; ARCH002 later automates it).
 - [ ] The three sequence diagrams render in a Mermaid preview without errors.
-- [ ] Every enforceable rule names the task that enforces it.
-- [ ] Trust boundary identifiers (TB-*) are defined and listed.
-- [ ] The document contains the "Rules checklist" (at most 20 lines).
-- [ ] No statement contradicts CONVENTIONS sections 5-7 (or a proposal file exists).
+- [x] Every enforceable rule names the task that enforces it.
+- [x] Trust boundary identifiers (TB-*) are defined and listed.
+- [x] The document contains the "Rules checklist" (at most 20 lines).
+- [x] No statement contradicts CONVENTIONS sections 5-7 (or a proposal file exists).
 
 ## 12. Test plan
 
@@ -142,3 +142,30 @@ Blocks ARCH002, ARCH006, ARCH012, SEC001 (soft). Everything else can start in pa
 - ASSUMPTION: UI to engine transport is forwarded by the Rust shell (webview cannot open Unix sockets); ENGINE finalises the mechanism, the `Transport` seam in `api-client` stays.
 - ASSUMPTION: `application` exposes two entry points, `@overmind/application` and `@overmind/application/ports`, via the `exports` map.
 - Open: whether `workflow-runtime` may import `adapters/*` types for checkpoints: default NO, it uses ports only.
+
+
+### Implementation evidence (2026-10-16)
+
+The architecture document is the target, not a claim that the future product
+architecture is implemented. It has 14 ordered sections, a complete 24-entry
+catalogue (17 existing npm workspaces, five planned packages, native shell and
+Skill content), 12 stable trust-boundary IDs and an 18-rule review checklist.
+The version-1 JSON uses only the specified keys. Four Mermaid sources exactly
+match their embedded blocks.
+
+Real Node JSON.parse passed. A temporary independent validator checked every
+required task-matrix cell against Markdown and every one of the 140 projection
+cells against JSON/overlays, all adapter policies, package schema/reference
+integrity, catalogue/path coverage, source/block identity, section/line counts,
+all local/task links and all 17 actual workspace paths. This validates data and
+document consistency, not ARCH002's future enforcement or product isolation.
+Prettier was invoked explicitly for the owned documents because the generic
+repository config ignores docs. No code, package manifest, dependency, root
+aggregator, live setting or user research file was changed.
+
+mmdc and markdownlint are not installed. No extra dependency was installed to
+pretend those commands ran. Real Mermaid rendering is assigned to the parent
+through the published GitHub Markdown preview; its acceptance checkbox remains
+open until actual rendering is verified. Independent Standards/Spec review and
+exact-head hosted CI remain required before merge. Conflicts and proposed owner
+alignment are recorded in tasks/_proposals/OVE_ARCH001-conventions-fix.md.

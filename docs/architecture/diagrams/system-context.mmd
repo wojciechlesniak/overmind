@@ -1,0 +1,54 @@
+flowchart TB
+  Owner["Owner on the Mac"]
+  Phone["Owner on the phone"]
+  Telegram["Telegram cloud - TB-TG"]
+  Providers["CLI vendor services - TB-PROVIDER"]
+  Content["Untrusted repos, pages and Skills - TB-CONTENT"]
+  Supply["Pinned build and dependency chain - TB-SUPPLY"]
+  subgraph Host["Owner's Mac"]
+    subgraph Desktop["Desktop process - TB-UI"]
+      Webview["React webview"]
+      Rust["Tauri Rust shell"]
+    end
+    subgraph Engine["Background engine process - TB-ENG"]
+      Gateway["Gateway pipeline - TB-GW"]
+      Usecases["Chief and application use cases"]
+      Runtime["Workflow runtime"]
+      Adapters["Injected ports and adapters"]
+    end
+    subgraph Sandbox["Apple container isolation - TB-SBX"]
+      Herdr["herdr terminals - TB-HERDR"]
+      CLIs["Official claude and codex CLIs"]
+      Volumes["Isolated CLI credential volumes"]
+      Skill["overmind Skill helper"]
+    end
+    Files["Canonical Allowed Directory mounts - TB-FS"]
+    DB["SQLite, events and checkpoints"]
+    Keychain["macOS Keychain - TB-KC"]
+    Ollama["Ollama process"]
+    Egress["Host allowlist egress proxy - TB-NET"]
+  end
+  Owner --> Webview
+  Phone --> Telegram
+  Webview -->|"api-client / injected Transport"| Rust
+  Rust -->|"owner-only Unix socket"| Gateway
+  Telegram -->|"Telegram adapter via api-client / in-process Transport"| Gateway
+  Skill -->|"scoped agent relay; same pipeline"| Gateway
+  Gateway --> Usecases
+  Usecases --> Runtime
+  Usecases --> Adapters
+  Runtime -->|"ports"| Adapters
+  Adapters -->|"Sandbox port"| Sandbox
+  Adapters -->|"TerminalLayer port"| Herdr
+  Herdr --> CLIs
+  CLIs --> Volumes
+  CLIs --> Skill
+  Sandbox -->|"only approved mounts"| Files
+  CLIs --> Egress
+  Egress --> Providers
+  Adapters -->|"provider port"| Ollama
+  Adapters --> DB
+  Adapters -->|"SecretRef; short-lived Secret"| Keychain
+  Content -.->|"data, never authority"| Usecases
+  Supply -.-> Rust
+  Supply -.-> Engine
