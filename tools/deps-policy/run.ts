@@ -16,6 +16,7 @@ import {
   readRegistryPolicy,
   readWorkspaceText,
   workspaceFilePath,
+  validatePatchPaths,
 } from "./input.parse-boundary.ts";
 
 export function checkDependencies(root: string, today: string) {
@@ -23,6 +24,10 @@ export function checkDependencies(root: string, today: string) {
   readRegistryPolicy(root);
   const catalog = readCatalog(root);
   const manifests = readManifests(root, catalog.packages);
+  validatePatchPaths(root, catalog);
+  for (const item of manifests) {
+    if (item.pnpm) {validatePatchPaths(root, item.pnpm);}
+  }
   const register = parseRegister(readWorkspaceText(root, "docs/dependencies.md"));
   const cargo = ["Cargo.toml", "apps/desktop/src-tauri/Cargo.toml"].filter((path) =>
     existsSync(resolve(root, path)),

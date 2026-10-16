@@ -1092,3 +1092,9 @@ execution. Global user settings and command-line overrides are outside this
 repository-file checker and remain subject to the controlled CI install process.
 The supported Cargo Tauri declarations require =MAJOR.MINOR.PATCH, including inline
 tables: a bare Cargo version is a caret range and cannot prove a matching minor.
+
+Overrides support exact registry semver targets only; URL, git, file, alias and range
+targets fail even with a justification. Patch files must be bounded regular files
+inside the workspace. Supported inline Tauri tables place version first and may
+then set features/default-features; alternative dependency sources and unknown
+fields fail rather than being interpreted as proof of a compatible registry pin.

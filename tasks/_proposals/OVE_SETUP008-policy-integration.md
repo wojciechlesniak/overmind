@@ -46,3 +46,9 @@ bypasses, and Cargo Tauri pins require the exact = prefix. Real CLI negative cas
 also cover package.json pnpm overrides, npmrc bypasses and implicit pnpm hook files;
 the fixture hook is never executed. No actual install/build permission or age
 exception was added.
+
+Follow-up review also closed alternate dependency-source overrides and patch-path
+escapes, with a complete justification present in each real CLI regression.
+Override targets are exact registry versions; patches are bounded local regular
+files without symlink components. The restricted Cargo inline-table parser checks
+the full allowed form and cannot confuse fake-version with the actual version key.

@@ -238,6 +238,9 @@ it.each([
   '[dependencies]\ntauri = "2.12.3"\n',
   '[dependencies]\ntauri = { version = "2.12.3" }\n',
   '[dependencies]\nother = "1.0.0"\n',
+  '[dependencies]\ntauri = { version = "^2.13", fake-version = "=2.12.3" }\n',
+  '[dependencies]\ntauri = { fake-version = "=2.12.3" }\n',
+  '[dependencies]\ntauri = { version = "=2.12.3", git = "https://example.invalid/repo" }\n',
 ])("fails closed on unsupported Cargo pin forms %#", (text) => {
   expect(() => parseTauriVersion(text)).toThrow();
 });

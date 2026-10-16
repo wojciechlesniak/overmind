@@ -1,6 +1,7 @@
 import { existsSync, lstatSync, readFileSync, readdirSync, realpathSync } from "node:fs";
 import { isAbsolute, relative, resolve, sep } from "node:path";
 import { parse } from "yaml";
+import { valid } from "semver";
 import { z } from "zod";
 import { readBinaryLock } from "../pinned-bin/lock.parse-boundary.ts";
 const packageName = z.string().regex(/^(?:@[a-z0-9][a-z0-9._-]*\/)?[a-z0-9][a-z0-9._-]*$/u);
@@ -8,7 +9,14 @@ const specs = z.record(packageName, z.string().min(1).max(1024)).default({});
 const policyMap = z.record(z.string().min(1).max(200), z.string().min(1).max(1024)).default({});
 const adjustments = z
   .object({
-    overrides: policyMap,
+    overrides: z
+      .record(
+        z.string().min(1).max(200),
+        z
+          .string()
+          .refine((value) => valid(value) === value, "Overrides require exact registry versions"),
+      )
+      .default({}),
     patchedDependencies: policyMap,
     onlyBuiltDependencies: z.array(packageName).default([]),
   })
@@ -148,6 +156,21 @@ export function justificationKeys(
     ...configuration.onlyBuiltDependencies.map((name) => `${prefix}onlyBuiltDependencies.${name}`),
   ];
 }
+export function validatePatchPaths(root: string, configuration: z.infer<typeof adjustments>): void {
+  for (const path of Object.values(configuration.patchedDependencies)) {
+    if (isAbsolute(path) || path.split(/[\\/]/u).includes("..")) {
+      throw new Error("Dependency patches must be reviewed workspace files");
+    }
+    let current = root;
+    for (const part of path.split(/[\\/]/u)) {
+      current = resolve(current, part);
+      if (lstatSync(current).isSymbolicLink()) {
+        throw new Error("Dependency patches cannot use symlinks");
+      }
+    }
+    workspaceFilePath(root, path);
+  }
+}
 export function parseTauriVersion(source: string): string | undefined {
   const sections = source.split(/^\[/mu);
   for (const section of sections) {
@@ -158,14 +181,17 @@ export function parseTauriVersion(source: string): string | undefined {
     if (!line) {
       continue;
     }
+    // Only these complete, registry-only TOML forms are supported. Requiring the
+    // actual first version field avoids matching suffix keys or nested strings.
     const version =
-      /^(?:tauri\s*=\s*)(?:"=([0-9]+\.[0-9]+\.[0-9]+)"|\{[^\n{}]*\bversion\s*=\s*"=([0-9]+\.[0-9]+\.[0-9]+)"[^\n{}]*\})\s*(?:#.*)?$/u.exec(
+      /^tauri\s*=\s*"=([0-9]+\.[0-9]+\.[0-9]+)"\s*(?:#.*)?$/u.exec(line) ??
+      /^tauri\s*=\s*\{\s*version\s*=\s*"=([0-9]+\.[0-9]+\.[0-9]+)"(?:\s*,\s*(?:features\s*=\s*\[\s*(?:"[a-zA-Z0-9_/-]+"(?:\s*,\s*"[a-zA-Z0-9_/-]+")*)?\s*\]|default-features\s*=\s*(?:true|false)))*\s*\}\s*(?:#.*)?$/u.exec(
         line,
       );
     if (!version) {
       throw new Error("Tauri dependency requires a supported exact pin");
     }
-    return version[1] ?? version[2];
+    return version[1];
   }
   throw new Error("Cargo manifest has no supported pinned Tauri dependency");
 }

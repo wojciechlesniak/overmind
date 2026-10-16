@@ -148,3 +148,60 @@ it("actual CLI rejects unreviewed build, age, hook and Cargo range bypasses", ()
     rmSync(directory, { recursive: true, force: true });
   }
 }, 60000);
+
+it("actual CLI rejects non-registry overrides even with a complete justification", () => {
+  const directory = fixture();
+  try {
+    const packagePath = resolve(directory, "package.json");
+    const original = readFileSync(packagePath, "utf8");
+    const registerPath = resolve(directory, "docs/dependencies.md");
+    const register = readFileSync(registerPath, "utf8").replace(
+      "### react\n",
+      "### react\n\n- Justifies: pnpm.overrides.react\n",
+    );
+    writeFileSync(registerPath, register);
+    const setOverride = (target: string) => { writeFileSync(
+        packagePath,
+        original.replace(/^\{/u, `{"pnpm":{"overrides":{"react":${JSON.stringify(target)}}},`),
+      ); };
+    setOverride("19.3.0");
+    expect(run(directory).status).toBe(0);
+    for (const target of [
+      "https://example.invalid/react.tgz",
+      "git+https://example.invalid/react",
+      "file:../outside",
+      "npm:alternate@19.3.0",
+      "^19.3.0",
+    ]) {
+      setOverride(target);
+      const invalid = run(directory);
+      expect(invalid.status, target).toBe(1);
+      expect(invalid.stderr).toContain("Overrides require exact registry versions");
+    }
+    writeFileSync(
+      registerPath,
+      register.replace("pnpm.overrides.react", "pnpm.patchedDependencies.react@19.3.0"),
+    );
+    const setPatch = (path: string) => { writeFileSync(
+        packagePath,
+        original.replace(
+          /^\{/u,
+          `{"pnpm":{"patchedDependencies":{"react@19.3.0":${JSON.stringify(path)}}},`,
+        ),
+      ); };
+    writeFileSync(resolve(directory, "reviewed.patch"), "reviewed fixture patch\n");
+    setPatch("reviewed.patch");
+    expect(run(directory).status).toBe(0);
+    setPatch("../outside.patch");
+    const patch = run(directory);
+    expect(patch.status).toBe(1);
+    expect(patch.stderr).toContain("Dependency patches must be reviewed workspace files");
+    symlinkSync("reviewed.patch", resolve(directory, "linked.patch"));
+    setPatch("linked.patch");
+    const linked = run(directory);
+    expect(linked.status).toBe(1);
+    expect(linked.stderr).toContain("Dependency patches cannot use symlinks");
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+}, 60000);
