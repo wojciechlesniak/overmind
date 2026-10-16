@@ -1,0 +1,7 @@
+(node:8522) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `overmind-engine --trace-warnings ...` to show where the warning was created)
+Error: OVE011_SOURCE_MAP_SENTINEL
+    at probeMappedFailure (/private/tmp/overmind-OVE-011-spike/spike/entry.ts:15:9)
+    at main (/private/tmp/overmind-OVE-011-spike/spike/entry.ts:32:5)
+    at <anonymous> (/private/tmp/overmind-OVE-011-spike/spike/entry.ts:100:1)
+    at embedderRunCjs (node:internal/main/embedding:89:10)

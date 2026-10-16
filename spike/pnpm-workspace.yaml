@@ -1,0 +1,6 @@
+packages:
+  - .
+minimumReleaseAge: 4320
+strictPeerDependencies: true
+allowBuilds: false
+registry: https://registry.npmjs.org/

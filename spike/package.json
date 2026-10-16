@@ -1,0 +1,12 @@
+{
+  "name": "overmind-setup011-probe",
+  "version": "0.0.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "dependencies": {
+    "better-sqlite3": "13.0.3",
+    "esbuild": "0.28.2",
+    "postject": "1.0.0-alpha.6"
+  }
+}

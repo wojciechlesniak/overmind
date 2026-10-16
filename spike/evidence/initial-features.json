@@ -1,0 +1,20 @@
+[
+  {
+    "candidate": "A",
+    "status": 0,
+    "stdout": "{\"driver\":\"node:sqlite\",\"pragmas\":{\"journal_mode\":\"wal\",\"busy_timeout\":5000,\"foreign_keys\":1,\"synchronous\":1},\"fts\":\"pass\",\"insertRows\":100000,\"insertMs\":150.774333,\"rowsPerSecond\":663242.8611042172,\"indexedReadRows\":100,\"readMs\":0.13995899999997619,\"before\":100100,\"backupCount\":100100,\"after\":100900,\"integrity\":\"ok\",\"apiBackup\":100400,\"userVersion\":11,\"jsonValue\":42,\"extension\":\"dlopen(/private/tmp/overmind-OVE-011-spike/spike/dist/noop.dylib.dylib, 0x000A): tried: '/private/tmp/overmind-OVE-011-spike/spike/dist/noop.dylib.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OS/private/tmp/overmind-OVE-011-spike/spike/dist/noop.dylib.dylib' (no such file), '/private/tmp/overmind-OVE-011-spike/spike/dist/noop.dylib.dylib' (\",\"childOutput\":\"child-ok\",\"sqlite\":\"3.51.3\"}\n",
+    "stderr": "(node:6773) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `overmind-engine --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "candidate": "B",
+    "status": 1,
+    "stdout": "",
+    "stderr": "Error: dlopen(/private/tmp/overmind-OVE-011-spike/spike/dist/B/0/Contents/Resources/engine/native/better_sqlite3.node, 0x0001): tried: '/private/tmp/overmind-OVE-011-spike/spike/dist/B/0/Contents/Resources/engine/native/better_sqlite3.node' (code signature in <C87A9325-F748-3E31-91DC-18CFB1217A68> '/private/tmp/overmind-OVE-011-spike/spike/dist/B/0/Contents/Resources/engine/native/better_sqlite3.node' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs), '/System/Volumes/Preboot/Cryptexes/OS/private/tmp/overmind-OVE-011-spike/spike/dist/B/0/Contents/Resources/engine/native/better_sqlite3.node' (no such file), '/private/tmp/overmind-OVE-011-spike/spike/dist/B/0/Contents/Resources/engine/native/better_sqlite3.node' (code signature in <C87A9325-F748-3E31-91DC-18CFB1217A68> '/private/tmp/overmind-OVE-011-spike/spike/dist/B/0/Contents/Resources/engine/native/better_sqlite3.node' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs)\n    at openDatabase (/private/tmp/overmind-OVE-011-spike/spike/dist/B/driver-better.ts:7:11)\n    at features (/private/tmp/overmind-OVE-011-spike/spike/dist/B/features.ts:17:14)\n    at main (/private/tmp/overmind-OVE-011-spike/spike/dist/B/entry.ts:30:72)\n    at <anonymous> (/private/tmp/overmind-OVE-011-spike/spike/dist/B/entry.ts:57:1)\n    at embedderRunCjs (node:internal/main/embedding:89:10)\n"
+  },
+  {
+    "candidate": "C",
+    "status": 0,
+    "stdout": "{\"driver\":\"bun:sqlite\",\"pragmas\":{\"journal_mode\":\"wal\",\"busy_timeout\":5000,\"foreign_keys\":1,\"synchronous\":1},\"fts\":\"pass\",\"insertRows\":100000,\"insertMs\":128.987834,\"rowsPerSecond\":775266.9139323636,\"indexedReadRows\":100,\"readMs\":0.22987499999999272,\"before\":100100,\"backupCount\":100100,\"after\":100700,\"integrity\":\"ok\",\"apiBackup\":\"unavailable\",\"userVersion\":11,\"jsonValue\":42,\"extension\":\"This build of sqlite3 does not support dynamic extension loading\",\"childOutput\":\"child-ok\",\"sqlite\":\"3.51.0\"}\n",
+    "stderr": ""
+  }
+]

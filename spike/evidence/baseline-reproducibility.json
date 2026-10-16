@@ -1,0 +1,10 @@
+{
+  "bundleHash1": "20900b00d7cd33aafc79ed5e9c70c91fff00bad2d86b39f765162fdd38b02d8e",
+  "bundleHash2": "20900b00d7cd33aafc79ed5e9c70c91fff00bad2d86b39f765162fdd38b02d8e",
+  "blobLength1": 2670286,
+  "blobLength2": 2670286,
+  "differentByteOffsets": [66],
+  "header1": "b' \\xdaC\\x01\\x11\\x00\\x00\\x00\\x00<\\x00\\x00\\x00\\x00\\x00\\x00\\x00/private/tmp/overmind-OVE-011-spike/spike/dist/A/1/entry.cjsU\\xbe(\\x00\\x00\\x00\\x00\\x00\"use strict\";\\nv'",
+  "header2": "b' \\xdaC\\x01\\x11\\x00\\x00\\x00\\x00<\\x00\\x00\\x00\\x00\\x00\\x00\\x00/private/tmp/overmind-OVE-011-spike/spike/dist/A/2/entry.cjsU\\xbe(\\x00\\x00\\x00\\x00\\x00\"use strict\";\\nv'",
+  "cause": "SEA embeds the configured main pathname; absolute iteration-specific paths differ. Final experiment will pass relative main/output and run Node in a stable-layout working directory."
+}

@@ -1,0 +1,6 @@
+Error: OVE011_SOURCE_MAP_SENTINEL
+    at probeMappedFailure (spike/dist/C/1/entry.cjs:19914:13)
+    at main (spike/dist/C/1/entry.cjs:19931:5)
+    at <anonymous> (spike/dist/C/1/entry.cjs:19998)
+    at <anonymous> (/$bunfs/root/overmind-engine:2:47)
+    at /$bunfs/root/overmind-engine:19568:29
