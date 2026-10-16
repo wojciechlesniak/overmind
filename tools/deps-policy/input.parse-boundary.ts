@@ -173,36 +173,47 @@ export function validatePatchPaths(root: string, configuration: z.infer<typeof a
 }
 export function parseTauriVersion(source: string): string {
   const versions = new Set<string>();
-  for (const section of source.split(/^\s*\[/mu)) {
-    const [header, ...body] = section.split("\n");
-    if (/\.tauri\]\s*$/u.test(header ?? "")) {
-      throw new Error(
-        "Tauri dependency subtables are unsupported; use an exact inline declaration",
-      );
+  // This is a restrictive declaration guard, not a TOML interpreter. Inspect
+  // every non-comment line so header spelling cannot hide another declaration.
+  for (const line of source
+    .split("\n")
+    .map((item) => item.trim())
+    .filter((item) => !item.startsWith("#"))) {
+    if (line.includes("\\")) {
+      throw new Error("Escaped Cargo syntax is unsupported by the Tauri pin guard");
     }
-    if (
-      !/^(?:.*\.)?(?:dependencies|dev-dependencies|build-dependencies)\]\s*$/u.test(header ?? "")
-    ) {
+    if (/(?:\bpackage|["']package["'])\s*=\s*["']tauri["']/u.test(line)) {
+      throw new Error("Aliased Tauri declarations are unsupported");
+    }
+    if (line.startsWith("[")) {
+      const header = line.replace(/\]\s*(?:#.*)?$/u, "]");
+      if (
+        /\btauri\b/u.test(header) ||
+        /\b(?:dependencies|dev-dependencies|build-dependencies)["']?\s*\./u.test(header)
+      ) {
+        throw new Error("Dependency subtables are unsupported; use exact inline declarations");
+      }
       continue;
     }
-    for (const line of body.map((item) => item.trim()).filter((item) => !item.startsWith("#"))) {
-      if (/\bpackage\s*=\s*["']tauri["']/u.test(line)) {
-        throw new Error("Aliased Tauri declarations are unsupported");
-      }
-      if (!/^(?:tauri|"tauri"|'tauri')\s*=/u.test(line)) {
-        continue;
-      }
-      // The whole supported TOML form must match, including the actual version key.
-      const version =
-        /^tauri\s*=\s*"=([0-9]+\.[0-9]+\.[0-9]+)"\s*(?:#.*)?$/u.exec(line) ??
-        /^tauri\s*=\s*\{\s*version\s*=\s*"=([0-9]+\.[0-9]+\.[0-9]+)"(?:\s*,\s*(?:features\s*=\s*\[\s*(?:"[a-zA-Z0-9_/-]+"(?:\s*,\s*"[a-zA-Z0-9_/-]+")*)?\s*\]|default-features\s*=\s*(?:true|false)))*\s*\}\s*(?:#.*)?$/u.exec(
-          line,
-        );
-      if (!version?.[1]) {
-        throw new Error("Tauri dependency requires a supported exact pin");
-      }
-      versions.add(version[1]);
+    if (/\b(?:dependencies|dev-dependencies|build-dependencies)["']?\s*\./u.test(line)) {
+      throw new Error("Dotted dependency declarations are unsupported");
     }
+    if (/^(?:tauri|"tauri"|'tauri')\s*\./u.test(line)) {
+      throw new Error("Dotted Tauri declarations are unsupported");
+    }
+    if (!/^(?:tauri|"tauri"|'tauri')\s*=/u.test(line)) {
+      continue;
+    }
+    // The whole supported TOML form must match, including the actual version key.
+    const version =
+      /^tauri\s*=\s*"=([0-9]+\.[0-9]+\.[0-9]+)"\s*(?:#.*)?$/u.exec(line) ??
+      /^tauri\s*=\s*\{\s*version\s*=\s*"=([0-9]+\.[0-9]+\.[0-9]+)"(?:\s*,\s*(?:features\s*=\s*\[\s*(?:"[a-zA-Z0-9_/-]+"(?:\s*,\s*"[a-zA-Z0-9_/-]+")*)?\s*\]|default-features\s*=\s*(?:true|false)))*\s*\}\s*(?:#.*)?$/u.exec(
+        line,
+      );
+    if (!version?.[1]) {
+      throw new Error("Tauri dependency requires a supported exact pin");
+    }
+    versions.add(version[1]);
   }
   const [version] = versions;
   if (versions.size !== 1 || !version) {

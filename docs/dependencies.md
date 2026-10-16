@@ -1099,6 +1099,9 @@ inside the workspace. Supported inline Tauri tables place version first and may
 then set features/default-features; alternative dependency sources and unknown
 fields fail rather than being interpreted as proof of a compatible registry pin.
 
-All supported Tauri declarations across workspace, package and target dependency
-sections must agree. Quoted keys, aliases and dependency subtables are unsupported
-and fail closed rather than hiding a second declaration from the minor guard.
+All Tauri declaration lines across the manifest must agree, independently of table
+header formatting/comments. The restrictive declaration guard does not interpret
+TOML: escaped syntax, dotted dependency declarations, aliases and dependency
+subtables are unsupported and fail closed. Supported pins use the unquoted tauri
+key and the exact string/inline-table forms above. A future task needing broader
+Cargo syntax must introduce a reviewed TOML parser rather than extend heuristics.
