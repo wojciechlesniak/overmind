@@ -6,7 +6,7 @@ kind: infra
 size: M
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: [OVE_SETUP001]
 soft_depends_on: [OVE_SETUP006]
 provides: ["lib:dependency-policy", "lib:dependency-register", "lib:renovate-config"]
@@ -153,14 +153,14 @@ Documentation (`docs/dependencies.md`), repository config (`renovate.json`) and 
 
 ## 11. Acceptance criteria
 
-- [ ] `docs/dependencies.md` contains the full matrix with "verified on" date and the upgrade rules; the TypeScript row states 6.0.3 vs 7.0.2 and the reason.
-- [ ] Given a package.json with `"react": "^19"`, then `pnpm check:deps` fails; with `catalog:` it passes.
-- [ ] Given `typescript` 7.0.2 in the catalog, then `check:deps` fails on rule (d).
-- [ ] Given vitest 5.0.4 and @vitest/coverage-v8 5.0.5, then it fails on rule (e).
-- [ ] Given a catalog entry without a register block, then it fails on rule (c).
-- [ ] `renovate.json` validates with `renovate-config-validator` and declares the groups and the `<6.1.0` TypeScript guard.
-- [ ] The lockfile review checklist exists and is referenced from the register.
-- [ ] Every version in the matrix equals the corresponding `catalog:` entry in `pnpm-workspace.yaml` (checked by the tool).
+- [x] `docs/dependencies.md` contains the full matrix with "verified on" date and the upgrade rules; the TypeScript row states 6.0.3 vs 7.0.2 and the reason.
+- [x] Given a package.json with `"react": "^19"`, then `pnpm check:deps` fails; with `catalog:` it passes.
+- [x] Given `typescript` 7.0.2 in the catalog, then `check:deps` fails on rule (d).
+- [x] Given vitest 5.0.4 and @vitest/coverage-v8 5.0.5, then it fails on rule (e).
+- [x] Given a catalog entry without a register block, then it fails on rule (c).
+- [x] `renovate.json` validates with `renovate-config-validator` and declares the groups and the `<6.1.0` TypeScript guard.
+- [x] The lockfile review checklist exists and is referenced from the register.
+- [x] Every version in the matrix equals the corresponding `catalog:` entry in `pnpm-workspace.yaml` (checked by the tool).
 
 ## 12. Test plan
 
@@ -176,3 +176,28 @@ Parallel with SETUP002..007. Hotspots: `docs/dependencies.md` is edited by every
 - ASSUMPTION: pnpm 12 supports `minimumReleaseAge` and `onlyBuiltDependencies`-style allow-lists; if the pinned version names them differently, adapt (see OVE_SETUP001).
 - Open question for the Owner: moving to Node 24 LTS now instead of 22 (22 leaves maintenance in 2027); default stays 22 as requested.
 - Open question: whether gitleaks, syft, actionlint, zizmor, cargo-deny and cargo-audit versions (not on npm) are recorded here; default: yes, pinned at implementation with checksums, and the matrix gets rows for them.
+
+## Implementation evidence (2026-10-16)
+
+- PR: https://github.com/wojciechlesniak/overmind/pull/942; base DEVELOP.
+- Reviewed implementation head: de1d60b727818a22b0bde7a5464e4633c7e18eaa.
+  Independent Standards PASS (0 findings) and Spec PASS (0 findings), compared
+  with baseline788fb4e1f08b0cf26b5b29c296d699a82c47dfb5. Reported configuration,
+  adjustment-source/path and Cargo declaration bypasses were corrected before acceptance.
+- Full local pnpm check passed: 148 unit cases in43files and15 distinct integration
+  cases in6files. The architecture job additionally reruns this tool's4CLI cases.
+  Formatting, lint, typecheck, build, workflow lint, dependency register, installed
+  licenses, production/dev audits, full-history/tree secret scans and SBOM all passed.
+- Hosted exact-source-head CI38883440639, Security38883440435 and Isolation38883440376
+  succeeded. Isolation here is the existing denial of direct untrusted PR execution,
+  not a physical escape-test claim; the approved SETUP006 release deferrals remain.
+- Registry matrix was reverified2026-10-16; ten sampled actual npm view outputs are
+  committed in tools/deps-policy/evidence/npm-view-2026-10-16.json. Retained adopted
+  pins and uninstalled incompatible/denied catalog reserves are explicitly marked.
+- Official Renovate44.155.1 strict repository validator passed with isolated,
+  checksum-verified Node24.21.0 and install scripts disabled. Project Node22 and
+  dependency lockfile are unchanged. No automatic age/license/build exception.
+- Shared integration and supported Cargo declaration grammar are documented in
+  tasks/_proposals/OVE_SETUP008-policy-integration.md and docs/dependencies.md.
+  Final documentation-only completion commit is also required to pass hosted CI
+  at the PR head before the authorized merge; final run links are in the PR.

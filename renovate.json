@@ -1,0 +1,185 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:best-practices", "helpers:pinGitHubActionDigestsToSemver"],
+  "rangeStrategy": "pin",
+  "minimumReleaseAge": "3 days",
+  "minimumReleaseAgeBehaviour": "timestamp-required",
+  "prConcurrentLimit": 5,
+  "automerge": false,
+  "platformAutomerge": false,
+  "dependencyDashboard": true,
+  "timezone": "UTC",
+  "schedule": ["before 6am on monday"],
+  "labels": ["dependencies"],
+  "nvm": {
+    "enabled": false
+  },
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "automerge": false,
+    "minimumReleaseAge": "3 days",
+    "labels": ["dependencies", "security"],
+    "prCreation": "immediate"
+  },
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "typescript",
+        "typescript-eslint",
+        "@eslint/js",
+        "prettier",
+        "oxlint",
+        "/^eslint(?:-|$)/"
+      ],
+      "groupName": "typescript-toolchain"
+    },
+    {
+      "matchPackageNames": ["react", "react-dom", "/^@types/react(?:-dom)?$/"],
+      "groupName": "react"
+    },
+    {
+      "matchPackageNames": ["/^@tauri-apps\\//", "/^tauri(?:-|$)/"],
+      "groupName": "tauri"
+    },
+    {
+      "matchPackageNames": ["storybook", "/^@storybook\\//"],
+      "groupName": "storybook"
+    },
+    {
+      "matchPackageNames": ["vitest", "@vitest/coverage-v8"],
+      "groupName": "vitest"
+    },
+    {
+      "matchPackageNames": ["vite", "/^@vitejs\\//"],
+      "groupName": "vite"
+    },
+    {
+      "matchPackageNames": ["playwright", "@playwright/test"],
+      "groupName": "playwright"
+    },
+    {
+      "matchPackageNames": ["@commitlint/cli", "@commitlint/config-conventional"],
+      "groupName": "commitlint"
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions"
+    },
+    {
+      "matchDatasources": ["rust"],
+      "groupName": "rust-toolchain",
+      "dependencyDashboardApproval": true
+    },
+    {
+      "matchPackageNames": ["typescript"],
+      "allowedVersions": "<6.1.0"
+    },
+    {
+      "matchPackageNames": ["node"],
+      "allowedVersions": ">=22 <23",
+      "groupName": "node-runtime"
+    },
+    {
+      "matchPackageNames": ["vite"],
+      "allowedVersions": ">=7.3.0 <8.0.0"
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true,
+      "addLabels": ["dependencies-major"]
+    },
+    {
+      "matchManagers": ["custom.regex"],
+      "matchFileNames": [
+        "tools/pinned-bin/lock.json",
+        "tools/secret-scan/*.lock.json",
+        "vendor/herdr/VERSION"
+      ],
+      "dependencyDashboardApproval": true,
+      "dependencyDashboardCategory": "Manual binary checksum updates",
+      "description": "Dashboard issue notices only; leave unchecked and update version, both assets and publisher checksums by hand."
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^\\.nvmrc$/"],
+      "matchStrings": ["^(?<currentValue>\\d+\\.\\d+\\.\\d+)\\s*$"],
+      "depNameTemplate": "node",
+      "datasourceTemplate": "node",
+      "versioningTemplate": "node"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)rust-toolchain\\.toml$/"],
+      "matchStrings": ["channel\\s*=\\s*\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\""],
+      "depNameTemplate": "rust",
+      "datasourceTemplate": "rust"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^vendor/herdr/VERSION$/"],
+      "matchStrings": ["^(?<currentValue>\\d+\\.\\d+\\.\\d+)\\s*$"],
+      "depNameTemplate": "herdrdev/herdr",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v?(?<version>\\d+\\.\\d+\\.\\d+)$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^tools/pinned-bin/lock\\.json$/"],
+      "matchStrings": [
+        "\"name\"\\s*:\\s*\"actionlint\"\\s*,\\s*\"version\"\\s*:\\s*\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\""
+      ],
+      "depNameTemplate": "rhysd/actionlint",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v?(?<version>\\d+\\.\\d+\\.\\d+)$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^tools/pinned-bin/lock\\.json$/"],
+      "matchStrings": [
+        "\"name\"\\s*:\\s*\"zizmor\"\\s*,\\s*\"version\"\\s*:\\s*\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\""
+      ],
+      "depNameTemplate": "zizmorcore/zizmor",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v?(?<version>\\d+\\.\\d+\\.\\d+)$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^tools/pinned-bin/lock\\.json$/"],
+      "matchStrings": [
+        "\"name\"\\s*:\\s*\"cargo-deny\"\\s*,\\s*\"version\"\\s*:\\s*\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\""
+      ],
+      "depNameTemplate": "EmbarkStudios/cargo-deny",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v?(?<version>\\d+\\.\\d+\\.\\d+)$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^tools/pinned-bin/lock\\.json$/"],
+      "matchStrings": [
+        "\"name\"\\s*:\\s*\"cargo-audit\"\\s*,\\s*\"version\"\\s*:\\s*\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\""
+      ],
+      "depNameTemplate": "rustsec/rustsec",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^cargo-audit/v(?<version>\\d+\\.\\d+\\.\\d+)$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^tools/secret-scan/gitleaks\\.lock\\.json$/"],
+      "matchStrings": ["\"version\"\\s*:\\s*\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\""],
+      "depNameTemplate": "gitleaks/gitleaks",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v?(?<version>\\d+\\.\\d+\\.\\d+)$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^tools/secret-scan/syft\\.lock\\.json$/"],
+      "matchStrings": ["\"version\"\\s*:\\s*\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\""],
+      "depNameTemplate": "anchore/syft",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v?(?<version>\\d+\\.\\d+\\.\\d+)$"
+    }
+  ],
+  "ignoreScripts": true
+}

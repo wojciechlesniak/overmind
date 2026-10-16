@@ -6,7 +6,7 @@ if (pr) {
     encoding: "utf8",
   }).split("\0");
   const protectedFiles = files.filter((file) =>
-    /^(?:lefthook(?:-secrets)?\.yml|commitlint\.config\.mjs|eslint\.config[^/]*(?:\/.*)?|\.oxlintrc\.json|vitest(?:\.shared|\.ci\.config)\.ts|\.github\/actionlint\.yaml|\.github\/workflows\/.*|\.github\/actions\/.*|deny\.toml|\.gitleaks\.toml|tools\/secret-scan\/safe-sarif\.tmpl|tools\/secret-scan\/(?:policy|gitleaks\.lock|syft\.lock|default-config\.lock)\.json|tools\/pinned-bin\/lock\.json|tools\/check-licenses\/(?:allowlist|exceptions)\.json|tools\/commitlint\/.*)$/u.test(
+    /^(?:lefthook(?:-secrets)?\.yml|commitlint\.config\.mjs|eslint\.config[^/]*(?:\/.*)?|\.oxlintrc\.json|vitest(?:\.shared|\.ci\.config)\.ts|\.github\/actionlint\.yaml|\.github\/workflows\/.*|\.github\/actions\/.*|renovate\.json|docs\/dependencies\.md|deny\.toml|\.gitleaks\.toml|tools\/secret-scan\/safe-sarif\.tmpl|tools\/secret-scan\/(?:policy|gitleaks\.lock|syft\.lock|default-config\.lock)\.json|tools\/pinned-bin\/lock\.json|tools\/check-licenses\/(?:allowlist|exceptions)\.json|tools\/commitlint\/.*)$/u.test(
       file,
     ),
   );
