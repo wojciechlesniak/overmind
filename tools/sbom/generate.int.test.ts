@@ -62,6 +62,28 @@ it("real Syft catalogs only lockfiles, ignores forged installed packages and val
     git(["commit", "--quiet", "-m", "chore: Rust lockfile fixture"]);
     const withRust = validateSBOM(readSBOM(await generateSBOM(fixture, { gitEnv: env })), true);
     expect(withRust.components.some((item) => item.purl.startsWith("pkg:cargo/tauri@"))).toBe(true);
+    const localLock = resolve(fixture, "apps/desktop/src-tauri/Cargo.lock");
+    writeFileSync(
+      localLock,
+      readFileSync(localLock, "utf8") +
+        '\n[[package]]\nname = "overmind-desktop"\nversion = "0.0.0"\ndependencies = [\n "tauri",\n]\n',
+    );
+    git(["add", "apps/desktop/src-tauri/Cargo.lock"]);
+    git(["commit", "--quiet", "-m", "chore: local Rust workspace fixture"]);
+    const localHead = execFileSync("git", ["rev-parse", "HEAD"], {
+      cwd: fixture,
+      env,
+      encoding: "utf8",
+    }).trim();
+    const localDocument = validateSBOM(
+      readSBOM(await generateSBOM(fixture, { gitEnv: env })),
+      true,
+    );
+    const desktop = localDocument.components.find((item) => item.name === "overmind-desktop");
+    expect(desktop?.purl).toContain(`%40${localHead}#apps/desktop/src-tauri`);
+    expect(localDocument.components.some((item) => item.purl.startsWith("pkg:cargo/tauri@"))).toBe(
+      true,
+    );
     const cargoPath = resolve(fixture, "apps/desktop/src-tauri/Cargo.lock");
     const cargoBytes = readFileSync(cargoPath);
     rmSync(cargoPath);

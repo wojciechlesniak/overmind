@@ -16,7 +16,7 @@ import { dirname, relative, resolve, sep } from "node:path";
 import { randomUUID } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { installSecurityTool } from "../secret-scan/install.ts";
-import { readSBOM } from "./input.parse-boundary.ts";
+import { desktopWorkspaceIdentity, readSBOM } from "./input.parse-boundary.ts";
 import { completeLicenseEvidence, validateSBOM } from "./validate.ts";
 
 function lockfile(root: string, path: string) {
@@ -133,7 +133,14 @@ export async function generateSBOM(
     if (result.error || result.status !== 0) {
       throw new Error("SBOM generator failed or is unavailable");
     }
-    const document = validateSBOM(completeLicenseEvidence(readSBOM(raw)), paths.length > 1);
+    const desktopLock = "apps/desktop/src-tauri/Cargo.lock";
+    const workspace = paths.includes(desktopLock)
+      ? desktopWorkspaceIdentity(readFileSync(resolve(snapshot, desktopLock), "utf8"), sha)
+      : undefined;
+    const document = validateSBOM(
+      completeLicenseEvidence(readSBOM(raw, workspace)),
+      paths.length > 1,
+    );
     const directory = resolve(root, "sbom");
     if (
       existsSync(directory) &&

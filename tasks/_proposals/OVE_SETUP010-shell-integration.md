@@ -61,3 +61,12 @@ The policy guard also rejects alternate and platform-specific Tauri configs.
 Tauri merges these after reading the canonical JSON; accepting an unchecked macOS
 override would let it replace the pinned CSP/window after the base-file check.
 Negative fixtures cover JSON, JSON5 and TOML override names.
+
+The first real Cargo.lock exposed a SETUP007 integration gap: pinned Syft omits
+PURL for local, unpublished workspace crates. SBOM generation now identifies only
+`overmind-desktop` from the byte-verified committed Cargo.lock's strict local stanza
+and matching cataloger/location/version evidence. Its Cargo PURL includes an explicit
+VCS URL with the exact source commit and native directory subpath. The general schema
+still requires PURL on every component; foreign/mismatched/malformed identities fail.
+No license is inferred or approved by this identity normalization. Real Syft tests
+cover the local package and preserve all registry dependency identity checks.

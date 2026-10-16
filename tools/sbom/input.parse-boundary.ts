@@ -27,14 +27,77 @@ const document = z
   })
   .loose();
 export type SBOM = z.infer<typeof document>;
-export function parseSBOM(raw: unknown): SBOM {
-  return document.parse(raw);
+export interface WorkspaceIdentity {
+  version: string;
+  sha: string;
 }
-export function readSBOM(path: string): SBOM {
+export function desktopWorkspaceIdentity(lock: string, sha: string): WorkspaceIdentity | undefined {
+  if (!/^[a-f0-9]{40}$/u.test(sha)) {
+    throw new Error("Invalid workspace source commit");
+  }
+  const sections = lock
+    .split(/^\[\[package\]\]$/mu)
+    .filter((part) => /^name = "overmind-desktop"$/mu.test(part));
+  if (!sections.length) {
+    return undefined;
+  }
+  // Accept only Cargo's generated local stanza; registry/git entries and broader
+  // TOML syntax are not guessed into a first-party identity.
+  const stanza =
+    /^\s*name = "overmind-desktop"\nversion = "(\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.+-]+)?)"\n(?:dependencies = \[\n(?: "[A-Za-z0-9_. +-]+",\n)*\]\n)?\s*$/u;
+  const version = sections.length === 1 ? stanza.exec(sections[0] ?? "")?.[1] : undefined;
+  if (!version) {
+    throw new Error("Unsupported desktop workspace lockfile identity");
+  }
+  return { version, sha };
+}
+function identifyWorkspace(raw: unknown, workspace: WorkspaceIdentity): unknown {
+  const input = z
+    .object({ components: z.array(z.unknown()) })
+    .loose()
+    .parse(raw);
+  const local = z
+    .object({
+      name: z.literal("overmind-desktop"),
+      version: z.literal(workspace.version),
+      purl: z.undefined().optional(),
+      properties: z.array(property),
+    })
+    .loose();
+  return {
+    ...input,
+    components: input.components.map((value) => {
+      const result = local.safeParse(value);
+      if (!result.success) {
+        return value;
+      }
+      const item = result.data;
+      const has = (name: string, value: string) =>
+        item.properties.some((entry) => entry.name === name && entry.value === value);
+      if (
+        !has("syft:package:foundBy", "rust-cargo-lock-cataloger") ||
+        !has("syft:package:metadataType", "rust-cargo-lock-entry") ||
+        !has("syft:location:0:path", "/apps/desktop/src-tauri/Cargo.lock")
+      ) {
+        return value;
+      }
+      const source = `git+https://github.com/wojciechlesniak/overmind@${workspace.sha}`;
+      return {
+        ...item,
+        purl: `pkg:cargo/overmind-desktop@${workspace.version}?vcs_url=${encodeURIComponent(source)}#apps/desktop/src-tauri`,
+        properties: [...item.properties, { name: "overmind:workspace-source", value: source }],
+      };
+    }),
+  };
+}
+export function parseSBOM(raw: unknown, workspace?: WorkspaceIdentity): SBOM {
+  return document.parse(workspace ? identifyWorkspace(raw, workspace) : raw);
+}
+export function readSBOM(path: string, workspace?: WorkspaceIdentity): SBOM {
   const file = lstatSync(path);
   if (!file.isFile() || file.size > 64 * 1024 * 1024) {
     throw new Error("SBOM must be a bounded regular file");
   }
   const raw: unknown = JSON.parse(readFileSync(path, "utf8"));
-  return parseSBOM(raw);
+  return parseSBOM(raw, workspace);
 }
