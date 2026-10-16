@@ -6,7 +6,7 @@ kind: docs
 size: S
 priority: P0
 mvp: true
-status: todo
+status: in_progress
 depends_on: [OVE_SETUP001]
 soft_depends_on: [OVE_SETUP013, OVE_SETUP022, OVE_OSS002]
 provides: ["lib:agent-instructions"]
