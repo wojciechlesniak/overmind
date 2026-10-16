@@ -238,6 +238,11 @@ it.each([
   '[dependencies]\ntauri = "2.12.3"\n',
   '[dependencies]\ntauri = { version = "2.12.3" }\n',
   '[dependencies]\nother = "1.0.0"\n',
+  'dependencies = { tauri = "=2.13.0" }\n[workspace.dependencies]\ntauri = "=2.12.3"\n',
+  '[dependencies]\ntauri = "=2.12.3"\n[target.\'cfg(windows)\']\ndependencies = { tauri = "=2.13.0" }\n',
+  '\'dependencies\' = { "tauri" = "=2.13.0" }\n[workspace.dependencies]\ntauri = "=2.12.3"\n',
+  '[dependencies]\ntauri = "=2.12.3"\nother = { package = """tauri""", version = "=2.13.0" }\n',
+
   '[workspace.dependencies]\ntauri = "=2.12.3"\n[dependencies]\ntauri.version = "=2.13.0"\n',
   '[dependencies]\ntauri = "=2.12.3"\nother = { "package" = "tauri", version = "=2.13.0" }\n',
 

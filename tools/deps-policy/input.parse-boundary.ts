@@ -182,8 +182,8 @@ export function parseTauriVersion(source: string): string {
     if (line.includes("\\")) {
       throw new Error("Escaped Cargo syntax is unsupported by the Tauri pin guard");
     }
-    if (/(?:\bpackage|["']package["'])\s*=\s*["']tauri["']/u.test(line)) {
-      throw new Error("Aliased Tauri declarations are unsupported");
+    if (/(?:\bpackage|["']package["'])\s*=/u.test(line)) {
+      throw new Error("Dependency package aliases are unsupported by the Tauri pin guard");
     }
     if (line.startsWith("[")) {
       const header = line.replace(/\]\s*(?:#.*)?$/u, "]");
@@ -194,6 +194,9 @@ export function parseTauriVersion(source: string): string {
         throw new Error("Dependency subtables are unsupported; use exact inline declarations");
       }
       continue;
+    }
+    if (/\b(?:dependencies|dev-dependencies|build-dependencies)["']?\s*=/u.test(line)) {
+      throw new Error("Inline dependency containers are unsupported");
     }
     if (/\b(?:dependencies|dev-dependencies|build-dependencies)["']?\s*\./u.test(line)) {
       throw new Error("Dotted dependency declarations are unsupported");
