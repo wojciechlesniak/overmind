@@ -6,7 +6,7 @@ kind: docs
 size: S
 priority: P0
 mvp: true
-status: in_review
+status: done
 depends_on: [OVE_SETUP001]
 soft_depends_on: [OVE_SETUP013, OVE_SETUP022, OVE_OSS002]
 provides: ["lib:agent-instructions"]
@@ -98,6 +98,14 @@ Parallel with everything after OVE_SETUP001. Hotspot: none (short file). When CO
 - Open question: should `.cursor/rules` or other agent-specific files also be generated? Default no; AGENTS.md is the single source.
 
 ### Implementation evidence (2026-10-16)
+
+Independent Standards and Spec reviews both passed atb4483a615df3403cf2f28a7b3f834f3782f191bc,
+rebased on DEVELOP e8a300f. Hosted CI38960409585, Security38960409498 and
+isolation-admission38960409614 passed for that exact head after the required
+config-change/hooks-change labels. Normal pre-push typecheck/lint and275 unit
+tests passed after rebase. The final status-only commit requires fresh CI/security
+and incremental review before merge. Superseded label-triggered runs were cancelled;
+their cancellation is not reported as passing evidence.
 
 - AGENTS.md is 126 lines, with the ten required sections followed by Maintenance.
   It preserves the Owner's explicit current-session DEVELOP integration and merge
