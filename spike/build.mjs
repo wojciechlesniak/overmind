@@ -1,4 +1,4 @@
-import { build } from "esbuild";
+import { build } from "./node_modules/.toolchain/node_modules/esbuild/lib/main.js";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { Buffer } from "node:buffer";
@@ -90,6 +90,7 @@ export async function buildCandidate(candidate, iteration = 0) {
       absWorkingDir: root,
       entryPoints: ["spike/entry.ts"],
       bundle: true,
+      nodePaths: [resolve(directory, "node_modules/.toolchain/node_modules")],
       platform: "node",
       target: "node22",
       format: "cjs",
@@ -105,7 +106,7 @@ export async function buildCandidate(candidate, iteration = 0) {
         {
           name: "probe-driver",
           setup(plugin) {
-            plugin.onResolve({ filter: /^#driver$/ }, () => ({
+            plugin.onResolve({ filter: /^\.\/driver-default\.ts$/ }, () => ({
               path: resolve(directory, `driver-${driver}.ts`),
             }));
           },
@@ -170,7 +171,7 @@ export async function buildCandidate(candidate, iteration = 0) {
     execFileSync(
       node,
       [
-        resolve(directory, "node_modules/postject/dist/cli.js"),
+        resolve(directory, "node_modules/.toolchain/node_modules/postject/dist/cli.js"),
         executable,
         "NODE_SEA_BLOB",
         blob,
@@ -188,7 +189,10 @@ export async function buildCandidate(candidate, iteration = 0) {
     const addon = join(base, "Contents/Resources/engine/native/better_sqlite3.node");
     mkdirSync(dirname(addon), { recursive: true });
     copyFileSync(
-      resolve(directory, "node_modules/better-sqlite3/prebuilds/darwin-arm64.node"),
+      resolve(
+        directory,
+        "node_modules/.toolchain/node_modules/better-sqlite3/prebuilds/darwin-arm64.node",
+      ),
       addon,
     );
     execFileSync(

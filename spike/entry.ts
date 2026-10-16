@@ -2,7 +2,7 @@ import { createServer } from "node:net";
 import { chmodSync, mkdirSync, readFileSync, statSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import { homedir } from "node:os";
-import { openDatabase, driver } from "#driver";
+import { openDatabase, driver } from "./driver-default.ts";
 import { configure, features } from "./features.ts";
 
 declare const __VERSION__: string;

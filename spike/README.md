@@ -13,7 +13,7 @@ Use Node 22.23.3 and pnpm 12.11.2 from the project toolchain, then:
 
 ```sh
 pnpm install --frozen-lockfile
-pnpm --dir spike install --ignore-workspace --frozen-lockfile --ignore-scripts
+node spike/prepare.mjs
 pnpm exec tsx spike/probe.ts
 pnpm exec vitest run spike/adapter.test.ts
 pnpm exec tsx spike/build.mjs --candidate A
@@ -29,6 +29,13 @@ LaunchAgents; it never resets privacy permissions or reads existing user files.
 The full benchmark defaults to ten runs per candidate; `OVE011_CANDIDATES=A` and
 `OVE011_RUNS=1` narrow a reproduction. It writes new results into ignored `dist/`
 and does not overwrite retained evidence.
+
+The final retention fix stores the manifest as `package-manifest.json` and
+installs it only under ignored `node_modules/.toolchain`. The product's unchanged
+manifest-inventory test correctly rejects an eighteenth package at `spike/`.
+Driver selection now uses a relative default module and compiler plugins. These
+retention-only changes were checked by hooks/typechecking, not a new ten-run
+experiment; measured binaries came from the earlier source phases above.
 
 ## Recipe phases and limits
 
