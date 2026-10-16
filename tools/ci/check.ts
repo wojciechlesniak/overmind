@@ -6,6 +6,9 @@ import { readManifest } from "../test-support/json.parse-boundary.ts";
 function pnpm(args: string[]) {
   execFileSync("pnpm", args, { stdio: "inherit", shell: false });
 }
+if (existsSync("tools/secret-scan/install.ts")) {
+  pnpm(["exec", "tsx", "tools/secret-scan/install.ts", "all"]);
+}
 for (const command of [
   ["format:check"],
   ["lint"],
@@ -65,6 +68,11 @@ const desktop = readManifest("apps/desktop/package.json");
 if (desktop.scripts?.["test:e2e"] && desktop.scripts["test:visual"]) {
   pnpm(["test:e2e"]);
   pnpm(["test:visual"]);
+}
+if (existsSync("tools/secret-scan/run.ts")) {
+  pnpm(["exec", "tsx", "tools/secret-scan/run.ts", "all"]);
+  pnpm(["exec", "tsx", "tools/secret-scan/run.ts", "tree"]);
+  pnpm(["run", "sbom"]);
 }
 // These checks need a GitHub event; normal local commits are enforced by hooks.
 if (process.env["GITHUB_EVENT_PATH"]) {

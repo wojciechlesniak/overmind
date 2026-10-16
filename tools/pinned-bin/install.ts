@@ -13,7 +13,7 @@ import {
 } from "node:fs";
 import { resolve, relative, isAbsolute, basename, sep } from "node:path";
 import { fileURLToPath } from "node:url";
-import { readBinaryLock } from "./lock.parse-boundary.ts";
+import { parsePinnedAsset, readBinaryLock, type PinnedAsset } from "./lock.parse-boundary.ts";
 
 const root = resolve(import.meta.dirname, "../..");
 function hash(bytes: Uint8Array): string {
@@ -100,6 +100,40 @@ function checkCacheFile(path: string): void {
   }
 }
 
+function writeAtomic(destination: string, bytes: Uint8Array, mode: number): void {
+  const temporary = `${destination}.${randomUUID()}.tmp`;
+  try {
+    writeFileSync(temporary, bytes, { flag: "wx", mode });
+    renameSync(temporary, destination);
+  } finally {
+    rmSync(temporary, { force: true });
+  }
+}
+
+export async function installResource(
+  name: string,
+  value: PinnedAsset,
+  options: { offline?: boolean; fetchBytes?: (url: string) => Promise<Uint8Array> } = {},
+): Promise<string | undefined> {
+  if (!/^[a-z][a-z0-9-]*$/u.test(name)) {
+    throw new Error("Invalid pinned resource name");
+  }
+  const asset = parsePinnedAsset(value);
+  const directory = confinedDirectory(resolve(root, ".cache/tools", `${name}-${asset.sha256}`));
+  const destination = resolve(directory, "resource");
+  checkCacheFile(destination);
+  if (!existsSync(destination)) {
+    if (options.offline) {
+      return undefined;
+    }
+    const bytes = await (options.fetchBytes ?? download)(asset.url);
+    verifyChecksum(bytes, asset.sha256);
+    writeAtomic(destination, bytes, 0o600);
+  }
+  verifyChecksum(readFileSync(destination), asset.sha256);
+  return destination;
+}
+
 export async function install(
   name: string,
   options: {
@@ -128,13 +162,7 @@ export async function install(
   if (!existsSync(archive)) {
     const bytes = await (options.fetchBytes ?? download)(asset.url);
     verifyChecksum(bytes, asset.sha256);
-    const temp = resolve(directory, `${randomUUID()}.tmp`);
-    try {
-      writeFileSync(temp, bytes, { flag: "wx", mode: 0o600 });
-      renameSync(temp, archive);
-    } finally {
-      rmSync(temp, { force: true });
-    }
+    writeAtomic(archive, bytes, 0o600);
   }
   verifyChecksum(readFileSync(archive), asset.sha256);
   // Extract only the selected member to stdout: archive paths never touch the filesystem.
@@ -164,13 +192,7 @@ export async function install(
   const destination = resolve(directory, name);
   checkCacheFile(destination);
   if (!existsSync(destination) || hash(readFileSync(destination)) !== hash(binary)) {
-    const temp = resolve(directory, `${randomUUID()}.tmp`);
-    try {
-      writeFileSync(temp, binary, { flag: "wx", mode: 0o700 });
-      renameSync(temp, destination);
-    } finally {
-      rmSync(temp, { force: true });
-    }
+    writeAtomic(destination, binary, 0o700);
   }
   chmodSync(destination, 0o700);
   return destination;

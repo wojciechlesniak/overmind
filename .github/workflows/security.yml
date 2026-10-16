@@ -1,0 +1,203 @@
+name: Security
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, labeled]
+  push:
+    branches: [main, master, DEVELOP]
+  merge_group: {}
+  schedule:
+    - cron: "41 2 * * *"
+  workflow_dispatch: {}
+  workflow_call: {}
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != format('refs/heads/{0}', github.event.repository.default_branch) }}
+defaults:
+  run:
+    shell: bash
+jobs:
+  tools:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      base: ${{ steps.prepare.outputs.base }}
+      head: ${{ steps.prepare.outputs.head }}
+      mode: ${{ steps.prepare.outputs.mode }}
+      licenses: ${{ steps.prepare.outputs.licenses }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup
+      - id: prepare
+        run: |
+          set -euo pipefail
+          pnpm exec tsx tools/secret-scan/ci.ts
+      - name: Verify real scanners and SBOM integration
+        run: |
+          set -euo pipefail
+          pnpm exec vitest run --config vitest.int.config.ts tools/secret-scan/scan.int.test.ts tools/secret-scan/install.int.test.ts tools/secret-scan/guard.int.test.ts tools/sbom/generate.int.test.ts
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: security-tools
+          path: ${{ runner.temp }}/security-tools/
+          retention-days: 1
+          if-no-files-found: error
+  secrets:
+    needs: tools
+    if: github.event_name != 'schedule' && github.event_name != 'workflow_dispatch' && github.event_name != 'workflow_call'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.1
+        with:
+          name: security-tools
+          path: ${{ runner.temp }}/security-tools
+      - name: Verify scanner and inspect commit range
+        env:
+          SCAN_BASE: ${{ needs.tools.outputs.base }}
+          SCAN_HEAD: ${{ needs.tools.outputs.head }}
+          SCAN_MODE: ${{ needs.tools.outputs.mode }}
+        run: |
+          set -euo pipefail
+          (cd "$RUNNER_TEMP/security-tools" && sha256sum --check SHA256SUMS)
+          chmod u+x "$RUNNER_TEMP/security-tools/gitleaks"
+          mkdir -p "$RUNNER_TEMP/secret-results"
+          status=0
+          bash tools/secret-scan/scan.sh "$RUNNER_TEMP/security-tools/gitleaks" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/secret-results/range.sarif" "$SCAN_MODE" "$SCAN_BASE" "$SCAN_HEAD" "$RUNNER_TEMP/security-tools/gitleaks.toml" > "$RUNNER_TEMP/scanner.log" 2>&1 || status=$?
+          bash tools/secret-scan/classify.sh "$RUNNER_TEMP/secret-results/range.sarif" "$status"
+      - if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: secret-findings
+          path: ${{ runner.temp }}/secret-results/
+          retention-days: 7
+          if-no-files-found: warn
+  secrets-sarif:
+    needs: [tools, secrets]
+    if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && needs.tools.result == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    # Upload redacted SARIF only for same-repository PRs; forks retain read-only scans.
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.1
+        with:
+          name: secret-findings
+          path: ${{ runner.temp }}/secret-results
+      - uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+        with:
+          sarif_file: ${{ runner.temp }}/secret-results/
+          category: overmind-gitleaks
+  dependency-review:
+    needs: tools
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high
+          # v5 deprecates deny-licenses; the unchanged allow-list is stricter.
+          allow-licenses: ${{ needs.tools.outputs.licenses }}
+          comment-summary-in-pr: never
+  sbom:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup
+      - run: |
+          set -euo pipefail
+          pnpm run sbom
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: sbom
+          path: sbom/overmind-*.cdx.json
+          retention-days: 90
+          if-no-files-found: error
+  secrets-full:
+    needs: tools
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      findings: ${{ steps.history.outputs.findings }}
+      tree_findings: ${{ steps.tree.outputs.findings }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.1
+        with:
+          name: security-tools
+          path: ${{ runner.temp }}/security-tools
+      - run: |
+          set -euo pipefail
+          (cd "$RUNNER_TEMP/security-tools" && sha256sum --check SHA256SUMS)
+          chmod u+x "$RUNNER_TEMP/security-tools/gitleaks"
+          mkdir -p "$RUNNER_TEMP/secret-results"
+      - id: history
+        run: |
+          set -euo pipefail
+          status=0
+          bash tools/secret-scan/scan.sh "$RUNNER_TEMP/security-tools/gitleaks" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/secret-results/history.sarif" all "" "" "$RUNNER_TEMP/security-tools/gitleaks.toml" > "$RUNNER_TEMP/scanner-history.log" 2>&1 || status=$?
+          bash tools/secret-scan/classify.sh "$RUNNER_TEMP/secret-results/history.sarif" "$status"
+      - id: tree
+        if: always()
+        run: |
+          set -euo pipefail
+          status=0
+          bash tools/secret-scan/scan.sh "$RUNNER_TEMP/security-tools/gitleaks" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/secret-results/tree.sarif" tree "" "" "$RUNNER_TEMP/security-tools/gitleaks.toml" > "$RUNNER_TEMP/scanner-tree.log" 2>&1 || status=$?
+          bash tools/secret-scan/classify.sh "$RUNNER_TEMP/secret-results/tree.sarif" "$status"
+      - if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: secret-findings-full
+          path: ${{ runner.temp }}/secret-results/
+          retention-days: 7
+          if-no-files-found: warn
+  report:
+    needs: [tools, secrets-full]
+    if: always() && (needs.secrets-full.result == 'failure' || needs.tools.result == 'failure') && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    # Only trusted default-branch full scans may open/update a count-only issue.
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          HISTORY_COUNT: ${{ needs.secrets-full.outputs.findings }}
+          TREE_COUNT: ${{ needs.secrets-full.outputs.tree_findings }}
+        run: |
+          set -euo pipefail
+          [[ "$HISTORY_COUNT" =~ ^[0-9]+$ ]] || HISTORY_COUNT=0
+          [[ "$TREE_COUNT" =~ ^[0-9]+$ ]] || TREE_COUNT=0
+          body="Secret scan failed. Finding occurrences: $((HISTORY_COUNT + TREE_COUNT)). Values are excluded; inspect the redacted workflow artifacts."
+          number="$(gh issue list --repo "$REPOSITORY" --state open --search 'security: secret scan finding in:title' --json number,title --jq '.[] | select(.title == "security: secret scan finding") | .number' | head -n 1)"
+          if [[ -n "$number" ]]; then
+            gh issue edit "$number" --repo "$REPOSITORY" --body "$body"
+          else
+            gh issue create --repo "$REPOSITORY" --title 'security: secret scan finding' --body "$body"
+          fi

@@ -6,7 +6,7 @@ kind: security
 size: S
 priority: P0
 mvp: true
-status: todo
+status: in_review
 depends_on: [OVE_SETUP001, OVE_SETUP005, OVE_SETUP006]
 soft_depends_on: [OVE_SETUP008]
 provides: ["lib:secret-scanning", "lib:sbom"]

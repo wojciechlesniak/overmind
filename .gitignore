@@ -21,3 +21,5 @@ apps/desktop/src-tauri/resources/
 .vitest/
 .vitest-reports/
 escape-evidence/
+/sbom/
+/secret-results/

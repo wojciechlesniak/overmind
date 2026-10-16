@@ -2,12 +2,16 @@ import { readFileSync } from "node:fs";
 import { parse } from "yaml";
 import { z } from "zod";
 const step = z.object({
+  id: z.string().optional(),
   uses: z.string().optional(),
   run: z.string().optional(),
   shell: z.string().optional(),
   env: z.record(z.string(), z.string()).optional(),
+  with: z.record(z.string(), z.unknown()).optional(),
 });
 const job = z.object({
+  if: z.union([z.string(), z.boolean()]).optional(),
+  permissions: z.record(z.string(), z.enum(["read", "write", "none"])).optional(),
   "runs-on": z.union([z.string(), z.array(z.string())]),
   "timeout-minutes": z.number().positive(),
   needs: z.union([z.string(), z.array(z.string())]).optional(),
