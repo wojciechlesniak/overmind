@@ -67,6 +67,12 @@ it("rejects an upgrade, a new MPL/Unicode package, changed license, checksum or 
       );
     }).toThrow(/new exact-version/u);
   }
+  const unicode = packages.find((item) => item.license === "Unicode-3.0");
+  if (!unicode) {
+    throw new Error("Missing Unicode fixture");
+  }
+  expect(() => { checkRustGraph(entries, [...packages, { ...unicode, version: "99.0.0" }], checksums, common); },
+  ).toThrow(/new exact-version/u);
   const wrong = new Map(checksums);
   wrong.set("cssparser@0.37.0", "0".repeat(64));
   expect(() => {
