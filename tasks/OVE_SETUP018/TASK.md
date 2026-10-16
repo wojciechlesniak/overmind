@@ -6,7 +6,7 @@ kind: security
 size: S
 priority: P0
 mvp: true
-status: todo
+status: in_progress
 depends_on: [OVE_SETUP006]
 soft_depends_on: [OVE_OSS003, OVE_SETUP007, OVE_SETUP014]
 provides: ["lib:repo-settings", "lib:repo-labels", "lib:branch-protection-spec"]
@@ -22,6 +22,11 @@ adr_refs: [13, 25]
 ---
 
 # OVE_SETUP018: GitHub repository settings, rulesets, labels and a read-only settings audit
+
+## Implementation claim
+
+Claimed-By: Codex ove016_settings
+Claimed-At: 2026-10-16T19:13:30Z
 
 ## 1. Summary
 
