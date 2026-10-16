@@ -107,7 +107,7 @@ Parallel with everything after OVE_SETUP001. Hotspot: none (short file). When CO
 - The relative CLAUDE.md symlink reads the exact AGENTS.md bytes. A real isolated
   Git fixture verifies mode 120000; regular, wrong-target, absolute and missing
   links fail. The root symlink is staged and committed as mode 120000 too.
-- 39 focused tests pass: 36 checker cases and three actual configuration-gate
+- 55 focused tests pass: 52 checker cases and three actual configuration-gate
   cases. They cover removed/reordered/hidden sections, injection hash tampering,
   missing/empty/prototype script names, missing and escaping links, real symlink
   escapes, malformed manifests, oversized content, maintenance placement and
@@ -134,3 +134,20 @@ Parallel with everything after OVE_SETUP001. Hotspot: none (short file). When CO
   byte identity and Git symlink mode were verified; no UI-loader result is claimed.
 - Reserved task scripts and check:boundaries are documented as unavailable until
   their owning implementations merge. No stub or simulated pass was introduced.
+
+### Review correction: visible Markdown rules
+
+- Independent Standards and Spec reviews found that tilde fences could hide the
+  mandatory paragraph or the whole document while the checker accepted it.
+  A public-checker regression reproduced the bypass as a real failing test before
+  implementation; the same fixture passed after the correction.
+- A small stateful reader handles backtick and tilde fences, delimiter length,
+  zero to three leading spaces, valid closing suffixes and unclosed blocks through
+  EOF. It processes fences before comments so comments cannot create a false
+  closing delimiter. Positive tests preserve legitimate fenced examples.
+- Two additional real red/green regressions cover indented code and raw HTML
+  hiding rules. Those block forms are explicitly unsupported and fail closed;
+  no Markdown parser dependency was added. The checker README documents the
+  supported instruction-document syntax.
+- The 55 focused cases include whole-document wrapping, shorter/wrong delimiters,
+  indented and invalid closing runs, unclosed fences and hidden rule paragraphs.

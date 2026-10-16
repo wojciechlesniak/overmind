@@ -47,6 +47,34 @@ function paragraphsOf(text: string): string[] {
   return text.split(/\r?\n\s*\r?\n/u).map((part) => part.replace(/\r?\n/gu, " ").trim());
 }
 
+function visibleMarkdown(text: string): { text: string; unsupportedBlocks: boolean } {
+  const visible: string[] = [];
+  let fence: { marker: string; length: number } | undefined;
+  let unsupportedBlocks = false;
+  for (const line of text.split(/\r?\n/u)) {
+    const delimiter = /^ {0,3}(`{3,}|~{3,})(.*)$/u.exec(line);
+    const run = delimiter?.[1] ?? "";
+    const suffix = delimiter?.[2] ?? "";
+    if (fence) {
+      if (run.startsWith(fence.marker) && run.length >= fence.length && /^[\t ]*$/u.test(suffix)) {
+        fence = undefined;
+      }
+      visible.push("");
+    } else if (delimiter && (run.startsWith("~") || !suffix.includes("`"))) {
+      fence = { marker: run[0] ?? "", length: run.length };
+      visible.push("");
+    } else {
+      unsupportedBlocks ||=
+        (Boolean(line.trim()) && /^(?: {4}|\t)/u.test(line)) || /^ {0,3}<[A-Za-z/!?]/u.test(line);
+      visible.push(line);
+    }
+  }
+  return {
+    text: visible.join("\n").replace(/<!--[^]*?(?:-->|$)/gu, ""),
+    unsupportedBlocks,
+  };
+}
+
 function readInstructions(root: string): string {
   const descriptor = openSync(
     resolve(root, "AGENTS.md"),
@@ -108,9 +136,11 @@ export function checkAgentInstructions(directory: string): string[] {
   if (lines.length > 200) {
     errors.push("AGENTS.md must contain at most 200 lines.");
   }
-  const visible = text
-    .replace(/<!--[^]*?(?:-->|$)/gu, "")
-    .replace(/^```[^\n]*\n[^]*?^```[^\n]*$/gmu, "");
+  const markdown = visibleMarkdown(text);
+  if (markdown.unsupportedBlocks) {
+    errors.push("Use root prose, flat lists and fenced examples; unsupported blocks are rejected.");
+  }
+  const visible = markdown.text;
   const actual = [...visible.matchAll(/^## (.+)\r?$/gmu)].map((match) => match[1]);
   if (actual.join("\n") !== headings.join("\n")) {
     errors.push("Required sections must appear exactly once, in order, with Maintenance last.");

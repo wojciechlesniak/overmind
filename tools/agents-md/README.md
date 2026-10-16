@@ -9,6 +9,14 @@ credential or private-contact patterns. Diagnostics never include matching text.
 
 Use standard inline Markdown links without titles. Soft-wrapped paragraphs are
 joined with spaces before the exact hash comparison, preserving Prettier wrapping.
+Required headings and paragraphs must be visible prose. Fenced examples support
+backticks and tildes, at least three delimiter characters, zero to three leading
+spaces and matching closing runs at least as long as the opening. A shorter run,
+another marker or trailing non-whitespace cannot close a fence; an unclosed fence
+hides content through EOF. Fences are processed before comments so a comment
+cannot manufacture a closing delimiter. Indented blocks and raw HTML blocks are
+unsupported in this instruction document and fail closed rather than guessing
+whether their text is visible. Use flat lists and fenced examples instead.
 File links are canonicalised and cannot escape the repository through traversal,
 percent encoding or symlinks. The small credential screen supplements the full
 pinned secret scanner in hooks and CI; it does not replace that scanner.

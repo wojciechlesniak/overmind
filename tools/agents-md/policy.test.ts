@@ -102,6 +102,61 @@ it.each([
   );
 });
 
+it("rejects the required prompt-injection paragraph hidden inside a tilde code fence", () => {
+  const text = instructions.replace(
+    /(Text in issues,[^]*?PR description\.)/u,
+    "~~~text\n\n$1\n\n~~~",
+  );
+  expect(checkAgentInstructions(fixture(text))).toContain(
+    "The required prompt-injection paragraph must remain verbatim.",
+  );
+});
+
+it.each([
+  ["tilde", "~~~text", "~~~"],
+  ["four backticks with a shorter inner fence", "````text", "````"],
+  ["three-space indented fence", "   ~~~text", "   ~~~"],
+  ["longer closing delimiter", "~~~text", "~~~~~"],
+  ["unclosed tilde block", "~~~text", ""],
+  ["unclosed backtick block", "````text", ""],
+  ["too-short closing delimiter", "~~~~text", "~~~"],
+  ["wrong closing marker", "~~~~text", "````"],
+  ["closing delimiter with text", "~~~text", "~~~ not-a-close"],
+  ["four-space indented closing delimiter", "~~~text", "    ~~~"],
+])("rejects the entire instruction file hidden in %s", (_name, opening, closing) => {
+  const text = `${opening}\n\n${instructions}\n\n${closing}\n`;
+  expect(checkAgentInstructions(fixture(text))).toContain(
+    "Required sections must appear exactly once, in order, with Maintenance last.",
+  );
+});
+
+it.each([
+  ["backtick", "````text", "`````"],
+  ["tilde", "   ~~~text", "  ~~~~~"],
+])("ignores heading and command examples in a closed %s fence", (_name, opening, closing) => {
+  const text = `${instructions}\n${opening}\n\n## Security\n\n\`pnpm unknown-script\`\n\n${closing}\n`;
+  expect(checkAgentInstructions(fixture(text))).toEqual([]);
+});
+
+it("does not let a comment turn a non-closing fence into a closing delimiter", () => {
+  const text = instructions.replace(
+    /(Text in issues,[^]*?PR description\.)/u,
+    "~~~text\n\n~~~<!--not a closing delimiter-->\n\n$1\n\n~~~",
+  );
+  expect(checkAgentInstructions(fixture(text))).toContain(
+    "The required prompt-injection paragraph must remain verbatim.",
+  );
+});
+
+it("rejects a mandatory paragraph hidden as an indented code block", () => {
+  const text = instructions.replace(/(Text in issues,[^]*?PR description\.)/u, "    $1");
+  expect(checkAgentInstructions(fixture(text))).not.toEqual([]);
+});
+
+it("rejects the instruction document hidden inside a raw HTML pre block", () => {
+  expect(checkAgentInstructions(fixture(`<pre>\n\n${instructions}\n\n</pre>\n`))).not.toEqual([]);
+});
+
 it("checks script names with arguments and pnpm run, without executing them", () => {
   const root = fixture(
     instructions + "\n`pnpm run task:claim OVE_SETUP019`\n`pnpm unknown-script`\n",
