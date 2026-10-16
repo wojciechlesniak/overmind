@@ -6,7 +6,7 @@ kind: spike
 size: M
 priority: P0
 mvp: true
-status: todo
+status: in_progress
 depends_on: [OVE_SETUP001, OVE_SETUP002]
 soft_depends_on: [OVE_SETUP008, OVE_SETUP010]
 provides: ["decision:engine-packaging", "decision:sqlite-driver"]
