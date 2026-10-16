@@ -6,7 +6,7 @@ kind: security
 size: M
 priority: P0
 mvp: true
-status: in_review
+status: done
 depends_on: [OVE_SETUP001, OVE_SETUP009]
 soft_depends_on: [OVE_SETUP011, OVE_SETUP008]
 provides: ["lib:tauri-shell", "lib:tauri-capabilities", "lib:csp", "lib:engine-ensure-running-contract", "lib:desktop-gateway-bridge"]
@@ -143,7 +143,7 @@ Parallel with OVE_SETUP011, 012, 015 and, after OVE_SETUP009, with the SHELL and
 4. ASSUMPTION: no auto-updater in the MVP (see requirement 11); Owner may reverse.
 5. ASSUMPTION: Tauri feature names are as listed; if they differ in 2.12.3, use the documented equivalents and keep the surface minimal.
 
-## 15. Implementation evidence and merge gate (2026-10-16)
+## 15. Historical verification before license approval (2026-10-16)
 
 Code review baseline: `71113cf6c2224f93dc47bd08d8ac8cf3eafd02a6` (latest DEVELOP).
 Reviewed implementation: `0f681316a38145aa0aeb682465a92dd898a68073`.
@@ -172,12 +172,33 @@ case-insensitive platform configuration overrides and canonical SBOM PURL encodi
 - RustSec reports no blocking vulnerability and two visible Linux-only warnings;
   their exact IDs and target scope are in the license-block report. No ignore added.
 
-- [ ] **Final merge gate:** the Owner approved only the 27 identified Rust package
-  versions on 2026-10-16. Exact version/license/checksum enforcement, native Cargo
-  exceptions, notices, complete MPL source archives and bundle resources are now
-  implemented. Final full checks, independent reviews and hosted CI must pass
-  before merge and before starting SETUP011. See
-  [approval and enforcement](../_proposals/OVE_SETUP010-license-approval.md).
+## 16. Approved-license verification and final merge gate (2026-10-16)
+
+- [x] Owner approval applies only to the 27 recorded Rust package versions. Exact
+  identity/version/SPDX/checksum validation runs locally, before packaging and
+  before GitHub's global exclusions are emitted. Additional Cargo graphs and new
+  versions, including versions coexisting with approved ones, fail closed.
+- [x] Six exact Cargo exceptions and 27 versioned GitHub exclusions are backed by
+  original license notices, five complete checksum-verified MPL source archives
+  and a source availability notice. Tauri copies them to licenses/rust resources;
+  a real native test verifies the copied bytes and all 29 notice files.
+- [x] Independent Standards/security and Spec reviews PASS with zero remaining
+  findings for e8fc16b42a8f7fe3f0e9224f6dfc5456fe4d5eb9 against DEVELOP baseline
+  71113cf6c2224f93dc47bd08d8ac8cf3eafd02a6. Review caught and fixed the global
+  exclusion bypass for additional Cargo graphs.
+- [x] Full sequential pnpm check passes: 200 unit tests in 50 files, 20 distinct
+  integration tests in 8 files, architecture's four dependency-policy CLI cases,
+  lint/typecheck/format/build, workflow lint, npm and Cargo license/source/bans,
+  both npm audits, rustfmt, Clippy denied warnings and all 27 native tests.
+- [x] Full-history and tree scans report zero secrets; Syft emits 841 components.
+  RustSec has no blocking vulnerability; the two documented Linux-only warnings
+  remain visible without an ignore. The npm license policy, dependency pins,
+  lockfiles, vulnerability thresholds and 72-hour age rule are unchanged.
+
+Final documentation head must pass hosted CI and Security before merging PR944
+into DEVELOP or starting SETUP011. The exact run links and final-head reviews are
+recorded in the PR. See [approval and enforcement](../_proposals/OVE_SETUP010-license-approval.md).
+This evidence replaces the historical license failure in section 15.
 
 Dev entry point: `pnpm dev:tauri` starts loopback Vite and the Tauri shell;
 `pnpm dev:tauri --help` displays CLI options. Without the future SETUP017 binary,

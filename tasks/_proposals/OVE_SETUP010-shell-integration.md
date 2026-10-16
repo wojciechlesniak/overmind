@@ -18,8 +18,10 @@ receives only the owner-checked Unix socket, never a TCP connector or URL resolv
 Node/package CI integration, capability/config guard protection, and the hosted
 macOS Rust job will be updated through the existing foundation gates. No physical
 escape test is run on the user's daily-use Mac, and the accepted SETUP006 release
-isolation deferrals remain mandatory. License policy, registry sources, age rules
-and exceptions are unchanged; a failed license check blocks merge.
+isolation deferrals remain mandatory. Registry sources and age rules are unchanged;
+a failed license check blocks merge. The original license block was superseded by
+the explicit 27-version Rust approval in OVE_SETUP010-license-approval.md; the npm
+policy remains unchanged.
 
 Two small, explicitly owned native modules deepen the transport seam: native_io.rs
 holds owner-checked sockets/private logging and shared layout; transport.rs holds

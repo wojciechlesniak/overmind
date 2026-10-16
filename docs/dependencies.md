@@ -5,7 +5,10 @@ Verified on: 2026-10-16
 The catalog is the exact source of pins. Registry latest is evidence, never an
 instruction to upgrade. This review retains the Owner-approved SETUP006 tooling
 and the deferred typescript-eslint update; it installs no new project package.
-Licenses and exceptions remain SETUP006's unchanged authoritative policy.
+The npm license policy remains SETUP006's unchanged authoritative policy.
+SETUP010 adds the Owner-approved exceptions for exactly 27 Rust package versions,
+with pinned license/checksum evidence and bundled compliance artifacts; see
+[tightly scoped Rust approval](../tasks/_proposals/OVE_SETUP010-license-approval.md).
 Reserved catalog packages are not installed; their owning task must prove peers,
 release age, scripts and the full transitive license graph before adoption.
 
@@ -22,8 +25,8 @@ release age, scripts and the full transitive license graph before adoption.
 | @playwright/test | 1.64.0 | 1.64.1 | npm @playwright/test@1.64.0 | Reserved catalog pin; not yet installed. Owning task rechecks peers and full license graph. |
 | @storybook/addon-a11y | 10.6.2 | 10.6.2 | npm @storybook/addon-a11y@10.6.2 | Reserved catalog pin; not yet installed. Owning task rechecks peers and full license graph. |
 | @storybook/react-vite | 10.6.2 | 10.6.2 | npm @storybook/react-vite@10.6.2 | Reserved catalog pin; not yet installed. Owning task rechecks peers and full license graph. |
-| @tauri-apps/api | 2.12.3 | 2.12.4 | npm @tauri-apps/api@2.12.3 | Installed by SETUP010; exact CLI/API pins; Rust graph license gate remains blocked. |
-| @tauri-apps/cli | 2.12.2 | 2.12.3 | npm @tauri-apps/cli@2.12.2 | Installed by SETUP010; exact CLI/API pins; Rust graph license gate remains blocked. |
+| @tauri-apps/api | 2.12.3 | 2.12.4 | npm @tauri-apps/api@2.12.3 | Installed by SETUP010; exact CLI/API pins; Rust graph uses only the 27 exact Owner-approved exceptions. |
+| @tauri-apps/cli | 2.12.2 | 2.12.3 | npm @tauri-apps/cli@2.12.2 | Installed by SETUP010; exact CLI/API pins; Rust graph uses only the 27 exact Owner-approved exceptions. |
 | @testing-library/dom | 10.4.2 | 10.4.2 | npm @testing-library/dom@10.4.2 | Installed dev tool. |
 | @testing-library/jest-dom | 7.0.1 | 7.0.1 | npm @testing-library/jest-dom@7.0.1 | Installed dev tool. |
 | @testing-library/react | 16.3.3 | 16.3.3 | npm @testing-library/react@16.3.3 | Installed dev tool. |
@@ -69,15 +72,15 @@ release age, scripts and the full transitive license graph before adoption.
 | @yao-pkg/pkg | candidate 6.23.0 | 6.23.0 | npm registry on review date | SETUP011 evaluates engine packaging/storage; sqlite-vec remains a future feature. Not an adoption. |
 | esbuild | candidate 0.28.2 | 0.28.2 | npm registry on review date | SETUP011 evaluates engine packaging/storage; sqlite-vec remains a future feature. Not an adoption. |
 | sqlite-vec | candidate 0.1.9 | 0.1.9 | npm registry on review date | SETUP011 evaluates engine packaging/storage; sqlite-vec remains a future feature. Not an adoption. |
-| crate:tauri | 2.12.3 | 2.12.4 | https://crates.io/api/v1/crates/tauri/2.12.3 | Future Rust shell; MSRV 1.90; SETUP010 installs exact pins. |
-| crate:tauri-build | 2.7.2 | 2.7.3 | https://crates.io/api/v1/crates/tauri-build/2.7.2 | Future Rust shell; MSRV 1.90; SETUP010 installs exact pins. |
-| crate:tauri-plugin-shell | 2.5.0 | 2.5.0 | https://crates.io/api/v1/crates/tauri-plugin-shell/2.5.0 | Future Rust shell; MSRV 1.90; SETUP010 installs exact pins. |
-| crate:tauri-plugin-single-instance | 2.5.3 | 2.5.4 | https://crates.io/api/v1/crates/tauri-plugin-single-instance/2.5.3 | Future Rust shell; MSRV 1.90; SETUP010 installs exact pins. |
-| crate:tauri-plugin-dialog | 2.8.2 | 2.8.3 | https://crates.io/api/v1/crates/tauri-plugin-dialog/2.8.2 | Future Rust shell; MSRV 1.90; SETUP010 installs exact pins. |
-| crate:serde | 1.0.229 | 1.0.229 | https://crates.io/api/v1/crates/serde/1.0.229 | Future Rust shell; MSRV 1.56; SETUP010 installs exact pins. |
-| crate:serde_json | 1.0.154 | 1.0.154 | https://crates.io/api/v1/crates/serde_json/1.0.154 | Future Rust shell; MSRV 1.71; SETUP010 installs exact pins. |
-| crate:tokio | 1.53.2 | 1.53.3 | https://crates.io/api/v1/crates/tokio/1.53.2 | Future Rust shell; MSRV 1.71; SETUP010 installs exact pins. |
-| Rust toolchain | 1.90.0 | not adopted | Rust/Tauri MSRV | No rust-toolchain.toml yet; SETUP010 owns installation. |
+| crate:tauri | 2.12.3 | 2.12.4 | https://crates.io/api/v1/crates/tauri/2.12.3 | SETUP010 native shell; MSRV 1.90; SETUP010 installs exact pins. |
+| crate:tauri-build | 2.7.2 | 2.7.3 | https://crates.io/api/v1/crates/tauri-build/2.7.2 | SETUP010 native shell; MSRV 1.90; SETUP010 installs exact pins. |
+| crate:tauri-plugin-shell | 2.5.0 | 2.5.0 | https://crates.io/api/v1/crates/tauri-plugin-shell/2.5.0 | SETUP010 native shell; MSRV 1.90; SETUP010 installs exact pins. |
+| crate:tauri-plugin-single-instance | 2.5.3 | 2.5.4 | https://crates.io/api/v1/crates/tauri-plugin-single-instance/2.5.3 | SETUP010 native shell; MSRV 1.90; SETUP010 installs exact pins. |
+| crate:tauri-plugin-dialog | 2.8.2 | 2.8.3 | https://crates.io/api/v1/crates/tauri-plugin-dialog/2.8.2 | SETUP010 native shell; MSRV 1.90; SETUP010 installs exact pins. |
+| crate:serde | 1.0.229 | 1.0.229 | https://crates.io/api/v1/crates/serde/1.0.229 | SETUP010 native shell; MSRV 1.56; SETUP010 installs exact pins. |
+| crate:serde_json | 1.0.154 | 1.0.154 | https://crates.io/api/v1/crates/serde_json/1.0.154 | SETUP010 native shell; MSRV 1.71; SETUP010 installs exact pins. |
+| crate:tokio | 1.53.2 | 1.53.3 | https://crates.io/api/v1/crates/tokio/1.53.2 | SETUP010 native shell; MSRV 1.71; SETUP010 installs exact pins. |
+| Rust toolchain | 1.90.0 | not adopted | Rust/Tauri MSRV | SETUP010 pins rust-toolchain.toml; private verified toolchain, no global change. |
 | herdr | 0.9.3 | 0.9.5 | SETUP015 vendor/herdr/VERSION | SETUP015 selects a verified mature release; latest is younger than72 hours. |
 | Apple container CLI | minimum 1.5.0 | 1.5.0 | Apple container publisher; SETUP015 | Requires macOS26/Apple silicon; no current runner. |
 | node:sqlite | built into 22.23.3 | built in | Node22 API | SETUP011 verifies experimental status and chooses storage. |
@@ -817,10 +820,10 @@ solution or obtain an explicit policy decision; no exception is created here.
 
 - Version: 2.12.3
 - License: Apache-2.0 OR MIT
-- Used by: apps/desktop/src-tauri (SETUP010; merge blocked by transitive MPL)
+- Used by: apps/desktop/src-tauri (SETUP010; exact Rust exceptions approved 2026-10-16)
 - Added by: OVE_SETUP010
 - Value: Pinned native shell, permission generation, byte transport and lifecycle serialization required by SETUP010.
-- Maintenance cost: Review Rust MSRV, upstream cadence and feature/size impact together with the shell's future lockfile.
+- Maintenance cost: Review Rust MSRV, upstream cadence and feature/size impact together with the shell's committed lockfile.
 - Alternatives considered: Keep business logic in TypeScript engine/adapters; Rust remains a thin shell.
 - Risk: Native code and possible crate build scripts; SETUP010 must prove licenses, sources, bans, locked install and capabilities before use.
 - Last reviewed: 2026-10-16
@@ -830,10 +833,10 @@ solution or obtain an explicit policy decision; no exception is created here.
 
 - Version: 2.7.2
 - License: Apache-2.0 OR MIT
-- Used by: apps/desktop/src-tauri (SETUP010; merge blocked by transitive MPL)
+- Used by: apps/desktop/src-tauri (SETUP010; exact Rust exceptions approved 2026-10-16)
 - Added by: OVE_SETUP010
 - Value: Pinned native shell, permission generation, byte transport and lifecycle serialization required by SETUP010.
-- Maintenance cost: Review Rust MSRV, upstream cadence and feature/size impact together with the shell's future lockfile.
+- Maintenance cost: Review Rust MSRV, upstream cadence and feature/size impact together with the shell's committed lockfile.
 - Alternatives considered: Keep business logic in TypeScript engine/adapters; Rust remains a thin shell.
 - Risk: Native code and possible crate build scripts; SETUP010 must prove licenses, sources, bans, locked install and capabilities before use.
 - Last reviewed: 2026-10-16
@@ -843,10 +846,10 @@ solution or obtain an explicit policy decision; no exception is created here.
 
 - Version: 2.5.0
 - License: Apache-2.0 OR MIT
-- Used by: apps/desktop/src-tauri (SETUP010; merge blocked by transitive MPL)
+- Used by: apps/desktop/src-tauri (SETUP010; exact Rust exceptions approved 2026-10-16)
 - Added by: OVE_SETUP010
 - Value: Pinned native shell, permission generation, byte transport and lifecycle serialization required by SETUP010.
-- Maintenance cost: Review Rust MSRV, upstream cadence and feature/size impact together with the shell's future lockfile.
+- Maintenance cost: Review Rust MSRV, upstream cadence and feature/size impact together with the shell's committed lockfile.
 - Alternatives considered: Keep business logic in TypeScript engine/adapters; Rust remains a thin shell.
 - Risk: Native code and possible crate build scripts; SETUP010 must prove licenses, sources, bans, locked install and capabilities before use.
 - Last reviewed: 2026-10-16
@@ -856,10 +859,10 @@ solution or obtain an explicit policy decision; no exception is created here.
 
 - Version: 2.5.3
 - License: Apache-2.0 OR MIT
-- Used by: apps/desktop/src-tauri (SETUP010; merge blocked by transitive MPL)
+- Used by: apps/desktop/src-tauri (SETUP010; exact Rust exceptions approved 2026-10-16)
 - Added by: OVE_SETUP010
 - Value: Pinned native shell, permission generation, byte transport and lifecycle serialization required by SETUP010.
-- Maintenance cost: Review Rust MSRV, upstream cadence and feature/size impact together with the shell's future lockfile.
+- Maintenance cost: Review Rust MSRV, upstream cadence and feature/size impact together with the shell's committed lockfile.
 - Alternatives considered: Keep business logic in TypeScript engine/adapters; Rust remains a thin shell.
 - Risk: Native code and possible crate build scripts; SETUP010 must prove licenses, sources, bans, locked install and capabilities before use.
 - Last reviewed: 2026-10-16
@@ -869,10 +872,10 @@ solution or obtain an explicit policy decision; no exception is created here.
 
 - Version: 2.8.2
 - License: Apache-2.0 OR MIT
-- Used by: apps/desktop/src-tauri (SETUP010; merge blocked by transitive MPL)
+- Used by: apps/desktop/src-tauri (SETUP010; exact Rust exceptions approved 2026-10-16)
 - Added by: OVE_SETUP010
 - Value: Pinned native shell, permission generation, byte transport and lifecycle serialization required by SETUP010.
-- Maintenance cost: Review Rust MSRV, upstream cadence and feature/size impact together with the shell's future lockfile.
+- Maintenance cost: Review Rust MSRV, upstream cadence and feature/size impact together with the shell's committed lockfile.
 - Alternatives considered: Keep business logic in TypeScript engine/adapters; Rust remains a thin shell.
 - Risk: Native code and possible crate build scripts; SETUP010 must prove licenses, sources, bans, locked install and capabilities before use.
 - Last reviewed: 2026-10-16
@@ -882,10 +885,10 @@ solution or obtain an explicit policy decision; no exception is created here.
 
 - Version: 1.0.229
 - License: MIT OR Apache-2.0
-- Used by: apps/desktop/src-tauri (SETUP010; merge blocked by transitive MPL)
+- Used by: apps/desktop/src-tauri (SETUP010; exact Rust exceptions approved 2026-10-16)
 - Added by: OVE_SETUP010
 - Value: Pinned native shell, permission generation, byte transport and lifecycle serialization required by SETUP010.
-- Maintenance cost: Review Rust MSRV, upstream cadence and feature/size impact together with the shell's future lockfile.
+- Maintenance cost: Review Rust MSRV, upstream cadence and feature/size impact together with the shell's committed lockfile.
 - Alternatives considered: Keep business logic in TypeScript engine/adapters; Rust remains a thin shell.
 - Risk: Native code and possible crate build scripts; SETUP010 must prove licenses, sources, bans, locked install and capabilities before use.
 - Last reviewed: 2026-10-16
@@ -895,10 +898,10 @@ solution or obtain an explicit policy decision; no exception is created here.
 
 - Version: 1.0.154
 - License: MIT OR Apache-2.0
-- Used by: apps/desktop/src-tauri (SETUP010; merge blocked by transitive MPL)
+- Used by: apps/desktop/src-tauri (SETUP010; exact Rust exceptions approved 2026-10-16)
 - Added by: OVE_SETUP010
 - Value: Pinned native shell, permission generation, byte transport and lifecycle serialization required by SETUP010.
-- Maintenance cost: Review Rust MSRV, upstream cadence and feature/size impact together with the shell's future lockfile.
+- Maintenance cost: Review Rust MSRV, upstream cadence and feature/size impact together with the shell's committed lockfile.
 - Alternatives considered: Keep business logic in TypeScript engine/adapters; Rust remains a thin shell.
 - Risk: Native code and possible crate build scripts; SETUP010 must prove licenses, sources, bans, locked install and capabilities before use.
 - Last reviewed: 2026-10-16
@@ -908,10 +911,10 @@ solution or obtain an explicit policy decision; no exception is created here.
 
 - Version: 1.53.2
 - License: MIT
-- Used by: apps/desktop/src-tauri (SETUP010; merge blocked by transitive MPL)
+- Used by: apps/desktop/src-tauri (SETUP010; exact Rust exceptions approved 2026-10-16)
 - Added by: OVE_SETUP010
 - Value: Pinned native shell, permission generation, byte transport and lifecycle serialization required by SETUP010.
-- Maintenance cost: Review Rust MSRV, upstream cadence and feature/size impact together with the shell's future lockfile.
+- Maintenance cost: Review Rust MSRV, upstream cadence and feature/size impact together with the shell's committed lockfile.
 - Alternatives considered: Keep business logic in TypeScript engine/adapters; Rust remains a thin shell.
 - Risk: Native code and possible crate build scripts; SETUP010 must prove licenses, sources, bans, locked install and capabilities before use.
 - Last reviewed: 2026-10-16
@@ -1136,7 +1139,7 @@ Cargo syntax must introduce a reviewed TOML parser rather than extend heuristics
 - Value: Safe effective UID and Unix peer credential checks without unsafe application code.
 - Maintenance cost: Review upstream fixes, Rust MSRV and the complete locked graph with every update.
 - Alternatives considered: Unsafe direct libc calls or checking only pathname metadata, which misses peer credentials.
-- Risk: Native dependency; no elevated rights or TCP transport; full Rust license gate remains blocking.
+- Risk: Native dependency; no elevated rights or TCP transport; full Rust license gate is mandatory on every update.
 - Last reviewed: 2026-10-16
 - Source: https://crates.io/api/v1/crates/nix/0.31.3
 
@@ -1149,7 +1152,7 @@ Cargo syntax must introduce a reviewed TOML parser rather than extend heuristics
 - Value: HTTP/1 framing over an already checked Unix stream; no TCP connector.
 - Maintenance cost: Review upstream fixes, Rust MSRV and the complete locked graph with every update.
 - Alternatives considered: Handwritten HTTP parser and chunk framing with request-smuggling risk.
-- Risk: Native dependency; no elevated rights or TCP transport; full Rust license gate remains blocking.
+- Risk: Native dependency; no elevated rights or TCP transport; full Rust license gate is mandatory on every update.
 - Last reviewed: 2026-10-16
 - Source: https://crates.io/api/v1/crates/hyper/1.12.0
 
@@ -1162,7 +1165,7 @@ Cargo syntax must introduce a reviewed TOML parser rather than extend heuristics
 - Value: Tokio Unix stream adapter for the selected Hyper HTTP/1 driver.
 - Maintenance cost: Review upstream fixes, Rust MSRV and the complete locked graph with every update.
 - Alternatives considered: Duplicating the runtime IO bridge and pinning internal Hyper interfaces.
-- Risk: Native dependency; no elevated rights or TCP transport; full Rust license gate remains blocking.
+- Risk: Native dependency; no elevated rights or TCP transport; full Rust license gate is mandatory on every update.
 - Last reviewed: 2026-10-16
 - Source: https://crates.io/api/v1/crates/hyper-util/0.1.21
 
@@ -1175,7 +1178,7 @@ Cargo syntax must introduce a reviewed TOML parser rather than extend heuristics
 - Value: Bounded HTTP response collection with cancellation by dropping the connection driver.
 - Maintenance cost: Review upstream fixes, Rust MSRV and the complete locked graph with every update.
 - Alternatives considered: Manual unbounded buffering or duplicating HTTP body implementations.
-- Risk: Native dependency; no elevated rights or TCP transport; full Rust license gate remains blocking.
+- Risk: Native dependency; no elevated rights or TCP transport; full Rust license gate is mandatory on every update.
 - Last reviewed: 2026-10-16
 - Source: https://crates.io/api/v1/crates/http-body-util/0.1.5
 
