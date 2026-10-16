@@ -1,4 +1,4 @@
-import { missingHook, stderr, stdout } from "../cli.ts";
+import { diagnosticText, missingHook, stderr, stdout } from "../cli.ts";
 import { EXIT_CODES } from "../exit-codes.ts";
 import { versionInfo } from "../version.ts";
 
@@ -42,13 +42,14 @@ async function loadService(): Promise<unknown> {
 }
 export function reportEnsureResult(result: EnsureResult, json: boolean): number {
   const info = versionInfo();
+  const detail = result.detail === null ? null : diagnosticText(result.detail);
   if (json) {
     stdout(
-      `${JSON.stringify({ status: result.status, pid: result.pid, socket: result.socket, version: info.version, protocol: info.protocol, detail: result.detail })}\n`,
+      `${JSON.stringify({ status: result.status, pid: result.pid, socket: result.socket, version: info.version, protocol: info.protocol, detail })}\n`,
     );
   }
-  if (result.detail !== null) {
-    stderr(`${result.detail}\n`);
+  if (detail !== null) {
+    stderr(`${detail}\n`);
   }
   return {
     running: EXIT_CODES.ok,

@@ -13,13 +13,22 @@ interface EngineHooks {
 export function installShutdown(shutdown: () => Promise<void>): () => void {
   let stopping = false;
   let deadline: NodeJS.Timeout | undefined;
+  const cleanup = () => {
+    process.off("SIGTERM", signal);
+    process.off("SIGINT", signal);
+    clearTimeout(deadline);
+  };
+  const finish = (code: number): never => {
+    cleanup();
+    process.exit(code);
+  };
   const signal = () => {
     if (stopping) {
-      process.exit(130);
+      finish(130);
     }
     stopping = true;
     deadline = setTimeout(() => {
-      process.exit(EXIT_CODES.ok);
+      finish(EXIT_CODES.ok);
     }, 5000);
     void Promise.resolve()
       .then(shutdown)
@@ -27,15 +36,16 @@ export function installShutdown(shutdown: () => Promise<void>): () => void {
         stderr(`${diagnostic(error)}\n`);
       })
       .finally(() => {
-        process.exit(EXIT_CODES.ok);
+        finish(EXIT_CODES.ok);
       });
   };
   process.on("SIGTERM", signal);
   process.on("SIGINT", signal);
   return () => {
-    process.off("SIGTERM", signal);
-    process.off("SIGINT", signal);
-    clearTimeout(deadline);
+    // A startup failure must not cancel shutdown already in progress.
+    if (!stopping) {
+      cleanup();
+    }
   };
 }
 
@@ -67,11 +77,11 @@ export async function run(options: RunOptions, load = loadEngine): Promise<numbe
     throw new Error("invalid engine composition hook");
   }
   const engine = hooks as EngineHooks;
-  const removeHandlers = installShutdown(() => engine.shutdown());
+  const cleanupStartup = installShutdown(() => engine.shutdown());
   try {
     await engine.startEngine(options);
     throw new Error("engine start returned unexpectedly");
   } finally {
-    removeHandlers();
+    cleanupStartup();
   }
 }

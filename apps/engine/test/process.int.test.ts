@@ -13,7 +13,7 @@ import {
   symlinkSync,
   writeFileSync,
 } from "node:fs";
-import { tmpdir } from "node:os";
+import { homedir, tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { createRequire } from "node:module";
 import { afterAll, beforeAll, expect, it } from "vitest";
@@ -142,6 +142,22 @@ function exit(child: ChildProcessWithoutNullStreams): Promise<number | null> {
   });
 }
 const start = `export async function startEngine(options) { if(options.dataDir !== "../as-data" || !options.foreground) throw new Error("options mismatch"); process.stderr.write("ready\\n"); await new Promise(() => {setInterval(()=>{},1000)}); }`;
+it("normal service detail is bounded and redacted identically in JSON and stderr", async () => {
+  const entry = await fixtureBundle(
+    "unsafe-detail",
+    `import {homedir} from "node:os"; export async function ensureRunning(){return {status:"failed",pid:null,socket:null,detail:"\\x1b[31m"+homedir()+"/private\\n"+"x".repeat(600)}}`,
+    true,
+  );
+  const result = execute(entry, ["ensure-running", "--json"]);
+  expect(result.status).toBe(20);
+  expect(result.stdout.trim().split("\n")).toHaveLength(1);
+  const detail = readOutput(result.stdout)["detail"];
+  expect(typeof detail).toBe("string");
+  expect(detail).not.toContain(homedir());
+  expect(detail).not.toMatch(/\p{Cc}/u);
+  expect(detail).toHaveLength(512);
+  expect(result.stderr).toBe(`${String(detail)}\n`);
+});
 it.each(["SIGTERM", "SIGINT"] as const)(
   "actual %s calls shutdown and exits successfully",
   async (signal) => {
@@ -186,6 +202,43 @@ it("a second signal exits immediately with 130", async () => {
   child.kill("SIGINT");
   expect(await stopped).toBe(130);
 });
+it.each([
+  ["deadline", 0],
+  ["second signal", 130],
+] as const)(
+  "start failure during active shutdown preserves the %s exit",
+  { timeout: 10000 },
+  async (mode, expected) => {
+    const entry = await fixtureBundle(
+      `shutdown-race-${String(expected)}`,
+      `let rejectStart; setInterval(()=>{},1000);
+export function startEngine(){process.stderr.write("ready\\n");return new Promise((_,reject)=>{rejectStart=reject})}
+export async function shutdown(){rejectStart(new Error("fixture start rejected after signal"));await new Promise(()=>{})}`,
+    );
+    const child = launch(entry);
+    await output(child, "ready");
+    const stopped = exit(child);
+    const failed = output(child, "fixture start rejected after signal");
+    const watchdog = setTimeout(() => {
+      child.kill("SIGKILL");
+    }, 6500);
+    const began = performance.now();
+    try {
+      child.kill("SIGTERM");
+      await failed;
+      if (mode === "second signal") {
+        child.kill("SIGINT");
+      }
+      expect(await stopped).toBe(expected);
+      if (mode === "deadline") {
+        expect(performance.now() - began).toBeGreaterThanOrEqual(4900);
+        expect(performance.now() - began).toBeLessThan(6500);
+      }
+    } finally {
+      clearTimeout(watchdog);
+    }
+  },
+);
 it("errors thrown inside present hooks are internal errors, never missing-hook stubs", async () => {
   const entry = await fixtureBundle(
     "broken",

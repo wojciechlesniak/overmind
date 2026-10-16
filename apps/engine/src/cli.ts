@@ -69,13 +69,14 @@ export const stdout = (text: string): void => {
 export const stderr = (text: string): void => {
   process.stderr.write(text);
 };
+export function diagnosticText(text: string): string {
+  return text
+    .replaceAll(homedir(), "<home>")
+    .replace(/\p{Cc}/gu, " ")
+    .slice(0, 512);
+}
 export function diagnostic(error: unknown): string {
-  return error instanceof Error
-    ? error.message
-        .replaceAll(homedir(), "<home>")
-        .replace(/\p{Cc}/gu, " ")
-        .slice(0, 512)
-    : "engine internal error";
+  return error instanceof Error ? diagnosticText(error.message) : "engine internal error";
 }
 export function missingHook(error: unknown, expectedUrl: string): boolean {
   return (

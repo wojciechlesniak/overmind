@@ -134,3 +134,11 @@ catalog/manifest/lockfile and minimal shell receipt compatibility edit, preservi
 unknown-field rejection, exact socket/live ping checks and rejecting an explicit
 null protocol instead of treating it as a legacy missing field. No Cargo dependency
 or license policy changed. Review and hosted gates remain required before merge.
+
+Independent review regressions reproduce ordinary hook detail containing a home
+path, ANSI/control characters and more than600 characters, and a real process
+holding an open resource while startup rejects after shutdown begins. Both JSON
+and stderr now use one normalized detail; active shutdown retains its five-second
+deadline and second-signal exit130 despite startup failure. Ordinary startup
+failure still removes handlers. Red/green evidence is retained in local review
+logs; independent review and hosted gates must assess the corrected head.

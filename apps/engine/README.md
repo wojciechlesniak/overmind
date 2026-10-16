@@ -18,6 +18,8 @@ Commands:
   ENGINE, which owns canonicalization and access decisions. The scaffold does
   not read it. SIGTERM/SIGINT call `shutdown()` and exit0 after completion or a
   five-second deadline; a second signal exits130 immediately.
+  Start failures before shutdown remove signal handlers. Once shutdown starts,
+  its deadline and second-signal handling remain active until exit.
 - `ensure-running [--json]`: ask the future service hook to start or find the
   engine, without creating a child daemon here.
 - `version [--json]`: always available, independently of ENGINE hooks.
@@ -26,7 +28,9 @@ Commands:
 Unknown commands, options, extra positionals, options belonging to another
 command and more than4096 argv characters including separators exit64. Never
 pass secrets as command-line arguments. Diagnostics never echo argv or dump
-environment variables; error text is bounded and the home directory is redacted.
+environment variables. Error text and ordinary service-result details use the
+same home redaction, control-character removal and512-character limit before
+they reach either JSON or stderr.
 Closed output pipes exit0 for `version`,70 for other commands, without EPIPE output.
 
 | Exit | Meaning                                      |
