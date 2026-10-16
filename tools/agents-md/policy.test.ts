@@ -24,6 +24,7 @@ const files = [
   "tasks/INDEX.md",
   "tasks/_template/TASK.md",
   "docs/SPECIFICATION.md",
+  "docs/architecture/ARCHITECTURE.md",
   "docs/dependencies.md",
   "GLOSSARY.md",
   "docs/adr/0016-dokumentacja-projektu-zrodlem-prawdy.md",

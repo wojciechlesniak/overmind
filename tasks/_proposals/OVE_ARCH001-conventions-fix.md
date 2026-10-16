@@ -110,3 +110,9 @@ now link the existing architecture document and remove architecture-only future
 qualifiers; the glossary/source-language statements are preserved. The sensitive
 AGENTS change requires config-change and independent review before merge.
 No edit to docs/architecture/README.md is made here; OSS004 retains that ownership.
+
+The integrator also authorized adding docs/architecture/ARCHITECTURE.md to the
+AGENTS guard's static test-fixture file list. Fixtures copy the current AGENTS.md,
+so its new real link must resolve in the positive fixtures as in the checkout.
+The first pre-push correctly rejected nine incomplete fixtures. Only their file
+inventory is updated; guard policy, negative cases and assertions are unchanged.

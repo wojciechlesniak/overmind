@@ -182,3 +182,9 @@ and contributor instructions now link the architecture document in this same PR,
 under the integrator's coordination. The render checkbox remains open until the
 parent verifies all three corrected sequences at the newly published head.
 Independent delta reviews and exact-head hosted checks remain required.
+
+
+The coordinated AGENTS test-fixture inventory now includes the newly linked
+architecture file. The first pre-push found nine incomplete positive fixtures;
+no guard policy or assertions were relaxed. The actual instruction checker and
+all 75 focused guard/configuration-gate tests pass after that inventory correction.
