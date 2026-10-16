@@ -435,7 +435,7 @@ sequenceDiagram
   Owner->>UI: Send message with Workspace context
   UI->>Client: Typed request and cancellation signal
   Client->>Shell: Opaque gateway frame
-  Shell->>GW: Inject authentication; owner-only socket
+  Shell->>GW: Inject authentication, owner-only socket
   GW->>GW: Authenticate, authorize, validate, audit
   GW->>UC: Validated DTO plus caller context
   UC->>Repo: Persist message and append event atomically
@@ -474,34 +474,34 @@ sequenceDiagram
   participant Path as PathProbe port
   participant Sandbox as Sandbox port
   Agent->>GW: Scoped report requesting access for active Run
-  GW->>GW: Authenticate agent scope; validate bounded input
+  GW->>GW: Authenticate agent scope, validate bounded input
   GW->>Access: Validated request, no permission grant
   Access->>Store: Persist pending request and audit decision
   Store-->>Access: Pending request persisted
   Access->>TG: Redacted notification through injected channel port
   TG->>Owner: Request id, purpose and Run scope
   Owner->>TG: Approve this request for this Run
-  TG->>TG: Verify paired sender; deduplicate callback
+  TG->>TG: Verify paired sender, deduplicate callback
   TG->>GW: api-client via in-process Transport, channel telegram
   GW->>GW: Same authn, authz, validation and audit pipeline
   GW->>Approve: Validated approval identity and Run context
   Approve->>Store: Check active Run, expiry, action binding and single use
   Approve->>Path: Revalidate canonical path, symlinks and mounts
   Path-->>Approve: Result with canonical allowed mount
-  Approve->>Store: Record Run-only approval intent; keep execution paused
+  Approve->>Store: Record Run-only approval intent, keep execution paused
   Approve->>Sandbox: Apply mount constrained to this Run
   Sandbox-->>Approve: Result with isolation update
   alt Mount enforcement succeeded
     Approve->>Store: Activate Run-only grant and append audit event
-    Approve-->>GW: Result; never permanent Workspace rights
+    Approve-->>GW: Result, never permanent Workspace rights
     GW-->>TG: Redacted approval result
     GW-->>Agent: Authorized Run may resume
   else Enforcement failed or became unknown
-    Approve->>Store: Audit failure; grant inactive; Agent stays paused
+    Approve->>Store: Audit failure, grant inactive, Agent stays paused
     Approve-->>GW: Fail-closed Result
     GW-->>TG: Safe refusal requiring local attention
   end
-  Note over Approve,Store: Refuse permanent changes from Telegram; revoke Run grant when Run ends
+  Note over Approve,Store: Refuse permanent changes from Telegram, revoke Run grant when Run ends
 ```
 
 ### Engine crash and Run resume
@@ -529,8 +529,8 @@ sequenceDiagram
   Service->>Engine: Restart independently of the desktop window
   Engine->>Engine: Validate config, data permissions and adapters
   Engine->>Ledger: Load Run checkpoint and incomplete action intents
-  Ledger-->>Engine: Action started; completion unknown
-  Engine->>Engine: Reconcile evidence; do not blindly execute again
+  Ledger-->>Engine: Action started, completion unknown
+  Engine->>Engine: Reconcile evidence, do not blindly execute again
   alt Verified completion evidence exists
     Engine->>Ledger: Record reconciled result and append recovery event
     Engine->>Runtime: Resume from next safe transition
@@ -539,7 +539,7 @@ sequenceDiagram
     Engine-->>Owner: Request a decision with redacted evidence
     Note over Engine,Effect: No automatic replay, including after timeout or retry
   end
-  Note over Service,Owner: Closing the window does not stop the service; sleep stops progress
+  Note over Service,Owner: Closing the window does not stop the service, sleep stops progress
 ```
 
 ## 10. Naming and file conventions
@@ -662,7 +662,7 @@ conventions proposal). ARCH001 changes no runtime, package manifest, generated i
 - Keep contracts, domain, application and workflow-runtime free of I/O (OVE_ARCH002).
 - Derive DTO types from contracts and preserve additive compatibility (OVE_ARCH008).
 - Inject ports; construct adapters only in composition roots (OVE_ARCH006).
-- Import application/ports only from adapters; never application use cases (OVE_ARCH002).
+- In adapters, import application only through application/ports; never import its use cases (OVE_ARCH002).
 - Never import another adapter, including its types/helpers (OVE_ARCH002).
 - Keep gateway transport/security logic separate from business rules (OVE_ENGINE011).
 - Route UI, Telegram, CLI and Agent actions through the same gateway (OVE_ENGINE020/028).

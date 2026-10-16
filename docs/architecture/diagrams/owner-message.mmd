@@ -10,7 +10,7 @@ sequenceDiagram
   Owner->>UI: Send message with Workspace context
   UI->>Client: Typed request and cancellation signal
   Client->>Shell: Opaque gateway frame
-  Shell->>GW: Inject authentication; owner-only socket
+  Shell->>GW: Inject authentication, owner-only socket
   GW->>GW: Authenticate, authorize, validate, audit
   GW->>UC: Validated DTO plus caller context
   UC->>Repo: Persist message and append event atomically

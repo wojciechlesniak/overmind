@@ -12,8 +12,8 @@ sequenceDiagram
   Service->>Engine: Restart independently of the desktop window
   Engine->>Engine: Validate config, data permissions and adapters
   Engine->>Ledger: Load Run checkpoint and incomplete action intents
-  Ledger-->>Engine: Action started; completion unknown
-  Engine->>Engine: Reconcile evidence; do not blindly execute again
+  Ledger-->>Engine: Action started, completion unknown
+  Engine->>Engine: Reconcile evidence, do not blindly execute again
   alt Verified completion evidence exists
     Engine->>Ledger: Record reconciled result and append recovery event
     Engine->>Runtime: Resume from next safe transition
@@ -22,4 +22,4 @@ sequenceDiagram
     Engine-->>Owner: Request a decision with redacted evidence
     Note over Engine,Effect: No automatic replay, including after timeout or retry
   end
-  Note over Service,Owner: Closing the window does not stop the service; sleep stops progress
+  Note over Service,Owner: Closing the window does not stop the service, sleep stops progress

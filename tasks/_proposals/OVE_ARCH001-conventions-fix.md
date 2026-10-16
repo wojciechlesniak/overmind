@@ -104,6 +104,9 @@ policy exceptions. Link future owning fixes back to this record.
 
 OSS004 owns docs/architecture/README.md; the parent may link ARCHITECTURE.md,
 boundaries.json and the four diagrams there after this document exists.
-No edits to that file or to AGENTS.md/CONTRIBUTING.md are made by ARCH001.
-The parent coordinates any required root links through the owning task after
-its dependent integration is merged.
+The parent integrator authorized minimal AGENTS.md/CONTRIBUTING.md availability
+updates in this same ARCH001 PR, as required by AGENTS Maintenance. Those edits
+now link the existing architecture document and remove architecture-only future
+qualifiers; the glossary/source-language statements are preserved. The sensitive
+AGENTS change requires config-change and independent review before merge.
+No edit to docs/architecture/README.md is made here; OSS004 retains that ownership.

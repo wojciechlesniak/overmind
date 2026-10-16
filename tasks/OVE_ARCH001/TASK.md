@@ -160,8 +160,9 @@ integrity, catalogue/path coverage, source/block identity, section/line counts,
 all local/task links and all 17 actual workspace paths. This validates data and
 document consistency, not ARCH002's future enforcement or product isolation.
 Prettier was invoked explicitly for the owned documents because the generic
-repository config ignores docs. No code, package manifest, dependency, root
-aggregator, live setting or user research file was changed.
+repository config ignores docs. No runtime code, package manifest, dependency,
+live setting or user research file was changed. The parent integrator authorized
+minimal AGENTS.md/CONTRIBUTING.md link-availability updates in this same PR.
 
 mmdc and markdownlint are not installed. No extra dependency was installed to
 pretend those commands ran. Real Mermaid rendering is assigned to the parent
@@ -169,3 +170,15 @@ through the published GitHub Markdown preview; its acceptance checkbox remains
 open until actual rendering is verified. Independent Standards/Spec review and
 exact-head hosted CI remain required before merge. Conflicts and proposed owner
 alignment are recorded in tasks/_proposals/OVE_ARCH001-conventions-fix.md.
+
+
+### Review corrections
+
+The parent verified the C4 diagram through the actual GitHub renderer; the three
+initial sequence previews failed on semicolon delimiters in labels. Those labels
+now use commas, and their source files and embedded blocks remain identical.
+The adapter-only application/ports checklist wording is corrected. Shared agent
+and contributor instructions now link the architecture document in this same PR,
+under the integrator's coordination. The render checkbox remains open until the
+parent verifies all three corrected sequences at the newly published head.
+Independent delta reviews and exact-head hosted checks remain required.

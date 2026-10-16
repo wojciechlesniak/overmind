@@ -6,8 +6,8 @@
 - Open your assigned `tasks/<ID>/TASK.md` through the [task index](tasks/INDEX.md),
   using the [task template](tasks/_template/TASK.md) only to understand its format.
 - Read [SPECIFICATION](docs/SPECIFICATION.md) and the task's referenced ADRs.
-- Read `docs/architecture/ARCHITECTURE.md` when its owning task creates it;
-  until then, use the architecture rules in CONVENTIONS and PLAN.
+- Read [ARCHITECTURE](docs/architecture/ARCHITECTURE.md) for package, layer and
+  process boundaries.
 
 ## Workflow
 
