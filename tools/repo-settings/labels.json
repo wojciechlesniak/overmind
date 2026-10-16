@@ -1,0 +1,107 @@
+[
+  {
+    "name": "accepted",
+    "color": "0e8a16",
+    "description": "Issue approved for implementation by a maintainer"
+  },
+  {
+    "name": "needs-triage",
+    "color": "ededed",
+    "description": "Needs maintainer triage"
+  },
+  {
+    "name": "bug",
+    "color": "d73a4a",
+    "description": "Something is not working"
+  },
+  {
+    "name": "enhancement",
+    "color": "a2eeef",
+    "description": "New feature or improvement"
+  },
+  {
+    "name": "security",
+    "color": "b60205",
+    "description": "Public security tracking after coordinated disclosure only"
+  },
+  {
+    "name": "task",
+    "color": "1d76db",
+    "description": "Implementation backlog task"
+  },
+  {
+    "name": "good first issue",
+    "color": "7057ff",
+    "description": "Suitable for a new contributor"
+  },
+  {
+    "name": "help wanted",
+    "color": "008672",
+    "description": "Contributions welcome"
+  },
+  {
+    "name": "config-change",
+    "color": "b60205",
+    "description": "Maintainer reviewed protected configuration changes"
+  },
+  {
+    "name": "hooks-change",
+    "color": "d93f0b",
+    "description": "Maintainer reviewed hook policy changes"
+  },
+  {
+    "name": "lint-config-change",
+    "color": "b60205",
+    "description": "Maintainer approved ESLint policy changes"
+  },
+  {
+    "name": "run-isolation",
+    "color": "b60205",
+    "description": "Maintainer requests trusted exact-SHA isolation admission"
+  },
+  {
+    "name": "gate:closed",
+    "color": "000000",
+    "description": "Pull request closed by the contribution gate"
+  },
+  {
+    "name": "trusted",
+    "color": "0e8a16",
+    "description": "Informational trusted contributor marker"
+  },
+  {
+    "name": "dependencies",
+    "color": "0366d6",
+    "description": "Dependency changes"
+  },
+  {
+    "name": "dependencies-major",
+    "color": "b60205",
+    "description": "Major dependency upgrade requiring explicit review"
+  },
+  {
+    "name": "docs",
+    "color": "0075ca",
+    "description": "Documentation changes"
+  },
+  {
+    "name": "translation",
+    "color": "fbca04",
+    "description": "Localization or translation changes"
+  },
+  {
+    "name": "blocked",
+    "color": "b60205",
+    "description": "Blocked by a recorded dependency or decision"
+  },
+  {
+    "name": "wontfix",
+    "color": "ffffff",
+    "description": "Maintainer decided not to implement"
+  },
+  {
+    "name": "duplicate",
+    "color": "cfd3d7",
+    "description": "Duplicates an existing issue or pull request"
+  }
+]
