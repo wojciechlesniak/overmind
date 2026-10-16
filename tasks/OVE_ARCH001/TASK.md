@@ -6,7 +6,7 @@ kind: docs
 size: M
 priority: P0
 mvp: true
-status: in_review
+status: done
 depends_on: [OVE_SETUP001]
 soft_depends_on: []
 provides: ["doc:architecture", "lib:boundaries-manifest"]
@@ -122,7 +122,7 @@ The architecture document is the home of the trust boundaries: Owner, desktop UI
 
 - [x] `ARCHITECTURE.md` exists with all 14 sections in the specified order and every package of PLAN section 1 appears in the catalogue.
 - [x] The dependency matrix in the Markdown and `boundaries.json` agree cell by cell (a reviewer can diff them; ARCH002 later automates it).
-- [ ] The three sequence diagrams render in a Mermaid preview without errors.
+- [x] The three sequence diagrams render in a Mermaid preview without errors.
 - [x] Every enforceable rule names the task that enforces it.
 - [x] Trust boundary identifiers (TB-*) are defined and listed.
 - [x] The document contains the "Rules checklist" (at most 20 lines).
@@ -188,3 +188,22 @@ The coordinated AGENTS test-fixture inventory now includes the newly linked
 architecture file. The first pre-push found nine incomplete positive fixtures;
 no guard policy or assertions were relaxed. The actual instruction checker and
 all 75 focused guard/configuration-gate tests pass after that inventory correction.
+
+### Final acceptance evidence (2026-10-17)
+
+The parent verified all four diagrams in the real GitHub Markdown renderer at
+be64b90f6d9fe87c333f80d69ae0ef098d6fd529. All three corrected sequence diagrams
+rendered without parse errors; the Owner-message diagram was also visually checked.
+The separately audited markdownlint 0.41.1 official API returned zero diagnostics
+for ARCHITECTURE.md with the prescribed OSS004 rules and inline suppression
+disabled. This was an isolated semantic check, not the absent CLI command, and
+added no repository dependency.
+
+Independent Standards and Spec final reviews both passed with zero findings at
+be64b90. Final code CI 38965727745, Security 38965727544 and isolation admission
+38965719798 passed at that exact head. Earlier runs superseded by the ready/label
+events were cancelled and are not counted as evidence. Physical isolation and
+ARCH002 enforcement remain their owning tasks' required evidence.
+
+This final commit changes only acceptance metadata. It requires fresh exact-head
+hosted checks and independent metadata-delta reviews before integration.
