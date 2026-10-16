@@ -6,7 +6,7 @@ kind: security
 size: S
 priority: P0
 mvp: true
-status: todo
+status: in_review
 depends_on: [OVE_SETUP006]
 soft_depends_on: [OVE_OSS003, OVE_SETUP007, OVE_SETUP014]
 provides: ["lib:repo-settings", "lib:repo-labels", "lib:branch-protection-spec"]
@@ -22,6 +22,11 @@ adr_refs: [13, 25]
 ---
 
 # OVE_SETUP018: GitHub repository settings, rulesets, labels and a read-only settings audit
+
+## Implementation claim
+
+Claimed-By: Codex ove016_settings
+Claimed-At: 2026-10-16T19:13:30Z
 
 ## 1. Summary
 
@@ -90,12 +95,12 @@ The set of required check names is read from the workflow files by the audit (jo
 
 - [ ] A real PR from a separate outside-contributor fork runs hosted CI with a read-only token and no secrets and cannot start a self-hosted isolation job; record actual workflow evidence.
 
-- [ ] `docs/engineering/repository-settings.md` lists every setting in requirements 1-8 with value, rationale and verification command.
+- [x] `docs/engineering/repository-settings.md` lists every setting in requirements 1-8 with value, rationale and verification command.
 - [ ] `pnpm settings:audit` against a correctly configured repository exits 0; flipping one setting (for example allowing merge commits) makes it exit 1 naming the setting.
-- [ ] The audit sends only GET requests (unit test on the wrapper) and prints no token.
+- [x] The audit sends only GET requests (unit test on the wrapper) and prints no token.
 - [ ] `expected.json` required checks all exist as jobs in `.github/workflows` (test).
 - [ ] `pnpm settings:labels` dry run lists labels to create; `--apply` creates them.
-- [ ] The doc includes the bootstrap order and the single-maintainer exceptions.
+- [x] The doc includes the bootstrap order and the single-maintainer exceptions.
 
 ## 12. Test plan
 
@@ -118,3 +123,23 @@ Parallel with OVE_OSS003. Hotspot: `expected.json` changes whenever a new workfl
 The Owner-approved SETUP006 sequence transfers real outside-contributor fork verification here, after a separate writable fork/account is available. Static workflow checks and mocked gate/API tests are foundation evidence only. Verify the deployed CI/security workflows, actual token permissions and denied self-hosted execution without exposing token or secret values.
 
 Source: tasks/_proposals/OVE_SETUP006-acceptance-sequence.md.
+
+
+### Implementation and operational acceptance (2026-10-16)
+
+The implementation is ready for independent review; this task is not done.
+`tools/repo-settings/` supplies the exact expected state, labels, paginated GET-only
+operator audit, pure comparison/label planning, explicit-only label writes, and
+recorded-response/negative tests. No dependencies or live settings were changed.
+Root script additions are coordinated in
+`tasks/_proposals/OVE_SETUP018-shared-integration.md`.
+
+Actual local audit exited 1 on repository drift; label dry run exited 0 and planned
+18 creates/metadata updates, retaining all extras. No `--apply` was run. GitHub
+GET inspection found no forks and no external-fork PRs in any state. A real fork
+run, Owner-applied settings and reviewed live audit remain required. `pr-gate`
+is not yet delivered by OSS003, and the inventory reports that missing required
+job as drift. A fully configured personal repository still needs explicit Owner
+verification of manual 2FA/permissions and dependency graph controls; strict API
+mode cannot fabricate those observations. `--allow-unknown` cannot waive known
+setting drift, missing labels or malformed returned metadata.
