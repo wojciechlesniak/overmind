@@ -6,7 +6,7 @@ kind: infra
 size: M
 priority: P0
 mvp: true
-status: todo
+status: in_progress
 depends_on: [OVE_SETUP001, OVE_SETUP002]
 soft_depends_on: [OVE_SETUP004, OVE_SETUP005]
 provides: ["lib:task-tools", "lib:task-model", "lib:worktree-tools"]
