@@ -62,6 +62,11 @@ it("real Syft catalogs only lockfiles, ignores forged installed packages and val
     git(["commit", "--quiet", "-m", "chore: Rust lockfile fixture"]);
     const withRust = validateSBOM(readSBOM(await generateSBOM(fixture, { gitEnv: env })), true);
     expect(withRust.components.some((item) => item.purl.startsWith("pkg:cargo/tauri@"))).toBe(true);
+    const cargoPath = resolve(fixture, "apps/desktop/src-tauri/Cargo.lock");
+    const cargoBytes = readFileSync(cargoPath);
+    rmSync(cargoPath);
+    await expect(generateSBOM(fixture, { gitEnv: env })).rejects.toThrow();
+    writeFileSync(cargoPath, cargoBytes);
     rmSync(resolve(fixture, "pnpm-lock.yaml"));
     symlinkSync(resolve(root, "pnpm-lock.yaml"), resolve(fixture, "pnpm-lock.yaml"));
     git(["add", "pnpm-lock.yaml"]);

@@ -107,7 +107,9 @@ Syft scans a temporary snapshot of the actual root `pnpm-lock.yaml` and optional
 root/desktop Cargo locks. No install runs inside the generator and no package code
 is executed. Lockfiles must be regular, tracked, unchanged from the named commit
 and free of symlink parents. Copied bytes are compared directly with committed
-Git blobs, including when index flags hide working-tree changes from Git diff. Installed `node_modules`, fixtures, repository Syft
+Git blobs, including when index flags hide working-tree changes from Git diff.
+Cargo locks present in the captured commit cannot be omitted by deleting them
+locally; committed inventory and working-tree presence are checked together. Installed `node_modules`, fixtures, repository Syft
 configuration and inherited Syft environment cannot inject components. The CI job
 uses frozen setup for the tooling itself; cataloging reads only the lock snapshot.
 

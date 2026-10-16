@@ -52,10 +52,22 @@ export async function generateSBOM(
   if (!/^[a-f0-9]{40}$/u.test(sha)) {
     throw new Error("Invalid repository commit");
   }
+  const optionalLocks = ["Cargo.lock", "apps/desktop/src-tauri/Cargo.lock"];
+  const committedPaths = new Set(
+    execFileSync("git", ["ls-tree", "--name-only", "-z", sha, "--", ...optionalLocks], {
+      cwd: root,
+      env: options.gitEnv,
+      encoding: "utf8",
+    })
+      .split("\0")
+      .filter(Boolean),
+  );
   const paths = [
     "pnpm-lock.yaml",
-    ...["Cargo.lock", "apps/desktop/src-tauri/Cargo.lock"].filter((path) =>
-      Boolean(lstatSync(resolve(root, path), { throwIfNoEntry: false })),
+    ...optionalLocks.filter(
+      (path) =>
+        committedPaths.has(path) ||
+        Boolean(lstatSync(resolve(root, path), { throwIfNoEntry: false })),
     ),
   ];
   try {
