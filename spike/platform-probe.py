@@ -62,7 +62,7 @@ def main():
         with os.fdopen(fd, "wb") as file:
             file.write(marker)
         created = True
-        for candidate, iteration in (("A", 10), ("B", 1), ("C", 10)):
+        for candidate, iteration in (("A", 0), ("B", 0), ("C", 0)):
             executable = ROOT / "dist" / candidate / str(iteration) / "Contents/MacOS/overmind-engine"
             for run in range(1, 11):
                 data = Path(tempfile.mkdtemp(prefix="ove11-launch-", dir="/private/tmp"))

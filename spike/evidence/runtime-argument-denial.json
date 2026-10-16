@@ -1,0 +1,5 @@
+{
+  "status": 0,
+  "stdout": "{\"version\":\"0.0.0-ove011\",\"protocol\":1,\"driver\":\"node:sqlite\",\"node\":\"22.23.3\"}\n",
+  "ignoredInjectedNodeOptions": true
+}

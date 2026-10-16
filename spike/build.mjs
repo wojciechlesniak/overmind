@@ -1,10 +1,11 @@
 import { build } from "esbuild";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
+import { Buffer } from "node:buffer";
 import process from "node:process";
 import { performance } from "node:perf_hooks";
-import { chmodSync, copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { resolve, join, dirname } from "node:path";
+import { chmodSync, copyFileSync, mkdirSync, readFileSync, writeFileSync, rmSync } from "node:fs";
+import { resolve, join, dirname, relative, isAbsolute } from "node:path";
 import { installResource } from "../tools/pinned-bin/install.ts";
 import { readBinaryLock } from "../tools/pinned-bin/lock.parse-boundary.ts";
 
@@ -72,53 +73,75 @@ export async function buildCandidate(candidate, iteration = 0) {
   if (!["A", "B", "C"].includes(candidate)) {
     throw new Error("Unknown candidate");
   }
+  if (!Number.isSafeInteger(iteration) || iteration < 0 || iteration > 1000) {
+    throw new Error("Invalid iteration");
+  }
   const started = performance.now();
   const base = join(outputs, candidate, String(iteration));
   const executable = join(base, "Contents/MacOS/overmind-engine");
   mkdirSync(dirname(executable), { recursive: true });
+  // A version launch once timed out after replacing an executed fixture.
+  // Stale kernel signature state is unproven; use a fresh generated inode.
+  rmSync(executable, { force: true });
   const bundle = join(base, "entry.cjs");
   const driver = { A: "node", B: "better", C: "bun" }[candidate];
-  await build({
-    absWorkingDir: root,
-    entryPoints: ["spike/entry.ts"],
-    bundle: true,
-    platform: "node",
-    target: "node22",
-    format: "cjs",
-    outfile: bundle,
-    sourcemap: "inline",
-    sourceRoot: "../../",
-    sourcesContent: true,
-    minify: false,
-    legalComments: "inline",
-    metafile: true,
-    define: { __VERSION__: '"0.0.0-ove011"', __PROTOCOL__: "1" },
-    external: ["bun:sqlite"],
-    plugins: [
-      {
-        name: "probe-driver",
-        setup(plugin) {
-          plugin.onResolve({ filter: /^\.\/driver\.ts$/ }, () => ({
-            path: resolve(directory, `driver-${driver}.ts`),
-          }));
+  if (candidate !== "C") {
+    await build({
+      absWorkingDir: root,
+      entryPoints: ["spike/entry.ts"],
+      bundle: true,
+      platform: "node",
+      target: "node22",
+      format: "cjs",
+      outfile: bundle,
+      sourcemap: "external",
+      sourcesContent: true,
+      minify: false,
+      legalComments: "inline",
+      metafile: true,
+      define: { __VERSION__: '"0.0.0-ove011"', __PROTOCOL__: "1" },
+      external: ["bun:sqlite"],
+      plugins: [
+        {
+          name: "probe-driver",
+          setup(plugin) {
+            plugin.onResolve({ filter: /^#driver$/ }, () => ({
+              path: resolve(directory, `driver-${driver}.ts`),
+            }));
+          },
         },
-      },
-    ],
-  }).then((result) => {
-    writeFileSync(join(base, "metafile.json"), JSON.stringify(result.metafile, null, 2) + "\n");
-  });
+      ],
+    }).then((result) => {
+      writeFileSync(join(base, "metafile.json"), JSON.stringify(result.metafile, null, 2) + "\n");
+      // Stable source identities support map lookup and offline symbolication.
+      // This parses only the source map emitted by the pinned esbuild above.
+      const map = JSON.parse(readFileSync(bundle + ".map", "utf8"));
+      if (!Array.isArray(map.sources) || !map.sources.every((item) => typeof item === "string")) {
+        throw new Error("Invalid esbuild source map");
+      }
+      map.sourceRoot = "";
+      map.sources = map.sources.map((source) => {
+        const path = relative(root, resolve(dirname(bundle), source));
+        if (path.startsWith("..") || isAbsolute(path)) {
+          throw new Error("Source map escapes probe root");
+        }
+        return "file:///overmind/source/" + path;
+      });
+      const encoded = Buffer.from(JSON.stringify(map)).toString("base64");
+      writeFileSync(bundle + ".map", JSON.stringify(map) + "\n");
+      writeFileSync(
+        bundle,
+        readFileSync(bundle, "utf8") +
+          "\n//# sourceMappingURL=data:application/json;base64," +
+          encoded +
+          "\n//# sourceURL=file:///overmind/engine.cjs\n",
+      );
+    });
+  }
   if (candidate === "C") {
     execFileSync(
       bun,
-      [
-        "build",
-        "--compile",
-        "--target=bun-darwin-arm64",
-        "--sourcemap=inline",
-        bundle,
-        "--outfile",
-        executable,
-      ],
+      [resolve(directory, "compile-bun.mjs"), resolve(directory, "entry.ts"), executable],
       { cwd: root, stdio: "pipe", timeout: 120000 },
     );
   } else {
@@ -127,8 +150,8 @@ export async function buildCandidate(candidate, iteration = 0) {
     writeFileSync(
       config,
       JSON.stringify({
-        main: bundle,
-        output: blob,
+        main: "entry.cjs",
+        output: "sea-prep.blob",
         disableExperimentalSEAWarning: true,
         useCodeCache: false,
         useSnapshot: false,
@@ -136,7 +159,11 @@ export async function buildCandidate(candidate, iteration = 0) {
         execArgvExtension: "none",
       }),
     );
-    execFileSync(node, ["--experimental-sea-config", config], { stdio: "pipe", timeout: 120000 });
+    execFileSync(node, ["--experimental-sea-config", "sea-config.json"], {
+      cwd: base,
+      stdio: "pipe",
+      timeout: 120000,
+    });
     copyFileSync(node, executable);
     chmodSync(executable, 0o755);
     execFileSync("/usr/bin/codesign", ["--remove-signature", executable], { stdio: "pipe" });
@@ -199,8 +226,11 @@ export async function buildCandidate(candidate, iteration = 0) {
     buildMs: performance.now() - started,
   };
 }
-if (process.argv.includes("--build-once")) {
-  for (const candidate of ["A", "B", "C"]) {
+const candidateIndex = process.argv.indexOf("--candidate");
+if (process.argv.includes("--build-once") || candidateIndex >= 0) {
+  for (const candidate of candidateIndex >= 0
+    ? [process.argv[candidateIndex + 1]]
+    : ["A", "B", "C"]) {
     const result = await buildCandidate(candidate);
     try {
       process.stdout.write(

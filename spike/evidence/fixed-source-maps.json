@@ -1,0 +1,14 @@
+[
+  {
+    "candidate": "A",
+    "status": 1,
+    "mapped": false,
+    "stderr": "(node:15824) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `overmind-engine --trace-warnings ...` to show where the warning was created)\nError: OVE011_SOURCE_MAP_SENTINEL\n    at probeMappedFailure (entry.cjs:19917:9)\n    at main (entry.cjs:19934:5)\n    at entry.cjs:20006:1\n    at embedderRunCjs (node:internal/main/embedding:89:10)\n"
+  },
+  {
+    "candidate": "C",
+    "status": 1,
+    "mapped": true,
+    "stderr": "Error: OVE011_SOURCE_MAP_SENTINEL\n    at probeMappedFailure (spike/entry.ts:15:13)\n    at main (spike/entry.ts:32:5)\n    at spike/entry.ts:106\n"
+  }
+]

@@ -4,6 +4,12 @@
   "private": true,
   "license": "Apache-2.0",
   "type": "module",
+  "imports": {
+    "#driver": {
+      "bun": "./driver-bun.ts",
+      "default": "./driver-node.ts"
+    }
+  },
   "dependencies": {
     "better-sqlite3": "13.0.3",
     "esbuild": "0.28.2",

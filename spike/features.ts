@@ -2,7 +2,7 @@ import { spawn, execFileSync } from "node:child_process";
 import { once } from "node:events";
 import { join } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
-import { openDatabase, driver } from "./driver.ts";
+import { openDatabase, driver } from "#driver";
 import { number, record } from "./probe-input.parse-boundary.ts";
 import type { DatabasePort } from "./driver-port.ts";
 

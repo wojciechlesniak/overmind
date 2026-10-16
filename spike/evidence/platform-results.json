@@ -1,0 +1,362 @@
+[
+  {
+    "candidate": "A",
+    "iteration": 1,
+    "mode": "serve",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 402.10175000000004,
+    "stdout": "{\"ready\":true,\"pid\":15758,\"mode\":384}\n",
+    "stderr": "(node:15758) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `overmind-engine --trace-warnings ...` to show where the warning was created)\n",
+    "socketMode": 384,
+    "response": "{\"version\":\"0.0.0-ove011\",\"protocol\":1,\"driver\":\"node:sqlite\"}"
+  },
+  {
+    "candidate": "A",
+    "iteration": 2,
+    "mode": "serve",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 122.54124999999999,
+    "stdout": "{\"ready\":true,\"pid\":15769,\"mode\":384}\n",
+    "stderr": "(node:15769) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `overmind-engine --trace-warnings ...` to show where the warning was created)\n",
+    "socketMode": 384,
+    "response": "{\"version\":\"0.0.0-ove011\",\"protocol\":1,\"driver\":\"node:sqlite\"}"
+  },
+  {
+    "candidate": "A",
+    "iteration": 3,
+    "mode": "serve",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 119.97195800000004,
+    "stdout": "{\"ready\":true,\"pid\":15772,\"mode\":384}\n",
+    "stderr": "(node:15772) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `overmind-engine --trace-warnings ...` to show where the warning was created)\n",
+    "socketMode": 384,
+    "response": "{\"version\":\"0.0.0-ove011\",\"protocol\":1,\"driver\":\"node:sqlite\"}"
+  },
+  {
+    "candidate": "A",
+    "iteration": 4,
+    "mode": "serve",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 129.12425000000005,
+    "stdout": "{\"ready\":true,\"pid\":15775,\"mode\":384}\n",
+    "stderr": "(node:15775) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `overmind-engine --trace-warnings ...` to show where the warning was created)\n",
+    "socketMode": 384,
+    "response": "{\"version\":\"0.0.0-ove011\",\"protocol\":1,\"driver\":\"node:sqlite\"}"
+  },
+  {
+    "candidate": "A",
+    "iteration": 5,
+    "mode": "serve",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 124.61616599999992,
+    "stdout": "{\"ready\":true,\"pid\":15778,\"mode\":384}\n",
+    "stderr": "(node:15778) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `overmind-engine --trace-warnings ...` to show where the warning was created)\n",
+    "socketMode": 384,
+    "response": "{\"version\":\"0.0.0-ove011\",\"protocol\":1,\"driver\":\"node:sqlite\"}"
+  },
+  {
+    "candidate": "A",
+    "iteration": 6,
+    "mode": "serve",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 118.66362499999994,
+    "stdout": "{\"ready\":true,\"pid\":15781,\"mode\":384}\n",
+    "stderr": "(node:15781) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `overmind-engine --trace-warnings ...` to show where the warning was created)\n",
+    "socketMode": 384,
+    "response": "{\"version\":\"0.0.0-ove011\",\"protocol\":1,\"driver\":\"node:sqlite\"}"
+  },
+  {
+    "candidate": "A",
+    "iteration": 7,
+    "mode": "serve",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 117.76849999999995,
+    "stdout": "{\"ready\":true,\"pid\":15784,\"mode\":384}\n",
+    "stderr": "(node:15784) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `overmind-engine --trace-warnings ...` to show where the warning was created)\n",
+    "socketMode": 384,
+    "response": "{\"version\":\"0.0.0-ove011\",\"protocol\":1,\"driver\":\"node:sqlite\"}"
+  },
+  {
+    "candidate": "A",
+    "iteration": 8,
+    "mode": "serve",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 114.38762499999999,
+    "stdout": "{\"ready\":true,\"pid\":15787,\"mode\":384}\n",
+    "stderr": "(node:15787) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `overmind-engine --trace-warnings ...` to show where the warning was created)\n",
+    "socketMode": 384,
+    "response": "{\"version\":\"0.0.0-ove011\",\"protocol\":1,\"driver\":\"node:sqlite\"}"
+  },
+  {
+    "candidate": "A",
+    "iteration": 9,
+    "mode": "serve",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 124.098166,
+    "stdout": "{\"ready\":true,\"pid\":15790,\"mode\":384}\n",
+    "stderr": "(node:15790) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `overmind-engine --trace-warnings ...` to show where the warning was created)\n",
+    "socketMode": 384,
+    "response": "{\"version\":\"0.0.0-ove011\",\"protocol\":1,\"driver\":\"node:sqlite\"}"
+  },
+  {
+    "candidate": "A",
+    "iteration": 10,
+    "mode": "serve",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 128.75208400000005,
+    "stdout": "{\"ready\":true,\"pid\":15793,\"mode\":384}\n",
+    "stderr": "(node:15793) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `overmind-engine --trace-warnings ...` to show where the warning was created)\n",
+    "socketMode": 384,
+    "response": "{\"version\":\"0.0.0-ove011\",\"protocol\":1,\"driver\":\"node:sqlite\"}"
+  },
+  {
+    "candidate": "A",
+    "iteration": 1,
+    "mode": "tcc",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 3728.0007919999994,
+    "stdout": "own-document-read-ok\n",
+    "stderr": "(node:15797) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `overmind-engine --trace-warnings ...` to show where the warning was created)\n",
+    "socketMode": null,
+    "response": null
+  },
+  {
+    "candidate": "B",
+    "iteration": 1,
+    "mode": "serve",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 5485.495917,
+    "stdout": "",
+    "stderr": "Error: dlopen(/private/tmp/overmind-OVE-011-spike/spike/dist/B/0/Contents/Resources/engine/native/better_sqlite3.node, 0x0001): tried: '/private/tmp/overmind-OVE-011-spike/spike/dist/B/0/Contents/Resources/engine/native/better_sqlite3.node' (code signature in <C87A9325-F748-3E31-91DC-18CFB1217A68> '/private/tmp/overmind-OVE-011-spike/spike/dist/B/0/Contents/Resources/engine/native/better_sqlite3.node' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs), '/System/Volumes/Preboot/Cryptexes/OS/private/tmp/overmind-OVE-011-spike/spike/dist/B/0/Contents/Resources/engine/native/better_sqlite3.node' (no such file), '/private/tmp/overmind-OVE-011-spike/spike/dist/B/0/Contents/Resources/engine/native/better_sqlite3.node' (code signature in <C87A9325-F748-3E31-91DC-18CFB1217A68> '/private/tmp/overmind-OVE-011-spike/spike/dist/B/0/Contents/Resources/engine/native/better_sqlite3.node' not valid for use in process: mapping process and mapped file (non-platform) have different Team IDs)\n    at openDatabase (entry.cjs:738:11)\n    at main (entry.cjs:20677:14)\n    at entry.cjs:20730:1\n    at embedderRunCjs (node:internal/main/embedding:89:10)\n",
+    "socketMode": null,
+    "response": null
+  },
+  {
+    "candidate": "B",
+    "iteration": 1,
+    "mode": "tcc",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 5479.9201250000015,
+    "stdout": "",
+    "stderr": "",
+    "socketMode": null,
+    "response": null
+  },
+  {
+    "candidate": "C",
+    "iteration": 1,
+    "mode": "serve",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 120.85079199999882,
+    "stdout": "{\"ready\":true,\"pid\":15897,\"mode\":384}\n",
+    "stderr": "",
+    "socketMode": 384,
+    "response": "{\"version\":\"0.0.0-ove011\",\"protocol\":1,\"driver\":\"bun:sqlite\"}"
+  },
+  {
+    "candidate": "C",
+    "iteration": 2,
+    "mode": "serve",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 115.0540410000005,
+    "stdout": "{\"ready\":true,\"pid\":15900,\"mode\":384}\n",
+    "stderr": "",
+    "socketMode": 384,
+    "response": "{\"version\":\"0.0.0-ove011\",\"protocol\":1,\"driver\":\"bun:sqlite\"}"
+  },
+  {
+    "candidate": "C",
+    "iteration": 3,
+    "mode": "serve",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 64.51554199999876,
+    "stdout": "{\"ready\":true,\"pid\":15915,\"mode\":384}\n",
+    "stderr": "",
+    "socketMode": 384,
+    "response": "{\"version\":\"0.0.0-ove011\",\"protocol\":1,\"driver\":\"bun:sqlite\"}"
+  },
+  {
+    "candidate": "C",
+    "iteration": 4,
+    "mode": "serve",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 62.87508300000155,
+    "stdout": "{\"ready\":true,\"pid\":15919,\"mode\":384}\n",
+    "stderr": "",
+    "socketMode": 384,
+    "response": "{\"version\":\"0.0.0-ove011\",\"protocol\":1,\"driver\":\"bun:sqlite\"}"
+  },
+  {
+    "candidate": "C",
+    "iteration": 5,
+    "mode": "serve",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 59.858250000001334,
+    "stdout": "{\"ready\":true,\"pid\":15923,\"mode\":384}\n",
+    "stderr": "",
+    "socketMode": 384,
+    "response": "{\"version\":\"0.0.0-ove011\",\"protocol\":1,\"driver\":\"bun:sqlite\"}"
+  },
+  {
+    "candidate": "C",
+    "iteration": 6,
+    "mode": "serve",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 60.612834000000504,
+    "stdout": "{\"ready\":true,\"pid\":15927,\"mode\":384}\n",
+    "stderr": "",
+    "socketMode": 384,
+    "response": "{\"version\":\"0.0.0-ove011\",\"protocol\":1,\"driver\":\"bun:sqlite\"}"
+  },
+  {
+    "candidate": "C",
+    "iteration": 7,
+    "mode": "serve",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 61.56029199999935,
+    "stdout": "{\"ready\":true,\"pid\":15930,\"mode\":384}\n",
+    "stderr": "",
+    "socketMode": 384,
+    "response": "{\"version\":\"0.0.0-ove011\",\"protocol\":1,\"driver\":\"bun:sqlite\"}"
+  },
+  {
+    "candidate": "C",
+    "iteration": 8,
+    "mode": "serve",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 59.318707999999276,
+    "stdout": "{\"ready\":true,\"pid\":15933,\"mode\":384}\n",
+    "stderr": "",
+    "socketMode": 384,
+    "response": "{\"version\":\"0.0.0-ove011\",\"protocol\":1,\"driver\":\"bun:sqlite\"}"
+  },
+  {
+    "candidate": "C",
+    "iteration": 9,
+    "mode": "serve",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 113.09024999999906,
+    "stdout": "{\"ready\":true,\"pid\":15936,\"mode\":384}\n",
+    "stderr": "",
+    "socketMode": 384,
+    "response": "{\"version\":\"0.0.0-ove011\",\"protocol\":1,\"driver\":\"bun:sqlite\"}"
+  },
+  {
+    "candidate": "C",
+    "iteration": 10,
+    "mode": "serve",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 60.05299999999991,
+    "stdout": "{\"ready\":true,\"pid\":15939,\"mode\":384}\n",
+    "stderr": "",
+    "socketMode": 384,
+    "response": "{\"version\":\"0.0.0-ove011\",\"protocol\":1,\"driver\":\"bun:sqlite\"}"
+  },
+  {
+    "candidate": "C",
+    "iteration": 1,
+    "mode": "tcc",
+    "bootstrap": {
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "readyMs": 5513.2919999999995,
+    "stdout": "",
+    "stderr": "",
+    "socketMode": null,
+    "response": null
+  }
+]

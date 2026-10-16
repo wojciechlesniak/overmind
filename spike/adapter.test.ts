@@ -17,6 +17,7 @@ async function fixture(run: (db: DatabasePort, directory: string) => void | Prom
   }
 }
 it("retains the required WAL/foreign-key/busy/synchronous policy on Node22", async () => {
+  expect(process.versions.node).toBe("22.23.3");
   await fixture((db) => {
     expect(scalar(db, "PRAGMA journal_mode")).toBe("wal");
     expect(scalar(db, "PRAGMA busy_timeout")).toBe(5000);

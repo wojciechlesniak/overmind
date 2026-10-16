@@ -2,7 +2,7 @@ import { createServer } from "node:net";
 import { chmodSync, mkdirSync, readFileSync, statSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import { homedir } from "node:os";
-import { openDatabase, driver } from "./driver.ts";
+import { openDatabase, driver } from "#driver";
 import { configure, features } from "./features.ts";
 
 declare const __VERSION__: string;
@@ -15,8 +15,8 @@ function probeMappedFailure(): never {
   throw new Error("OVE011_SOURCE_MAP_SENTINEL");
 }
 async function main(): Promise<void> {
-  const version = typeof __VERSION__ === "string" ? __VERSION__ : "0.0.0-ove011";
-  const protocol = typeof __PROTOCOL__ === "number" ? __PROTOCOL__ : 1;
+  const version = typeof __VERSION__ === "string" ? __VERSION__ : "unbundled-probe";
+  const protocol = typeof __PROTOCOL__ === "number" ? __PROTOCOL__ : 0;
   if (argument("expected-protocol") && Number(argument("expected-protocol")) !== protocol) {
     process.exitCode = 30;
     return;
@@ -63,6 +63,12 @@ async function main(): Promise<void> {
     };
     tick();
     const timer = setInterval(tick, 25);
+    // Bound the writer even if its parent is killed during a failed probe.
+    setTimeout(() => {
+      clearInterval(timer);
+      db.close();
+      process.exit(0);
+    }, 10000).unref();
     process.on("SIGTERM", () => {
       clearInterval(timer);
       db.close();

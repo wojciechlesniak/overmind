@@ -1,0 +1,11 @@
+
+ RUN  v5.0.4 /private/tmp/overmind-OVE-011-spike
+
+(node:29315) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  20:09:45
+   Duration  220ms (import 56%, transform 25%, tests 16%, worker 3%)
+
