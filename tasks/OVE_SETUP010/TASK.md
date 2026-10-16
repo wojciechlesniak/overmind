@@ -6,7 +6,7 @@ kind: security
 size: M
 priority: P0
 mvp: true
-status: todo
+status: in_progress
 depends_on: [OVE_SETUP001, OVE_SETUP009]
 soft_depends_on: [OVE_SETUP011, OVE_SETUP008]
 provides: ["lib:tauri-shell", "lib:tauri-capabilities", "lib:csp", "lib:engine-ensure-running-contract", "lib:desktop-gateway-bridge"]
@@ -23,6 +23,9 @@ owns:
   - apps/desktop/src-tauri/src/engine.rs
   - apps/desktop/src-tauri/src/gateway_bridge.rs
   - apps/desktop/src-tauri/src/pick_directory.rs
+  - apps/desktop/src-tauri/src/transport.rs
+  - apps/desktop/src-tauri/src/native_io.rs
+  - apps/desktop/src-tauri/src/sidecar.rs
   - apps/desktop/src-tauri/icons/**
   - rust-toolchain.toml
   - apps/desktop/scripts/check-tauri-config.mjs

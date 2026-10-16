@@ -288,7 +288,7 @@ jobs:
     needs:
       - plan
     if: needs.plan.outputs.full == 'true' && needs.plan.outputs.rust == 'true'
-    runs-on: ${{ vars.MACOS_RUNNER || 'macos-15' }}
+    runs-on: macos-26
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

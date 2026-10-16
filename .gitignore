@@ -23,3 +23,6 @@ apps/desktop/src-tauri/resources/
 escape-evidence/
 /sbom/
 /secret-results/
+
+# Tauri ACL/schema outputs are regenerated from reviewed source permissions.
+apps/desktop/src-tauri/gen/

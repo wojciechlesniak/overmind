@@ -17,13 +17,17 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && node scripts/check-dist.mjs",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "lint": "node scripts/check-tauri-config.mjs"
   },
   "devDependencies": {
     "vite": "catalog:",
     "@vitejs/plugin-react-swc": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@types/node": "catalog:"
+    "@types/node": "catalog:",
+    "@tauri-apps/api": "catalog:",
+    "@tauri-apps/cli": "catalog:"
   }
 }

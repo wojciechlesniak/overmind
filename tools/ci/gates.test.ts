@@ -155,6 +155,11 @@ it("desktop dist policy and Vite configuration require the configuration approva
       "apps/desktop/vite.config.ts",
       "apps/desktop/scripts/check-dist.mjs",
       "apps/desktop/scripts/check-dist.allow.json",
+      "apps/desktop/scripts/check-tauri-config.mjs",
+      "apps/desktop/scripts/tauri-permission-allowlist.json",
+      "apps/desktop/src-tauri/tauri.conf.json",
+      "apps/desktop/src-tauri/capabilities/main.json",
+      "rust-toolchain.toml",
     ]) {
       const base = git(["rev-parse", "HEAD"]).trim();
       mkdirSync(dirname(resolve(fixture, file)), { recursive: true });

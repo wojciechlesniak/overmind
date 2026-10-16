@@ -1,0 +1,12 @@
+{
+  "identifier": "main",
+  "description": "Local main-window transport and native folder selection only.",
+  "windows": ["main"],
+  "permissions": [
+    "core:event:allow-listen",
+    "core:event:allow-unlisten",
+    "allow-gateway-request",
+    "allow-gateway-subscribe",
+    "allow-pick-directory"
+  ]
+}
