@@ -1,0 +1,7 @@
+[
+  "core:event:allow-listen",
+  "core:event:allow-unlisten",
+  "allow-gateway-request",
+  "allow-gateway-subscribe",
+  "allow-pick-directory"
+]

@@ -59,3 +59,58 @@ it("NOASSERTION is accepted only with explicit lockfile evidence, never as licen
     }),
   ).toThrow(/NOASSERTION/u);
 });
+
+it("only a verified local desktop stanza can supply a commit-qualified missing PURL", async () => {
+  const { desktopWorkspaceIdentity } = await import("./input.parse-boundary.ts");
+  const sha = "a".repeat(40);
+  const lock =
+    'version = 4\n\n[[package]]\nname = "overmind-desktop"\nversion = "0.0.0"\ndependencies = [\n "tauri",\n]\n';
+  const workspace = desktopWorkspaceIdentity(lock, sha);
+  expect(workspace).toEqual({ version: "0.0.0", sha });
+  const local = {
+    name: "overmind-desktop",
+    version: "0.0.0",
+    properties: [
+      { name: "syft:package:foundBy", value: "rust-cargo-lock-cataloger" },
+      { name: "syft:package:metadataType", value: "rust-cargo-lock-entry" },
+      { name: "syft:location:0:path", value: "/apps/desktop/src-tauri/Cargo.lock" },
+    ],
+  };
+  const raw = { ...good(), components: [...good().components, local] };
+  expect(() => parseSBOM(raw)).toThrow();
+  const document = completeLicenseEvidence(parseSBOM(raw, workspace));
+  expect(validateSBOM(document).components.at(-1)?.purl).toBe(
+    `pkg:cargo/overmind-desktop@0.0.0?vcs_url=git%2Bhttps:%2F%2Fgithub.com%2Fwojciechlesniak%2Fovermind%40${sha}#apps/desktop/src-tauri`,
+  );
+  const buildVersion = "0.0.0+local.1";
+  const buildWorkspace = desktopWorkspaceIdentity(
+    lock.replace('version = "0.0.0"', `version = "${buildVersion}"`),
+    sha,
+  );
+  const buildDocument = parseSBOM(
+    { ...raw, components: [...good().components, { ...local, version: buildVersion }] },
+    buildWorkspace,
+  );
+  expect(buildDocument.components.at(-1)?.purl).toBe(
+    `pkg:cargo/overmind-desktop@0.0.0%2Blocal.1?vcs_url=git%2Bhttps:%2F%2Fgithub.com%2Fwojciechlesniak%2Fovermind%40${sha}#apps/desktop/src-tauri`,
+  );
+  for (const change of [{ name: "foreign" }, { version: "9.9.9" }, { properties: [] }]) {
+    expect(() =>
+      parseSBOM({ ...raw, components: [...good().components, { ...local, ...change }] }, workspace),
+    ).toThrow();
+  }
+  expect(() =>
+    desktopWorkspaceIdentity(
+      lock.replace(
+        "dependencies = [",
+        'source = "registry+https://example.invalid"\ndependencies = [',
+      ),
+      sha,
+    ),
+  ).toThrow();
+  expect(() => desktopWorkspaceIdentity(lock + lock, sha)).toThrow();
+  expect(() => desktopWorkspaceIdentity(lock, "invalid")).toThrow();
+  expect(
+    desktopWorkspaceIdentity(lock.replace("overmind-desktop", "another"), sha),
+  ).toBeUndefined();
+});

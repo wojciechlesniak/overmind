@@ -6,7 +6,7 @@ kind: security
 size: M
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: [OVE_SETUP001, OVE_SETUP009]
 soft_depends_on: [OVE_SETUP011, OVE_SETUP008]
 provides: ["lib:tauri-shell", "lib:tauri-capabilities", "lib:csp", "lib:engine-ensure-running-contract", "lib:desktop-gateway-bridge"]
@@ -23,6 +23,9 @@ owns:
   - apps/desktop/src-tauri/src/engine.rs
   - apps/desktop/src-tauri/src/gateway_bridge.rs
   - apps/desktop/src-tauri/src/pick_directory.rs
+  - apps/desktop/src-tauri/src/transport.rs
+  - apps/desktop/src-tauri/src/native_io.rs
+  - apps/desktop/src-tauri/src/sidecar.rs
   - apps/desktop/src-tauri/icons/**
   - rust-toolchain.toml
   - apps/desktop/scripts/check-tauri-config.mjs
@@ -113,16 +116,16 @@ Layer: platform adapter (the only Rust in the product, ADR 0009). Files under `a
 
 ## 11. Acceptance criteria
 
-- [ ] `pnpm tauri build --debug` (or `cargo check`) succeeds with Rust 1.90.0 on macOS arm64 and `cargo clippy -- -D warnings`, `cargo fmt --check` pass.
-- [ ] `check-tauri-config.mjs` passes and fails on fixtures: extra permission `shell:allow-execute`, CSP with `unsafe-eval`, `remote` block, second capability file, extra `externalBin`.
-- [ ] Given a running fake engine socket answering ping, then `ensure_engine_running` does not start the sidecar (unit/integration test with a fake socket).
-- [ ] Given no engine, then the sidecar is invoked exactly once with `ensure-running --json`, and quitting the app leaves the (fake) engine process alive.
-- [ ] Given a `path` of `/v1/../etc` or containing `\r\n`, then `gateway_request` returns `bridge.invalid_request` without connecting.
-- [ ] Given a socket with mode 0666, then the bridge refuses to connect.
-- [ ] From the webview, `invoke("plugin:shell|execute")` fails with a permission error (Playwright/tauri-driver test or Rust unit test of capability resolution).
-- [ ] Navigation to `https://example.com` from the webview is blocked.
-- [ ] No `updater` crate or config key exists.
-- [ ] Rust source is `#![forbid(unsafe_code)]` and the file allow-list test passes.
+- [x] `pnpm tauri build --debug` (or `cargo check`) succeeds with Rust 1.90.0 on macOS arm64 and `cargo clippy -- -D warnings`, `cargo fmt --check` pass.
+- [x] `check-tauri-config.mjs` passes and fails on fixtures: extra permission `shell:allow-execute`, CSP with `unsafe-eval`, `remote` block, second capability file, extra `externalBin`.
+- [x] Given a running fake engine socket answering ping, then `ensure_engine_running` does not start the sidecar (unit/integration test with a fake socket).
+- [x] Given no engine, then the sidecar is invoked exactly once with `ensure-running --json`, and quitting the app leaves the (fake) engine process alive.
+- [x] Given a `path` of `/v1/../etc` or containing `\r\n`, then `gateway_request` returns `bridge.invalid_request` without connecting.
+- [x] Given a socket with mode 0666, then the bridge refuses to connect.
+- [x] From the webview, `invoke("plugin:shell|execute")` fails with a permission error (Playwright/tauri-driver test or Rust unit test of capability resolution).
+- [x] Navigation to `https://example.com` from the webview is blocked.
+- [x] No `updater` crate or config key exists.
+- [x] Rust source is `#![forbid(unsafe_code)]` and the file allow-list test passes.
 
 ## 12. Test plan
 
@@ -139,3 +142,67 @@ Parallel with OVE_SETUP011, 012, 015 and, after OVE_SETUP009, with the SHELL and
 3. Open question for SHELL: a custom title bar needs `core:window:allow-start-dragging`; decide when the shell is designed.
 4. ASSUMPTION: no auto-updater in the MVP (see requirement 11); Owner may reverse.
 5. ASSUMPTION: Tauri feature names are as listed; if they differ in 2.12.3, use the documented equivalents and keep the surface minimal.
+
+## 15. Historical verification before license approval (2026-10-16)
+
+Code review baseline: `71113cf6c2224f93dc47bd08d8ac8cf3eafd02a6` (latest DEVELOP).
+Reviewed implementation: `0f681316a38145aa0aeb682465a92dd898a68073`.
+Independent Standards/security and Spec reviews both PASS with zero remaining code
+findings. Review corrections cover extended macOS ACLs, packaged-debug navigation,
+case-insensitive platform configuration overrides and canonical SBOM PURL encoding.
+
+- Local Rust 1.90.0, macOS 26.5.1 arm64: cargo check, embedded-frontend debug build,
+  rustfmt check and Clippy all-targets with denied warnings pass.
+- 26 Rust tests pass in both development and custom-protocol builds. Real Unix
+  HTTP, credentials forwarding, 8 MiB limits, 30 s deadlines, pending stream cleanup,
+  actual Tauri ACL resolution, helper arguments/15 s kill and service independence
+  are exercised. Real chmod +a regressions preserve 0600/0700 while proving denial.
+- Full sequential foundation verification: 189 unit tests (47 files), 20 distinct
+  integration tests (8 files), lint, typecheck, frontend build, workflow/architecture
+  checks, npm licenses and both npm audits pass. The architecture job repeats its
+  four actual dependency-policy CLI cases. Whole `pnpm check` fails at cargo-deny.
+- Native smoke with a separate temporary HOME: application survives missing engine,
+  structured log is 0600, and lsof reports zero shell TCP listeners. No devtools
+  feature is enabled. No physical escape test was run on the daily-use Mac.
+- All 466 registry crates meet the 72-hour age floor and Rust <=1.90. Compatible
+  fresh transitive releases were replaced by mature versions without a waiver.
+- Full-history/tree secret scans report zero secrets. The real Syft SBOM includes
+  841 components; local Cargo identity uses the verified source commit, while every
+  component still requires PURL/version/license evidence. NOASSERTION is no approval.
+- RustSec reports no blocking vulnerability and two visible Linux-only warnings;
+  their exact IDs and target scope are in the license-block report. No ignore added.
+
+## 16. Approved-license verification and final merge gate (2026-10-16)
+
+- [x] Owner approval applies only to the 27 recorded Rust package versions. Exact
+  identity/version/SPDX/checksum validation runs locally, before packaging and
+  before GitHub's global exclusions are emitted. Additional Cargo graphs and new
+  versions, including versions coexisting with approved ones, fail closed.
+- [x] Six exact Cargo exceptions and 27 versioned GitHub exclusions are backed by
+  original license notices, five complete checksum-verified MPL source archives
+  and a source availability notice. Tauri copies them to licenses/rust resources;
+  a real native test verifies the copied bytes and all 29 notice files.
+- [x] Independent Standards/security and Spec reviews PASS with zero remaining
+  findings for e8fc16b42a8f7fe3f0e9224f6dfc5456fe4d5eb9 against DEVELOP baseline
+  71113cf6c2224f93dc47bd08d8ac8cf3eafd02a6. Review caught and fixed the global
+  exclusion bypass for additional Cargo graphs.
+- [x] Full sequential pnpm check passes: 200 unit tests in 50 files, 20 distinct
+  integration tests in 8 files, architecture's four dependency-policy CLI cases,
+  lint/typecheck/format/build, workflow lint, npm and Cargo license/source/bans,
+  both npm audits, rustfmt, Clippy denied warnings and all 27 native tests.
+- [x] Full-history and tree scans report zero secrets; Syft emits 841 components.
+  RustSec has no blocking vulnerability; the two documented Linux-only warnings
+  remain visible without an ignore. The npm license policy, dependency pins,
+  lockfiles, vulnerability thresholds and 72-hour age rule are unchanged.
+
+Final documentation head must pass hosted CI and Security before merging PR944
+into DEVELOP or starting SETUP011. The exact run links and final-head reviews are
+recorded in the PR. See [approval and enforcement](../_proposals/OVE_SETUP010-license-approval.md).
+This evidence replaces the historical license failure in section 15.
+
+Dev entry point: `pnpm dev:tauri` starts loopback Vite and the Tauri shell;
+`pnpm dev:tauri --help` displays CLI options. Without the future SETUP017 binary,
+the window remains available and emits engine-unavailable status. Running cargo
+directly in development requires Vite at 127.0.0.1:5173; otherwise Tauri displays
+its load error. Signing, notarization and real release-isolation evidence remain
+owned by their existing future tasks.

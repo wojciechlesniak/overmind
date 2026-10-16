@@ -10,3 +10,6 @@ tasks/**
 docs/**
 **/*.generated.ts
 GLOSSARY.md
+
+# Preserve upstream license text byte-for-byte against its approved hashes.
+third-party/rust/licenses/**

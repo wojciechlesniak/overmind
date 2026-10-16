@@ -55,12 +55,13 @@ it("all workflows and the setup action enforce pins, permissions, timeouts and s
   const source = readFileSync(resolve(root, ".github/workflows/ci.yml"), "utf8");
   expect(source).not.toContain("secrets.");
   expect([...source.matchAll(/vars\.([A-Z_]+)/gu)].map((match) => match[1])).toEqual(
-    expect.arrayContaining(["MACOS_RUNNER", "CI_STRICT_TOOLS"]),
+    expect.arrayContaining(["CI_STRICT_TOOLS"]),
   );
   for (const match of source.matchAll(/vars\.([A-Z_]+)/gu)) {
-    expect(["MACOS_RUNNER", "CI_STRICT_TOOLS"]).toContain(match[1]);
+    expect(["CI_STRICT_TOOLS"]).toContain(match[1]);
   }
   const workflow = readWorkflow(resolve(root, ".github/workflows/ci.yml"));
+  expect(workflow.jobs["rust"]?.["runs-on"]).toBe("macos-26");
   const needs = workflow.jobs["ci-success"]?.needs;
   expect(Array.isArray(needs) ? needs.toSorted() : []).toEqual(
     Object.keys(workflow.jobs)

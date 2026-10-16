@@ -14,7 +14,7 @@
     "dev:tauri": "pnpm --filter @overmind/desktop tauri dev",
     "build": "pnpm -r --if-present run build",
     "typecheck": "tsc -b && tsc --noEmit -p tsconfig.tests.json",
-    "lint": "eslint . --max-warnings 0 && pnpm lint:react && node tools/eslint/check-disable-reasons.mjs",
+    "lint": "eslint . --max-warnings 0 && pnpm lint:react && node tools/eslint/check-disable-reasons.mjs && pnpm check:tauri",
     "lint:react": "oxlint --disable-nested-config --config .oxlintrc.json --deny-warnings apps/desktop packages/ui-kit",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
@@ -46,7 +46,8 @@
     "task:finish": "tsx tools/tasks/finish.ts",
     "task:status": "tsx tools/tasks/status.ts",
     "task:next": "tsx tools/tasks/next.ts",
-    "test:int": "vitest run --config vitest.int.config.ts --project \"*-int\" --passWithNoTests"
+    "test:int": "vitest run --config vitest.int.config.ts --project \"*-int\" --passWithNoTests",
+    "check:tauri": "node apps/desktop/scripts/check-tauri-config.mjs"
   },
   "devDependencies": {
     "@commitlint/cli": "catalog:",

@@ -1,10 +1,18 @@
-import { appendFileSync, copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  appendFileSync,
+  copyFileSync,
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+} from "node:fs";
 import { createHash } from "node:crypto";
 import { resolve } from "node:path";
 import { z } from "zod";
 import { readEvent } from "../ci/context.parse-boundary.ts";
 import { installSecurityTool } from "./install.ts";
 import { createGitleaksConfig } from "./config.ts";
+import { checkRustLicenses } from "../check-licenses/rust.ts";
 import { readAllowlist } from "../check-licenses/input.parse-boundary.ts";
 
 const temporary = process.env["RUNNER_TEMP"];
@@ -53,7 +61,10 @@ const mode = /^[a-f0-9]{40}$/u.test(base) && base !== "0".repeat(40) ? "range" :
 const allowlist = z
   .array(z.string().regex(/^[A-Za-z0-9.-]+$/u))
   .parse([...readAllowlist(resolve(import.meta.dirname, "../check-licenses/allowlist.json"))]);
+const rust = existsSync("apps/desktop/src-tauri/Cargo.toml")
+  ? checkRustLicenses(process.cwd())
+  : [];
 appendFileSync(
   output,
-  `base=${base}\nhead=${validSHA}\nmode=${mode}\nlicenses=${allowlist.join(",")}\n`,
+  `base=${base}\nhead=${validSHA}\nmode=${mode}\nlicenses=${allowlist.join(",")}\nrust_license_exclusions=${rust.join(",")}\n`,
 );
