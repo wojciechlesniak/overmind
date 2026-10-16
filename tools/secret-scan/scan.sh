@@ -7,6 +7,7 @@ mode="$4"
 base="${5:-}"
 head="${6:-}"
 config="$7"
+script_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 [[ "$scanner" == /* && "$source_root" == /* && "$report" == /* && "$config" == /* ]]
 args=(git)
 case "$mode" in
@@ -48,4 +49,4 @@ esac
 rm -f -- "$report"
 "$scanner" "${args[@]}" --redact=100 --no-banner --ignore-gitleaks-allow \
   --gitleaks-ignore-path /dev/null --config "$config" \
-  --report-format sarif --report-path "$report" "$source_root"
+  --report-format template --report-template "$script_root/safe-sarif.tmpl" --report-path "$report" "$source_root"

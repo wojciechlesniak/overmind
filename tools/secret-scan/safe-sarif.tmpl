@@ -1,0 +1,6 @@
+{"$schema":"https://json.schemastore.org/sarif-2.1.0.json","version":"2.1.0","runs":[{"tool":{"driver":{"name":"gitleaks"}},"results":[
+{{- range $index, $finding := . -}}
+{{- if $index -}},{{- end -}}
+{{- dict "ruleId" $finding.RuleID "level" (ternary "warning" "error" (has "warning" $finding.Tags)) "message" (dict "text" "Credential pattern detected; value omitted.") "locations" (list (dict "physicalLocation" (dict "artifactLocation" (dict "uri" (printf "redacted-path/%s" (sha256sum $finding.File))) "region" (dict "startLine" $finding.StartLine)))) | mustToJson -}}
+{{- end -}}
+]}]}

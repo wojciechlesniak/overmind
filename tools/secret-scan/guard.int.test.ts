@@ -19,6 +19,7 @@ it("actual Git-diff guard requires maintainer labels for secret policy, pins and
     git(["commit", "--allow-empty", "--quiet", "-m", "chore: fixture"]);
     for (const path of [
       ".gitleaks.toml",
+      "tools/secret-scan/safe-sarif.tmpl",
       "tools/secret-scan/gitleaks.lock.json",
       "tools/secret-scan/default-config.lock.json",
       "tools/secret-scan/syft.lock.json",

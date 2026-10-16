@@ -4,7 +4,15 @@
 groups. Only same-repository PRs have a separate SARIF upload job with
 `security-events: write`. Fork scan/dependency jobs inherit only `contents: read`,
 receive no secrets and never post PR comments. The summary contains rule id,
-file and line only; reports redact values with `--redact=100`.
+file and line only; scanning uses `--redact=100`. A shared native Go template emits
+minimal SARIF with rule, hashed file location, line and fixed message only. File
+paths themselves can contain credentials, so every published location uses
+`redacted-path/<SHA-256 of repository-relative path>`; raw filenames never enter
+artifacts or summaries. For a known candidate path, compare its UTF-8 SHA-256
+locally (without a trailing newline). This deliberately trades source navigation
+for the no-secret-values guarantee. Keychain alerts have SARIF level warning. Upstream SARIF retains
+raw commit messages even under redaction, so it is never published. Neither
+matching source, secret values, commit messages nor author metadata enter reports.
 
 ## Local commands
 
@@ -21,6 +29,9 @@ Use the project's pinned Node/Corepack/pnpm first.
 | SBOM | `pnpm run sbom` | `sbom/overmind-<gitsha>.cdx.json` |
 | Validate SBOM | `pnpm exec tsx tools/sbom/validate.ts <file> [--rust]` | Fails on missing/invalid identity, license evidence or required packages |
 | Real integration checks | `pnpm exec vitest run --config vitest.int.config.ts tools/secret-scan tools/sbom` | Actual scanner, hook, publisher-checksum tampering and Syft behavior |
+
+The real CI-classifier integration probe additionally requires `jq` locally; the
+staged hook itself requires no local jq.
 
 Use **`pnpm run sbom`**: pnpm 12's built-in `pnpm sbom` shadows the script and
 requires different arguments. The selected implementation uses Syft for both
@@ -95,7 +106,8 @@ branch (`master` currently); merging to DEVELOP alone does not deploy them.
 Syft scans a temporary snapshot of the actual root `pnpm-lock.yaml` and optional
 root/desktop Cargo locks. No install runs inside the generator and no package code
 is executed. Lockfiles must be regular, tracked, unchanged from the named commit
-and free of symlink parents. Installed `node_modules`, fixtures, repository Syft
+and free of symlink parents. Copied bytes are compared directly with committed
+Git blobs, including when index flags hide working-tree changes from Git diff. Installed `node_modules`, fixtures, repository Syft
 configuration and inherited Syft environment cannot inject components. The CI job
 uses frozen setup for the tooling itself; cataloging reads only the lock snapshot.
 

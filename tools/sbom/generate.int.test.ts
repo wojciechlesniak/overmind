@@ -43,6 +43,14 @@ it("real Syft catalogs only lockfiles, ignores forged installed packages and val
     expect(document.components.some((item) => item.name === "zod")).toBe(true);
     expect(document.components.some((item) => item.name === "forged-component")).toBe(false);
     expect(readFileSync(resolve(fixture, "pnpm-lock.yaml"), "utf8")).toBe(before);
+    git(["update-index", "--assume-unchanged", "pnpm-lock.yaml"]);
+    writeFileSync(
+      resolve(fixture, "pnpm-lock.yaml"),
+      before + "\n# altered while Git diff ignores it\n",
+    );
+    await expect(generateSBOM(fixture, { gitEnv: env })).rejects.toThrow("stated commit");
+    writeFileSync(resolve(fixture, "pnpm-lock.yaml"), before);
+    git(["update-index", "--no-assume-unchanged", "pnpm-lock.yaml"]);
     mkdirSync(resolve(fixture, "apps/desktop/src-tauri"), { recursive: true });
     writeFileSync(
       resolve(fixture, "apps/desktop/src-tauri/Cargo.lock"),

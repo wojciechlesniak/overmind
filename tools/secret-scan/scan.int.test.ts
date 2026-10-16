@@ -36,6 +36,8 @@ it("real scanner denies generated credentials, requires both fixture conditions 
     let counter = 0;
     for (const [path, line, allowed] of [
       ["plain.txt", token, false],
+      ["hyphen.txt", token.slice(0, -1) + "-", false],
+      ["underscore.txt", token.slice(0, -1) + "_", false],
       ["pnpm-lock.yaml", token, false],
       ["tasks/synthetic.png", token, false],
       ["fixtures/secrets/path-only.txt", token, false],
@@ -149,6 +151,7 @@ it("custom provider/certificate rules detect real-format synthetic values and th
         env: isolatedGitEnvironment(),
       }),
     ).toEqual({ findings: 0, warnings: 1 });
+    expect(readFileSync(resolve(fixture, "report.sarif"), "utf8")).toContain('"level":"warning"');
   } finally {
     rmSync(fixture, { recursive: true, force: true });
   }
@@ -177,6 +180,60 @@ it("tree scans do not follow repository symlinks outside their source; a real in
     writeFileSync(resolve(source, "real.txt"), secret);
     expect(scanSecrets(options).findings).toBeGreaterThan(0);
     expect(readFileSync(options.report, "utf8").includes(secret)).toBe(false);
+  } finally {
+    rmSync(fixture, { recursive: true, force: true });
+  }
+}, 30000);
+
+it("commit-range reports do not retain a synthetic credential from commit metadata", async () => {
+  const fixture = mkdtempSync(resolve(tmpdir(), "overmind-secret-range-"));
+  const env = isolatedGitEnvironment();
+  const git = (args: string[]) =>
+    execFileSync("git", args, { cwd: fixture, env, encoding: "utf8" });
+  try {
+    git(["init", "--quiet"]);
+    git(["config", "user.name", "Fixture"]);
+    git(["config", "user.email", "fixture@example.invalid"]);
+    git(["config", "core.hooksPath", "/dev/null"]);
+    git(["commit", "--allow-empty", "--quiet", "-m", "chore: baseline"]);
+    const base = git(["rev-parse", "HEAD"]).trim();
+    const value = `123456789:${randomBytes(30).toString("hex").slice(0, 35)}`;
+    writeFileSync(resolve(fixture, `${value}.txt`), value);
+    git(["add", `${value}.txt`]);
+    git(["commit", "--quiet", "-m", `chore: synthetic fixture ${value}`]);
+    const head = git(["rev-parse", "HEAD"]).trim();
+    const report = resolve(fixture, "report.sarif");
+    const counts = scanSecrets({
+      config,
+      binary: await installSecurityTool("gitleaks"),
+      cwd: fixture,
+      report,
+      mode: "range",
+      base,
+      head,
+      env,
+    });
+    expect(counts.findings).toBeGreaterThan(0);
+    expect(readFileSync(report, "utf8").includes(value)).toBe(false);
+    const summary = resolve(fixture, "summary.txt");
+    const classified = spawnSync(
+      "/bin/bash",
+      [resolve(import.meta.dirname, "classify.sh"), report, "1"],
+      {
+        env: {
+          ...env,
+          GITHUB_STEP_SUMMARY: summary,
+          GITHUB_OUTPUT: resolve(fixture, "output.txt"),
+        },
+        encoding: "utf8",
+        timeout: 10000,
+      },
+    );
+    expect(classified.status).toBe(1);
+    expect(
+      (classified.stdout + classified.stderr + readFileSync(summary, "utf8")).includes(value),
+    ).toBe(false);
+    expect(readFileSync(summary, "utf8")).toContain("redacted-path/");
   } finally {
     rmSync(fixture, { recursive: true, force: true });
   }

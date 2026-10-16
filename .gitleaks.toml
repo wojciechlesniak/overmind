@@ -13,7 +13,8 @@ regexes = ['''OVERMIND_FAKE_SECRET''']
 [[rules]]
 id = "overmind-telegram-bot-token"
 description = "Telegram bot credential"
-regex = '''\b[0-9]{8,10}:[A-Za-z0-9_-]{35}\b'''
+regex = '''\b([0-9]{8,10}:[A-Za-z0-9_-]{35})(?:[^A-Za-z0-9_-]|$)'''
+secretGroup = 1
 
 [[rules]]
 id = "overmind-anthropic-api-key"

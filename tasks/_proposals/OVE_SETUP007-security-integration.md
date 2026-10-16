@@ -45,3 +45,24 @@ suffix also matches the end of a second BEGIN header, falsely joining separate
 backlog examples into a key. Tests cover that case and a complete synthetic PEM;
 the custom Apple filename/header guard is unchanged. No path/commit exception is
 added. Default entropy checks and provider rules remain active.
+
+Real range regression found Gitleaks native SARIF retains an unredacted commit
+message. The common scanner therefore uses its supported template reporter to
+emit valid minimal SARIF without source/secret/commit-message/author fields. One
+Go template serves local and Node-free CI scans, protected by CODEOWNERS and the
+config-change guard; --redact=100 remains mandatory. Output contains rule/location
+and a fixed message. SBOM copied bytes are checked against committed blobs rather
+than Git diff, which can skip assume-unchanged entries.
+
+The requested Telegram pattern's final word boundary misses valid tokens ending
+in a hyphen. The scanner captures the exact token and requires an alphabet
+boundary/end instead, covering alphanumeric, underscore and hyphen endings with
+real scanner regressions. This corrects detection without adding exemptions.
+
+SARIF file locations use a stable SHA-256 path identifier and retain line numbers,
+because a filename can itself contain the credential. A real regression places
+one generated token in both filename, body and commit message and requires no
+value in the final report. Raw paths cannot safely be published while guaranteeing
+no secret values. This privacy projection sacrifices source navigation, recorded
+in the runbook. Warning-tagged Keychain findings retain SARIF warning severity.
+Snapshot comparisons use the captured immutable commit SHA consistently.

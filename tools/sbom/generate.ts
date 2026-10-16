@@ -6,6 +6,7 @@ import {
   mkdirSync,
   mkdtempSync,
   realpathSync,
+  readFileSync,
   renameSync,
   rmSync,
   writeFileSync,
@@ -63,11 +64,6 @@ export async function generateSBOM(
       env: options.gitEnv,
       stdio: "pipe",
     });
-    execFileSync("git", ["diff", "--quiet", "HEAD", "--", ...paths], {
-      cwd: root,
-      env: options.gitEnv,
-      stdio: "pipe",
-    });
   } catch {
     throw new Error("SBOM lockfiles must be tracked and match the stated commit");
   }
@@ -79,6 +75,14 @@ export async function generateSBOM(
       const target = resolve(snapshot, path);
       mkdirSync(dirname(target), { recursive: true });
       copyFileSync(lockfile(root, path), target);
+      const committed = execFileSync("git", ["show", `${sha}:${path}`], {
+        cwd: root,
+        env: options.gitEnv,
+        maxBuffer: 32 * 1024 * 1024,
+      });
+      if (!readFileSync(target).equals(committed)) {
+        throw new Error("SBOM lockfile snapshot does not match the stated commit");
+      }
     }
     const raw = resolve(fixture, "raw.json");
     const config = resolve(fixture, "syft.yaml");
