@@ -11,9 +11,12 @@ already specifies unit and real temporary-bare-repository integration tests for
 these interfaces. The approved backlog test plan is the seam agreement for TDD;
 no internal implementation methods or production credentials are test seams.
 
-Necessary shared integration consists only of adding task:release/task:cleanup
-to root package.json (explicit task scope). No dependency or package is added.
-Existing git-fixture environment isolation is reused for temporary repositories.
+Necessary shared integration adds task:release/task:cleanup to root package.json
+(explicit task scope). AGENTS.md links the implemented task tools guide and removes
+its obsolete manual-claim availability statement, as its Maintenance rule requires.
+The agent guard's fixture includes that new linked document, without policy or
+assertion changes. No dependency or package is added. Existing git-fixture
+environment isolation is reused for temporary repositories.
 
 Real repository hooks require installed dependencies before the first claim
 commit/push. Installation will therefore run before those hooks when enabled,
