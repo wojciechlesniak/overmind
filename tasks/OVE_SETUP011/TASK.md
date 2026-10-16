@@ -6,7 +6,7 @@ kind: spike
 size: M
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: [OVE_SETUP001, OVE_SETUP002]
 soft_depends_on: [OVE_SETUP008, OVE_SETUP010]
 provides: ["decision:engine-packaging", "decision:sqlite-driver"]
@@ -99,13 +99,13 @@ Documentation only on `main`: `docs/research/engine-packaging-spike.md` and one 
 
 ## 11. Acceptance criteria
 
-- [ ] Research doc contains the screened options, weighted scores, all measurements (or explicit "not measured" with reason), the probe matrix and exact versions.
-- [ ] ADR exists, accepted, states the packaging method, SQLite driver, the entitlements needed, and the "revisit when" list.
-- [ ] The decision follows the criteria, or states that the default rule of requirement 10 was applied and why.
-- [ ] The ADR lists the minimal SQLite port surface (requirement 11) and the exact files OVE_SETUP016/017/014 must produce.
-- [ ] Sidecar fit (requirement 5) is demonstrated or explained, including where companion files live.
-- [ ] Matrix rows for the shortlisted and rejected options are updated through OVE_SETUP008 (or a proposal file).
-- [ ] The spike branch exists with a commit hash quoted in the doc.
+- [x] Research doc contains the screened options, weighted scores, all measurements (or explicit "not measured" with reason), the probe matrix and exact versions.
+- [x] ADR exists, accepted, states the packaging method, SQLite driver, the entitlements needed, and the "revisit when" list.
+- [x] The decision follows the criteria, or states that the default rule of requirement 10 was applied and why.
+- [x] The ADR lists the minimal SQLite port surface (requirement 11) and the exact files OVE_SETUP016/017/014 must produce.
+- [x] Sidecar fit (requirement 5) is demonstrated or explained, including where companion files live.
+- [x] Matrix rows for the shortlisted and rejected options are updated through OVE_SETUP008 (or a proposal file).
+- [x] The spike branch exists with a commit hash quoted in the doc.
 
 ## 12. Test plan
 
