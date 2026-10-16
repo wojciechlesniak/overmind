@@ -6,7 +6,7 @@ kind: docs
 size: S
 priority: P0
 mvp: true
-status: in_progress
+status: in_review
 depends_on: [OVE_SETUP001]
 soft_depends_on: [OVE_SETUP013, OVE_SETUP022, OVE_OSS002]
 provides: ["lib:agent-instructions"]
@@ -78,11 +78,11 @@ Repository root files plus a tiny checker in `tools/agents-md/`. No product depe
 
 ## 11. Acceptance criteria
 
-- [ ] `AGENTS.md` exists with all ten sections in order and is <= 200 lines.
-- [ ] `CLAUDE.md` is a symlink to `AGENTS.md` (git mode 120000).
-- [ ] `pnpm check:agents-md` passes and fails for: missing section, removed injection paragraph, unknown script name, regular-file `CLAUDE.md`.
-- [ ] Every command named in code spans exists as a root script.
-- [ ] The file contains links to CONVENTIONS and PLAN and they resolve.
+- [x] `AGENTS.md` exists with all ten sections in order and is <= 200 lines.
+- [x] `CLAUDE.md` is a symlink to `AGENTS.md` (git mode 120000).
+- [x] `pnpm check:agents-md` passes and fails for: missing section, removed injection paragraph, unknown script name, regular-file `CLAUDE.md`.
+- [x] Every command named in code spans exists as a root script.
+- [x] The file contains links to CONVENTIONS and PLAN and they resolve.
 
 ## 12. Test plan
 
@@ -96,3 +96,41 @@ Parallel with everything after OVE_SETUP001. Hotspot: none (short file). When CO
 
 - ASSUMPTION: the Owner wants AGENTS.md/CLAUDE.md in the repository root (same as herdr).
 - Open question: should `.cursor/rules` or other agent-specific files also be generated? Default no; AGENTS.md is the single source.
+
+### Implementation evidence (2026-10-16)
+
+- AGENTS.md is 126 lines, with the ten required sections followed by Maintenance.
+  It preserves the Owner's explicit current-session DEVELOP integration and merge
+  authorization, qualified by real tests, security checks and independent review.
+  New project rules are English; personal Skills and provider rule packs are not
+  installed. Existing Polish source documents remain owned by OVE_OSS005.
+- The relative CLAUDE.md symlink reads the exact AGENTS.md bytes. A real isolated
+  Git fixture verifies mode 120000; regular, wrong-target, absolute and missing
+  links fail. The root symlink is staged and committed as mode 120000 too.
+- 39 focused tests pass: 36 checker cases and three actual configuration-gate
+  cases. They cover removed/reordered/hidden sections, injection hash tampering,
+  missing/empty/prototype script names, missing and escaping links, real symlink
+  escapes, malformed manifests, oversized content, maintenance placement and
+  redacted credential-like diagnostics. The actual checkout is checked too; its
+  glossary link points to the existing root GLOSSARY.md. Config tests use real Git diffs and show
+  that a PR body cannot substitute for the config-change approval label.
+- Frozen-lockfile installation, typecheck, lint and format:check passed with the
+  pinned Node22.23.3 and pnpm12.11.2. The claim push also passed all 200 existing
+  unit tests through normal hooks; implementation push results are recorded in
+  the PR after the final integration head is fixed.
+- Approved shared changes are recorded in
+  tasks/_proposals/OVE_SETUP019-agent-instructions-integration.md. The formatter
+  skips only the duplicate CLAUDE.md path because Prettier cannot accept explicit
+  symlink inputs. AGENTS.md remains formatted and symlink integrity is checked.
+  The integration owner added the root script and architecture-registry entry.
+  The real pnpm check:agents-md command passes and all named root scripts exist.
+  The architecture runner executes the checker and reports other not-yet-merged
+  foundation tools explicitly rather than simulating their success.
+- CODEOWNERS preserves established entries and adds these exact paths:
+  AGENTS.md, CLAUDE.md, tools/agents-md/ and .github/CODEOWNERS. The sensitive-config
+  gate now protects both root instruction files. Branch-review enforcement stays
+  with OVE_SETUP018; the broader contribution gate remains OVE_OSS003.
+- No Claude Code UI loading test was performed. Actual filesystem read-through,
+  byte identity and Git symlink mode were verified; no UI-loader result is claimed.
+- Reserved task scripts and check:boundaries are documented as unavailable until
+  their owning implementations merge. No stub or simulated pass was introduced.

@@ -7,6 +7,7 @@ const tools = [
   ["check:headers", "tools/check-headers/run.ts", "OVE_OSS001"],
   ["check:docs", "tools/docs-check/run.ts", "OVE_OSS002"],
   ["check:tasks", "tools/tasks/lint.ts", "OVE_SETUP013"],
+  ["check:agents-md", "tools/agents-md/check.ts", "OVE_SETUP019"],
 ];
 const missing: string[] = [];
 for (const [script, file, owner, integration] of tools) {
