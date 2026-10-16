@@ -6,7 +6,7 @@ kind: docs
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: [OVE_SETUP001]
 soft_depends_on: [OVE_SETUP013, OVE_SETUP022, OVE_OSS002]
 provides: ["lib:agent-instructions"]
@@ -78,11 +78,11 @@ Repository root files plus a tiny checker in `tools/agents-md/`. No product depe
 
 ## 11. Acceptance criteria
 
-- [ ] `AGENTS.md` exists with all ten sections in order and is <= 200 lines.
-- [ ] `CLAUDE.md` is a symlink to `AGENTS.md` (git mode 120000).
-- [ ] `pnpm check:agents-md` passes and fails for: missing section, removed injection paragraph, unknown script name, regular-file `CLAUDE.md`.
-- [ ] Every command named in code spans exists as a root script.
-- [ ] The file contains links to CONVENTIONS and PLAN and they resolve.
+- [x] `AGENTS.md` exists with all ten sections in order and is <= 200 lines.
+- [x] `CLAUDE.md` is a symlink to `AGENTS.md` (git mode 120000).
+- [x] `pnpm check:agents-md` passes and fails for: missing section, removed injection paragraph, unknown script name, regular-file `CLAUDE.md`.
+- [x] Every command named in code spans exists as a root script.
+- [x] The file contains links to CONVENTIONS and PLAN and they resolve.
 
 ## 12. Test plan
 
@@ -96,3 +96,81 @@ Parallel with everything after OVE_SETUP001. Hotspot: none (short file). When CO
 
 - ASSUMPTION: the Owner wants AGENTS.md/CLAUDE.md in the repository root (same as herdr).
 - Open question: should `.cursor/rules` or other agent-specific files also be generated? Default no; AGENTS.md is the single source.
+
+### Implementation evidence (2026-10-16)
+
+Independent Standards and Spec reviews both passed atb4483a615df3403cf2f28a7b3f834f3782f191bc,
+rebased on DEVELOP e8a300f. Hosted CI38960409585, Security38960409498 and
+isolation-admission38960409614 passed for that exact head after the required
+config-change/hooks-change labels. Normal pre-push typecheck/lint and275 unit
+tests passed after rebase. The final status-only commit requires fresh CI/security
+and incremental review before merge. Superseded label-triggered runs were cancelled;
+their cancellation is not reported as passing evidence.
+
+- AGENTS.md is 126 lines, with the ten required sections followed by Maintenance.
+  It preserves the Owner's explicit current-session DEVELOP integration and merge
+  authorization, qualified by real tests, security checks and independent review.
+  New project rules are English; personal Skills and provider rule packs are not
+  installed. Existing Polish source documents remain owned by OVE_OSS005.
+- The relative CLAUDE.md symlink reads the exact AGENTS.md bytes. A real isolated
+  Git fixture verifies mode 120000; regular, wrong-target, absolute and missing
+  links fail. The root symlink is staged and committed as mode 120000 too.
+- 75 focused tests pass: 72 checker cases and three actual configuration-gate
+  cases. They cover removed/reordered/hidden sections, injection hash tampering,
+  missing/empty/prototype script names, missing and escaping links, real symlink
+  escapes, malformed manifests, oversized content, maintenance placement and
+  redacted credential-like diagnostics. The actual checkout is checked too; its
+  glossary link points to the existing root GLOSSARY.md. Config tests use real Git diffs and show
+  that a PR body cannot substitute for the config-change approval label.
+- Frozen-lockfile installation, typecheck, lint and format:check passed with the
+  pinned Node22.23.3 and pnpm12.11.2. The claim push also passed all 200 existing
+  unit tests through normal hooks; implementation push results are recorded in
+  the PR after the final integration head is fixed.
+- Approved shared changes are recorded in
+  tasks/_proposals/OVE_SETUP019-agent-instructions-integration.md. The formatter
+  skips only the duplicate CLAUDE.md path because Prettier cannot accept explicit
+  symlink inputs. AGENTS.md remains formatted and symlink integrity is checked.
+  The integration owner added the root script and architecture-registry entry.
+  The real pnpm check:agents-md command passes and all named root scripts exist.
+  The architecture runner executes the checker and reports other not-yet-merged
+  foundation tools explicitly rather than simulating their success.
+- CODEOWNERS preserves established entries and adds these exact paths:
+  AGENTS.md, CLAUDE.md, tools/agents-md/ and .github/CODEOWNERS. The sensitive-config
+  gate now protects both root instruction files. Branch-review enforcement stays
+  with OVE_SETUP018; the broader contribution gate remains OVE_OSS003.
+- After explicit Owner authorization, the integrator verified actual loading in
+  interactive Claude Code 2.1.38 in `/private/tmp/overmind-OVE-017`. The read-only
+  `/context` command listed `CLAUDE.md` under Memory files (about 1.8k tokens).
+  No private memory was edited or copied. This follows the documented check in
+  [Claude Code memory documentation](https://code.claude.com/docs/en/memory).
+  Actual filesystem read-through, byte identity and Git symlink mode were also verified.
+- Reserved task scripts and check:boundaries are documented as unavailable until
+  their owning implementations merge. No stub or simulated pass was introduced.
+
+### Review correction: visible Markdown rules
+
+- Independent Standards and Spec reviews found that tilde fences could hide the
+  mandatory paragraph or the whole document while the checker accepted it.
+  A public-checker regression reproduced the bypass as a real failing test before
+  implementation; the same fixture passed after the correction.
+- A small stateful reader handles backtick and tilde fences, delimiter length,
+  zero to three leading spaces, valid closing suffixes and unclosed blocks through
+  EOF. It processes fences before comments so comments cannot create a false
+  closing delimiter. Positive tests preserve legitimate fenced examples.
+- Two additional real red/green regressions cover indented code and raw HTML
+  hiding rules. Those block forms are explicitly unsupported and fail closed;
+  no Markdown parser dependency was added. The checker README documents the
+  supported instruction-document syntax.
+- The focused cases include whole-document wrapping, shorter/wrong delimiters,
+  indented and invalid closing runs, unclosed fences and hidden rule paragraphs.
+- A second Standards review found raw HTML after a text prefix could still hide
+  the required paragraph. A real red-to-green regression now covers prefixed
+  details tags. Raw HTML is forbidden anywhere outside the documented code-span
+  and fence forms. Hidden div/pre/span wrappers and escaped, mismatched or
+  unclosed code delimiters are rejected; literal `<ID>` and equal-length code spans
+  and fenced HTML examples remain supported. No new dependency was added.
+- A further Standards review confirmed space-plus-TAB indentation and bare-CR
+  fence variants. Both were reproduced as failing tests before their fixes.
+  Leading TAB outside fenced examples is now rejected regardless of preceding
+  spaces; bare CR is rejected globally. LF/CRLF and fenced TAB examples remain
+  supported, with negative tests for line-count evasion. The fixes add no dependency.

@@ -38,3 +38,9 @@
 
 # Approved third-party notices and complete MPL source artifacts.
 /third-party/rust/ @wojciechlesniak
+
+# Agent instruction rules and their validator (OVE_SETUP019).
+/AGENTS.md @wojciechlesniak
+/CLAUDE.md @wojciechlesniak
+/tools/agents-md/ @wojciechlesniak
+/.github/CODEOWNERS @wojciechlesniak

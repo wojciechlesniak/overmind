@@ -10,7 +10,9 @@ pre-commit:
         jobs:
           - name: format
             glob: "*.{ts,tsx,js,mjs,json,md,yml,yaml,css,html}"
-            exclude: "docs/pl/**"
+            exclude:
+              - "docs/pl/**"
+              - "CLAUDE.md"
             run: pnpm exec prettier --write -- {staged_files}
             stage_fixed: true
           - name: lint
