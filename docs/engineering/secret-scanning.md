@@ -48,6 +48,13 @@ utilities are used from the pinned runner image. Local JSON parsing uses Node.
 tree scanning and SBOM generation. GitHub's dependency-diff service is additionally
 verified by the hosted workflow; local audit/license gates provide local policy checks.
 
+GitHub dependency review requires the repository's Dependency graph. This
+prerequisite and dependency alerts were enabled on 2026-10-16 through the
+[documented API](https://docs.github.com/en/rest/repos/repos#enable-vulnerability-alerts)
+(PUT/readback 204). Automatic security/version update PRs were not enabled.
+If graph access is unavailable, dependency-review fails; it must not be skipped.
+SETUP018 verifies the remaining repository controls and actual outside-account run.
+
 ## Detection and exceptions
 
 Default Gitleaks rules and entropy checks remain enabled. The wrapper compiles the

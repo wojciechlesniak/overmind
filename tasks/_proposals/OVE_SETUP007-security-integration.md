@@ -66,3 +66,11 @@ value in the final report. Raw paths cannot safely be published while guaranteei
 no secret values. This privacy projection sacrifices source navigation, recorded
 in the runbook. Warning-tagged Keychain findings retain SARIF warning severity.
 Snapshot comparisons use the captured immutable commit SHA consistently.
+
+Hosted dependency-review initially failed because the repository Dependency graph
+was disabled. The required graph/alerts prerequisite was enabled through GitHub's
+documented vulnerability-alerts endpoint (PUT/readback204), then clean review
+passed and the actual lodash high-advisory probe failed. Automatic update PRs were
+not enabled; broader repository settings remain SETUP018. Both negative probe PRs
+are closed without merge; only the fake-secret scratch ref is reset to verified
+clean code with an exact lease to avoid poisoning full reachable-history scans.
