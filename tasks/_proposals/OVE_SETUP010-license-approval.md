@@ -13,6 +13,11 @@ package against the common allow-list or an exact approved identity, version,
 checksum and SPDX expression. Future versions and unrelated packages do not inherit
 this decision. Missing notices/source archives or policy drift fail closed.
 
+Because GitHub applies those exclusions repository-wide, the gate also rejects any
+additional Cargo manifest or lockfile outside the checked desktop graph. It checks
+tracked and non-ignored untracked files, including tracked files hidden by ignore
+rules. Adding another Rust project requires explicitly extending the validation.
+
 The five MPL source archives are unchanged upstream .crate files, verified against
 Cargo.lock and retained with original license notices. Texts/notices for all 27
 packages and the source availability statement are versioned under third-party/rust.

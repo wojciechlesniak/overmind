@@ -10,7 +10,9 @@ import {
 } from "./rust-input.parse-boundary.ts";
 import { checkRustGraph, renderNativePolicy, rustExclusions } from "./rust-policy.ts";
 import { checkRustAssets } from "./rust-assets.ts";
+import { checkRustInventory } from "./rust-inventory.ts";
 export function checkRustLicenses(root: string): string[] {
+  checkRustInventory(root);
   const approval = readRustApproval(root);
   const entries = approval.entries;
   if (boundedFile(root, "deny.toml").toString("utf8") !== renderNativePolicy(entries)) {
