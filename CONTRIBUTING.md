@@ -60,12 +60,13 @@ Maintainers can revoke it when the process is repeatedly ignored or trust change
 Read [README.md](README.md), the [specification](docs/SPECIFICATION.md) and the
 [backlog conventions](tasks/CONVENTIONS.md). The conventions include the current
 English domain terminology: Owner, Chief, Agent, Workspace, Run and Approval.
-Use those terms consistently in code, tests and documentation.
+Read the source [glossary](GLOSSARY.md) and use those terms consistently in code,
+tests and documentation.
 
 The full architecture document will live at `docs/architecture/ARCHITECTURE.md`
-([OVE_ARCH001](tasks/OVE_ARCH001/TASK.md)). The planned standalone glossary is
-`docs/GLOSSARY.md`; use the conventions' terminology table while it is absent.
-These planned paths are recorded below rather than linked to missing files.
+([OVE_ARCH001](tasks/OVE_ARCH001/TASK.md)). Its planned path is recorded below
+rather than linked to a missing file. The glossary's Polish source and the
+conventions' English terminology table are available now.
 
 The Owner's rules and Project Documentation are the source of truth
 ([ADR 0016](docs/adr/0016-dokumentacja-projektu-zrodlem-prawdy.md)). Product behavior
@@ -268,7 +269,7 @@ Read [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) before participating. It covers is
 PRs, Discussions and agent-generated content posted from human accounts.
 For a vulnerability, follow [SECURITY.md](SECURITY.md) instead of a public issue.
 
-Open questions and planned references: `docs/architecture/ARCHITECTURE.md` and
-`docs/GLOSSARY.md` are pending documentation; `AGENTS.md`, `tools/dev/run.ts`, the
+Open questions and planned references: `docs/architecture/ARCHITECTURE.md` is
+pending documentation; `AGENTS.md`, `tools/dev/run.ts`, the
 trusted list and public-contribution templates are assigned above. Public contact
 markers in the conduct and security documents must be resolved before publication.
