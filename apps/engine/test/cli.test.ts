@@ -73,7 +73,7 @@ it("recognizes only the missing hook itself and redacts the home directory", () 
         code: "ERR_MODULE_NOT_FOUND",
         url: "file:///tmp/compose/index.js",
       }),
-      "/compose/index.js",
+      "file:///tmp/compose/index.js",
     ),
   ).toBe(true);
   expect(
@@ -82,10 +82,19 @@ it("recognizes only the missing hook itself and redacts the home directory", () 
         code: "ERR_MODULE_NOT_FOUND",
         url: "file:///tmp/dependency.js",
       }),
-      "/compose/index.js",
+      "file:///tmp/compose/index.js",
     ),
   ).toBe(false);
-  expect(missingHook(null, "/compose/index.js")).toBe(false);
+  expect(
+    missingHook(
+      Object.assign(new Error("same basename in a dependency"), {
+        code: "ERR_MODULE_NOT_FOUND",
+        url: "file:///tmp/nested/compose/index.js",
+      }),
+      "file:///tmp/compose/index.js",
+    ),
+  ).toBe(false);
+  expect(missingHook(null, "file:///tmp/compose/index.js")).toBe(false);
   expect(diagnostic(new Error(`${homedir()}/file\nfailed`))).toBe("<home>/file failed");
   expect(diagnostic(null)).toBe("engine internal error");
 });

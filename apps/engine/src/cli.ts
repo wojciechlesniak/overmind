@@ -77,13 +77,13 @@ export function diagnostic(error: unknown): string {
         .slice(0, 512)
     : "engine internal error";
 }
-export function missingHook(error: unknown, suffix: string): boolean {
+export function missingHook(error: unknown, expectedUrl: string): boolean {
   return (
     error instanceof Error &&
     "code" in error &&
     error.code === "ERR_MODULE_NOT_FOUND" &&
     "url" in error &&
     typeof error.url === "string" &&
-    error.url.endsWith(suffix)
+    error.url === expectedUrl
   );
 }

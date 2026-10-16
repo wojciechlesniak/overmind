@@ -34,7 +34,7 @@ async function loadService(): Promise<unknown> {
     // @ts-expect-error -- ENGINE service lifecycle owns this future module; replace with static import when it lands.
     return await import("../service/index.js");
   } catch (error) {
-    if (missingHook(error, "/service/index.js")) {
+    if (missingHook(error, new URL("../service/index.js", import.meta.url).href)) {
       return undefined;
     }
     throw error;

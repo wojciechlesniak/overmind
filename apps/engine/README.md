@@ -81,7 +81,9 @@ and `shutdown(): Promise<void>`. ENGINE service lifecycle creates
 the result type is exported by `src/commands/ensure-running.ts`.
 
 Literal guarded dynamic imports allow this scaffold to work before those modules
-exist. Only a missing hook itself is considered unimplemented; an exception or
+exist. The missing-module URL must exactly match the expected hook, including
+its directory; an identically named nested dependency is not a missing hook.
+Only a missing hook itself is considered unimplemented; an exception or
 missing dependency inside a present hook is an internal error. Esbuild includes
 the real modules automatically when present. At that point the ENGINE task
 takes explicit ownership and replaces each optional import and its temporary
@@ -92,7 +94,9 @@ module is created here. Hook code must keep stdout reserved for the CLI receipt.
 
 `build/bundle.mjs` produces `dist/engine.cjs`, `engine.cjs.map` and
 `engine.meta.json`, using exact esbuild0.28.2, CJS, Node22, external source maps,
-linked legal comments and no minification. `bundleEngine({root?,outfile?})` is
+linked legal comments and no minification. CJS module URLs are computed from the
+runtime `__filename`, preserving optional-import identity without host build paths.
+`bundleEngine({root?,outfile?})` is
 the packaging entry; the CLI accepts `--out-dir <path>`. Maps use stable
 `file:///overmind/source/` identities and contain no host build paths. The
 metafile is checked before files are written: desktop code, React, Tauri,

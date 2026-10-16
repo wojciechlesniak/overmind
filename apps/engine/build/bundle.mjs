@@ -77,6 +77,9 @@ export async function bundleEngine({
     platform: "node",
     target: "node22",
     format: "cjs",
+    banner: {
+      js: 'const __OVERMIND_MODULE_URL__ = require("node:url").pathToFileURL(__filename).href;',
+    },
     outfile,
     sourcemap: "external",
     minify: false,
@@ -85,6 +88,7 @@ export async function bundleEngine({
     write: false,
     logOverride: { "ignored-dynamic-import": "warning" },
     define: {
+      "import.meta.url": "__OVERMIND_MODULE_URL__",
       __OVERMIND_VERSION__: JSON.stringify(version),
       __PROTOCOL_VERSION__: String(protocol),
       __BUILD_SHA__: JSON.stringify(sha),

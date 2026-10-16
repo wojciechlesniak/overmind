@@ -199,13 +199,20 @@ it("errors thrown inside present hooks are internal errors, never missing-hook s
     status: "failed",
     detail: "fixture import failed",
   });
-  const nested = fixture(
-    "nested",
-    `await import("./missing-dependency.js"); export async function ensureRunning(){}`,
-    true,
-  );
-  const source = resolve(nested, "apps/engine/src/main.ts");
-  expect(execute(source, ["ensure-running", "--json"], true).status).toBe(70);
+  for (const [name, missing] of [
+    ["nested", "./missing-dependency.js"],
+    ["nested-same-name", "../nested/service/index.js"],
+  ] as const) {
+    const nested = fixture(
+      name,
+      `await import(${JSON.stringify(missing)}); export async function ensureRunning(){}`,
+      true,
+    );
+    const source = resolve(nested, "apps/engine/src/main.ts");
+    const error = execute(source, ["ensure-running", "--json"], true);
+    expect(error.status).toBe(70);
+    expect(readOutput(error.stdout)["status"]).toBe("failed");
+  }
 });
 it("closed stdout is handled silently for version and as internal failure otherwise", async () => {
   const many = await fixtureBundle(

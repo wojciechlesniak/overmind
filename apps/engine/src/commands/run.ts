@@ -44,7 +44,7 @@ async function loadEngine(): Promise<unknown> {
     // @ts-expect-error -- ENGINE/ARCH006 owns this future module; replace with static import when it lands.
     return await import("../compose/index.js");
   } catch (error) {
-    if (missingHook(error, "/compose/index.js")) {
+    if (missingHook(error, new URL("../compose/index.js", import.meta.url).href)) {
       return undefined;
     }
     throw error;
