@@ -96,3 +96,54 @@ fn packaged_debug_mode_rejects_development_origin() {
         !cfg!(feature = "custom-protocol")
     );
 }
+#[test]
+fn native_resource_copy_preserves_complete_mpl_sources_and_notices() {
+    let exe = std::env::current_exe().unwrap();
+    let resources = exe
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .join("licenses/rust");
+    macro_rules! source {
+        ($name:literal) => {
+            (
+                $name,
+                include_bytes!(concat!(
+                    env!("CARGO_MANIFEST_DIR"),
+                    "/../../../third-party/rust/sources/",
+                    $name
+                ))
+                .as_slice(),
+            )
+        };
+    }
+    for (name, expected) in [
+        source!("cssparser-0.37.0.crate"),
+        source!("cssparser-macros-0.7.1.crate"),
+        source!("dtoa-short-0.3.5.crate"),
+        source!("option-ext-0.2.0.crate"),
+        source!("selectors-0.38.0.crate"),
+    ] {
+        assert_eq!(
+            std::fs::read(resources.join("sources").join(name)).unwrap(),
+            expected
+        );
+    }
+    assert_eq!(
+        std::fs::read_to_string(resources.join("README.md")).unwrap(),
+        include_str!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../third-party/rust/README.md"
+        ))
+    );
+    let count: usize = std::fs::read_dir(resources.join("licenses"))
+        .unwrap()
+        .map(|directory| {
+            std::fs::read_dir(directory.unwrap().path())
+                .unwrap()
+                .count()
+        })
+        .sum();
+    assert_eq!(count, 29);
+}

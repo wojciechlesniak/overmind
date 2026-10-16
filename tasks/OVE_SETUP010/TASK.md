@@ -172,10 +172,12 @@ case-insensitive platform configuration overrides and canonical SBOM PURL encodi
 - RustSec reports no blocking vulnerability and two visible Linux-only warnings;
   their exact IDs and target scope are in the license-block report. No ignore added.
 
-- [ ] **Merge gate:** cargo-deny rejects six licenses under the unchanged policy.
-  The Owner has not approved an exception. Keep this task/issue open and do not
-  start SETUP011 before this branch can merge. See
-  [dependency chains and reproduction](../_proposals/OVE_SETUP010-license-block.md).
+- [ ] **Final merge gate:** the Owner approved only the 27 identified Rust package
+  versions on 2026-10-16. Exact version/license/checksum enforcement, native Cargo
+  exceptions, notices, complete MPL source archives and bundle resources are now
+  implemented. Final full checks, independent reviews and hosted CI must pass
+  before merge and before starting SETUP011. See
+  [approval and enforcement](../_proposals/OVE_SETUP010-license-approval.md).
 
 Dev entry point: `pnpm dev:tauri` starts loopback Vite and the Tauri shell;
 `pnpm dev:tauri --help` displays CLI options. Without the future SETUP017 binary,

@@ -55,6 +55,13 @@ describe("Tauri deny-by-default configuration", () => {
     expect(result.status).not.toBe(0);
     expect(result.stderr).toContain("Tauri policy:");
   });
+  it("rejects missing license bundle resources", () => {
+    expect(
+      probe((root) => {
+        edit(root, "tauri.conf.json", '"licenses/rust/"', '"elsewhere/"');
+      }).status,
+    ).not.toBe(0);
+  });
   it("rejects a second capability", () => {
     expect(
       probe((root) => {

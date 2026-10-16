@@ -7,8 +7,37 @@ allow = [
   "Apache-2.0", "MIT", "ISC", "BSD-2-Clause", "BSD-3-Clause", "0BSD",
   "BlueOak-1.0.0", "CC0-1.0", "Python-2.0", "Unlicense", "Unicode-3.0", "Zlib",
 ]
-# MPL-2.0 is intentionally absent until a named, reviewed crate exception exists.
-exceptions = []
+
+# Owner-approved exact-version exceptions (2026-10-16).
+[[licenses.exceptions]]
+name = "cssparser"
+version = "=0.37.0"
+allow = ["MPL-2.0"]
+
+[[licenses.exceptions]]
+name = "cssparser-macros"
+version = "=0.7.1"
+allow = ["MPL-2.0"]
+
+[[licenses.exceptions]]
+name = "dtoa-short"
+version = "=0.3.5"
+allow = ["MPL-2.0"]
+
+[[licenses.exceptions]]
+name = "option-ext"
+version = "=0.2.0"
+allow = ["MPL-2.0"]
+
+[[licenses.exceptions]]
+name = "selectors"
+version = "=0.38.0"
+allow = ["MPL-2.0"]
+
+[[licenses.exceptions]]
+name = "target-lexicon"
+version = "=0.12.16"
+allow = ["Apache-2.0 WITH LLVM-exception"]
 
 [bans]
 multiple-versions = "warn"

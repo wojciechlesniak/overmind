@@ -26,6 +26,7 @@ jobs:
       head: ${{ steps.prepare.outputs.head }}
       mode: ${{ steps.prepare.outputs.mode }}
       licenses: ${{ steps.prepare.outputs.licenses }}
+      rust_license_exclusions: ${{ steps.prepare.outputs.rust_license_exclusions }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -114,6 +115,8 @@ jobs:
           fail-on-severity: high
           # v5 deprecates deny-licenses; the unchanged allow-list is stricter.
           allow-licenses: ${{ needs.tools.outputs.licenses }}
+          # Upstream matching ignores versions; tools verifies exact lockfile identities first.
+          allow-dependencies-licenses: ${{ needs.tools.outputs.rust_license_exclusions }}
           comment-summary-in-pr: never
   sbom:
     if: github.event_name != 'schedule'

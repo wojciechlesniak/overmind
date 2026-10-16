@@ -6,7 +6,7 @@
   "build": {
     "beforeDevCommand": "pnpm --filter @overmind/desktop dev",
     "devUrl": "http://127.0.0.1:5173",
-    "beforeBuildCommand": "pnpm --filter @overmind/desktop build",
+    "beforeBuildCommand": "pnpm --workspace-root check:licenses && pnpm --filter @overmind/desktop build",
     "frontendDist": "../dist"
   },
   "app": {
@@ -30,7 +30,9 @@
       "capabilities": ["main"],
       "freezePrototype": true,
       "dangerousDisableAssetCspModification": false,
-      "assetProtocol": { "enable": false },
+      "assetProtocol": {
+        "enable": false
+      },
       "csp": "default-src 'none'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src ipc: http://ipc.localhost; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; frame-src 'none'; worker-src 'self'",
       "devCsp": "default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src ipc: http://ipc.localhost ws://127.0.0.1:5173 http://127.0.0.1:5173; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; frame-src 'none'; worker-src 'self'"
     }
@@ -40,6 +42,12 @@
     "targets": ["app", "dmg"],
     "externalBin": ["binaries/overmind-engine"],
     "icon": ["icons/icon.png"],
-    "macOS": { "minimumSystemVersion": "26.0", "hardenedRuntime": true }
+    "macOS": {
+      "minimumSystemVersion": "26.0",
+      "hardenedRuntime": true
+    },
+    "resources": {
+      "../../../third-party/rust/": "licenses/rust/"
+    }
   }
 }

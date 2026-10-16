@@ -1,7 +1,9 @@
 # SETUP010 merge block: the pinned Tauri graph exceeds the license allow-list
 
-Status: blocked; no policy change or license exception is approved or applied.
-The Owner's instruction to retain the current policy and merge block remains in force.
+Status: superseded by the Owner's exact-version approval on 2026-10-16.
+The original block and investigation below are historical evidence. The Owner now
+authorizes only the 27 identified Rust package versions; implementation and
+verification are described in OVE_SETUP010-license-approval.md.
 Approval of staged SETUP006 isolation evidence does not waive license requirements.
 
 On 2026-10-16 the existing, checksum-verified cargo-deny 0.20.2 command rejected

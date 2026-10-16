@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { checkRustLicenses } from "./rust.ts";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { readAllowlist, readExceptions, parseLicenseReport } from "./input.parse-boundary.ts";
@@ -30,5 +32,8 @@ for (const scope of ["prod", "dev"]) {
       failed ||= !passed;
     }
   }
+}
+if (existsSync("apps/desktop/src-tauri/Cargo.toml")) {
+  checkRustLicenses(process.cwd());
 }
 process.exitCode = failed ? 1 : 0;

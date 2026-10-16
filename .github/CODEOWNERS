@@ -35,3 +35,6 @@
 /apps/desktop/scripts/check-tauri-config.mjs @wojciechlesniak
 /apps/desktop/scripts/tauri-permission-allowlist.json @wojciechlesniak
 /rust-toolchain.toml @wojciechlesniak
+
+# Approved third-party notices and complete MPL source artifacts.
+/third-party/rust/ @wojciechlesniak

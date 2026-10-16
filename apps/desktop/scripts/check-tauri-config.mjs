@@ -99,7 +99,8 @@ same(
   {
     beforeDevCommand: "pnpm --filter @overmind/desktop dev",
     devUrl: "http://127.0.0.1:5173",
-    beforeBuildCommand: "pnpm --filter @overmind/desktop build",
+    beforeBuildCommand:
+      "pnpm --workspace-root check:licenses && pnpm --filter @overmind/desktop build",
     frontendDist: "../dist",
   },
   "build inputs",
@@ -107,6 +108,11 @@ same(
 same(config.identifier, "dev.overmind.app", "application identifier");
 same(config.version, "../package.json", "application version");
 same(config.bundle?.externalBin, ["binaries/overmind-engine"], "sidecar");
+same(
+  config.bundle?.resources,
+  { "../../../third-party/rust/": "licenses/rust/" },
+  "third-party license resources",
+);
 same(config.bundle?.targets, ["app", "dmg"], "bundle targets");
 same(
   config.bundle?.macOS,
