@@ -46,6 +46,8 @@
     "task:finish": "tsx tools/tasks/finish.ts",
     "task:status": "tsx tools/tasks/status.ts",
     "task:next": "tsx tools/tasks/next.ts",
+    "task:release": "tsx tools/tasks/release.ts",
+    "task:cleanup": "tsx tools/tasks/cleanup.ts",
     "test:int": "vitest run --config vitest.int.config.ts --project \"*-int\" --passWithNoTests",
     "check:tauri": "node apps/desktop/scripts/check-tauri-config.mjs",
     "check:agents-md": "tsx tools/agents-md/check.ts"
