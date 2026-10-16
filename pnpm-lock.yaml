@@ -94,6 +94,9 @@ packages:
     engines: {node: '>=18.*'}
     hasBin: true
 
+  lodash@4.17.20:
+    resolution: {integrity: sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==}
+
 snapshots:
 
   '@pnpm/exe.android-arm64@12.11.2':
@@ -258,6 +261,10 @@ catalogs:
 importers:
 
   .:
+    dependencies:
+      lodash:
+        specifier: 4.17.20
+        version: 4.17.20
     devDependencies:
       '@commitlint/cli':
         specifier: 'catalog:'
@@ -3514,3 +3521,5 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   zod@4.6.6: {}
+
+  lodash@4.17.20: {}
