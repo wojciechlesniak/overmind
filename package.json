@@ -54,7 +54,9 @@
     "adr:new": "tsx tools/adr/new.ts",
     "gen:adr-index": "tsx tools/adr/gen-index.ts",
     "check:adr": "tsx tools/adr/check.ts",
-    "adr:renumber": "tsx tools/adr/renumber.ts"
+    "adr:renumber": "tsx tools/adr/renumber.ts",
+    "settings:audit": "tsx tools/repo-settings/audit.ts",
+    "settings:labels": "tsx tools/repo-settings/sync-labels.ts"
   },
   "devDependencies": {
     "@commitlint/cli": "catalog:",
