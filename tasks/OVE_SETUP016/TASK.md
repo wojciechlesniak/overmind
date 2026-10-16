@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: in_review
+status: done
 depends_on: [OVE_SETUP001, OVE_SETUP002, OVE_SETUP011]
 soft_depends_on: [OVE_SETUP004, OVE_SETUP010]
 provides: ["lib:engine-scaffold", "lib:engine-cli-contract", "lib:engine-version-info"]
@@ -118,6 +118,12 @@ After OVE_SETUP011 decides packaging. Parallel with OVE_SETUP012 and OVE_SETUP01
 - Open question: whether `run` should refuse to start without `--data-dir` in production; default: the ENGINE area decides, the scaffold passes the flag through.
 
 ## Implementation evidence
+
+Independent Standards and Spec reviews both passed at14d58a0008c642a5f82084aee923b6f709f83e60,
+rebased on DEVELOP e8a300f. Hosted CI38960418829, Security38960418793 and
+isolation-admission38960418899 passed for that exact head. Normal pre-push
+typecheck/lint and238 unit tests passed after rebase. The final status-only commit
+requires fresh CI/security and incremental review before merge.
 
 The scaffold contains no ENGINE composition/service placeholder. Both source and
 bundle commands are tested as real subprocesses; fixture-only hooks exercise
