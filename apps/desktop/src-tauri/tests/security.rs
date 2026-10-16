@@ -86,3 +86,13 @@ fn custom_permissions_allow_only_main_local_origin() {
         .is_none()
     );
 }
+
+#[test]
+fn packaged_debug_mode_rejects_development_origin() {
+    assert_eq!(tauri::is_dev(), !cfg!(feature = "custom-protocol"));
+    let url = "http://127.0.0.1:5173/".parse().unwrap();
+    assert_eq!(
+        navigation_allowed(&url, tauri::is_dev()),
+        !cfg!(feature = "custom-protocol")
+    );
+}

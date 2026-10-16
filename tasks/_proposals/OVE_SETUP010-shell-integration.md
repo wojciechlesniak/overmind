@@ -50,3 +50,9 @@ minimum supported OS; the foundation workflow test now asserts that exact label
 instead of requiring the old optional `MACOS_RUNNER` variable. This job performs
 compilation and socket/ACL tests only, not physical isolation escape tests.
 Source: https://docs.github.com/en/actions/reference/runners/github-hosted-runners
+
+Review corrections: exacl 0.13.0 (MIT, Rust 1.85, published 2026-05-05) reads real
+macOS extended ACLs through a safe API. Private directories, sockets and log files
+reject any ACL and unreadable ACL metadata, including inherited grants; chmod +a
+regressions preserve the 0700/0600 modes. Tauri's actual `is_dev()` mode controls the
+Vite navigation exception, so a bundled custom-protocol debug build rejects it.

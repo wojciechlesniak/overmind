@@ -45,6 +45,15 @@ impl Paths {
         })
     }
 }
+fn private_acl(path: &Path) -> Result<(), NativeError> {
+    // macOS ACLs are additional grants independent of mode bits. Fail closed even
+    // for unknown principals or deny-only lists; private shell files need no ACL.
+    let acl = exacl::getfacl(path, None).map_err(|_| NativeError::Insecure)?;
+    if !acl.is_empty() {
+        return Err(NativeError::Insecure);
+    }
+    Ok(())
+}
 fn checked_directory(path: &Path, private: bool) -> Result<(), NativeError> {
     if path.canonicalize().map_err(|_| NativeError::Unavailable)? != path {
         return Err(NativeError::Insecure);
@@ -55,6 +64,9 @@ fn checked_directory(path: &Path, private: bool) -> Result<(), NativeError> {
         || (private && metadata.mode() & 0o077 != 0)
     {
         return Err(NativeError::Insecure);
+    }
+    if private {
+        private_acl(path)?;
     }
     Ok(())
 }
@@ -102,6 +114,7 @@ pub(crate) fn log(
     {
         return Err(NativeError::Insecure);
     }
+    private_acl(&paths.log)?;
     let line = LogLine {
         timestamp_ms: SystemTime::now()
             .duration_since(UNIX_EPOCH)
@@ -124,6 +137,7 @@ pub(crate) async fn connect(path: &Path) -> Result<UnixStream, NativeError> {
     {
         return Err(NativeError::Insecure);
     }
+    private_acl(path)?;
     let stream = UnixStream::connect(path)
         .await
         .map_err(|_| NativeError::Unavailable)?;

@@ -102,6 +102,8 @@ release age, scripts and the full transitive license graph before adoption.
 | crate:hyper-util | 0.1.21 | 0.1.21 | https://crates.io/api/v1/crates/hyper-util/0.1.21 | Exact mature MIT pin; Unix byte transport only. |
 | crate:http-body-util | 0.1.5 | 0.1.5 | https://crates.io/api/v1/crates/http-body-util/0.1.5 | Exact mature MIT pin; Unix byte transport only. |
 
+| crate:exacl | 0.13.0 | 0.13.0 | https://crates.io/api/v1/crates/exacl/0.13.0 | Exact mature MIT pin; safe macOS ACL inspection. |
+
 ## How to upgrade
 
 1. TypeScript and typescript-eslint move in one reviewed PR. Capture `npm view
@@ -1176,3 +1178,16 @@ Cargo syntax must introduce a reviewed TOML parser rather than extend heuristics
 - Risk: Native dependency; no elevated rights or TCP transport; full Rust license gate remains blocking.
 - Last reviewed: 2026-10-16
 - Source: https://crates.io/api/v1/crates/http-body-util/0.1.5
+
+### crate:exacl
+
+- Version: 0.13.0
+- License: MIT
+- Used by: apps/desktop/src-tauri
+- Added by: OVE_SETUP010
+- Value: Read actual macOS extended ACLs safely; mode bits alone do not prove owner-only access.
+- Maintenance cost: Review platform ACL APIs, pinned pre-generated bindings and Rust MSRV (1.85).
+- Alternatives considered: Unsafe direct libc ACL calls violate the shell unsafe-code prohibition; parsing ls output is brittle and starts an unnecessary process on every request.
+- Risk: Native dependency wrapping OS ACL APIs; default features disabled, no build-time bindgen, no ACL writes in production. Read failure or any extended ACL fails closed.
+- Last reviewed: 2026-10-16
+- Source: https://crates.io/api/v1/crates/exacl/0.13.0

@@ -77,3 +77,70 @@ fn logger_rejects_symlinks_and_hardlinks_without_writing() {
     assert!(log(&f.paths, "test", "denied").is_err());
     assert_eq!(fs::read_to_string(other).unwrap(), "untouched");
 }
+#[tokio::test]
+async fn real_macos_acl_grants_are_rejected_despite_private_modes() {
+    use std::process::Command;
+    let f = Fixture::new();
+    let _listener = f.socket(&f.paths.gateway);
+    assert!(
+        Command::new("/bin/chmod")
+            .args(["+a", "everyone allow read,write"])
+            .arg(&f.paths.gateway)
+            .status()
+            .unwrap()
+            .success()
+    );
+    assert_eq!(
+        fs::metadata(&f.paths.gateway).unwrap().mode() & 0o777,
+        0o600
+    );
+    assert_eq!(
+        connect(&f.paths.gateway).await.unwrap_err(),
+        NativeError::Insecure
+    );
+    assert!(
+        Command::new("/bin/chmod")
+            .arg("-N")
+            .arg(&f.paths.gateway)
+            .status()
+            .unwrap()
+            .success()
+    );
+    log(&f.paths, "test", "before_acl").unwrap();
+    let before = fs::read_to_string(&f.paths.log).unwrap();
+    assert!(
+        Command::new("/bin/chmod")
+            .args(["+a", "everyone allow read,write"])
+            .arg(&f.paths.log)
+            .status()
+            .unwrap()
+            .success()
+    );
+    assert_eq!(fs::metadata(&f.paths.log).unwrap().mode() & 0o777, 0o600);
+    assert_eq!(log(&f.paths, "test", "denied"), Err(NativeError::Insecure));
+    assert_eq!(fs::read_to_string(&f.paths.log).unwrap(), before);
+    assert!(
+        Command::new("/bin/chmod")
+            .args([
+                "+a",
+                "everyone allow search,read,write,file_inherit,directory_inherit"
+            ])
+            .arg(&f.root)
+            .status()
+            .unwrap()
+            .success()
+    );
+    assert_eq!(fs::metadata(&f.root).unwrap().mode() & 0o777, 0o700);
+    assert_eq!(
+        connect(&f.paths.gateway).await.unwrap_err(),
+        NativeError::Insecure
+    );
+    assert!(
+        Command::new("/bin/chmod")
+            .arg("-N")
+            .arg(&f.root)
+            .status()
+            .unwrap()
+            .success()
+    );
+}

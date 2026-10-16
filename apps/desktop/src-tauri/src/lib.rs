@@ -60,7 +60,7 @@ pub fn run() -> Result<(), tauri::Error> {
                 .first()
                 .ok_or("desktop.window_missing")?;
             WebviewWindowBuilder::from_config(app, config)?
-                .on_navigation(|url| navigation_allowed(url, cfg!(debug_assertions)))
+                .on_navigation(|url| navigation_allowed(url, tauri::is_dev()))
                 .on_new_window(|_, _| tauri::webview::NewWindowResponse::Deny)
                 .build()?;
             ensure(app.handle());
