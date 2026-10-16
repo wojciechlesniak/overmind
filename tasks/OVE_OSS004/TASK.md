@@ -6,7 +6,7 @@ kind: docs
 size: M
 priority: P0
 mvp: true
-status: todo
+status: in_progress
 depends_on: [OVE_SETUP001]
 soft_depends_on: [OVE_OSS001, OVE_OSS002, OVE_SETUP006, OVE_SETUP008]
 provides: ["lib:readme", "lib:docs-structure", "lib:docs-check"]
