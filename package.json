@@ -47,7 +47,9 @@
     "task:status": "tsx tools/tasks/status.ts",
     "task:next": "tsx tools/tasks/next.ts",
     "test:int": "vitest run --config vitest.int.config.ts --project \"*-int\" --passWithNoTests",
-    "check:tauri": "node apps/desktop/scripts/check-tauri-config.mjs"
+    "check:tauri": "node apps/desktop/scripts/check-tauri-config.mjs",
+    "settings:audit": "tsx tools/repo-settings/audit.ts",
+    "settings:labels": "tsx tools/repo-settings/sync-labels.ts"
   },
   "devDependencies": {
     "@commitlint/cli": "catalog:",
