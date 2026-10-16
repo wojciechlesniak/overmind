@@ -71,6 +71,72 @@ async fn successful_helper_requires_valid_receipt_and_live_socket() {
     }
 }
 #[tokio::test]
+async fn full_scaffold_receipts_require_live_socket_and_accept_already_running() {
+    for (code, state) in [(0, "running"), (10, "already_running")] {
+        let f = Fixture::new();
+        let path = f.paths.engine.clone();
+        let status = ensure(&f.paths, || async {
+            let listener = f.socket(&path);
+            tokio::spawn(async move {
+                let (mut socket, _) = listener.accept().await.unwrap();
+                let mut line = vec![0; 18];
+                socket.read_exact(&mut line).await.unwrap();
+                socket.write_all(b"{}").await.unwrap();
+            });
+            Ok(Outcome {
+                code,
+                output: serde_json::to_vec(&serde_json::json!({
+                    "status":state, "pid":42, "socket":path,
+                    "version":"0.0.0", "protocol":1, "detail":"never render this"
+                }))
+                .unwrap(),
+            })
+        })
+        .await;
+        assert_eq!(status.state, State::Running);
+        assert_eq!(status.detail, None);
+    }
+}
+#[tokio::test]
+async fn scaffold_receipts_reject_protocol_mismatch_unknown_fields_and_invalid_shapes() {
+    let f = Fixture::new();
+    let base = serde_json::json!({
+        "status":"running", "pid":42, "socket":f.paths.engine,
+        "version":"0.0.0", "protocol":1, "detail":null
+    });
+    for (field, value, expected) in [
+        ("protocol", serde_json::json!(2), State::Incompatible),
+        ("protocol", serde_json::json!(0), State::Incompatible),
+        ("protocol", serde_json::Value::Null, State::Unavailable),
+        ("unknown", serde_json::json!(true), State::Unavailable),
+        ("pid", serde_json::json!(0), State::Unavailable),
+        (
+            "socket",
+            serde_json::json!("/tmp/other.sock"),
+            State::Unavailable,
+        ),
+        ("version", serde_json::json!(7), State::Unavailable),
+        ("protocol", serde_json::json!("1"), State::Unavailable),
+        (
+            "detail",
+            serde_json::json!({"html":"untrusted"}),
+            State::Unavailable,
+        ),
+    ] {
+        let mut receipt = base.clone();
+        receipt[field] = value;
+        let status = ensure(&f.paths, || async {
+            Ok(Outcome {
+                code: 0,
+                output: serde_json::to_vec(&receipt).unwrap(),
+            })
+        })
+        .await;
+        assert_eq!(status.state, expected, "{field}");
+        assert_ne!(status.detail, Some("never render this"));
+    }
+}
+#[tokio::test]
 async fn insecure_socket_fails_without_helper() {
     use std::{fs, os::unix::fs::PermissionsExt};
     let f = Fixture::new();

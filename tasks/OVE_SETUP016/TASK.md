@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: [OVE_SETUP001, OVE_SETUP002, OVE_SETUP011]
 soft_depends_on: [OVE_SETUP004, OVE_SETUP010]
 provides: ["lib:engine-scaffold", "lib:engine-cli-contract", "lib:engine-version-info"]
@@ -95,13 +95,13 @@ Layer: `apps/engine` is the composition root; `main.ts` and `cli.ts` are the out
 
 ## 11. Acceptance criteria
 
-- [ ] `node dist/engine.cjs version --json` prints one JSON line containing version, protocol 1, buildSha and node version.
-- [ ] `ensure-running --json` without ENGINE hooks exits 20 with `{"status":"failed",...}` as the only stdout line.
-- [ ] Unknown command exits 64; unknown flag exits 64.
-- [ ] SIGTERM during `run` calls the shutdown hook and exits 0 within 5 s; a hanging hook is abandoned at 5 s.
-- [ ] `pnpm --filter @overmind/engine build` produces `dist/engine.cjs`, `dist/engine.cjs.map` and `dist/engine.meta.json`; build fails when a fixture import of `react` is added.
-- [ ] No `Bun.` or `Deno.` appears in `src/` (test).
-- [ ] `pnpm typecheck` and tests pass.
+- [x] `node dist/engine.cjs version --json` prints one JSON line containing version, protocol 1, buildSha and node version.
+- [x] `ensure-running --json` without ENGINE hooks exits 20 with `{"status":"failed",...}` as the only stdout line.
+- [x] Unknown command exits 64; unknown flag exits 64.
+- [x] SIGTERM during `run` calls the shutdown hook and exits 0 within 5 s; a hanging hook is abandoned at 5 s.
+- [x] `pnpm --filter @overmind/engine build` produces `dist/engine.cjs`, `dist/engine.cjs.map` and `dist/engine.meta.json`; build fails when a fixture import of `react` is added.
+- [x] No `Bun.` or `Deno.` appears in `src/` (test).
+- [x] `pnpm typecheck` and tests pass.
 
 ## 12. Test plan
 
@@ -116,3 +116,35 @@ After OVE_SETUP011 decides packaging. Parallel with OVE_SETUP012 and OVE_SETUP01
 - ASSUMPTION: CJS single-file bundle for Node SEA (ADR may require another format; then only `bundle.mjs` changes).
 - ASSUMPTION: exit codes 10, 20, 30 as in OVE_SETUP010 plus BSD sysexits 64 and 70.
 - Open question: whether `run` should refuse to start without `--data-dir` in production; default: the ENGINE area decides, the scaffold passes the flag through.
+
+## Implementation evidence
+
+Independent Standards and Spec reviews both passed at14d58a0008c642a5f82084aee923b6f709f83e60,
+rebased on DEVELOP e8a300f. Hosted CI38960418829, Security38960418793 and
+isolation-admission38960418899 passed for that exact head. Normal pre-push
+typecheck/lint and238 unit tests passed after rebase. The final status-only commit
+requires fresh CI/security and incremental review before merge.
+
+The scaffold contains no ENGINE composition/service placeholder. Both source and
+bundle commands are tested as real subprocesses; fixture-only hooks exercise
+SIGTERM/SIGINT, the five-second shutdown deadline, second-signal exit130, EPIPE,
+import failures and the one-line JSON channel contract. Negative bundle tests
+reject actual React and undeclared npm imports. Independent output directories
+produce identical CJS and external map bytes; SEA reproducibility remains017.
+The build reads the shared contracts protocol export when present and rejects
+invalid values; before that export exists it stamps1.
+
+The coordinated integration proposal is
+`tasks/_proposals/OVE_SETUP016-engine-integration.md`. It records the approved
+catalog/manifest/lockfile and minimal shell receipt compatibility edit, preserving
+unknown-field rejection, exact socket/live ping checks and rejecting an explicit
+null protocol instead of treating it as a legacy missing field. No Cargo dependency
+or license policy changed. Review and hosted gates remain required before merge.
+
+Independent review regressions reproduce ordinary hook detail containing a home
+path, ANSI/control characters and more than600 characters, and a real process
+holding an open resource while startup rejects after shutdown begins. Both JSON
+and stderr now use one normalized detail; active shutdown retains its five-second
+deadline and second-signal exit130 despite startup failure. Ordinary startup
+failure still removes handlers. Red/green evidence is retained in local review
+logs; independent review and hosted gates must assess the corrected head.

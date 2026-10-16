@@ -22,5 +22,13 @@
     "@overmind/gateway": "workspace:*",
     "@overmind/ui-kit": "workspace:*",
     "@overmind/workflow-runtime": "workspace:*"
+  },
+  "scripts": {
+    "build": "node build/bundle.mjs",
+    "start": "tsx src/main.ts",
+    "test": "vitest run --project engine"
+  },
+  "devDependencies": {
+    "esbuild": "catalog:"
   }
 }
