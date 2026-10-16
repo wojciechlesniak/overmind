@@ -199,7 +199,7 @@ described in [SECURITY.md](SECURITY.md), even if discovered during contribution 
 Use Conventional Commits with a lowercase scope from the area table in
 [tasks/PLAN.md](tasks/PLAN.md). Allowed types are `feat`, `fix`, `docs`, `test`,
 `refactor`, `perf`, `build`, `ci`, `chore`, `revert` and `security`.
-Example: `fix(gateway): reject expired approval tokens`.
+Example: `fix(setup): reject invalid task identifiers`.
 Backlog branches also require `Refs: OVE_<AREA><NNN>`; feature, fix and security
 commits explain why the change is needed. Local hooks validate the exact policy.
 
