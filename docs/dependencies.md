@@ -70,7 +70,7 @@ release age, scripts and the full transitive license graph before adoption.
 | bun | 1.4.3 | 1.4.3 | npm registry on review date | Rejected as product runtime (ADR 0030); no runtime split or binary-license exception approved. |
 | postject | 1.0.0-alpha.6 | 1.0.0-alpha.6 | npm registry on review date | Selected build tool for SETUP017 (ADR 0030), exact pin retained; alpha risk and provenance checks remain. |
 | @yao-pkg/pkg | 6.23.0 | 6.23.0 | npm registry on review date | Rejected (ADR 0030); direct official SEA avoids the extra packaging abstraction and graph. |
-| esbuild | 0.28.2 | 0.28.2 | npm registry on review date | Selected CommonJS bundler for SETUP016 (ADR 0030); maps/metafile required; installation scripts stay disabled. |
+| esbuild | 0.28.2 | 0.28.2 | npm registry on review date | Build-only CommonJS bundler used by apps/engine (SETUP016, ADR 0030); maps/metafile and dependency guard required; installation scripts stay disabled. |
 | sqlite-vec | candidate 0.1.9 | 0.1.9 | npm registry on review date | SETUP011 evaluates engine packaging/storage; sqlite-vec remains a future feature. Not an adoption. |
 | crate:tauri | 2.12.3 | 2.12.4 | https://crates.io/api/v1/crates/tauri/2.12.3 | SETUP010 native shell; MSRV 1.90; SETUP010 installs exact pins. |
 | crate:tauri-build | 2.7.2 | 2.7.3 | https://crates.io/api/v1/crates/tauri-build/2.7.2 | SETUP010 native shell; MSRV 1.90; SETUP010 installs exact pins. |
@@ -1070,6 +1070,19 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: plugin-react6 requires the denied Vite8 graph; plugin-react5 introduces Babel/caniuse-lite; handwritten refresh integration duplicates official tooling.
 - Risk: Transitive @swc/core native packages; postinstall remains explicitly denied. Development transforms use installed platform binaries without granting install scripts or network access.
 - Last reviewed: 2026-10-16
+
+### esbuild
+
+- Version: 0.28.2
+- License: MIT
+- Used by: apps/engine (build-only development dependency)
+- Added by: OVE_SETUP016
+- Value: Single-file Node22 CommonJS bundle, external source maps and inspectable metafile for the standalone engine.
+- Maintenance cost: Review upstream version and native platform package integrity with the packaging pipeline.
+- Alternatives considered: TypeScript alone does not bundle workspace modules; Bun changes the approved runtime; a handwritten bundler duplicates established tooling.
+- Risk: Native build tool; installation scripts remain denied, exact catalog pin and lockfile integrity retained, bundle inputs are checked before publication.
+- Last reviewed: 2026-10-16
+- Source: https://registry.npmjs.org/esbuild/0.28.2
 
 ## Operational limits and sources
 

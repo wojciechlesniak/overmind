@@ -206,6 +206,9 @@ catalogs:
     '@vitest/coverage-v8':
       specifier: 5.0.4
       version: 5.0.4
+    esbuild:
+      specifier: 0.28.2
+      version: 0.28.2
     eslint:
       specifier: 10.12.0
       version: 10.12.0
@@ -443,6 +446,10 @@ importers:
       '@overmind/workflow-runtime':
         specifier: workspace:*
         version: link:../../packages/workflow-runtime
+    devDependencies:
+      esbuild:
+        specifier: 'catalog:'
+        version: 0.28.2
 
   packages/adapters/herdr:
     dependencies:

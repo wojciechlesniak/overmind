@@ -94,6 +94,17 @@ struct Receipt {
     status: String,
     pid: u32,
     socket: String,
+    #[serde(rename = "version")]
+    _version: Option<String>,
+    #[serde(default, deserialize_with = "receipt_protocol")]
+    protocol: Option<u32>,
+    #[serde(rename = "detail")]
+    _detail: Option<String>,
+}
+fn receipt_protocol<'de, D: serde::Deserializer<'de>>(
+    deserializer: D,
+) -> Result<Option<u32>, D::Error> {
+    u32::deserialize(deserializer).map(Some)
 }
 pub(crate) async fn ensure<F, T>(paths: &Paths, start: F) -> Status
 where
@@ -115,13 +126,18 @@ where
     match outcome.code {
         30 => Status::new(State::Incompatible, Some("version mismatch")),
         0 | 10 => {
-            let valid = serde_json::from_slice::<Receipt>(&outcome.output)
-                .ok()
-                .is_some_and(|value| {
-                    value.status == "running"
-                        && value.pid > 0
-                        && std::path::Path::new(&value.socket) == paths.engine
-                });
+            let receipt = serde_json::from_slice::<Receipt>(&outcome.output).ok();
+            if receipt
+                .as_ref()
+                .is_some_and(|value| value.protocol.is_some_and(|protocol| protocol != 1))
+            {
+                return Status::new(State::Incompatible, Some("version mismatch"));
+            }
+            let valid = receipt.is_some_and(|value| {
+                matches!(value.status.as_str(), "running" | "already_running")
+                    && value.pid > 0
+                    && std::path::Path::new(&value.socket) == paths.engine
+            });
             if valid && ping(paths).await.is_ok() {
                 Status::new(State::Running, None)
             } else {
