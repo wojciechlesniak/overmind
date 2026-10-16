@@ -13,6 +13,10 @@ const entry = z.object({
   version: z.string().regex(/^[0-9]+\.[0-9]+\.[0-9]+$/u),
   assets: z.record(z.string(), asset),
 });
+export type PinnedAsset = z.infer<typeof asset>;
+export function parsePinnedAsset(value: unknown): PinnedAsset {
+  return asset.parse(value);
+}
 export type BinaryEntry = z.infer<typeof entry>;
 export function readBinaryLock(path: string, requestedName?: string): BinaryEntry[] {
   const raw: unknown = JSON.parse(readFileSync(path, "utf8"));

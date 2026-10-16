@@ -6,7 +6,7 @@ kind: security
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: [OVE_SETUP001, OVE_SETUP005, OVE_SETUP006]
 soft_depends_on: [OVE_SETUP008]
 provides: ["lib:secret-scanning", "lib:sbom"]
@@ -97,14 +97,33 @@ Tooling and CI only. Scripts in TypeScript under `tools/`, run by `tsx`. No prod
 
 ## 11. Acceptance criteria
 
-- [ ] Given a throw-away commit with a fake Telegram token `123456789:AAAA...` (35 chars), then job `secrets` fails and the log does not contain the token.
-- [ ] Given the same string inside `fixtures/secrets/` with the marker, then the scan passes.
-- [ ] Given a fork PR, then `secrets` and `dependency-review` run with a read-only token and no secrets.
-- [ ] Given a PR adding a dependency with a known high-severity advisory, then `dependency-review` fails.
-- [ ] `sbom` produces a valid CycloneDX JSON containing `react`, `zod` and `tauri` (when Rust exists) and uploads it as artifact `sbom`.
-- [ ] Pre-commit hook blocks a staged file containing `-----BEGIN PRIVATE KEY-----`.
-- [ ] `tools/secret-scan/gitleaks.lock.json` has a checksum for linux-x64 and darwin-arm64; tampering with the checksum makes the install script fail.
-- [ ] Runbook exists and covers the four steps in requirement 9.
+- [x] Given a throw-away commit with a fake Telegram token `123456789:AAAA...` (35 chars), then job `secrets` fails and the log does not contain the token.
+- [x] Given the same string inside `fixtures/secrets/` with the marker, then the scan passes.
+- [x] Given a fork PR, then `secrets` and `dependency-review` run with a read-only token and no secrets.
+- [x] Given a PR adding a dependency with a known high-severity advisory, then `dependency-review` fails.
+- [x] `sbom` produces a valid CycloneDX JSON containing `react`, `zod` and `tauri` (when Rust exists) and uploads it as artifact `sbom`.
+- [x] Pre-commit hook blocks a staged file containing `-----BEGIN PRIVATE KEY-----`.
+- [x] `tools/secret-scan/gitleaks.lock.json` has a checksum for linux-x64 and darwin-arm64; tampering with the checksum makes the install script fail.
+- [x] Runbook exists and covers the four steps in requirement 9.
+
+Acceptance evidence (2026-10-16): code commit `6bc0e4a` passed independent
+Standards and Spec reviews with zero remaining findings. Local checks passed
+92 unit tests and 11 integration tests, unchanged license/advisory gates,
+full-history/tree scanning and SBOM. [Clean CI](https://github.com/wojciechlesniak/overmind/actions/runs/38871595365)
+and [Security](https://github.com/wojciechlesniak/overmind/actions/runs/38871595386)
+passed; the actual SBOM artifact has 344 components including React/Zod.
+[Secret probe PR940](https://github.com/wojciechlesniak/overmind/pull/940) failed
+`secrets` with one finding; the complete log and SARIF contain no generated value.
+[Advisory probe PR941](https://github.com/wojciechlesniak/overmind/pull/941)
+[run38872283312](https://github.com/wojciechlesniak/overmind/actions/runs/38872283312)
+failed `dependency-review` on two high-severity lodash advisories. Both probes are
+closed without merge. Only the fake-secret scratch ref is returned to verified
+clean code with an exact lease; no implementation/unrelated history is rewritten.
+Fork permissions are verified by workflow tests; real outside-account execution
+remains SETUP018 under the Owner-approved SETUP006 foundation sequence.
+GitHub dependency graph/alerts were enabled as the required service prerequisite;
+no automatic update PRs were enabled. Scheduled dispatch awaits default-branch
+promotion. Regex/SARIF safety adaptations are recorded in the integration proposal.
 
 ## 12. Test plan
 

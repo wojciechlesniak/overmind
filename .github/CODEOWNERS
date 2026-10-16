@@ -15,3 +15,8 @@
 /tools/ci/ @wojciechlesniak
 /deny.toml @wojciechlesniak
 /.github/actionlint.yaml @wojciechlesniak
+# Secret detection policy and security binaries (OVE_SETUP007).
+/.gitleaks.toml @wojciechlesniak
+/lefthook-secrets.yml @wojciechlesniak
+/tools/secret-scan/ @wojciechlesniak
+/tools/sbom/ @wojciechlesniak

@@ -1,0 +1,45 @@
+title = "Overmind secret policy (OVE_SETUP007)"
+[extend]
+useDefault = true
+
+# OVE_SETUP007: both the fixture path AND its same-line marker are mandatory.
+[[allowlists]]
+description = "OVE_SETUP007 deliberately fake fixture secrets only"
+condition = "AND"
+paths = ['''^(?:.*/)?fixtures/secrets/.*$''']
+regexTarget = "line"
+regexes = ['''OVERMIND_FAKE_SECRET''']
+
+[[rules]]
+id = "overmind-telegram-bot-token"
+description = "Telegram bot credential"
+regex = '''\b([0-9]{8,10}:[A-Za-z0-9_-]{35})(?:[^A-Za-z0-9_-]|$)'''
+secretGroup = 1
+
+[[rules]]
+id = "overmind-anthropic-api-key"
+description = "Anthropic credential"
+regex = '''\bsk-ant-[A-Za-z0-9_\-]{20,}'''
+
+[[rules]]
+id = "overmind-openai-api-key"
+description = "OpenAI credential"
+regex = '''\bsk-(?:proj-)?[A-Za-z0-9_\-]{20,}'''
+
+[[rules]]
+id = "overmind-apple-p8"
+description = "Apple signing key"
+path = '''(?:^|/)AuthKey_[^/]+\.p8$'''
+regex = '''-----BEGIN PRIVATE KEY-----'''
+
+[[rules]]
+id = "overmind-p12-base64"
+description = "Encoded signing certificate"
+path = '''(?i)(?:\.(?:ya?ml|json|env)|(?:^|/)\.env(?:\.[^/]*)?)$'''
+regex = '''MIIK[A-Za-z0-9+/=]{100,}'''
+
+[[rules]]
+id = "overmind-keychain-ref-guard"
+description = "Warning: literal Keychain password in command"
+regex = '''security\s+add-generic-password[^\r\n]*\s-w\s+[^\s$][^\s]*'''
+tags = ["warning"]

@@ -12,7 +12,7 @@ import {
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { expect, it, vi } from "vitest";
-import { install, verifyChecksum } from "./install.ts";
+import { install, installResource, verifyChecksum } from "./install.ts";
 import { readBinaryLock } from "./lock.parse-boundary.ts";
 const root = resolve(import.meta.dirname, "../..");
 it("rejects checksum changes, unknown names, unsafe URLs and duplicate pins", async () => {
@@ -157,6 +157,40 @@ it("refuses HTTPS downgrade redirects and failed downloads before caching bytes"
   } finally {
     vi.unstubAllGlobals();
     rmSync(fixture, { recursive: true, force: true });
+    rmSync(cache, { recursive: true, force: true });
+  }
+});
+
+it("pinned data resources reject corrupt downloads, cache tampering and symlinks without an offline fallback", async () => {
+  const bytes = Buffer.from("pinned default configuration fixture");
+  const sha256 = createHash("sha256").update(bytes).digest("hex");
+  const asset = { url: "https://example.invalid/config", sha256 };
+  const cache = resolve(root, ".cache/tools", `resource-fixture-${sha256}`);
+  const destination = resolve(cache, "resource");
+  try {
+    expect(await installResource("resource-fixture", asset, { offline: true })).toBeUndefined();
+    await expect(
+      installResource("resource-fixture", asset, {
+        fetchBytes: () => Promise.resolve(Buffer.from("corrupt")),
+      }),
+    ).rejects.toThrow("checksum mismatch");
+    expect(
+      await installResource("resource-fixture", asset, {
+        fetchBytes: () => Promise.resolve(bytes),
+      }),
+    ).toBe(destination);
+    expect(await installResource("resource-fixture", asset, { offline: true })).toBe(destination);
+    writeFileSync(destination, "tampered");
+    await expect(installResource("resource-fixture", asset, { offline: true })).rejects.toThrow(
+      "checksum mismatch",
+    );
+    rmSync(destination);
+    symlinkSync("/dev/null", destination);
+    await expect(installResource("resource-fixture", asset, { offline: true })).rejects.toThrow(
+      "regular",
+    );
+    await expect(installResource("../escape", asset)).rejects.toThrow("name");
+  } finally {
     rmSync(cache, { recursive: true, force: true });
   }
 });
