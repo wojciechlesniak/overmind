@@ -255,9 +255,9 @@ or package is added to DEVELOP by this task. Runtime third-party notices must
 still be handled by SETUP017; the Rust exceptions do not cover Node/Bun binaries.
 
 Retained spike branch: `spike/OVE_SETUP011`, final source/evidence commit
-`6c8d73279f7d6303000b10394a3735acabc1e4fc`. It must never be merged or deleted. The ten-run baseline is
+`ba898762b78a2bc95bc09f270f96c665495daeea`. It must never be merged or deleted. The ten-run baseline is
 commit `6b6a9b6a8208a4e6b75669f418a5d04c285d158d`; its source differs from the
-final recipe. [Retained evidence](https://github.com/wojciechlesniak/overmind/tree/6c8d73279f7d6303000b10394a3735acabc1e4fc/spike/evidence)
+final recipe. [Retained evidence](https://github.com/wojciechlesniak/overmind/tree/ba898762b78a2bc95bc09f270f96c665495daeea/spike/evidence)
 contains immutable raw results and their derived summary.
 
 - Baseline A/B: absolute SEA `main`, esbuild CJS with inline maps, no snapshots
@@ -409,7 +409,7 @@ pnpm exec tsx spike/probe.ts
 pnpm exec tsx spike/build.mjs --build-once
 pnpm exec tsx spike/build.mjs --candidate A
 pnpm exec tsx spike/symbolicate.mjs 0
-pnpm exec vitest run spike/adapter.test.ts
+pnpm exec vitest run --config spike/vitest.config.ts
 python3 spike/platform-probe.py
 codesign --force --options runtime --timestamp=none --entitlements spike/engine.plist --sign - <executable>
 codesign --verify --deep --strict <executable>
@@ -493,7 +493,8 @@ WAL/FK/NORMAL, ranked FTS5, active-writer backups, migration and JSON passed;
 backup integrity was `ok`. Strict codesign verification passed. Its size was
 114,612,656 bytes (different recipe from the baseline size table), and signed
 SHA-256 matched `d1bc4446698f2617fc2ce1d3979ec3a19803b252ed7a8c22fc827e8595a0e5ec`.
-This is a single post-experiment review verification, not a ten-run repeat or
+After the retention fix, all four adapter tests were rerun with the isolated
+Vitest configuration and passed. This is a single post-experiment review verification, not a ten-run repeat or
 an additional distribution claim. The reviewer's own temporary data was removed.
 
 ## Follow-up contract and revisit triggers
