@@ -51,6 +51,10 @@ export function desktopWorkspaceIdentity(lock: string, sha: string): WorkspaceId
   }
   return { version, sha };
 }
+function purlComponent(value: string): string {
+  // PURL clause 5.4 preserves colons even inside a qualifier value.
+  return encodeURIComponent(value).replaceAll("%3A", ":");
+}
 function identifyWorkspace(raw: unknown, workspace: WorkspaceIdentity): unknown {
   const input = z
     .object({ components: z.array(z.unknown()) })
@@ -84,7 +88,7 @@ function identifyWorkspace(raw: unknown, workspace: WorkspaceIdentity): unknown 
       const source = `git+https://github.com/wojciechlesniak/overmind@${workspace.sha}`;
       return {
         ...item,
-        purl: `pkg:cargo/overmind-desktop@${workspace.version}?vcs_url=${encodeURIComponent(source)}#apps/desktop/src-tauri`,
+        purl: `pkg:cargo/overmind-desktop@${purlComponent(workspace.version)}?vcs_url=${purlComponent(source)}#apps/desktop/src-tauri`,
         properties: [...item.properties, { name: "overmind:workspace-source", value: source }],
       };
     }),

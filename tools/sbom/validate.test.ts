@@ -80,7 +80,19 @@ it("only a verified local desktop stanza can supply a commit-qualified missing P
   expect(() => parseSBOM(raw)).toThrow();
   const document = completeLicenseEvidence(parseSBOM(raw, workspace));
   expect(validateSBOM(document).components.at(-1)?.purl).toBe(
-    `pkg:cargo/overmind-desktop@0.0.0?vcs_url=git%2Bhttps%3A%2F%2Fgithub.com%2Fwojciechlesniak%2Fovermind%40${sha}#apps/desktop/src-tauri`,
+    `pkg:cargo/overmind-desktop@0.0.0?vcs_url=git%2Bhttps:%2F%2Fgithub.com%2Fwojciechlesniak%2Fovermind%40${sha}#apps/desktop/src-tauri`,
+  );
+  const buildVersion = "0.0.0+local.1";
+  const buildWorkspace = desktopWorkspaceIdentity(
+    lock.replace('version = "0.0.0"', `version = "${buildVersion}"`),
+    sha,
+  );
+  const buildDocument = parseSBOM(
+    { ...raw, components: [...good().components, { ...local, version: buildVersion }] },
+    buildWorkspace,
+  );
+  expect(buildDocument.components.at(-1)?.purl).toBe(
+    `pkg:cargo/overmind-desktop@0.0.0%2Blocal.1?vcs_url=git%2Bhttps:%2F%2Fgithub.com%2Fwojciechlesniak%2Fovermind%40${sha}#apps/desktop/src-tauri`,
   );
   for (const change of [{ name: "foreign" }, { version: "9.9.9" }, { properties: [] }]) {
     expect(() =>
