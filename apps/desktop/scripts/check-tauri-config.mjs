@@ -60,7 +60,7 @@ same(
 for (const name of readdirSync(root)) {
   if (
     name !== "tauri.conf.json" &&
-    /^(?:tauri(?:\..+)?\.conf\.(?:json|json5)|Tauri(?:\..+)?\.toml)$/u.test(name)
+    /^(?:tauri(?:\..+)?\.conf\.(?:json|json5)|Tauri(?:\..+)?\.toml)$/iu.test(name)
   ) {
     fail("alternate or platform configuration is not approved");
   }
