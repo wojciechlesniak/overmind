@@ -5,6 +5,7 @@ packages:
   - tools
 
 catalog:
+  "@vitejs/plugin-react-swc": "4.3.3"
   "spdx-license-ids": "3.0.24"
   "happy-dom": "21.0.1"
   "oxlint": "1.87.0"
@@ -51,6 +52,7 @@ catalog:
 
 # pnpm 12 uses allowBuilds instead of onlyBuiltDependencies. No builds are allowed.
 allowBuilds:
+  "@swc/core": false
   esbuild: false
   lefthook: false
 strictDepBuilds: true

@@ -10,6 +10,20 @@
   "dependencies": {
     "@overmind/api-client": "workspace:*",
     "@overmind/contracts": "workspace:*",
-    "@overmind/ui-kit": "workspace:*"
+    "@overmind/ui-kit": "workspace:*",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/check-dist.mjs",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "catalog:",
+    "@vitejs/plugin-react-swc": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@types/node": "catalog:"
   }
 }

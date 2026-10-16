@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: in_review
 depends_on: [OVE_SETUP001, OVE_SETUP002]
 soft_depends_on: [OVE_SETUP003, OVE_SETUP004, OVE_SETUP008]
 provides: ["lib:desktop-scaffold", "lib:vite-config"]

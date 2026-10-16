@@ -5,5 +5,5 @@
     "tsBuildInfoFile": "${configDir}/.tsbuild/tsconfig.node.tsbuildinfo",
     "outDir": "${configDir}/.tsbuild/node"
   },
-  "include": ["vite.config.ts", "vitest.config.ts"]
+  "include": ["vite.config.ts"]
 }

@@ -1,7 +1,7 @@
 import { execFileSync, spawnSync } from "node:child_process";
-import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
+import { mkdirSync, mkdtempSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 import { expect, it } from "vitest";
 import { isolatedGitEnvironment } from "../hooks/git-test-environment.ts";
 const root = resolve(import.meta.dirname, "../..");
@@ -138,4 +138,58 @@ it("PR title checks retain syntax policy without requiring a nonexistent body", 
     env: isolatedGitEnvironment(),
   });
   expect(normal.status).not.toBe(0);
+}, 15000);
+
+it("desktop dist policy and Vite configuration require the configuration approval label", () => {
+  const fixture = mkdtempSync(resolve(tmpdir(), "overmind-desktop-policy-"));
+  const env = isolatedGitEnvironment();
+  const git = (args: string[]) =>
+    execFileSync("git", args, { cwd: fixture, env, encoding: "utf8" });
+  try {
+    git(["init", "--quiet"]);
+    git(["config", "user.name", "CI fixture"]);
+    git(["config", "user.email", "fixture@example.invalid"]);
+    git(["config", "core.hooksPath", "/dev/null"]);
+    git(["commit", "--allow-empty", "--quiet", "-m", "chore: baseline"]);
+    for (const file of [
+      "apps/desktop/vite.config.ts",
+      "apps/desktop/scripts/check-dist.mjs",
+      "apps/desktop/scripts/check-dist.allow.json",
+    ]) {
+      const base = git(["rev-parse", "HEAD"]).trim();
+      mkdirSync(dirname(resolve(fixture, file)), { recursive: true });
+      writeFileSync(resolve(fixture, file), "fixture policy edit\n");
+      git(["add", file]);
+      git(["commit", "--quiet", "-m", "chore: policy fixture"]);
+      const head = git(["rev-parse", "HEAD"]).trim();
+      const path = resolve(fixture, "event.json");
+      for (const labels of [[], [{ name: "config-change" }]]) {
+        writeFileSync(
+          path,
+          JSON.stringify({
+            pull_request: {
+              number: 1,
+              title: "chore: policy",
+              draft: false,
+              base: { sha: base, ref: "DEVELOP", repo: { full_name: "owner/repo" } },
+              head: { sha: head, ref: "task/OVE_SETUP009", repo: { full_name: "owner/repo" } },
+              labels,
+            },
+          }),
+        );
+        const result = spawnSync(
+          resolve(root, "node_modules/.bin/tsx"),
+          [resolve(root, "tools/ci/config-integrity.ts")],
+          {
+            cwd: fixture,
+            env: { ...env, GITHUB_EVENT_PATH: path },
+            encoding: "utf8",
+          },
+        );
+        expect(result.status, file).toBe(labels.length ? 0 : 1);
+      }
+    }
+  } finally {
+    rmSync(fixture, { recursive: true, force: true });
+  }
 }, 15000);

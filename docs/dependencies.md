@@ -31,7 +31,8 @@ release age, scripts and the full transitive license graph before adoption.
 | @types/react | 19.3.0 | 19.3.0 | npm @types/react@19.3.0 | Installed dev tool. |
 | @types/react-dom | 19.3.0 | 19.3.0 | npm @types/react-dom@19.3.0 | Installed dev tool. |
 | @types/semver | 7.8.0 | 7.8.0 | npm @types/semver@7.8.0 | Installed dev tool. |
-| @vitejs/plugin-react | 6.1.2 | 6.1.2 | npm @vitejs/plugin-react@6.1.2 | Catalog reserve only;6.1.2 requires Vite8 and is not installed with Vite7. SETUP009 must reconcile before adoption. |
+| @vitejs/plugin-react-swc | 4.3.3 | 4.3.3 | npm; Vite ^4..^8, Node ^20.19 or >=22.12 | SETUP009 official React plugin compatible with approved Vite7 and unchanged licenses. |
+| @vitejs/plugin-react | 6.1.2 | 6.1.2 | npm @vitejs/plugin-react@6.1.2 | Catalog reserve only;6.1.2 requires Vite8 and is not installed with Vite7. SETUP009 uses official plugin-react-swc4.3.3 instead. |
 | @vitest/coverage-v8 | 5.0.4 | 5.0.5 | npm @vitest/coverage-v8@5.0.4 | Installed dev tool. |
 | @xyflow/react | 12.12.0 | 12.12.0 | npm @xyflow/react@12.12.0 | Reserved catalog pin; not yet installed. Owning task rechecks peers and full license graph. |
 | dependency-cruiser | 18.6.0 | 18.6.0 | npm dependency-cruiser@18.6.0 | Reserved catalog pin; not yet installed. Owning task rechecks peers and full license graph. |
@@ -110,7 +111,7 @@ release age, scripts and the full transitive license graph before adoption.
    and Vite plugin peers. Vitest/coverage, all Storybook packages, commitlint pairs,
    Playwright/package/Docker image and Rust toolchain pins are coordinated groups.
    The reserved plugin-react6 is incompatible with the adopted Vite7: it must not
-   be installed before SETUP009 resolves that reserved row.
+   be installed with Vite7; SETUP009 adopts the compatible official SWC plugin instead.
 4. Node patches stay on22.x and update .nvmrc, engines, matrix and CI together.
    A move to another Node major requires an ADR; plan Node24 before22's recorded
    end of life. Types continue to match the runtime major.
@@ -327,7 +328,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 
 - Version: 22.20.5
 - License: MIT
-- Used by: overmind (dev)
+- Used by: overmind (dev); apps/desktop (dev)
 - Added by: OVE_SETUP001
 - Value: Give the engine/tooling Node22 API types while keeping pure layers free of Node globals.
 - Maintenance cost: Upstream-driven release cadence; review every update. 1 npm publisher maintainers; pinned unpacked size 2381 KiB.
@@ -340,7 +341,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 
 - Version: 19.3.0
 - License: MIT
-- Used by: overmind (dev)
+- Used by: overmind (dev); apps/desktop (dev)
 - Added by: OVE_SETUP001
 - Value: Type React19 component props, hooks and JSX against the adopted runtime.
 - Maintenance cost: Upstream-driven release cadence; review every update. 1 npm publisher maintainers; pinned unpacked size 399 KiB.
@@ -353,7 +354,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 
 - Version: 19.3.0
 - License: MIT
-- Used by: overmind (dev)
+- Used by: overmind (dev); apps/desktop (dev)
 - Added by: OVE_SETUP001
 - Value: Type the matching React DOM rendering and browser integration surface.
 - Maintenance cost: Upstream-driven release cadence; review every update. 1 npm publisher maintainers; pinned unpacked size 32 KiB.
@@ -574,7 +575,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 
 - Version: 19.3.0
 - License: MIT
-- Used by: overmind (dev)
+- Used by: overmind (dev); apps/desktop (runtime)
 - Added by: OVE_SETUP001
 - Value: Render the planned desktop interface through a typed component model.
 - Maintenance cost: Upstream-driven release cadence; review every update. 2 npm publisher maintainers; pinned unpacked size 174 KiB.
@@ -587,7 +588,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 
 - Version: 19.3.0
 - License: MIT
-- Used by: overmind (dev)
+- Used by: overmind (dev); apps/desktop (runtime)
 - Added by: OVE_SETUP001
 - Value: Render the same React19 runtime into the desktop WebView DOM.
 - Maintenance cost: Upstream-driven release cadence; review every update. 2 npm publisher maintainers; pinned unpacked size 7875 KiB.
@@ -678,7 +679,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 
 - Version: 7.3.7
 - License: MIT
-- Used by: overmind (dev)
+- Used by: overmind (dev); apps/desktop (dev)
 - Added by: OVE_SETUP006
 - Value: Build the future desktop WebView on the approved MIT7.3 line without mandatory Lightning CSS.
 - Maintenance cost: Upstream-driven release cadence; review every update. 2 npm publisher maintainers; pinned unpacked size 2192 KiB.
@@ -1046,6 +1047,19 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Last reviewed: 2026-10-16
 - Digest: 24c54180a607b1449ed407dd24f251e4e9147c8d
 - Source: https://github.com/github/codeql-action/blob/24c54180a607b1449ed407dd24f251e4e9147c8d/LICENSE
+
+
+### @vitejs/plugin-react-swc
+
+- Version: 4.3.3
+- License: MIT
+- Used by: apps/desktop (dev)
+- Added by: OVE_SETUP009
+- Value: Official React Fast Refresh integration compatible with the adopted Vite7 without the denied Babel/browser-data graph.
+- Maintenance cost: Vite-maintained plugin, upstream-driven cadence; two npm publisher maintainers, 41170 bytes unpacked. Review SWC native platform dependencies on upgrades.
+- Alternatives considered: plugin-react6 requires the denied Vite8 graph; plugin-react5 introduces Babel/caniuse-lite; handwritten refresh integration duplicates official tooling.
+- Risk: Transitive @swc/core native packages; postinstall remains explicitly denied. Development transforms use installed platform binaries without granting install scripts or network access.
+- Last reviewed: 2026-10-16
 
 ## Operational limits and sources
 

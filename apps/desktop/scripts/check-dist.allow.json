@@ -1,0 +1,12 @@
+[
+  {
+    "file": "assets/index-*.js",
+    "pattern": "\"https://react.dev/errors/\"",
+    "reason": "React19 production error decoder URL is diagnostic text in thrown errors; the scaffold makes no request to it."
+  },
+  {
+    "file": "assets/index-*.js",
+    "pattern": "n.innerHTML=\"<script><\\/script>\"",
+    "reason": "Pinned React DOM creates an inert empty script through innerHTML before removing it; this exact assignment contains no executable inline body."
+  }
+]
