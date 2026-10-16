@@ -6,7 +6,7 @@ kind: docs
 size: M
 priority: P0
 mvp: true
-status: in_review
+status: done
 depends_on: [OVE_SETUP001]
 soft_depends_on: [OVE_OSS001, OVE_OSS003, OVE_SETUP018, OVE_SETUP019]
 provides: ["lib:contributing-docs", "lib:security-policy"]
@@ -95,12 +95,12 @@ Three root Markdown files. No code.
 
 ## 11. Acceptance criteria
 
-- [ ] `CONTRIBUTING.md` contains all 14 sections with concrete steps and the exact gate comment text.
-- [ ] `CODE_OF_CONDUCT.md` is Contributor Covenant 2.1 with attribution and the contact placeholder marker.
-- [ ] `SECURITY.md` has supported versions, private reporting path, SLA, the Critical/High definitions for isolation, in/out of scope, and safe harbour.
-- [ ] Markers `TODO-OWNER:` exist for the unknown contacts and are the only unresolved items.
-- [ ] A new contributor can follow `CONTRIBUTING.md` from clone to a green `pnpm check` without other documents (reviewer dry run).
-- [ ] No emojis; English only; links resolve.
+- [x] `CONTRIBUTING.md` contains all 14 sections with concrete steps and the exact gate comment text.
+- [x] `CODE_OF_CONDUCT.md` is Contributor Covenant 2.1 with attribution and the contact placeholder marker.
+- [x] `SECURITY.md` has supported versions, private reporting path, SLA, the Critical/High definitions for isolation, in/out of scope, and safe harbour.
+- [x] Markers `TODO-OWNER:` exist for the unknown contacts and are the only unresolved items.
+- [x] A new contributor can follow `CONTRIBUTING.md` from clone to a green `pnpm check` without other documents (reviewer dry run).
+- [x] No emojis; English only; links resolve.
 
 ## 12. Test plan
 
@@ -116,3 +116,26 @@ Parallel with OVE_OSS001, 003, 004, 006. The gate comment constant is shared wit
 - ASSUMPTION: 14-day claim expiry on accepted issues.
 - Owner must supply: public security contact and code-of-conduct enforcement contact (placeholders `TODO-OWNER`).
 - Open question: whether to require DCO sign-off (ADR 0013 says no CLA; DCO is lighter). Default: no.
+
+### Implementation evidence (2026-10-16)
+
+Independent Standards and Spec reviews passed at implementation head
+3493bd65cea9fedf924d0b1351cd3c61b9c1689a after correcting the commit-scope example.
+The Spec reviewer cloned the preceding documentation head into a fresh directory,
+installed with the frozen lockfile and ran the complete pnpm check to exit 0:
+200 unit tests, 20 integration tests, 4 architecture CLI cases and 27 Rust tests,
+plus formatting, lint, types, build, licenses, audits, secret scans and SBOM.
+Node22.23.3, pnpm12.11.2, Rust1.90.0 and Xcode were preinstalled on macOS26 arm64.
+A transient official cargo-audit download failed first; the checksum-verified
+retry and full check passed without skipped gates. The one-line example fix was
+reviewed separately and did not change setup behavior. Hosted CI38957740640,
+Security38957740642 and isolation-admission38957740581 passed for the same head.
+
+The exact 453-character PR-gate comment, all local references, Covenant2.1 wording
+and attribution were independently verified. The original official license at
+91532d80ea5f39b6685aff4892bc6854bf2f6d6f is CC BY4.0. Publication still requires
+the two Owner contacts and a verified private reporting route; API inspection
+confirmed private reporting disabled on 2026-10-16. Future tools and document
+paths are explicitly identified, not reported as implemented or passing checks.
+The final status/checklist-only commit requires fresh hosted CI and incremental
+review before merge. This task does not authorize publication or live settings.
