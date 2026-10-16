@@ -480,6 +480,22 @@ LaunchAgent raw outputs, later build logs and argument-denial/relocation diagnos
 are retained under the immutable spike commit above. No failed or unavailable
 probe is presented as passed.
 
+## Independent review confirmation
+
+Standards/security and Spec reviews found zero actionable issues at documentation
+commit `054815319c049a186c5ddbee172cd48a80d03637` against DEVELOP base
+`3fbc902e8fc278f27b40007d0913a66e5e1de108`. Both explicitly recognized the time-cap
+overrun and the permitted default with incomplete measurements.
+
+The Spec reviewer executed the existing revised A/0 binary once, without a
+rebuild: 100,000 inserts in 152.839ms (654,284 rows/s), 100 indexed rows in 0.118ms.
+WAL/FK/NORMAL, ranked FTS5, active-writer backups, migration and JSON passed;
+backup integrity was `ok`. Strict codesign verification passed. Its size was
+114,612,656 bytes (different recipe from the baseline size table), and signed
+SHA-256 matched `d1bc4446698f2617fc2ce1d3979ec3a19803b252ed7a8c22fc827e8595a0e5ec`.
+This is a single post-experiment review verification, not a ten-run repeat or
+an additional distribution claim. The reviewer's own temporary data was removed.
+
 ## Follow-up contract and revisit triggers
 
 The driver-neutral port needed by DATA is `exec`, prepared `run/get/all`,
