@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: [OVE_SETUP001, OVE_SETUP002]
 soft_depends_on: [OVE_SETUP003, OVE_SETUP004, OVE_SETUP008]
 provides: ["lib:desktop-scaffold", "lib:vite-config"]
@@ -91,12 +91,12 @@ Layer: UI composition root of the desktop app (`apps/desktop`). Allowed imports:
 
 ## 11. Acceptance criteria
 
-- [ ] `pnpm --filter @overmind/desktop build` produces `dist/index.html` and passes `check-dist.mjs`.
-- [ ] `pnpm --filter @overmind/desktop dev` serves on `127.0.0.1:5173` and not on other interfaces (checked with `lsof` or a connect test to the LAN address).
-- [ ] A request with `Host: evil.example` to the dev server is rejected.
-- [ ] Given a fixture bundle containing `eval(`, `check-dist.mjs` exits 1.
-- [ ] `pnpm typecheck`, `pnpm lint` pass for `apps/desktop`; the render smoke test passes.
-- [ ] `index.html` contains exactly one script tag and no external URL (asserted by test).
+- [x] `pnpm --filter @overmind/desktop build` produces `dist/index.html` and passes `check-dist.mjs`.
+- [x] `pnpm --filter @overmind/desktop dev` serves on `127.0.0.1:5173` and not on other interfaces (checked with `lsof` or a connect test to the LAN address).
+- [x] A request with `Host: evil.example` to the dev server is rejected.
+- [x] Given a fixture bundle containing `eval(`, `check-dist.mjs` exits 1.
+- [x] `pnpm typecheck`, `pnpm lint` pass for `apps/desktop`; the render smoke test passes.
+- [x] `index.html` contains exactly one script tag and no external URL (asserted by test).
 
 ## 12. Test plan
 
@@ -111,3 +111,31 @@ Parallel with OVE_SETUP010, 011, 012. Hotspots: `apps/desktop/package.json` (sha
 - ASSUMPTION: no CSS framework is chosen; styling comes from `ui-kit` tokens (DS area).
 - ASSUMPTION: Safari 18 as WebKit baseline (macOS 26 ships newer); lower target not needed.
 - Open question: whether to use `rolldown`-specific features of Vite 8; default no.
+
+## Implementation evidence (2026-10-16)
+
+- PR: https://github.com/wojciechlesniak/overmind/pull/943; base DEVELOP.
+- Reviewed implementation head: a50d09b25751916d0fbfcf0e451cb333fbe5b423 against
+  baseline85a7a5230f1bef8bbfb9147b46193a5bd3e05dee. Independent Standards and Spec:
+  PASS, zero actionable findings after narrowing React diagnostic exceptions and
+  making URL schemes case-insensitive. Exact-URL fetch/import regressions reject.
+- Full local pnpm check passed: 166 unit tests in46files and20 distinct integration
+  tests in8files. Architecture additionally reruns4dependency-policy CLI cases.
+  Typecheck, lint, coverage, build, installed licenses, both audits, workflow lint,
+  secret scans and lockfile SBOM passed. Frozen installation is reproducible.
+- Exact implementation-head hosted CI38887989174 and Security38887989157 passed.
+  The build job ran all5new real server/build integration cases. Final documentation
+  head must also pass hosted checks before merge; final links are in the PR.
+- Actual local pnpm --filter @overmind/desktop dev returned HTTP200 on127.0.0.1:5173,
+  rejected Host evil.example with403, and lsof confirmed only127.0.0.1:5173 listening.
+  The spawned test process was terminated and cleaned up after the probe.
+- Runtime integration verifies loopback binding, denied external-interface access,
+  CORS, hostile Host, outside-workspace files, busy strict ports and real proxy Host
+  preservation. Production ignores the proxy. The actual built bundle excludes
+  private env markers and passes the pinned SETUP007 scanner; an inserted synthetic
+  credential fails and its report remains redacted.
+- Accepted Vite7 replacement and official plugin-react-swc4.3.3 retain the unchanged
+  license/age/build-script policy. Native SWC postinstall is explicitly false.
+  Shared integration and reviewed literal constructs are recorded in
+  tasks/_proposals/OVE_SETUP009-scaffold-integration.md. No product routing, styles,
+  engine or Tauri shell is claimed here; those remain assigned to later tasks.

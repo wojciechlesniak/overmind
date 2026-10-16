@@ -65,6 +65,7 @@ test("every project reference exactly matches the manifest graph and the solutio
       .map((reference) => resolve(directory, string(object(reference)["path"])))
       .sort();
     const expected = Object.keys(object(manifest["dependencies"] ?? {}))
+      .filter((name) => name.startsWith("@overmind/"))
       .map((name) => directoryByName.get(name))
       .sort();
     assert.deepEqual(actual, expected, relative(root, directory));
@@ -73,7 +74,7 @@ test("every project reference exactly matches the manifest graph and the solutio
   assert.ok(Array.isArray(references));
   assert.deepEqual(
     references.map((reference) => resolve(root, string(object(reference)["path"]))).sort(),
-    manifests.map(dirname).sort(),
+    [...manifests.map(dirname), resolve(root, "apps/desktop/tsconfig.node.json")].sort(),
   );
 });
 

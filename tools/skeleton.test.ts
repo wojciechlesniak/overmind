@@ -61,13 +61,16 @@ test("all 17 packages encode exactly the required Clean Architecture graph", () 
     const name = manifest.name.replace("@overmind/", "");
     assert.deepEqual(
       Object.keys(manifest.dependencies ?? {})
+        .filter((key) => key.startsWith("@overmind/"))
         .map((key) => key.replace("@overmind/", ""))
         .sort(),
       expectedEdges[name]?.toSorted(),
       name,
     );
     assert.ok(
-      Object.values(manifest.dependencies ?? {}).every((value) => value === "workspace:*"),
+      Object.entries(manifest.dependencies ?? {}).every(
+        ([key, value]) => value === (key.startsWith("@overmind/") ? "workspace:*" : "catalog:"),
+      ),
       name,
     );
     assert.equal(manifest.main, undefined);

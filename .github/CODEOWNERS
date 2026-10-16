@@ -25,3 +25,7 @@
 /renovate.json @wojciechlesniak
 /docs/dependencies.md @wojciechlesniak
 /tools/deps-policy/ @wojciechlesniak
+
+# Desktop CSP build guard (OVE_SETUP009).
+/apps/desktop/scripts/check-dist* @wojciechlesniak
+/apps/desktop/vite.config.ts @wojciechlesniak
