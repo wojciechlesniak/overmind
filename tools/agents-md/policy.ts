@@ -47,6 +47,11 @@ function paragraphsOf(text: string): string[] {
   return text.split(/\r?\n\s*\r?\n/u).map((part) => part.replace(/\r?\n/gu, " ").trim());
 }
 
+function withoutInlineCode(line: string): string {
+  // Supported openings have no preceding escape; closing runs match exactly.
+  return line.replace(/(?<![\\`])(`+)(?!`).*?(?<!`)\1(?!`)/gu, "");
+}
+
 function visibleMarkdown(text: string): { text: string; unsupportedBlocks: boolean } {
   const visible: string[] = [];
   let fence: { marker: string; length: number } | undefined;
@@ -65,7 +70,8 @@ function visibleMarkdown(text: string): { text: string; unsupportedBlocks: boole
       visible.push("");
     } else {
       unsupportedBlocks ||=
-        (Boolean(line.trim()) && /^(?: {4}|\t)/u.test(line)) || /^ {0,3}<[A-Za-z/!?]/u.test(line);
+        (Boolean(line.trim()) && /^(?: {4}|\t)/u.test(line)) ||
+        /<[A-Za-z/!?]/u.test(withoutInlineCode(line));
       visible.push(line);
     }
   }

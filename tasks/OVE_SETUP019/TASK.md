@@ -107,7 +107,7 @@ Parallel with everything after OVE_SETUP001. Hotspot: none (short file). When CO
 - The relative CLAUDE.md symlink reads the exact AGENTS.md bytes. A real isolated
   Git fixture verifies mode 120000; regular, wrong-target, absolute and missing
   links fail. The root symlink is staged and committed as mode 120000 too.
-- 55 focused tests pass: 52 checker cases and three actual configuration-gate
+- 67 focused tests pass: 64 checker cases and three actual configuration-gate
   cases. They cover removed/reordered/hidden sections, injection hash tampering,
   missing/empty/prototype script names, missing and escaping links, real symlink
   escapes, malformed manifests, oversized content, maintenance placement and
@@ -149,5 +149,11 @@ Parallel with everything after OVE_SETUP001. Hotspot: none (short file). When CO
   hiding rules. Those block forms are explicitly unsupported and fail closed;
   no Markdown parser dependency was added. The checker README documents the
   supported instruction-document syntax.
-- The 55 focused cases include whole-document wrapping, shorter/wrong delimiters,
+- The focused cases include whole-document wrapping, shorter/wrong delimiters,
   indented and invalid closing runs, unclosed fences and hidden rule paragraphs.
+- A second Standards review found raw HTML after a text prefix could still hide
+  the required paragraph. A real red-to-green regression now covers prefixed
+  details tags. Raw HTML is forbidden anywhere outside the documented code-span
+  and fence forms. Hidden div/pre/span wrappers and escaped, mismatched or
+  unclosed code delimiters are rejected; literal `<ID>` and equal-length code spans
+  and fenced HTML examples remain supported. No new dependency was added.

@@ -16,7 +16,12 @@ another marker or trailing non-whitespace cannot close a fence; an unclosed fenc
 hides content through EOF. Fences are processed before comments so a comment
 cannot manufacture a closing delimiter. Indented blocks and raw HTML blocks are
 unsupported in this instruction document and fail closed rather than guessing
-whether their text is visible. Use flat lists and fenced examples instead.
+whether their text is visible. Raw HTML is forbidden anywhere outside code, even
+after ordinary text; details/hidden tags cannot hide mandatory rules. Literal
+HTML-like text such as `<ID>` belongs in a code span or fenced example. Supported
+code spans use equal-length backtick runs on one line, with no backslash directly
+before the opening run. Mismatched, escaped or unclosed runs cannot exempt HTML
+from the guard. Use flat lists and fenced examples instead.
 File links are canonicalised and cannot escape the repository through traversal,
 percent encoding or symlinks. The small credential screen supplements the full
 pinned secret scanner in hooks and CI; it does not replace that scanner.

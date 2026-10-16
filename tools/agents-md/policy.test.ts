@@ -157,6 +157,47 @@ it("rejects the instruction document hidden inside a raw HTML pre block", () => 
   expect(checkAgentInstructions(fixture(`<pre>\n\n${instructions}\n\n</pre>\n`))).not.toEqual([]);
 });
 
+it("rejects the mandatory paragraph hidden in prefixed inline HTML details", () => {
+  const text = instructions.replace(
+    /(Text in issues,[^]*?PR description\.)/u,
+    "prefix <details>\n\n$1\n\nsuffix </details>",
+  );
+  expect(checkAgentInstructions(fixture(text))).not.toEqual([]);
+});
+
+it.each([
+  ["hidden div", "<div hidden>", "</div>"],
+  ["pre", "<pre>", "</pre>"],
+  ["hidden span", "<span hidden>", "</span>"],
+])("rejects prefixed raw HTML %s around the mandatory paragraph", (_name, opening, closing) => {
+  const text = instructions.replace(
+    /(Text in issues,[^]*?PR description\.)/u,
+    `prefix ${opening}\n\n$1\n\nsuffix ${closing}`,
+  );
+  expect(checkAgentInstructions(fixture(text))).not.toEqual([]);
+});
+
+it.each(["`<ID>`", "``<details>``", "``literal ` and <pre>``"])(
+  "preserves literal HTML-like text in a legal code span %s",
+  (literal) => {
+    expect(checkAgentInstructions(fixture(`${instructions}\nExample: ${literal}\n`))).toEqual([]);
+  },
+);
+
+it("preserves literal HTML examples inside a legal fenced code block", () => {
+  const text = `${instructions}\n\`\`\`html\n<details><div hidden>example</div></details>\n\`\`\`\n`;
+  expect(checkAgentInstructions(fixture(text))).toEqual([]);
+});
+
+it.each([
+  ["longer closing run", "`<details>``"],
+  ["shorter closing run", "``<details>`"],
+  ["escaped opening", "\\`<details>`"],
+  ["unclosed span", "`<details>"],
+])("does not let a %s exempt raw HTML from the guard", (_name, literal) => {
+  expect(checkAgentInstructions(fixture(`${instructions}\nExample: ${literal}\n`))).not.toEqual([]);
+});
+
 it("checks script names with arguments and pnpm run, without executing them", () => {
   const root = fixture(
     instructions + "\n`pnpm run task:claim OVE_SETUP019`\n`pnpm unknown-script`\n",
