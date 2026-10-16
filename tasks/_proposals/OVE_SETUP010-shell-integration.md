@@ -56,3 +56,8 @@ macOS extended ACLs through a safe API. Private directories, sockets and log fil
 reject any ACL and unreadable ACL metadata, including inherited grants; chmod +a
 regressions preserve the 0700/0600 modes. Tauri's actual `is_dev()` mode controls the
 Vite navigation exception, so a bundled custom-protocol debug build rejects it.
+
+The policy guard also rejects alternate and platform-specific Tauri configs.
+Tauri merges these after reading the canonical JSON; accepting an unchecked macOS
+override would let it replace the pinned CSP/window after the base-file check.
+Negative fixtures cover JSON, JSON5 and TOML override names.

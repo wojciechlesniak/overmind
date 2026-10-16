@@ -55,6 +55,16 @@ same(
   permissions,
   "permission allow-list",
 );
+// Tauri merges platform overrides before compiling; an unchecked override could
+// replace the pinned CSP or window URL after this guard accepts the base config.
+for (const name of readdirSync(root)) {
+  if (
+    name !== "tauri.conf.json" &&
+    /^(?:tauri(?:\..+)?\.conf\.(?:json|json5)|Tauri(?:\..+)?\.toml)$/u.test(name)
+  ) {
+    fail("alternate or platform configuration is not approved");
+  }
+}
 const config = json(resolve(root, "tauri.conf.json"));
 forbidden(config);
 const security = config.app?.security;

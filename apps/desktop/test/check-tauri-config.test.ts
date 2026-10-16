@@ -76,4 +76,14 @@ describe("Tauri deny-by-default configuration", () => {
       }).status,
     ).not.toBe(0);
   });
+  it.each(["tauri.macos.conf.json", "tauri.conf.json5", "Tauri.toml", "Tauri.macos.toml"])(
+    "rejects configuration override %s",
+    (name) => {
+      expect(
+        probe((root) => {
+          writeFileSync(resolve(root, name), '{"app":{"security":{"csp":null}}}');
+        }).status,
+      ).not.toBe(0);
+    },
+  );
 });
