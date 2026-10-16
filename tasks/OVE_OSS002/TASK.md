@@ -6,7 +6,7 @@ kind: docs
 size: M
 priority: P0
 mvp: true
-status: in_progress
+status: in_review
 depends_on: [OVE_SETUP001]
 soft_depends_on: [OVE_OSS001, OVE_OSS003, OVE_SETUP018, OVE_SETUP019]
 provides: ["lib:contributing-docs", "lib:security-policy"]
