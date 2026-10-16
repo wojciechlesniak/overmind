@@ -7,7 +7,7 @@ const scriptDirectory = dirname(fileURLToPath(import.meta.url));
 const rules = [
   ["dynamic-eval", /\beval\s*\(/u],
   ["dynamic-function", /\bnew\s+Function\s*\(/u],
-  ["remote-url", /https?:\/\/(?!www\.w3\.org\/)/u],
+  ["remote-url", /https?:\/\/(?!www\.w3\.org\/)/iu],
   ["remote-provider", /fonts\.googleapis\.com|\bcdn\.|\bunpkg\b|\bjsdelivr\b/iu],
   ["inline-style", /<style\b|\sstyle\s*=/iu],
 ];
@@ -33,7 +33,7 @@ function readAllowances(path) {
         entry.file.startsWith("/") ||
         typeof entry.pattern !== "string" ||
         entry.pattern.length < 10 ||
-        entry.pattern.length > 200 ||
+        entry.pattern.length > 1024 ||
         typeof entry.reason !== "string" ||
         entry.reason.trim().length < 30,
     )

@@ -22,10 +22,10 @@ negative fixtures are reviewed before allowing any upstream diagnostic literal.
 The server validates the optional development proxy as a loopback-only HTTP URL;
 production builds never consume that setting. Preview also binds to loopback.
 
-The first actual build identified two pinned React DOM false positives: the quoted
-React error-documentation URL and the exact minified assignment creating an inert
+The first actual build identified two pinned React DOM false positives: the complete
+React error-formatting functions and the exact minified assignment creating an inert
 empty script through innerHTML. The reviewed literal exception file removes only
-those exact strings in assets/index-*.js. Changed script bodies, unrelated URLs and
+those exact code constructs in assets/index-*.js. Changed script bodies, unrelated URLs and
 extended React URLs remain failures. Production build integration runs the actual
 SETUP007 scanner on the generated files, proves a synthetic inserted credential is
 detected, and verifies reports stay redacted. CI prewarms checksum-verified binaries
@@ -56,3 +56,12 @@ Server tests use one active Vite instance at a time. The occupied-port regressio
 uses a native TCP listener in a separate test; simultaneous Vite instances sharing
 a root/cache caused a shutdown wait unrelated to the tested product configuration.
 HTTP probe connections explicitly close. Final tests keep the normal time limits.
+
+Independent review narrowed the URL exception from a standalone quoted literal to
+the two complete pinned React error-formatting functions. Exact-URL fetch/import
+calls and uppercase HTTPS remain violations. The actual minified functions are
+reviewed verbatim; their diagnostic return value is prose, not a request target.
+The complete foundation suite also exposed assumptions from the empty skeleton:
+its graph/reference tests now distinguish internal workspace edges from catalog
+runtime dependencies, retaining exact checks for both. The solution additionally
+requires the real desktop Node config reference; no assertion is removed.

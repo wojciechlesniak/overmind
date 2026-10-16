@@ -1,8 +1,13 @@
 [
   {
     "file": "assets/index-*.js",
-    "pattern": "\"https://react.dev/errors/\"",
-    "reason": "React19 production error decoder URL is diagnostic text in thrown errors; the scaffold makes no request to it."
+    "pattern": "function Rl(Y){var T=\"https://react.dev/errors/\"+Y;if(1<arguments.length){T+=\"?args[]=\"+encodeURIComponent(arguments[1]);for(var H=2;H<arguments.length;H++)T+=\"&args[]=\"+encodeURIComponent(arguments[H])}return\"Minified React error #\"+Y+\"; visit \"+T+\" for the full message or use the non-minified dev environment for full errors and additional helpful warnings.\"}",
+    "reason": "Exact pinned React19 error formatter constructs diagnostic prose only. Its complete function body performs no network request or dynamic execution."
+  },
+  {
+    "file": "assets/index-*.js",
+    "pattern": "function S(l){var t=\"https://react.dev/errors/\"+l;if(1<arguments.length){t+=\"?args[]=\"+encodeURIComponent(arguments[1]);for(var u=2;u<arguments.length;u++)t+=\"&args[]=\"+encodeURIComponent(arguments[u])}return\"Minified React error #\"+l+\"; visit \"+t+\" for the full message or use the non-minified dev environment for full errors and additional helpful warnings.\"}",
+    "reason": "Exact pinned React19 error formatter constructs diagnostic prose only. Its complete function body performs no network request or dynamic execution."
   },
   {
     "file": "assets/index-*.js",

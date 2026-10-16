@@ -46,6 +46,10 @@ it("literal React exceptions do not hide executable script bodies or other URLs"
     writeFileSync(resolve(directory, "index.html"), "<main>Overmind</main>");
     for (const source of [
       '"https://react.dev/errors/evil"',
+      'fetch("https://react.dev/errors/")',
+      'import("https://react.dev/errors/")',
+      'fetch("HTTPS://example.invalid/")',
+
       'n.innerHTML="<script>alert(1)</script>"',
       '"https://react.dev/errors/";fetch("https://example.invalid/")',
     ]) {
