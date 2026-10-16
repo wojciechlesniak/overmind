@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: in_progress
 depends_on: [OVE_SETUP001, OVE_SETUP002, OVE_SETUP011]
 soft_depends_on: [OVE_SETUP004, OVE_SETUP010]
 provides: ["lib:engine-scaffold", "lib:engine-cli-contract", "lib:engine-version-info"]
