@@ -66,11 +66,11 @@ release age, scripts and the full transitive license graph before adoption.
 | eslint-plugin-jsx-a11y | not adopted | 6.10.2 | npm registry on review date | ESLint10 peer mismatch; actual axe tests owned by Storybook/Playwright tasks. |
 | jsdom | not adopted | 30.1.3 | npm registry on review date | Direct license MIT; its installed transitive graph violates the unchanged policy. Happy DOM replaces it. |
 | zod-to-json-schema | not adopted | 3.25.2 | npm registry on review date | Targets zod3; zod4 already supplies schema conversion. |
-| better-sqlite3 | candidate 13.0.3 | 13.0.3 | npm registry on review date | SETUP011 evaluates engine packaging/storage; sqlite-vec remains a future feature. Not an adoption. |
-| bun | candidate 1.4.3 | 1.4.3 | npm registry on review date | SETUP011 evaluates engine packaging/storage; sqlite-vec remains a future feature. Not an adoption. |
-| postject | candidate 1.0.0-alpha.6 | 1.0.0-alpha.6 | npm registry on review date | SETUP011 evaluates engine packaging/storage; sqlite-vec remains a future feature. Not an adoption. |
-| @yao-pkg/pkg | candidate 6.23.0 | 6.23.0 | npm registry on review date | SETUP011 evaluates engine packaging/storage; sqlite-vec remains a future feature. Not an adoption. |
-| esbuild | candidate 0.28.2 | 0.28.2 | npm registry on review date | SETUP011 evaluates engine packaging/storage; sqlite-vec remains a future feature. Not an adoption. |
+| better-sqlite3 | 13.0.3 | 13.0.3 | npm registry on review date | Fallback only (ADR 0030); built-in gates passed. No adoption; same-Team-ID addon loading remains unmeasured. |
+| bun | 1.4.3 | 1.4.3 | npm registry on review date | Rejected as product runtime (ADR 0030); no runtime split or binary-license exception approved. |
+| postject | 1.0.0-alpha.6 | 1.0.0-alpha.6 | npm registry on review date | Selected build tool for SETUP017 (ADR 0030), exact pin retained; alpha risk and provenance checks remain. |
+| @yao-pkg/pkg | 6.23.0 | 6.23.0 | npm registry on review date | Rejected (ADR 0030); direct official SEA avoids the extra packaging abstraction and graph. |
+| esbuild | 0.28.2 | 0.28.2 | npm registry on review date | Selected CommonJS bundler for SETUP016 (ADR 0030); maps/metafile required; installation scripts stay disabled. |
 | sqlite-vec | candidate 0.1.9 | 0.1.9 | npm registry on review date | SETUP011 evaluates engine packaging/storage; sqlite-vec remains a future feature. Not an adoption. |
 | crate:tauri | 2.12.3 | 2.12.4 | https://crates.io/api/v1/crates/tauri/2.12.3 | SETUP010 native shell; MSRV 1.90; SETUP010 installs exact pins. |
 | crate:tauri-build | 2.7.2 | 2.7.3 | https://crates.io/api/v1/crates/tauri-build/2.7.2 | SETUP010 native shell; MSRV 1.90; SETUP010 installs exact pins. |
@@ -83,7 +83,7 @@ release age, scripts and the full transitive license graph before adoption.
 | Rust toolchain | 1.90.0 | not adopted | Rust/Tauri MSRV | SETUP010 pins rust-toolchain.toml; private verified toolchain, no global change. |
 | herdr | 0.9.3 | 0.9.5 | SETUP015 vendor/herdr/VERSION | SETUP015 selects a verified mature release; latest is younger than72 hours. |
 | Apple container CLI | minimum 1.5.0 | 1.5.0 | Apple container publisher; SETUP015 | Requires macOS26/Apple silicon; no current runner. |
-| node:sqlite | built into 22.23.3 | built in | Node22 API | SETUP011 verifies experimental status and chooses storage. |
+| node:sqlite | built into 22.23.3 | built in | Node22 API | Selected built-in default (ADR 0030); required actual SQLite gates passed on Node 22.23.3; driver-neutral DATA adapter. |
 | actionlint | 1.7.12 | 1.7.12 | Publisher release verified by SETUP006/007 | SHA256 platform pins; manual updates only. |
 | zizmor | 1.30.1 | 1.31.1 | Publisher release verified by SETUP006/007 | Latest release is younger than72 hours; retain mature1.30.1. |
 | cargo-deny | 0.20.2 | 0.20.2 | Publisher release verified by SETUP006/007 | SHA256 platform pins; manual updates only. |
