@@ -6,7 +6,7 @@ kind: infra
 size: M
 priority: P0
 mvp: true
-status: in_review
+status: done
 depends_on: [OVE_SETUP001, OVE_SETUP002]
 soft_depends_on: [OVE_SETUP004, OVE_SETUP005]
 provides: ["lib:task-tools", "lib:task-model", "lib:worktree-tools"]
@@ -150,9 +150,19 @@ are documented in the integration proposal.
 The real `task:next --limit 5 --json` also completed against fetched DEVELOP and
 the current remote claims. Mutation tests use real isolated bare remotes, frozen
 offline workspace installs and independent clones. GitHub finish evidence uses
-validated API fixtures; it is not fabricated hosted CI. Hosted CI/security and
-the final status-only head review remain required before merge into DEVELOP.
+validated API fixtures; it is not fabricated hosted CI.
 
 The first pre-push exposed an ignored-cache traversal race in the existing
 skeleton test collector. Its exact `.cache` exclusion preserves every workspace
 and supply-chain assertion; the proposal records the failure and narrow fix.
+
+Hosted Linux then exposed the macOS-only fixture prefix; all nine temporary
+roots now use canonical system temporary directories. Five affected unit tests,
+all 22 task integration tests and the full normal pre-push suite passed. Both
+independent delta reviews passed with zero findings at
+`d9a6116a819e6c68a624bf88b564a47f69ec4824`. Hosted CI `39023982740`, Security
+`39023982789` and Isolation admission `39023982767` passed for that head: all 27
+contexts completed, with successful required checks and only planned conditional
+exclusions. Admission is not a physical isolation test. This final status-only
+commit still requires fresh exact-head CI/security and both independent metadata
+reviews before merge into DEVELOP.
