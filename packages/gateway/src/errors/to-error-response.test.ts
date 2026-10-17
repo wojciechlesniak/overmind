@@ -152,6 +152,10 @@ it("never serializes hostile exceptions, unknown codes, malformed details or hos
 
 const sensitiveDetails = [
   { name: "an assigned home path", value: () => "source=" + "/Users/fake/.ssh/id_rsa" },
+  {
+    name: "a home path attached to a diagnostic",
+    value: () => "source-" + "/Users/fake/.ssh/id_rsa",
+  },
   { name: "a diagnostic path", value: () => "path:" + "/private/fake/input" },
   { name: "a bracketed Unix path", value: () => "source=[" + "/etc/fake.conf]" },
   { name: "an AWS access key", value: () => ["AK", "IA", "A1".repeat(8)].join("") },

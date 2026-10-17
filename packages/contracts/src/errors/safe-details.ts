@@ -3,6 +3,7 @@ import type { JsonValue, ErrorDefinition } from "./definition.ts";
 
 // Transitional error-boundary defence; ARCH004 will own shared redaction.
 const sensitive = [
+  /\/(?:Users|home)(?:\/|$)/iu,
   /(?:^|[^\p{L}\p{N}_./-])\/\S+|[A-Za-z]:[\\/]/u,
   /\b(?:SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|CREATE)\b|\b(?:Bearer|stderr)\b/iu,
   /(?:sk-|gh[pousr]_|github_pat_|xox[baprs]-)[A-Za-z0-9_-]+/u,
