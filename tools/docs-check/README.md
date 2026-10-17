@@ -48,6 +48,15 @@ Pending local targets must be registered in `pending-links.json` with a tracked
 owning task. Remove an entry in the same change that creates its target. Stale
 entries fail ordinary checks; any remaining entry blocks publication.
 
+Git inventory selects inputs; a tracked name alone does not prove that a target
+still exists. Linked files and LICENSE must resolve to real regular files inside
+the repository on the same device. Binary assets are checked without reading
+their contents. Document reads open without following the final symlink or
+blocking on a FIFO, validate descriptor identity/type/size before content access,
+and stop after at most one MiB plus a single overflow-detection byte. Changed
+documents fail. Translation metadata supports a leading UTF-8 BOM and both YAML
+end markers; incomplete front matter fails publication.
+
 ## Translation extension
 
 Every tracked canonical `tools/docs-*/check.ts` module is trusted project code

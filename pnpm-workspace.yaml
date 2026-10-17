@@ -5,6 +5,7 @@ packages:
   - tools
 
 catalog:
+  "entities": "7.0.1"
   "esbuild": "0.28.2"
   "@vitejs/plugin-react-swc": "4.3.3"
   "spdx-license-ids": "3.0.24"

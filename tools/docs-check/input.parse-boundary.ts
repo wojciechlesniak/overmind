@@ -4,8 +4,12 @@ import type { Configuration } from "markdownlint";
 import type { Diagnostic } from "./policy.ts";
 
 export function translationStatus(md: string): string | undefined {
-  const match = /^---\r?\n([^]*?)\r?\n---(?:\r?\n|$)/u.exec(md);
+  const source = md.replace(/^\uFEFF/u, "").replace(/\r\n?/gu, "\n");
+  const match = /^---\n([^]*?)\n(?:---|\.\.\.)(?:\n|$)/u.exec(source);
   if (!match) {
+    if (source.startsWith("---\n")) {
+      throw new Error("Unclosed translation front matter.");
+    }
     return undefined;
   }
   const raw: unknown = parse(match[1] ?? "");

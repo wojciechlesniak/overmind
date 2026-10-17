@@ -74,3 +74,25 @@ it("fails closed on local paths, contact details, unowned TODOs and publication 
   ]);
   expect(diagnostics.map((d) => d.message).join(" ")).not.toContain("someone");
 });
+
+it("accepts GitHub's reserved top fragment and rendered-reference headings", () => {
+  const files = new Map([
+    ["README.md", "# Root\n\n[top](guide.md#top)\n[letter](guide.md#a)\n"],
+    ["guide.md", "# &#65;\n"],
+  ]);
+  expect(checkLinks(files)).toEqual([]);
+});
+
+it("decodes link destination references before path and credential checks", () => {
+  const files = new Map([
+    [
+      "README.md",
+      "# Root\n\n[absolute](&#x2f;outside.md)\n[scheme](&#x66;ile:///outside.md)\n[credential](https://sample&#58;value&#64;example.test/)\n",
+    ],
+  ]);
+  expect(checkLinks(files).map((d) => d.rule)).toEqual([
+    "unsafe-link",
+    "unsafe-link",
+    "unsafe-link",
+  ]);
+});

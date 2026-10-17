@@ -10,7 +10,7 @@ Owners append one descriptive row when their document lands, keeping rows alphab
 | Planned PR gate guide                    | Contribution automation                | OVE_OSS003   |
 | Planned release guide                    | Signing and notarization               | OVE_SETUP014 |
 | Planned repository settings guide        | Labels, rulesets and checks            | OVE_SETUP018 |
-| Planned runner guide                     | Disposable CI and isolation evidence   | OVE_SETUP022 |
+| Planned runner guide                     | Disposable CI and isolation evidence   | OVE_SETUP021 |
 | [secret-scanning.md](secret-scanning.md) | Redaction, scanning and SBOM           | OVE_SETUP007 |
 
 Planned entries describe ownership, not completed code. [Dependency policy](../dependencies.md) covers adopted tools.

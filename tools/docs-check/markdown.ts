@@ -1,11 +1,11 @@
 import { lint } from "markdownlint/sync";
 import type { MicromarkToken, Rule } from "markdownlint";
+import { decodeHTMLStrict } from "entities";
 
 export function slug(heading: string): string {
   return heading
     .toLowerCase()
-    .replace(/\p{Variation_Selector}/gu, "")
-    .replace(/[^\p{L}\p{M}\p{N}_ -]/gu, "")
+    .replace(/[^\p{L}\p{M}\p{N}\p{Pc} -]/gu, "")
     .replace(/ /gu, "-");
 }
 
@@ -89,7 +89,11 @@ function stringValue(token: MicromarkToken): string {
     if (!child || ["image", "reference", "resource"].includes(child.type)) {
       continue;
     }
-    if (["data", "characterEscapeValue", "codeTextData"].includes(child.type)) {
+    if (child.type === "characterReference") {
+      text += decodeHTMLStrict(child.text);
+    } else if (
+      ["data", "characterEscapeValue", "codeTextData", "mathTextData"].includes(child.type)
+    ) {
       text += child.text;
     } else {
       queue.push(...[...child.children].reverse());
@@ -124,7 +128,10 @@ export function extractLinks(md: string): DocLink[] {
       )) {
         if (attribute[1]?.toLowerCase() === "src") {
           links.push({
-            target: attribute[2] ?? attribute[3] ?? attribute[4] ?? "",
+            target: (attribute[2] ?? attribute[3] ?? attribute[4] ?? "").replace(
+              /&(?:#[xX][0-9a-fA-F]+|#[0-9]+|[A-Za-z][A-Za-z0-9]+);/gu,
+              (reference) => decodeHTMLStrict(reference),
+            ),
             line: token.startLine + offset + html.slice(0, tag.index).split("\n").length - 1,
           });
         }

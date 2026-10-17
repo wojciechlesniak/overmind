@@ -1,5 +1,10 @@
 import { expect, it } from "vitest";
-import { lintConfiguration } from "./input.parse-boundary.ts";
+import { lintConfiguration, translationStatus } from "./input.parse-boundary.ts";
+
+it("recognizes front-matter end markers and fails closed on incomplete metadata", () => {
+  expect(translationStatus("\uFEFF---\nstatus: draft\n...\n# Draft\n")).toBe("draft");
+  expect(() => translationStatus("\uFEFF---\nstatus: draft\n")).toThrow();
+});
 
 it("accepts JSONC comments and trailing commas while preserving quoted data and denying executable config", () => {
   expect(

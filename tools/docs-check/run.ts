@@ -6,7 +6,7 @@ import { pathToFileURL } from "node:url";
 import { checkDocuments, type Flags } from "./checker.ts";
 import { diagnostic, type Diagnostic } from "./policy.ts";
 import { checkExternalLinks, type ExternalPort } from "./external.ts";
-import { canonicalFile, readRepositoryFile } from "./files.ts";
+import { canonicalFile, canonicalTarget, readRepositoryFile } from "./files.ts";
 import {
   lintConfiguration,
   pendingLinks,
@@ -124,11 +124,13 @@ export async function run(root: string, args: string[], network?: ExternalPort):
     })
       .split("\0")
       .filter(Boolean);
-    const paths = new Set(tracked);
+    const inventory = new Set(tracked);
+    const paths = new Set<string>();
     const files = new Map<string, string>();
     for (const file of tracked.filter((path) => path.endsWith(".md"))) {
       try {
         files.set(file, await readRepositoryFile(base, file));
+        paths.add(file);
       } catch {
         errors.push(
           diagnostic(
@@ -140,12 +142,20 @@ export async function run(root: string, args: string[], network?: ExternalPort):
         );
       }
     }
+    for (const file of tracked.filter((path) => !path.endsWith(".md"))) {
+      try {
+        await canonicalTarget(base, file);
+        paths.add(file);
+      } catch {
+        /* A tracked name is not proof that a safe target still exists. */
+      }
+    }
     const config = lintConfiguration(
       await readRepositoryFile(base, ".markdownlint-cli2.jsonc", true),
     );
     const scripts = rootScripts(await readRepositoryFile(base, "package.json", true));
     const workspaces = new Map<string, ReadonlySet<string>>();
-    if (paths.has("pnpm-workspace.yaml")) {
+    if (inventory.has("pnpm-workspace.yaml")) {
       const patterns = workspacePatterns(
         await readRepositoryFile(base, "pnpm-workspace.yaml", true),
       );
@@ -183,7 +193,7 @@ export async function run(root: string, args: string[], network?: ExternalPort):
     errors.push(
       ...(await checkDocuments({ files, paths, scripts, config, pending, flags, workspaces })),
     );
-    errors.push(...(await runPlugins({ root: base, files, paths, flags })));
+    errors.push(...(await runPlugins({ root: base, files, paths: inventory, flags })));
     if (flags.external) {
       errors.push(
         ...(await checkExternalLinks(

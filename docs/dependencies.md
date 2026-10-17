@@ -39,6 +39,7 @@ release age, scripts and the full transitive license graph before adoption.
 | @vitest/coverage-v8 | 5.0.4 | 5.0.5 | npm @vitest/coverage-v8@5.0.4 | Installed dev tool. |
 | @xyflow/react | 12.12.0 | 12.12.0 | npm @xyflow/react@12.12.0 | Reserved catalog pin; not yet installed. Owning task rechecks peers and full license graph. |
 | dependency-cruiser | 18.6.0 | 18.6.0 | npm dependency-cruiser@18.6.0 | Reserved catalog pin; not yet installed. Owning task rechecks peers and full license graph. |
+| entities | 7.0.1 | Existing locked version; no update | Existing graph and official public API | OVE_OSS004 direct adoption; BSD-2-Clause, no runtime dependencies. |
 | eslint | 10.12.0 | 10.12.0 | npm eslint@10.12.0 | Installed dev tool. |
 | eslint-config-prettier | 10.1.8 | 10.1.8 | npm eslint-config-prettier@10.1.8 | Installed dev tool. |
 | eslint-plugin-boundaries | 7.2.0 | 7.2.0 | npm eslint-plugin-boundaries@7.2.0 | Reserved catalog pin; not yet installed. Owning task rechecks peers and full license graph. |
@@ -438,6 +439,19 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
 - Source: <https://registry.npmjs.org/dependency-cruiser/18.6.0>
+
+### entities
+
+- Version: 7.0.1
+- License: BSD-2-Clause
+- Used by: overmind (dev)
+- Added by: OVE_OSS004
+- Value: Decode recognized HTML character references as inert strings before heading, path and URL checks; reuse the existing locked package instead of duplicating entity tables.
+- Maintenance cost: Review public API, license and semantic fixtures on exact-pin updates.
+- Alternatives considered: A heavy DOM environment, an additional Markdown parser, or copied character-reference tables with duplicated maintenance.
+- Risk: No runtime dependencies or consumer install scripts; all dependency controls remain unchanged. Decoding never executes HTML or JavaScript.
+- Last reviewed: 2026-10-17
+- Source: <https://github.com/fb55/entities>
 
 ### eslint
 

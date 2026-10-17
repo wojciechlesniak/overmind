@@ -25,6 +25,9 @@ export function checkLinks(
   const errors: Diagnostic[] = [];
   const anchors = new Map<string, Set<string>>();
   const hasAnchor = (file: string, fragment: string): boolean => {
+    if (targets.has(file) && fragment === "top") {
+      return true;
+    }
     let found = anchors.get(file);
     if (!found) {
       found = new Set(headings(targets.get(file) ?? "").map((h) => h.anchor));

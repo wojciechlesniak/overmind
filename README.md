@@ -122,15 +122,15 @@ Inventory entries, including reserved tooling:
 - `@axe-core/playwright`, `@commitlint/cli`, `@commitlint/config-conventional`, `@eslint/js`, `@playwright/test`, `@storybook/addon-a11y`
 - `@storybook/react-vite`, `@tauri-apps/api`, `@tauri-apps/cli`, `@testing-library/dom`, `@testing-library/jest-dom`, `@testing-library/react`
 - `@types/node`, `@types/react`, `@types/react-dom`, `@types/semver`, `@vitejs/plugin-react`, `@vitest/coverage-v8`
-- `@xyflow/react`, `dependency-cruiser`, `eslint`, `eslint-config-prettier`, `eslint-plugin-boundaries`, `eslint-plugin-react-refresh`
-- `globals`, `happy-dom`, `lefthook`, `markdownlint-cli2`, `markdownlint`, `oxlint`
-- `playwright`, `prettier`, `react`, `react-dom`, `semver`, `spdx-license-ids`
-- `storybook`, `tsx`, `typescript`, `typescript-eslint`, `vite`, `vitest`
-- `yaml`, `zod`, `actionlint`, `zizmor`, `cargo-deny`, `cargo-audit`
-- `gitleaks`, `syft`, `crate:tauri`, `crate:tauri-build`, `crate:tauri-plugin-shell`, `crate:tauri-plugin-single-instance`
-- `crate:tauri-plugin-dialog`, `crate:serde`, `crate:serde_json`, `crate:tokio`, `Node.js`, `pnpm`
-- `actions/checkout`, `actions/setup-node`, `actions/cache/restore`, `actions/cache/save`, `actions/upload-artifact`, `actions/download-artifact`
-- `actions/dependency-review-action`, `github/codeql-action/upload-sarif`, `@vitejs/plugin-react-swc`, `esbuild`, `crate:nix`, `crate:hyper`
-- `crate:hyper-util`, `crate:http-body-util`, `crate:exacl`
+- `@xyflow/react`, `dependency-cruiser`, `entities`, `eslint`, `eslint-config-prettier`, `eslint-plugin-boundaries`
+- `eslint-plugin-react-refresh`, `globals`, `happy-dom`, `lefthook`, `markdownlint-cli2`, `markdownlint`
+- `oxlint`, `playwright`, `prettier`, `react`, `react-dom`, `semver`
+- `spdx-license-ids`, `storybook`, `tsx`, `typescript`, `typescript-eslint`, `vite`
+- `vitest`, `yaml`, `zod`, `actionlint`, `zizmor`, `cargo-deny`
+- `cargo-audit`, `gitleaks`, `syft`, `crate:tauri`, `crate:tauri-build`, `crate:tauri-plugin-shell`
+- `crate:tauri-plugin-single-instance`, `crate:tauri-plugin-dialog`, `crate:serde`, `crate:serde_json`, `crate:tokio`, `Node.js`
+- `pnpm`, `actions/checkout`, `actions/setup-node`, `actions/cache/restore`, `actions/cache/save`, `actions/upload-artifact`
+- `actions/download-artifact`, `actions/dependency-review-action`, `github/codeql-action/upload-sarif`, `@vitejs/plugin-react-swc`, `esbuild`, `crate:nix`
+- `crate:hyper`, `crate:hyper-util`, `crate:http-body-util`, `crate:exacl`
 
 <!-- docs-credits:end -->

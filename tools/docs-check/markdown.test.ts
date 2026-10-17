@@ -2,7 +2,8 @@ import { expect, it } from "vitest";
 import { extractLinks, headings, slug } from "./markdown.ts";
 
 it("creates GitHub anchors for punctuation, emoji and non-ASCII text", () => {
-  expect(slug("Hello, World! ☕️")).toBe("hello-world-");
+  // GitHub's Word filter retains combining marks, including a variation selector.
+  expect(slug("Hello, World! ☕️")).toBe("hello-world-\uFE0F");
   expect(slug("Zażółć gęślą — A_B-C")).toBe("zażółć-gęślą--a_b-c");
 });
 
@@ -51,4 +52,16 @@ it("does not confuse other image attributes with the actual source", () => {
       '# Root\n\n<img alt=\' src="ignored.png"\' data-src="ignored.png" src="docs/assets/readme-hero.png">\n',
     ),
   ).toEqual([{ target: "docs/assets/readme-hero.png", line: 3 }]);
+});
+
+it("decodes numeric and named references as rendered heading data", () => {
+  expect(headings("# &#65; &#x3B2; &eacute; &Alpha;\n")[0]?.anchor).toBe("a-β-é-α");
+  expect(headings("# &fjlig;\n")[0]?.anchor).toBe("fj");
+});
+
+it("retains connector punctuation and inline math in GitHub anchors", () => {
+  expect(headings("# A‿B\n\n## Equation $x$\n").map((h) => h.anchor)).toEqual([
+    "a‿b",
+    "equation-x",
+  ]);
 });
