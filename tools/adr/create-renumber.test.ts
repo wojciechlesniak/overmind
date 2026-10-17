@@ -94,7 +94,26 @@ test("renumber defaults to a complete dry run, then fixes only the collided prop
     );
     writeFileSync(
       resolve(root, "docs/notes.md"),
-      '[ADR 0030](adr/0030-proposed-change.md#confirmation)\n[ADR 0030](adr/0030-proposed-change.md "title")\n[ADR 0030](<adr/0030-proposed-change.md> "title")\n[Existing ADR 0030](adr/0030-engine-packaging-and-sqlite-driver.md)\n[External](https://example.invalid/0030-proposed-change.md)\n[ADR 0030][proposal]\n[proposal]: adr/0030-proposed-change.md#confirmation\n',
+      [
+        "[ADR 0030](adr/0030-proposed-change.md#confirmation)",
+        '[ADR 0030](adr/0030-proposed-change.md "title")',
+        '[ADR 0030](<adr/0030-proposed-change.md> "title")',
+        "[Existing ADR 0030](adr/0030-engine-packaging-and-sqlite-driver.md)",
+        "[External](https://example.invalid/0030-proposed-change.md)",
+        "[ADR 0030][proposal]",
+        "",
+        "[proposal]: adr/0030-proposed-change.md#confirmation",
+        "",
+        "[ADR 0030][]",
+        "[ADR 0030]",
+        "",
+        '[ADR 0030]: <adr/0030-proposed-change.md> "reference title"',
+        "",
+        "[ADR 0030](adr\\/0030-proposed-change.md#one&amp;two)",
+        "`[ADR 0030](adr/0030-proposed-change.md)`",
+        "<!-- [ADR 0030](adr/0030-proposed-change.md) -->",
+        "",
+      ].join("\n"),
     );
     const original = readFileSync(resolve(root, "docs/notes.md"), "utf8");
     const plan = renumberAdr(root, 30, 31, false);
@@ -104,7 +123,26 @@ test("renumber defaults to a complete dry run, then fixes only the collided prop
     renumberAdr(root, 30, 31, true);
     expect(existsSync(resolve(root, old))).toBe(false);
     expect(readFileSync(resolve(root, "docs/notes.md"), "utf8")).toBe(
-      '[ADR 0031](adr/0031-proposed-change.md#confirmation)\n[ADR 0031](adr/0031-proposed-change.md "title")\n[ADR 0031](<adr/0031-proposed-change.md> "title")\n[Existing ADR 0030](adr/0030-engine-packaging-and-sqlite-driver.md)\n[External](https://example.invalid/0030-proposed-change.md)\n[ADR 0031][proposal]\n[proposal]: adr/0031-proposed-change.md#confirmation\n',
+      [
+        "[ADR 0031](adr/0031-proposed-change.md#confirmation)",
+        '[ADR 0031](adr/0031-proposed-change.md "title")',
+        '[ADR 0031](<adr/0031-proposed-change.md> "title")',
+        "[Existing ADR 0030](adr/0030-engine-packaging-and-sqlite-driver.md)",
+        "[External](https://example.invalid/0030-proposed-change.md)",
+        "[ADR 0031][proposal]",
+        "",
+        "[proposal]: adr/0031-proposed-change.md#confirmation",
+        "",
+        "[ADR 0031][ADR 0030]",
+        "[ADR 0031][ADR 0030]",
+        "",
+        '[ADR 0030]: <adr/0031-proposed-change.md> "reference title"',
+        "",
+        "[ADR 0031](adr\\/0031-proposed-change.md#one&amp;two)",
+        "`[ADR 0030](adr/0030-proposed-change.md)`",
+        "<!-- [ADR 0030](adr/0030-proposed-change.md) -->",
+        "",
+      ].join("\n"),
     );
     const changed = parseSlugMap(readFileSync(resolve(root, "docs/adr/slug-map.json"), "utf8"));
     expect(() => {
@@ -119,6 +157,20 @@ test("renumber defaults to a complete dry run, then fixes only the collided prop
       generateIndex(root, true);
     }).not.toThrow();
     expect(() => renumberAdr(root, 1, 32, true)).toThrow();
+    const proposal = createAdr(root, "Preserve history", {
+      clock: { today: () => "2026-10-17" },
+      git: { run: (args) => (args[0] === "rev-parse" ? "a".repeat(40) : "") },
+    });
+    expect(proposal).toBe("docs/adr/0032-preserve-history.md");
+    mkdirSync(resolve(root, "docs/pl"), { recursive: true });
+    const archive = "[ADR 0032](../adr/0032-preserve-history.md)\n";
+    writeFileSync(resolve(root, "docs/pl/archive.md"), archive);
+    const mapBeforeDenial = readFileSync(resolve(root, "docs/adr/slug-map.json"), "utf8");
+    expect(() => renumberAdr(root, 32, 33, true)).toThrow("Archived Polish originals");
+    expect(readFileSync(resolve(root, "docs/pl/archive.md"), "utf8")).toBe(archive);
+    expect(readFileSync(resolve(root, "docs/adr/slug-map.json"), "utf8")).toBe(mapBeforeDenial);
+    expect(existsSync(resolve(root, proposal))).toBe(true);
+    expect(existsSync(resolve(root, "docs/adr/0033-preserve-history.md"))).toBe(false);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }

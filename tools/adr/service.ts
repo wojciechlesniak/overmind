@@ -1,10 +1,11 @@
-import { basename, dirname, isAbsolute, relative, resolve } from "node:path";
+import { relative } from "node:path";
 import { lstatSync } from "node:fs";
 import { Files } from "./files.ts";
 import { metadataSchema, parseSlugMap, renderAdr } from "./input.parse-boundary.ts";
 import { slugify } from "./model.ts";
 import { observedNumbers, type Clock, type Git } from "./ports.ts";
 import { loadRecords } from "./repository.ts";
+import { rewriteAdrLinks } from "./rewrite-links.ts";
 
 export function createAdr(root: string, title: string, ports: { clock: Clock; git: Git }): string {
   const files = new Files(root);
@@ -95,45 +96,7 @@ export function renumberAdr(root: string, old: number, next: number, apply = fal
         continue;
       }
       const source = files.read(path);
-      const rewriteTarget = (target: string): string => {
-        const [file, anchor] = target.split("#");
-        if (
-          !file ||
-          isAbsolute(file) ||
-          /^[a-z][a-z0-9+.-]*:/iu.test(file) ||
-          resolve(dirname(path), file) !== files.path(before)
-        ) {
-          return target;
-        }
-        return (
-          file.slice(0, -record.file.length) +
-          basename(after) +
-          (anchor === undefined ? "" : `#${anchor}`)
-        );
-      };
-      const rewriteLabel = (label: string) =>
-        label.replace(
-          new RegExp(`\\bADR[- ]+${String(old).padStart(4, "0")}\\b`, "gu"),
-          `ADR ${String(next).padStart(4, "0")}`,
-        );
-      const references = new Set(
-        [...source.matchAll(/^ {0,3}\[([^\]\n]+)\]:\s+(\S+).*$/gmu)]
-          .filter((match) => match[2] !== undefined && rewriteTarget(match[2]) !== match[2])
-          .map((match) => (match[1] ?? "").trim().toLowerCase()),
-      );
-      const rewritten = source
-        .replace(/\[([^\]\n]*)\]\(([^)\s]+)\)/gu, (full: string, label: string, target: string) => {
-          const replaced = rewriteTarget(target);
-          return replaced === target ? full : `[${rewriteLabel(label)}](${replaced})`;
-        })
-        .replace(
-          /^( {0,3}\[[^\]\n]+\]:\s+)(\S+)(.*)$/gmu,
-          (_full: string, prefix: string, target: string, suffix: string) =>
-            prefix + rewriteTarget(target) + suffix,
-        )
-        .replace(/\[([^\]\n]*)\]\[([^\]\n]+)\]/gu, (full: string, label: string, key: string) =>
-          references.has(key.trim().toLowerCase()) ? `[${rewriteLabel(label)}][${key}]` : full,
-        );
+      const rewritten = rewriteAdrLinks(source, path, files.path(before), files.path(after, true));
       if (
         rewritten !== source &&
         relative(files.root, path).replaceAll("\\", "/").startsWith("docs/pl/")

@@ -59,7 +59,8 @@ test("real headings ignore H1 examples in indented fenced code and HTML comments
   expect(() =>
     parseAdr(
       "0001-choose-one-boundary.md",
-      record + "\n  ```markdown\n# A fenced example\n  ```\n\n<!--\n# A commented example\n-->\n",
+      record +
+        "\nExamples:\n\n  ```markdown\n# A fenced example\n  ```\n\n<!--\n# A commented example\n-->\n",
     ),
   ).not.toThrow();
 });

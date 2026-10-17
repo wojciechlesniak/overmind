@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { parseDocument, stringify } from "yaml";
+import { headings } from "../docs-check/markdown.ts";
 
 const number = z.number().int().min(1).max(9999);
 const text = z
@@ -117,13 +118,14 @@ export function parseAdr(file: string, source: string): Adr {
   const raw: unknown = document.toJS({ maxAliasCount: 0 });
   const meta = metadataSchema.parse(raw);
   const body = match[2] ?? "";
-  const headings = body.replace(/^(```|~~~)[^\n]*\n[\s\S]*?^\1[^\n]*$/gmu, "");
-  const titles = [...headings.matchAll(/^# (.+)\r?$/gmu)];
+  const visibleHeadings = headings(body);
+  const titles = visibleHeadings.filter((heading) => heading.level === 1);
   if (
     meta.adr !== Number(name[1]) ||
     titles.length !== 1 ||
-    titles[0]?.[1] !== meta.title ||
-    (meta.status !== "proposed" && !/^## Consequences\r?$/mu.test(headings))
+    titles[0]?.text !== meta.title ||
+    (meta.status !== "proposed" &&
+      !visibleHeadings.some((heading) => heading.level === 2 && heading.text === "Consequences"))
   ) {
     throw new Error("ADR number, title or Consequences is invalid");
   }

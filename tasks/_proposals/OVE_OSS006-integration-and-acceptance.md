@@ -244,3 +244,109 @@ examples, real titled/angle/reference link rewrites, unchanged external/archive
 targets, dry-run byte identity and unchanged non-target syntax. Run those scoped
 tests only after the integrator releases CPU. Full checks and independent reviews
 follow the focused GREEN; actual legacy metadata failures remain failures.
+
+### Actual pre-implementation Markdown reproduction
+
+The security checkpoint `112eb9f` passed the normal hooks, including zero secret
+findings, after scoped strict test typing and required style fixes. Rebase onto
+the exact OSS004 integration head completed as `cb8aa69`; the three shared-file
+conflicts retained both the existing protections and the additive ADR entries.
+The generated lockfile, catalog and dependency register stayed byte-identical to
+DEVELOP. Normal frozen install reused all 45 missing entries, downloaded none,
+and ran prepare. Primary Owner-file, index and common-configuration hashes stayed
+unchanged across these operations.
+
+Before any Markdown implementation, the exact existing records/renumber tests
+selected by name returned five failures and four skipped tests in 556 ms. They
+reproduced accepted indented second H1, comment-only and indented-fence-only
+Consequences; rejected valid fenced/commented H1 examples; and missed real titled
+and angle-wrapped renumber destinations. The local capture is named
+`ove026-markdown-red-cb8aa69.log` outside the tracked tree. The shared implementation
+and additional regressions are now being prepared as source only while another
+task holds the timed verification slot. No GREEN or final review is claimed yet.
+
+### Focused shared Markdown verification
+
+The new raw-HTML-heading regression first failed on the unchanged heading
+behavior: one failed test, eight skipped, 450 ms. The parser reported both hidden
+HTML-block headings as visible. The authorized narrow ancestor check now excludes
+only those synthetic HTML descendants; link extraction and the existing heading
+rules are otherwise unchanged. The failed capture remains available as
+`ove026-rawhtml-red-cb8aa69.log` outside the tracked tree.
+
+The first focused batch passed 19 tests and failed one valid-example fixture.
+Its indented fence continued the preceding list, while an unindented example H1
+ended that list/fence and therefore rendered as another heading. A normal
+`Examples:` paragraph now ends the list before the same two-space fence,
+unindented H1 and comment example; the expected assertion is unchanged. Reference
+fixtures also separate definitions from paragraphs so they exercise actual
+CommonMark reference links, rather than a regex-only imitation.
+
+The unchanged named batch then passed 20 tests across five files in 1.33 seconds,
+with 12 unrelated tests explicitly skipped: nine original-source span cases,
+five pure consumer cases, three denied heading cases, the valid fenced/commented
+example, the real dry-run/apply/archive renumber fixture and the HTML-heading
+regression. It proves the scoped real RED-to-GREEN, not complete docs/ADR checks.
+Both the failed first batch and successful capture are retained outside the
+tracked tree as `ove026-markdown-first-batch.log` and
+`ove026-markdown-focused-green.log`. Full shared regression, typing, lint,
+security, independent reviews and the explicit Owner acceptance decision remain
+pending. No new package, policy exception or fabricated legacy pass was added.
+
+### Complete applicable batch: real failures remain blocking
+
+Two additional label regressions first failed because a raw label match could
+change an ADR number inside inline code or an HTML comment. The minimal guard
+now refuses the entire ambiguous operation before any write, without attempting
+another markup parser. The actual pair changed from two failures in 2.20 seconds
+to two passes in 0.97 seconds. Original outputs remain in the local captures
+`ove026-label-red.log` and `ove026-label-green.log`.
+
+Full `pnpm typecheck`, full `pnpm lint` including React/Tauri checks, and all
+changed-source format checks then passed before the complete applicable suites.
+The shared docs/ADR unit batch passed 75 tests and failed two ordinary 5000 ms
+deadlines in 15.90 seconds: inherited documentation Git index isolation at
+8047 ms, and the real ADR CLI/FIFO/symlink safety test at 5152 ms. Neither failure
+was an integrity assertion, and neither was retried or assigned a larger budget.
+The inherited OSS004 classification repair belongs to the integrator's separate
+ARCH003 integration, not a duplicate edit here. All new span/consumer/heading
+cases and the actual dry-run/apply/archive assertions passed in this full batch.
+
+The actual ADR integrations passed five tests across four files in 25.22 seconds.
+Both public strict production commands returned exit 1 for the first legacy
+ADR's missing metadata, as intended; neither is called a migration pass. The
+first sandboxed invocation was prevented by tsx's local IPC boundary, so those
+failure logs were retained separately before the authorized normal execution
+confirmed the actual metadata finding. Primary Owner-file, index and shared Git
+configuration hashes remained unchanged. Complete captures are retained as
+`ove026-shared-unit-batch.log`, `ove026-adr-int-batch.log`,
+`ove026-legacy-check.log` and `ove026-legacy-index.log` outside the tracked tree.
+There is no complete-suite PASS, final acceptance or merge approval.
+
+### Proposed classification of the actual CLI safety integration
+
+Status: proposed only; no source move, workflow edit or budget change is applied.
+The complete-batch failure above is the reproduction. This test launches real
+Node CLI children and exercises real POSIX FIFO/symlink/filesystem boundaries;
+it belongs to integration discovery, as do the task's existing real Git tests.
+
+Request approval for an exact byte-preserving rename from
+`tools/adr/safety.test.ts` to `tools/adr/safety.int.test.ts`. Preserve every
+assertion, platform condition, unique fixture, 5000 ms outer deadline and 3000 ms
+child bound. Do not add retries, worker/coverage changes or a timing exception.
+After the separately owned ARCH003 CI repair is integrated, add one required
+shard-1 step after covered units in the existing matrix with exactly:
+
+```sh
+pnpm exec vitest run --config vitest.int.config.ts tools/adr/safety.int.test.ts
+```
+
+Extend that repair's existing protected integration-gate table with this exact
+name/command. Reuse its one schema/validator and genuine workflow mutations for
+removal, unrelated command, absent shard, wrong ordering, allowed failure and
+missing aggregate dependency. Keep the existing catalogue and documentation Git
+steps, all configuration approval protections and CODEOWNERS. Normal local
+integration discovery must include the renamed file. The focused actual public
+command, unchanged complete integration workload, remaining units and all exact
+head gates must pass before claiming this classification fixed the problem.
+If its unchanged budget still fails, retain the failure and stop that claim.

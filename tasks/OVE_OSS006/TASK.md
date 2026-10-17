@@ -154,3 +154,25 @@ Markdown indented-heading/comment/fence and titled/angle-link regressions remain
 RED pending the approved shared parser integration after OSS004 merges. No new
 runtime dependency or unmerged import was added. These repairs are not a final
 acceptance/review result; full checks and normal publication remain pending.
+
+The rebased shared-parser correction has now demonstrated actual focused
+RED-to-GREEN: the original five Markdown failures and a separately reproduced
+raw-HTML heading failure are corrected. The named batch passed 20 tests across
+five files in 1.33 seconds, including exact original-source spans, reference-key
+preservation, denied ambiguous destinations, dry-run identity and refusal to
+modify archived Polish source. Unrelated tests were explicitly skipped; full
+shared regressions, type/lint/security checks and fresh independent reviews
+remain pending. The strict production legacy-metadata failure and unapproved
+Owner staged acceptance remain blockers. Detailed captures and fixture
+corrections are recorded in the integration proposal.
+
+Subsequent actual validation passed full typecheck, full lint and changed-source
+formatting. The complete shared docs/ADR unit batch passed 75 and failed two
+5000 ms deadlines (inherited documentation Git isolation and this task's real
+CLI safety integration); no retry or budget relaxation was applied. Five actual
+ADR integrations passed across four files in 25.22 seconds. Both strict public
+ADR/index commands still exit 1 on legacy ADR 0001 metadata. A proposed
+byte-preserving classification with mandatory hosted execution is recorded for
+the real CLI safety test; it is not applied or approved yet. These failures,
+remaining exact-head gates/reviews and Owner staged acceptance still block
+completion.
