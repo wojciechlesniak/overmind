@@ -756,7 +756,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 
 - Version: 4.6.6
 - License: MIT
-- Used by: overmind (dev)
+- Used by: overmind (dev); contracts error metadata/details validation (runtime, OVE_ARCH003)
 - Added by: OVE_SETUP001
 - Value: Validate domain contracts and generate JSON Schema from one pure TypeScript source.
 - Maintenance cost: Upstream-driven release cadence; review every update. 1 npm publisher maintainers; pinned unpacked size 6005 KiB.

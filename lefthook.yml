@@ -17,7 +17,7 @@ pre-commit:
             stage_fixed: true
           - name: lint
             glob: "*.{ts,tsx,mjs}"
-            run: pnpm exec eslint --fix --max-warnings 0 -- {staged_files}
+            run: pnpm exec eslint --fix --no-warn-ignored --max-warnings 0 -- {staged_files}
             stage_fixed: true
           - name: react-lint
             glob: "*.tsx"

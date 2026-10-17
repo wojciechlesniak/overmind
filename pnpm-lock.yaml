@@ -568,7 +568,11 @@ importers:
         specifier: workspace:*
         version: link:../domain
 
-  packages/contracts: {}
+  packages/contracts:
+    dependencies:
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.6
 
   packages/domain:
     dependencies:
