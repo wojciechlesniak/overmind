@@ -126,8 +126,9 @@ The local pattern defence rejects common token, SQL, stack, absolute-path and
 control patterns after schema validation, including Unix paths after diagnostic
 punctuation, AWS keys, Telegram bot/API tokens, Overmind session/agent tokens,
 Keychain references and OAuth codes. The same text guard protects correlation
-identifiers. It is transitional until ARCH004's
-shared pure redaction seam exists; do not introduce an adapter import into L0.
+identifiers. Token patterns also match inside diagnostic identifiers; added
+letters, underscores or suffixes never make credentials safe to echo. It is
+transitional until ARCH004's shared pure redaction seam exists; do not introduce an adapter import into L0.
 Pattern matching does not make arbitrary CLI/file contents an approved detail.
 
 ## Reproduce the initial aggregate

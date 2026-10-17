@@ -195,3 +195,22 @@ Blocks every task that returns errors; publish early (a first merge with `Result
   documented bootstrap command regenerates the registry byte-for-byte. Scoped
   formatting and diff whitespace checks passed. Full checks, security gates,
   fresh independent reviews and integration remain pending; status is unchanged.
+
+## Second review-fix checkpoint (2026-10-17)
+
+- Seven embedded-token families first failed complete-response regressions.
+  Token guards now reject credentials inside underscore/alphanumeric prefixes
+  and suffixes. The corpus covers details, message parameters and correlation
+  across UI, Telegram and notifications, with runtime-assembled synthetic values
+  and boolean-only failure diagnostics.
+- The legitimate-PERM compiler fixture first failed with duplicate imports and
+  loss of its existing code (TypeScript 2300/2322). The extension probe now appends
+  a unique absent reason to an existing catalogue using its AST, preserving all
+  other catalogue files and registry descriptors. It also avoids shadowing an
+  existing assertion filename. The PERM-present scenario semantically checks
+  both the existing code and the added code.
+- The global DAG/value/byte guards and independent source/metadata registry scan
+  remain in place. Focused verification passed all 75 tests in the three affected
+  files; formatting and diff checks passed. Full checks and fresh independent
+  reviews are still required; this checkpoint does not claim completion or merge
+  approval.

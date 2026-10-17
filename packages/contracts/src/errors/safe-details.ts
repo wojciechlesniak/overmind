@@ -2,17 +2,20 @@ import { z } from "zod";
 import type { JsonValue, ErrorDefinition } from "./definition.ts";
 
 // Transitional error-boundary defence; ARCH004 will own shared redaction.
+// Credentials can be embedded in identifiers, so token patterns cannot rely on
+// word boundaries: underscores, letters and suffixes never make a token safe.
 const sensitive = [
   /\/(?:Users|home)(?:\/|$)/iu,
   /(?:^|[^\p{L}\p{N}_./-])\/\S+|[A-Za-z]:[\\/]/u,
   /\b(?:SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|CREATE)\b|\b(?:Bearer|stderr)\b/iu,
+  /bearer\s+[A-Za-z0-9._~+/=-]{16,}/iu,
   /(?:sk-|gh[pousr]_|github_pat_|xox[baprs]-)[A-Za-z0-9_-]+/u,
-  /\b(?:AKIA|ASIA)[0-9A-Z]{16}\b/u,
-  /\b\d{8,10}:[A-Za-z0-9_-]{35}(?![A-Za-z0-9_-])/u,
+  /(?:AKIA|ASIA)[0-9A-Z]{16}/u,
+  /\d{8,10}:[A-Za-z0-9_-]{35}/u,
   /api\.telegram\.org\/bot[^/\s]+/iu,
-  /\bovm_(?:st|at)_[A-Za-z0-9_-]{20,}/u,
+  /ovm_(?:st|at)_[A-Za-z0-9_-]{20,}/u,
   /[A-Za-z0-9_-]{16,}\.[A-Za-z0-9_-]{16,}\.[A-Za-z0-9_-]+/u,
-  /\beyJ[A-Za-z0-9_-]{8,}\.eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}/u,
+  /eyJ[A-Za-z0-9_-]{8,}\.eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}/u,
   /-----BEGIN|\bat\s+\S+\s*\(|\p{Cc}/u,
   /keychain:[A-Za-z0-9._/-]+/iu,
   /[?&](?:code|access_token|refresh_token|id_token)=[^&\s]+/iu,

@@ -1,9 +1,9 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import ts from "typescript";
 import { expect, expectTypeOf, it } from "vitest";
 import { catalogueModules, errorRegistry, isKnownCode, type ErrorCode } from "./index.generated.ts";
-import { createErrorRegistry } from "./registry.ts";
+import { createErrorRegistry, type CatalogueModule } from "./registry.ts";
 import { internalErrors } from "./internal.errors.ts";
 import { defineErrors } from "./define-errors.ts";
 import type { ErrorCatalogue } from "./definition.ts";
@@ -54,7 +54,7 @@ function catalogueDeclaration(source: string, text: string) {
   if (new Set(codes).size !== codes.length) {
     throw new Error("Duplicate error reasons in " + source);
   }
-  return { source, codes };
+  return { source, codes, table };
 }
 
 it("keeps the generated registry synchronized with every independently scanned catalogue", () => {
@@ -116,38 +116,48 @@ it("rejects two catalogues for the same area even when their reasons differ", ()
   ).toThrow(/one\.errors\.ts.*two\.errors\.ts/u);
 });
 
-it("typechecks a regenerated registry with another area without closing ErrorCode", () => {
-  const registryPath = resolve(import.meta.dirname, "index.generated.ts");
-  const extensionPath = resolve(import.meta.dirname, "perm.errors.ts");
-  const assertionPath = resolve(import.meta.dirname, "extension.typecheck.ts");
-  const source = readFileSync(registryPath, "utf8");
-  const extended = source
-    .replace(
-      'import { validationErrors } from "./validation.errors.ts";',
-      'import { validationErrors } from "./validation.errors.ts";\nimport { permErrors } from "./perm.errors.ts";',
-    )
-    .replace("] as const;", '  { source: "perm.errors.ts", errors: permErrors },\n] as const;');
+function extensionDiagnostics(
+  existingFiles = new Map<string, string>(),
+  requiredCode = "internal.unexpected",
+) {
+  const extensionPath = resolve(import.meta.dirname, "internal.errors.ts");
+  const source = existingFiles.get(extensionPath) ?? readFileSync(extensionPath, "utf8");
+  const declaration = catalogueDeclaration("internal.errors.ts", source);
+  let reason = "fixture_extension";
+  for (let suffix = 1; declaration.codes.includes("internal." + reason); suffix += 1) {
+    reason = "fixture_extension_" + String(suffix);
+  }
+  const addedCode = "internal." + reason;
+  const closing = declaration.table.getEnd() - 1;
+  const separator =
+    declaration.table.properties.length > 0 && !declaration.table.properties.hasTrailingComma
+      ? ","
+      : "";
+  const entry = [
+    separator,
+    reason + ': { http: 500, severity: "error", retryable: false,',
+    "messageKey: " +
+      JSON.stringify("errors:" + addedCode) +
+      ', defaultMessage: "Fixture failure.", telegramSafe: true },',
+    "",
+  ].join("\n");
+  let assertionPath = resolve(import.meta.dirname, "extension.typecheck.ts");
+  for (let suffix = 1; existsSync(assertionPath) || existingFiles.has(assertionPath); suffix += 1) {
+    assertionPath = resolve(import.meta.dirname, "extension.typecheck_" + String(suffix) + ".ts");
+  }
   const virtual = new Map([
-    [registryPath, extended],
-    [
-      extensionPath,
-      [
-        'import { defineErrors } from "./define-errors.ts";',
-        'export const permErrors = defineErrors("perm", {',
-        '  fixture_extension: { http: 403, severity: "warn", retryable: false,',
-        '    messageKey: "errors:perm.fixture_extension", defaultMessage: "Access was denied.", telegramSafe: true },',
-        "});",
-      ].join("\n"),
-    ],
+    ...existingFiles,
+    [extensionPath, source.slice(0, closing) + entry + source.slice(closing)],
     [
       assertionPath,
       [
         'import type { ErrorCode } from "./index.generated.ts";',
-        'const added: ErrorCode = "perm.fixture_extension";',
+        "const added: ErrorCode = " + JSON.stringify(addedCode) + ";",
         'const core: ErrorCode = "internal.unexpected";',
+        "const existing: ErrorCode = " + JSON.stringify(requiredCode) + ";",
         "// @ts-expect-error Unknown values must not widen the literal code union.",
         'const unknown: ErrorCode = "newer.unknown";',
-        "void [added, core, unknown];",
+        "void [added, core, existing, unknown];",
       ].join("\n"),
     ],
   ]);
@@ -179,5 +189,43 @@ it("typechecks a regenerated registry with another area without closing ErrorCod
     },
   };
   const program = ts.createProgram([import.meta.filename, assertionPath], options, host);
-  expect(ts.getPreEmitDiagnostics(program).map((diagnostic) => diagnostic.code)).toEqual([]);
+  return ts.getPreEmitDiagnostics(program).map((diagnostic) => diagnostic.code);
+}
+
+it("typechecks an additive catalogue extension without closing ErrorCode", () => {
+  expect(extensionDiagnostics()).toEqual([]);
+});
+
+it("keeps a real PERM catalogue intact when checking an additional error code", () => {
+  const registryPath = resolve(import.meta.dirname, "index.generated.ts");
+  const permPath = resolve(import.meta.dirname, "perm.errors.ts");
+  const modules: readonly CatalogueModule[] = catalogueModules;
+  const existing = modules.find((module) => module.source === "perm.errors.ts");
+  const requiredCode = existing ? Object.values(existing.errors)[0]?.code : "perm.existing_reason";
+  if (!requiredCode) {
+    throw new Error("The existing PERM catalogue has no codes.");
+  }
+  const files = new Map<string, string>();
+  if (!existing) {
+    files.set(
+      permPath,
+      [
+        'import { defineErrors } from "./define-errors.ts";',
+        'export const permErrors = defineErrors("perm", {',
+        '  existing_reason: { http: 403, severity: "warn", retryable: false,',
+        '    messageKey: "errors:perm.existing_reason", defaultMessage: "Access was denied.", telegramSafe: true },',
+        "});",
+      ].join("\n"),
+    );
+    files.set(
+      registryPath,
+      readFileSync(registryPath, "utf8")
+        .replace(
+          'import { createErrorRegistry } from "./registry.ts";',
+          'import { createErrorRegistry } from "./registry.ts";\nimport { permErrors } from "./perm.errors.ts";',
+        )
+        .replace("] as const;", '  { source: "perm.errors.ts", errors: permErrors },\n] as const;'),
+    );
+  }
+  expect(extensionDiagnostics(files, requiredCode)).toEqual([]);
 });

@@ -90,7 +90,10 @@ compiler's AST, compares its literal declarations with the static descriptors
 and runtime registry, and retains duplicate-area/code checks. It executes no
 variable import, anticipating ARCH002's dynamic-import enforcement without
 requesting an exemption. The seed command in the owned error guide regenerates
-the same descriptors. A compiler-host overlay adds a synthetic new area and
-regenerates the aggregate in memory, then semantically checks the actual registry
-test and literal-code assignments. It proves that the test suite accepts additive
-codes while rejecting a broad string type; no fixture code is executed.
+the same descriptors. A compiler-host overlay appends a unique absent code to an
+existing catalogue without replacing existing definitions, then semantically checks the actual
+registry test and literal-code assignments. A separate scenario first includes a
+legitimate PERM catalogue and its generated descriptor, proving that future area
+files remain intact. The probe chooses an absent reason from the source AST and
+an absent virtual assertion filename. It accepts additive codes while rejecting
+a broad string type; no fixture code is executed.

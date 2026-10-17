@@ -150,14 +150,7 @@ it("never serializes hostile exceptions, unknown codes, malformed details or hos
   }
 });
 
-const sensitiveDetails = [
-  { name: "an assigned home path", value: () => "source=" + "/Users/fake/.ssh/id_rsa" },
-  {
-    name: "a home path attached to a diagnostic",
-    value: () => "source-" + "/Users/fake/.ssh/id_rsa",
-  },
-  { name: "a diagnostic path", value: () => "path:" + "/private/fake/input" },
-  { name: "a bracketed Unix path", value: () => "source=[" + "/etc/fake.conf]" },
+const sensitiveTokens = [
   { name: "an AWS access key", value: () => ["AK", "IA", "A1".repeat(8)].join("") },
   { name: "an AWS temporary key", value: () => ["AS", "IA", "B2".repeat(8)].join("") },
   { name: "a Telegram bot token", value: () => String(123456789) + ":" + "aB_".repeat(11) + "cd" },
@@ -187,48 +180,64 @@ const sensitiveDetails = [
     name: "URL credentials",
     value: () => ["https:", "//", "fake:fixture@", "invalid.example"].join(""),
   },
+];
+
+const sensitiveDetails = [
+  { name: "an assigned home path", value: () => "source=" + "/Users/fake/.ssh/id_rsa" },
+  {
+    name: "a home path attached to a diagnostic",
+    value: () => "source-" + "/Users/fake/.ssh/id_rsa",
+  },
+  { name: "a diagnostic path", value: () => "path:" + "/private/fake/input" },
+  { name: "a bracketed Unix path", value: () => "source=[" + "/etc/fake.conf]" },
+  ...sensitiveTokens,
   { name: "a SQL fragment", value: () => ["SELECT", "fake_table"].join(" ") },
   { name: "a stack frame", value: () => ["at", "fake", "(/private/fixture:1:1)"].join(" ") },
   { name: "process stderr", value: () => ["stderr:", "private fixture output"].join(" ") },
 ];
 
-it.each(sensitiveDetails)("never serializes $name approved as sanitised details", ({ value }) => {
-  const hostile = value();
-  const errors = defineErrors("gateway", {
-    sensitive_detail: {
-      http: 400,
-      severity: "warn",
-      retryable: false,
-      messageKey: "errors:gateway.sensitive_detail",
-      defaultMessage: "The input is invalid.",
-      detailsSchema: z.strictObject({ label: sanitisedText }),
-      telegramSafe: true,
-    },
-  });
-  const localRegistry = createErrorRegistry([{ source: "gateway.errors.ts", errors }]);
-  const error = errors.sensitive_detail({ label: hostile });
+const textErrors = defineErrors("gateway", {
+  sensitive_detail: {
+    http: 400,
+    severity: "warn",
+    retryable: false,
+    messageKey: "errors:gateway.sensitive_detail",
+    defaultMessage: "The input is invalid.",
+    detailsSchema: z.strictObject({ label: sanitisedText }),
+    telegramSafe: true,
+  },
+});
+const textRegistry = createErrorRegistry([{ source: "gateway.errors.ts", errors: textErrors }]);
+
+function expectNoSensitiveWireText(hostile: string, forbidden = hostile) {
+  const error = textErrors.sensitive_detail({ label: hostile });
   for (const channel of ["ui", "telegram", "notification"] as const) {
     for (const input of [error, { code: error.code, details: { label: hostile } }]) {
       const response = toErrorResponse(input, {
-        registry: localRegistry,
-        correlationId: "request-sensitive",
-        channel,
-      });
-      expect(
-        JSON.stringify(response).includes(hostile),
-        "Sensitive input must stay off the wire",
-      ).toBe(false);
-      expect(Object.hasOwn(response.body.error, "details")).toBe(false);
-      expect(Object.keys(response.body.error.userMessage.params)).toEqual([]);
-      const correlated = toErrorResponse(error, {
-        registry: localRegistry,
+        registry: textRegistry,
         correlationId: hostile,
         channel,
       });
       expect(
-        JSON.stringify(correlated).includes(hostile),
-        "Sensitive correlation must stay off the wire",
+        JSON.stringify(response).includes(forbidden),
+        "Sensitive input must stay off the complete wire response",
       ).toBe(false);
+      expect(Object.hasOwn(response.body.error, "details")).toBe(false);
+      expect(Object.keys(response.body.error.userMessage.params)).toEqual([]);
+      expect(response.body.error.correlationId === "unavailable").toBe(true);
+    }
+  }
+}
+
+it.each(sensitiveDetails)("never serializes $name approved as sanitised details", ({ value }) => {
+  expectNoSensitiveWireText(value());
+});
+
+it.each(sensitiveTokens)("rejects $name embedded in diagnostic identifiers", ({ value }) => {
+  const token = value();
+  for (const prefix of ["request_", "prefix123"]) {
+    for (const suffix of ["", "_suffix", "xyz"]) {
+      expectNoSensitiveWireText(prefix + token + suffix, token);
     }
   }
 });
