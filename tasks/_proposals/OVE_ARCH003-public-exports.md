@@ -417,3 +417,55 @@ Strict test typing and formatting passed; all five exact integration checks
 passed in 6.10 s, with four independent compiler scenarios at
 1470/1363/1336/1396 ms under the original 4 s / 5 s deadlines. Updated independent
 reviews and complete canonical/hosted checks remain required.
+
+
+### Inherited documentation Git integration repair, approved 2026-10-17
+
+The first canonical run at c982943dbfd1 passed 500 unit tests, 62 integration
+checks and 33 Rust tests, then stopped when the pinned cargo-audit download lost
+its external connection. The public installer subsequently succeeded. An
+unchanged aggregate retry exposed two inherited OSS004 documentation-fixture
+checks exceeding the ordinary 5000 ms test budget: 5144/5372 ms, compared with
+3178/2826 ms in the first complete run. No Git index/configuration assertion
+failed. Separate unchanged-source diagnostics passed all three checks alone
+(1448/1722/919 ms) and with the existing ESLint configuration test
+(1668/2201/973 ms). These observations support contention during the complete
+covered workload; they do not establish one specific competing process as its
+cause. The task is returned to in_progress while the integration repair is
+verified; the earlier done metadata is not permission to merge a failing run.
+
+The integrator approved this narrow correction to the inherited test placement:
+
+1. Rename the complete three-test documentation Git environment file to
+   tools/docs-check/git-environment.int.test.ts, preserving every byte of its
+   contents. The real nested Vitest callers still execute run.test.ts and
+   targets.test.ts. Poisoned Git selection/index modes, temporary sentinels,
+   index/configuration/tracked-file assertions and the real CLI comparison are
+   unchanged. The outer 5000 ms and child 10000 ms deadlines remain unchanged.
+2. Add one mandatory step named Check documentation Git environment integration
+   after covered units in the existing required test matrix, on shard 1, with:
+
+   pnpm exec vitest run --config vitest.int.config.ts tools/docs-check/git-environment.int.test.ts
+
+   The existing error catalogue step is unchanged. There is no new job, allowed
+   failure, worker change, retry or coverage exception. Complete local test:int
+   still discovers the renamed file under the existing two-worker configuration.
+3. Extend the existing protected catalogue-ci-gate.test.ts with a two-entry data
+   table and the same schema/validator. Both steps are checked independently.
+   Real parsed-workflow mutations must reject removal, an unrelated successful
+   command, an unreachable shard, execution before covered units, allowed failure
+   and omission from the required aggregate dependency. Existing CODEOWNERS and
+   config-change protection for tools/errors covers this validator; no new
+   protection file or policy rule is needed.
+
+Before the workflow edit, the new actual-workflow assertion failed specifically
+for the missing documentation step, while the existing catalogue gate passed
+(13 passed, one failed). After adding the exact step, all 14 structural checks
+passed. The byte-identical renamed integration passed all three actual checks in
+4.09 s, with cases at 1798/1295/844 ms under the unchanged deadlines. Strict
+test-project typing, scoped lint, formatting and diff checks also passed. Read-only
+comparison against the original publication receipt confirmed the primary Git
+index, common Git configuration and Owner research file unchanged. Complete
+covered/integration/canonical checks, fresh independent delta reviews and required
+hosted execution must still pass for the repaired head. This focused evidence
+does not establish final acceptance.

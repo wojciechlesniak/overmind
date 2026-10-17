@@ -105,6 +105,9 @@ jobs:
       - name: Check error catalogue integration
         if: matrix.shard == 1
         run: pnpm exec vitest run --config vitest.int.config.ts tools/errors/catalogue-types.int.test.ts
+      - name: Check documentation Git environment integration
+        if: matrix.shard == 1
+        run: pnpm exec vitest run --config vitest.int.config.ts tools/docs-check/git-environment.int.test.ts
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:

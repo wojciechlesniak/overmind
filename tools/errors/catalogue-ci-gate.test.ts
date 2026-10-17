@@ -2,11 +2,21 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { parse } from "yaml";
 import { z } from "zod";
-import { expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
-const name = "Check error catalogue integration";
-const command =
-  "pnpm exec vitest run --config vitest.int.config.ts tools/errors/catalogue-types.int.test.ts";
+const gates = [
+  {
+    name: "Check error catalogue integration",
+    command:
+      "pnpm exec vitest run --config vitest.int.config.ts tools/errors/catalogue-types.int.test.ts",
+  },
+  {
+    name: "Check documentation Git environment integration",
+    command:
+      "pnpm exec vitest run --config vitest.int.config.ts tools/docs-check/git-environment.int.test.ts",
+  },
+] as const;
+type Gate = (typeof gates)[number];
 const stepSchema = z.object({
   name: z.string().optional(),
   run: z.string().optional(),
@@ -34,7 +44,7 @@ const workflowSchema = z.object({
 });
 type Workflow = z.infer<typeof workflowSchema>;
 
-function requireCatalogueGate(input: unknown): void {
+function requireIntegrationGate(input: unknown, { name, command }: Gate): void {
   const workflow = workflowSchema.parse(input);
   const steps = workflow.jobs.test.steps;
   const probes = steps.filter((step) => step.name === name);
@@ -47,7 +57,7 @@ function requireCatalogueGate(input: unknown): void {
     coverageIndex < 0 ||
     steps.indexOf(probe) <= coverageIndex
   ) {
-    throw new Error("Required catalogue integration gate is absent or bypassed.");
+    throw new Error("Required integration gate is absent or bypassed.");
   }
 }
 
@@ -60,71 +70,106 @@ function actualWorkflow(): Workflow {
   return workflowSchema.parse(input);
 }
 
-it("requires the actual full-CI catalogue integration after covered units in a mandatory shard", () => {
-  expect(() => {
-    requireCatalogueGate(actualWorkflow());
-  }).not.toThrow();
-});
+describe.each(gates)("$name", (gate) => {
+  const { name } = gate;
 
-it.each([
-  {
-    name: "removing the integration step",
-    mutate: (workflow: Workflow): unknown => ({
-      ...workflow,
-      jobs: {
-        ...workflow.jobs,
-        test: {
-          ...workflow.jobs.test,
-          steps: workflow.jobs.test.steps.filter((step) => step.name !== name),
+  it("requires the actual full-CI integration after covered units in a mandatory shard", () => {
+    expect(() => {
+      requireIntegrationGate(actualWorkflow(), gate);
+    }).not.toThrow();
+  });
+
+  it.each([
+    {
+      name: "removing the integration step",
+      mutate: (workflow: Workflow): unknown => ({
+        ...workflow,
+        jobs: {
+          ...workflow.jobs,
+          test: {
+            ...workflow.jobs.test,
+            steps: workflow.jobs.test.steps.filter((step) => step.name !== name),
+          },
         },
-      },
-    }),
-  },
-  {
-    name: "using a shard which the matrix never starts",
-    mutate: (workflow: Workflow): unknown => ({
-      ...workflow,
-      jobs: {
-        ...workflow.jobs,
-        test: {
-          ...workflow.jobs.test,
-          steps: workflow.jobs.test.steps.map((step) =>
-            step.name === name ? { ...step, if: "matrix.shard == 999" } : step,
-          ),
+      }),
+    },
+    {
+      name: "replacing the required command with an unrelated successful command",
+      mutate: (workflow: Workflow): unknown => ({
+        ...workflow,
+        jobs: {
+          ...workflow.jobs,
+          test: {
+            ...workflow.jobs.test,
+            steps: workflow.jobs.test.steps.map((step) =>
+              step.name === name ? { ...step, run: "pnpm --version" } : step,
+            ),
+          },
         },
-      },
-    }),
-  },
-  {
-    name: "allowing the integration assertion to fail",
-    mutate: (workflow: Workflow): unknown => ({
-      ...workflow,
-      jobs: {
-        ...workflow.jobs,
-        test: {
-          ...workflow.jobs.test,
-          steps: workflow.jobs.test.steps.map((step) =>
-            step.name === name ? { ...step, "continue-on-error": true } : step,
-          ),
+      }),
+    },
+    {
+      name: "using a shard which the matrix never starts",
+      mutate: (workflow: Workflow): unknown => ({
+        ...workflow,
+        jobs: {
+          ...workflow.jobs,
+          test: {
+            ...workflow.jobs.test,
+            steps: workflow.jobs.test.steps.map((step) =>
+              step.name === name ? { ...step, if: "matrix.shard == 999" } : step,
+            ),
+          },
         },
-      },
-    }),
-  },
-  {
-    name: "dropping the required test dependency",
-    mutate: (workflow: Workflow): unknown => ({
-      ...workflow,
-      jobs: {
-        ...workflow.jobs,
-        "ci-success": {
-          ...workflow.jobs["ci-success"],
-          needs: workflow.jobs["ci-success"].needs.filter((need) => need !== "test"),
+      }),
+    },
+    {
+      name: "moving the integration before covered units",
+      mutate: (workflow: Workflow): unknown => ({
+        ...workflow,
+        jobs: {
+          ...workflow.jobs,
+          test: {
+            ...workflow.jobs.test,
+            steps: [
+              ...workflow.jobs.test.steps.filter((step) => step.name === name),
+              ...workflow.jobs.test.steps.filter((step) => step.name !== name),
+            ],
+          },
         },
-      },
-    }),
-  },
-])("detects $name in a structural mutation of the real workflow", ({ mutate }) => {
-  expect(() => {
-    requireCatalogueGate(mutate(actualWorkflow()));
-  }).toThrow();
+      }),
+    },
+    {
+      name: "allowing the integration assertion to fail",
+      mutate: (workflow: Workflow): unknown => ({
+        ...workflow,
+        jobs: {
+          ...workflow.jobs,
+          test: {
+            ...workflow.jobs.test,
+            steps: workflow.jobs.test.steps.map((step) =>
+              step.name === name ? { ...step, "continue-on-error": true } : step,
+            ),
+          },
+        },
+      }),
+    },
+    {
+      name: "dropping the required test dependency",
+      mutate: (workflow: Workflow): unknown => ({
+        ...workflow,
+        jobs: {
+          ...workflow.jobs,
+          "ci-success": {
+            ...workflow.jobs["ci-success"],
+            needs: workflow.jobs["ci-success"].needs.filter((need) => need !== "test"),
+          },
+        },
+      }),
+    },
+  ])("detects $name in a structural mutation of the real workflow", ({ mutate }) => {
+    expect(() => {
+      requireIntegrationGate(mutate(actualWorkflow()), gate);
+    }).toThrow();
+  });
 });

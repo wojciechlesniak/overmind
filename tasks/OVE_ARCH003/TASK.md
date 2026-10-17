@@ -6,7 +6,7 @@ kind: contract
 size: M
 priority: P0
 mvp: true
-status: done
+status: in_progress
 depends_on: [OVE_ARCH001, OVE_SETUP002]
 soft_depends_on: [OVE_ARCH008]
 provides: ["lib:result", "contract:AppError", "contract:ErrorCode", "lib:error-catalogue", "lib:error-mapper"]
@@ -290,3 +290,28 @@ Blocks every task that returns errors; publish early (a first merge with `Result
   all pre-emit diagnostics. No broad suite was rerun for this focused correction.
 - Both reviews must assess the updated head, and complete canonical/security and
   hosted checks on the rebased branch remain pending.
+
+
+## Inherited documentation integration repair (2026-10-17)
+
+- The original canonical check at c982943dbfd1 passed 500 units, 62 integrations
+  and 33 Rust tests before an external pinned-binary download failure. After the
+  public installer succeeded, an unchanged retry exceeded the ordinary 5000 ms
+  budget in two inherited documentation tests that launch real nested Vitest.
+  No Git integrity assertion failed; separate unchanged-source checks passed.
+  Status is returned to in_progress until the repaired head passes all gates.
+- The integrator approved moving the entire unchanged three-test file to
+  tools/docs-check/git-environment.int.test.ts and adding its exact command as a
+  mandatory shard-1 step in the existing required CI job. Real fixture callers,
+  every assertion, 5000 ms outer / 10000 ms child bounds, worker limits and
+  coverage policy remain unchanged.
+- The existing protected CI validator now uses one two-step table and one
+  schema/validator for both catalogue and documentation integrations. The new
+  actual-workflow assertion first failed for the absent documentation step;
+  after adding it, all 14 structural checks passed, including wrong-command and
+  ordering mutations for each step. The three unchanged real integrations passed
+  in 4.09 s, with cases at 1798/1295/844 ms. Strict test-project typing, scoped
+  lint, formatting and diff checks passed. Original receipt hashes confirm the
+  primary Git index, common configuration and Owner research unchanged. Complete
+  canonical/hosted execution and both independent delta reviews remain required;
+  this is not merge approval.
