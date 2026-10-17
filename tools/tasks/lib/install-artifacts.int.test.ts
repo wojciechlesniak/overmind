@@ -9,11 +9,14 @@ import {
   writeFileSync,
 } from "node:fs";
 import { join } from "node:path";
-import { expect, it } from "vitest";
+import { expect, it, vi } from "vitest";
 import { isolatedGitEnvironment } from "../../hooks/git-test-environment.ts";
 import { createGit, createRunner, gitText } from "./git.ts";
 import type { Runner } from "./git.ts";
 import { runCommand } from "./service.ts";
+
+// Each race performs two real frozen installations and multiple Git subprocesses.
+vi.setConfig({ testTimeout: 30_000 });
 
 async function installedRace(change?: (path: string) => void, inventoryUnavailable = false) {
   const directory = mkdtempSync("/private/tmp/ove-install-claim-");

@@ -68,6 +68,9 @@ the post-open regular-file check preserves that property if the path is swapped.
 
 The first full post-review run passed lint, types and 331 unit tests, but two
 multi-step real-Git lifecycle scenarios exceeded Vitest's default five-second
-test budget under concurrent builds. Those two scenarios now have a bounded
-30-second test budget; their assertions and subprocess limits are unchanged.
-The failed run remains recorded and is not counted as a passing full check.
+test budget under concurrent builds. A retry exposed the same budget issue in
+two real two-install races. Both lifecycle and installation-race suites now use
+a bounded 30-second per-test fixture budget; assertions and production subprocess
+limits are unchanged. Failed runs remain recorded and are not counted as passing
+full checks. Installation inventory also opens files nonblocking and verifies
+their regular-file type after open, preventing a file-to-FIFO swap from blocking.

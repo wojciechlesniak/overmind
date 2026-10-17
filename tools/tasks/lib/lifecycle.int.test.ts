@@ -1,12 +1,16 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync } from "node:fs";
 import { join } from "node:path";
-import { expect, it } from "vitest";
+import { expect, it, vi } from "vitest";
 import { isolatedGitEnvironment } from "../../hooks/git-test-environment.ts";
 import { createGit, createRunner, gitText } from "./git.ts";
 import { runCommand } from "./service.ts";
 import { writeFileSync } from "node:fs";
 import type { Runner } from "./git.ts";
 import { outputSchema } from "./output.ts";
+
+// Each scenario creates real repositories and runs multiple Git subprocesses.
+// Keep that fixture budget separate from the production subprocess limits.
+vi.setConfig({ testTimeout: 30_000 });
 
 async function fixture() {
   const directory = mkdtempSync("/private/tmp/ove-task-life-");

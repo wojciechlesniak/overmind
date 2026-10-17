@@ -87,9 +87,13 @@ async function fingerprint(git: Git, root: string): Promise<string> {
       if (bytes > maxBytes) {
         throw new Error("Installation inventory exceeds its byte bound");
       }
-      const descriptor = openSync(path, constants.O_RDONLY | constants.O_NOFOLLOW);
+      const descriptor = openSync(
+        path,
+        constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK,
+      );
       try {
-        if (metadata(fstatSync(descriptor, { bigint: true })) !== metadata(before)) {
+        const opened = fstatSync(descriptor, { bigint: true });
+        if (!opened.isFile() || metadata(opened) !== metadata(before)) {
           throw new Error("Installation file changed during inventory");
         }
         const buffer = Buffer.alloc(64 * 1024);
