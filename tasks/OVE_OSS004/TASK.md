@@ -106,6 +106,13 @@ Documentation files at the repository root and under `docs/`; tooling in `tools/
 
 Unit tests for slug, link extraction, command extraction, ADR reference parsing and forbidden strings, with fixture Markdown trees under `tools/docs-check/fixtures/`. A snapshot-free test runs the checker on the real `README.md`. Commands: `pnpm test -- tools/docs-check`, `pnpm check:docs`, `pnpm check:docs --publish` (expected to fail until Owner markers are resolved).
 
+Hook-environment regressions run the real fixture tests and documentation CLI in
+child processes with Git selection variables pointing only to disposable sentinel
+repositories. Assert that the sentinel index hash, configuration and inventory
+remain unchanged, while the CLI reports the requested fixture's actual content.
+The pre-fix RED evidence and shared-helper correction are recorded in
+[the isolation follow-up](../_proposals/OVE_OSS004-git-environment-isolation.md).
+
 ## 13. Parallelization notes
 
 Parallel with OVE_OSS001..003, 005, 006. Hotspots: `docs/README.md` and the folder index pages are append-only by other tasks (one line per document, alphabetical to keep merges trivial). `tools/docs-check/pending-links.json` entries are removed by the task that creates the target.

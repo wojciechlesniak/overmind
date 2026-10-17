@@ -3,12 +3,13 @@ import { mkdtemp, mkdir, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { expect, it, vi } from "vitest";
+import { isolatedGitEnvironment } from "../hooks/git-test-environment.ts";
 import { run } from "./run.ts";
 
 it("runs on a real tracked repository, remains offline by default and produces GitHub annotations", async () => {
   const root = await mkdtemp(join(tmpdir(), "ove-doc-cli-"));
   try {
-    execFileSync("git", ["init", "--quiet", root]);
+    execFileSync("git", ["init", "--quiet", root], { env: isolatedGitEnvironment() });
     await mkdir(join(root, "tools/docs-check"), { recursive: true });
     await writeFile(join(root, "package.json"), JSON.stringify({ scripts: { check: "test" } }));
     await mkdir(join(root, "apps/engine"), { recursive: true });
@@ -27,7 +28,7 @@ it("runs on a real tracked repository, remains offline by default and produces G
       join(root, "README.md"),
       "# Root\n\n[external](https://public.example/)\n\n```bash\npnpm missing\npnpm --filter @overmind/engine start\npnpm --filter @overmind/unknown start\npnpm --filter @overmind/engine missing\n```\n",
     );
-    execFileSync("git", ["-C", root, "add", "."]);
+    execFileSync("git", ["-C", root, "add", "."], { env: isolatedGitEnvironment() });
     const request = vi.fn();
     const result = await run(root, ["--github"], { resolve: vi.fn(), request });
     expect(result.diagnostics.map((d) => d.rule)).toContain("unknown-command");

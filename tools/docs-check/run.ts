@@ -16,6 +16,7 @@ import {
 } from "./input.parse-boundary.ts";
 import { runPlugins } from "./plugins.ts";
 import { updateGenerated } from "./generated.ts";
+import { isolatedGitEnvironment } from "../hooks/git-test-environment.ts";
 
 export interface Result {
   diagnostics: Diagnostic[];
@@ -119,6 +120,7 @@ export async function run(root: string, args: string[], network?: ExternalPort):
     const base = await realpath(root);
     const tracked = execFileSync("git", ["ls-files", "-z", "--cached"], {
       cwd: base,
+      env: isolatedGitEnvironment(),
       encoding: "utf8",
       maxBuffer: 8_388_608,
     })

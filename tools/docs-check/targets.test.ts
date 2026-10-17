@@ -3,11 +3,12 @@ import { mkdtemp, mkdir, writeFile, unlink, symlink, rm } from "node:fs/promises
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { expect, it } from "vitest";
+import { isolatedGitEnvironment } from "../hooks/git-test-environment.ts";
 import { run } from "./run.ts";
 
 async function fixture(): Promise<string> {
   const root = await mkdtemp(join(tmpdir(), "ove-doc-targets-"));
-  execFileSync("git", ["init", "--quiet", root]);
+  execFileSync("git", ["init", "--quiet", root], { env: isolatedGitEnvironment() });
   await mkdir(join(root, "tools/docs-check"), { recursive: true });
   await writeFile(join(root, "package.json"), '{"scripts":{}}');
   await writeFile(join(root, ".markdownlint-cli2.jsonc"), '{"config":{},"ignores":[]}');
@@ -15,7 +16,7 @@ async function fixture(): Promise<string> {
   await writeFile(join(root, "README.md"), "# Root\n\n![Hero](hero.png)\n");
   await writeFile(join(root, "LICENSE"), "fixture license\n");
   await writeFile(join(root, "hero.png"), "fixture image bytes");
-  execFileSync("git", ["-C", root, "add", "."]);
+  execFileSync("git", ["-C", root, "add", "."], { env: isolatedGitEnvironment() });
   return root;
 }
 

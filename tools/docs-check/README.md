@@ -49,7 +49,11 @@ owning task. Remove an entry in the same change that creates its target. Stale
 entries fail ordinary checks; any remaining entry blocks publication.
 
 Git inventory selects inputs; a tracked name alone does not prove that a target
-still exists. Linked files and LICENSE must resolve to real regular files inside
+still exists. Inventory reads and temporary-repository test commands use the shared
+Git environment isolation helper: inherited `GIT_*` variables cannot redirect
+repository, index, object or configuration selection. Other environment values,
+including PATH, HOME and the pinned toolchain, are preserved.
+Linked files and LICENSE must resolve to real regular files inside
 the repository on the same device. Binary assets are checked without reading
 their contents. Document reads open without following the final symlink or
 blocking on a FIFO, validate descriptor identity/type/size before content access,
