@@ -13,7 +13,7 @@ Wersje: herdr 0.9.3, Claude Code 2.1.296, Codex CLI 0.162.1. Mały adapter w Nod
 ## 2. Wyniki
 
 | # | Test | Wynik |
-|---|---|---|
+| --- | --- | --- |
 | 1 | herdr startuje w VM jako serwer w tle; gniazda API mają prawa 0600 | ✅ |
 | 2 | Adapter Node steruje herdr przez API JSON (workspace, pane, agent, read) | ✅ działa od pierwszego podejścia, schemat API (128 metod) da się pobrać z `herdr api schema --json` |
 | 3 | `agent.start` dla `claude` i `codex` | ✅ herdr uruchamia oba i rozpoznaje Codex jako agenta; ekran CLI czytelny przez `pane.read` |
@@ -56,6 +56,7 @@ Wersje: herdr 0.9.3, Claude Code 2.1.296, Codex CLI 0.162.1. Mały adapter w Nod
 ## 4. Test ręczny dla Właściciela (ok. 20 minut)
 
 **A. herdr i CLI z Twoją subskrypcją (bez izolacji):**
+
 1. `brew install herdr`, potem w terminalu `herdr`.
 2. W jednym panelu uruchom `claude` (zalogowany), w drugim `codex`.
 3. W innym oknie terminala: `herdr agent list`. Zapisz, czy oba są wykryte.
@@ -64,19 +65,21 @@ Wersje: herdr 0.9.3, Claude Code 2.1.296, Codex CLI 0.162.1. Mały adapter w Nod
 6. Zamknij okno herdr (`ctrl+b q`), otwórz ponownie (`herdr`). Czy agenci nadal pracują?
 
 **B. CLI w izolacji na Macu (najważniejsze)**, narzędzie `container` od Apple (wymaga Apple silicon i macOS 26):
+
 1. `sw_vers -productVersion` musi pokazać 26.x. Pobierz podpisany instalator `.pkg` ze strony wydań github.com/apple/container, zainstaluj, potem `container system start` (na pytanie o instalację jądra odpowiedz tak).
 2. Uruchom kontener z zamontowanym tylko folderem testowym, z limitem 2 CPU i 4 GB RAM:
    `container run -it --name ovm-test -c 2 -m 4G --volume ~/Projects/overmind-prototyp/ws-demo:/work docker.io/library/node:22 bash`
 3. W kontenerze: `npm i -g @anthropic-ai/claude-code @openai/codex`, potem `cd /work && ls && ls /Users`. Oczekiwane: widać `README.md`, a `/Users` nie istnieje.
 4. `claude`: zaloguj się subskrypcją (link otwierasz w przeglądarce na Macu, kod wklejasz w terminal). Polecenia dla Claude:
    - „utwórz plik z-kontenera.md z jednym zdaniem”,
-   - „pokaż, co jest w /Users/wojciechlesniak/Projects”.
+   - „pokaż, co jest w HOST_WORKSPACE_ROOT”.
 5. W drugim terminalu na Macu, gdy Claude pracuje: `container stats --no-stream ovm-test`. Zapisz zużycie pamięci.
 6. `codex`: wybierz „Sign in with Device Code” i sprawdź, czy logowanie przechodzi.
 7. Na Macu: `ls ~/Projects/overmind-prototyp/ws-demo`. Plik `z-kontenera.md` powinien tam być.
 8. Sprzątanie: `exit`, potem `container rm ovm-test`.
 
 Zapisz:
+
 - czy logowanie się udało (Claude, Codex),
 - zużycie pamięci,
 - czy agent zobaczył cokolwiek poza `/work`,
@@ -87,6 +90,7 @@ Wyniki dopisz tutaj w sekcji 5. Na ich podstawie zaktualizujemy ADR 0020 i 0026,
 ## 5. Wyniki testu ręcznego
 
 **A (macOS, herdr + zalogowane CLI), 12.10.2026, częściowo:**
+
 - ✅ herdr na macOS wykrywa oba CLI uruchomione ręcznie w panelach: `claude` (w1:p1) i `codex` (w1:p2), oba w stanie `idle`.
 - ✅ Dla Claude herdr ma identyfikator sesji (`agent_session` ze źródła `herdr:claude`), więc integracja z hookiem działa i wznowienie po restarcie będzie możliwe.
 - ⚠️ `agent prompt` nie zadziałał, bo agenci uruchomieni ręcznie nie mają w herdr nazwy (`agent_not_found`). Agenta trzeba nazwać (`herdr agent rename <pane> <nazwa>`) albo uruchamiać przez `herdr agent start`. Wniosek dla Overmind: zawsze uruchamiać CLI przez `agent.start` z nadaną nazwą, nigdy nie polegać na wykryciu ręcznie uruchomionego procesu.
@@ -98,10 +102,12 @@ Wyniki dopisz tutaj w sekcji 5. Na ich podstawie zaktualizujemy ADR 0020 i 0026,
 - ✅ **`blocked` przy prawdziwym oknie zgody.** Z wyłączonym auto mode `agent prompt cc "dopisz drugie zdanie do README.md" --wait` zwrócił `blocked`, gdy Claude pytał „Do you want to make this edit to README.md?” (Yes / Yes for session / No). Na ekranie widać pełny diff zmiany, a tytuł terminala zawiera streszczenie Zadania („Dodaj drugie zdanie do README.md”).
 
 **Wnioski z testu A (całość):**
+
 - Okno zgody CLI da się zamienić na Zgodę w Overmind: stan `blocked` przychodzi wiarygodnie, a diff do pokazania Właścicielowi można odczytać z ekranu (`pane.read`). Odpowiedź Właściciela Overmind wpisuje w CLI (1/2/3).
 - Tytuł terminala to darmowe źródło krótkiego opisu, co Agent właśnie robi. Przyda się w podglądzie Tablicy i w Telegramie.
 
 **Wnioski z testu A:**
+
 1. **Stan z herdr to wskazówka, nie dowód.** Overmind przesuwa Zadanie dalej dopiero po sprawdzeniu rzeczywistego efektu (plik, wynik testu, commit) albo raportu Skilla „overmind”, a nie samego `done`. To potwierdza zasadę Quality Gate opartego na dowodach.
 2. **Overmind musi rozpoznawać więcej stanów niż herdr**, przede wszystkim:
    - „wymaga zalogowania” (wygasła sesja subskrypcji): powiadomienie Właściciela, żeby sam wykonał `/login` (ADR 0022);
@@ -111,11 +117,12 @@ Wyniki dopisz tutaj w sekcji 5. Na ich podstawie zaktualizujemy ADR 0020 i 0026,
 3. **Tryb uprawnień CLI to decyzja projektowa.** Claude Code działał w „auto mode”, czyli bez pytania o zgodę na akcje. Trzeba ustalić, czy Agenci w Overmind pracują w CLI w trybie auto (bezpieczeństwo zapewnia izolacja z ADR 0020, a Zgody obsługuje Overmind), czy z pytaniami CLI zamienianymi na Zgody w Overmind.
 
 **B (izolacja na macOS, narzędzie `container` 1.5.0 od Apple), 12.10.2026:**
+
 - ℹ️ Instalacja: podpisany `.pkg` z wydań GitHub; przy pierwszym uruchomieniu trzeba było osobno zainstalować jądro (`container system kernel set --recommended`). Kreator Overmind musi to robić sam albo prowadzić Właściciela krok po kroku.
 - ✅ Kontener (`node:22`, 2 CPU, limit 4 GB) z zamontowanym wyłącznie `ws-demo` jako `/work`: widać tylko pliki tego folderu, `/Users` z Maca nie istnieje.
 - ✅ **Logowanie subskrypcją Claude działa wewnątrz kontenera** (Claude Code 2.1.296, „Claude Max”).
 - ✅ Claude w kontenerze utworzył `/work/z-kontenera.md`; plik zweryfikowany na dysku Maca w `~/Projects/overmind-prototyp/ws-demo`.
-- ✅ **Próba wyjścia poza folder:** poproszony o pokazanie `/Users/wojciechlesniak/Projects` Claude sam sprawdził system plików i odpowiedział, że ta ścieżka nie istnieje, a z hosta zamontowany jest tylko `/work`. Granica wynika z systemu, nie z dobrej woli agenta.
+- ✅ **Próba wyjścia poza folder:** poproszony o pokazanie `HOST_WORKSPACE_ROOT` Claude sam sprawdził system plików i odpowiedział, że ta ścieżka nie istnieje, a z hosta zamontowany jest tylko `/work`. Granica wynika z systemu, nie z dobrej woli agenta.
 - 📊 **Zasoby:** 1,29 GiB RAM z 4 GiB i 1,6% CPU przy jednym aktywnym Claude (w tym Node i świeżo zainstalowane CLI), 11 procesów.
 - ℹ️ Claude Code ogłasza, że **auto mode jest teraz jego domyślnym trybem uprawnień**. Sam ocenia ryzyko akcji i blokuje groźne, więc pytań o zgodę z CLI będzie coraz mniej.
 - ❌ **Codex, opcja „Sign in with ChatGPT” (przez przeglądarkę) nie działa z kontenera.** Po zalogowaniu przeglądarka na Macu przekierowuje na `http://127.0.0.1:1455/auth/callback…`, ale ten port nasłuchuje wewnątrz kontenera, nie na Macu, więc logowanie się nie kończy (`ERR_CONNECTION_REFUSED`).
@@ -126,6 +133,7 @@ Wyniki dopisz tutaj w sekcji 5. Na ich podstawie zaktualizujemy ADR 0020 i 0026,
 - ⚠️ **Plik powstał w złym miejscu.** Codex został uruchomiony w katalogu `/` kontenera zamiast w `/work`, więc `z-codexa.md` trafił do systemu plików kontenera, nie do zamontowanego folderu. Na dysku Maca go nie ma i zniknie razem z kontenerem. Izolacja zadziałała (Agent nie wyszedł poza kontener), ale praca została utracona.
 
 **Wnioski z testu B:**
+
 1. **Założenia ADR 0020 i 0022 potwierdzone na prawdziwym Macu:** izolacja przez kontener Apple działa, a subskrypcja działa w środku.
 2. **Koszt pamięci ok. 1,3 GiB na Agenta w osobnym kontenerze.** Przy limicie 3 Agentów to ok. 4 GiB. Do decyzji przy implementacji: jeden kontener na Agenta (najsilniejsza izolacja, większy koszt) czy jeden kontener na Workspace z bubblewrap dla każdego Agenta w środku (taniej, sprawdzone w teście w VM).
 3. **Wymóg macOS 26 + Apple silicon** dotyczy narzędzia Apple. Dla starszych Maców trzeba przewidzieć alternatywę (np. Lima) za tym samym interfejsem izolacji albo jawnie ograniczyć wymagania systemowe Overmind.

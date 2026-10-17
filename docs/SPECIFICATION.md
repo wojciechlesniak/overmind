@@ -54,6 +54,7 @@ Cztery filary:
 **Chief.** Jeden na instalację. Widzi wszystkie Workspace'y poza izolowanymi. Dobiera Agentów, tworzy Agentów dynamicznych, prowadzi plan, uruchamia Workflow, rozstrzyga spory w granicach Budżetu i Dokumentacji (ADR 0015). Na proste pytania odpowiada sam, bez uruchamiania Zespołu. Na ogólne pytanie o postęp odpowiada po jednym zdaniu o każdym Workspace, na szczegółowe tylko o tym, o co pytano.
 
 **Agenci.**
+
 - *Agent stały:* wielokrotnego użytku, z własną Pamięcią agenta. Domyślnie publiczny, jeśli utworzył go Właściciel.
 - *Agent dynamiczny:* tworzony przez Chiefa na potrzeby Zadania, prywatny w swoim Workspace. Po akceptacji Właściciela staje się stały razem ze swoją pamięcią, a Właściciel decyduje, czy ma być publiczny.
 - Agent widzi tylko Workspace, w którym aktualnie pracuje.
@@ -81,6 +82,7 @@ Cztery filary:
 **Tablica Zadań** (ADR 0011). Każdy Workspace ma jedną Tablicę. Workflow definiuje jej Tory (np. Build, QA, Review), a Zadanie przechodzi po Torach w miarę wykonywania Węzłów. Tablica jest źródłem prawdy, a synchronizacja z GitHub Issues, Linear czy Todoist może dojść później.
 
 **Dyskusja** to moderowana rozmowa Agentów (także Chiefa) z agendą i limitem rund, w której uczestnicy używają swoich Skilli. Zwykle kończy się Zadaniami, a nie kolejnym Skillem.
+
 - Dyskusja wpisana jako Węzeł w Workflow rusza sama.
 - Gdy Chief sam uzna, że coś trzeba przedyskutować, wstrzymuje dany Run lub gałąź, wysyła powiadomienie i czeka na Właściciela. Reszta pracuje dalej.
 - Brak porozumienia po limicie rund: Chief rozstrzyga, jeśli mieści się w Budżecie, Dokumentacji i Regułach; w przeciwnym razie Eskalacja. Rozstrzygnięcie trafia do Rejestru decyzji z argumentami stron.
@@ -90,6 +92,7 @@ Cztery filary:
 **USTALONE:** Workflow to wykonywalny program. Edytor tylko go tworzy i pokazuje, a wykonuje go własny silnik (ADR 0002, 0019).
 
 **Canvas** (PROPONOWANE, wygląd wg `docs/design/styl-wizualny.md`):
+
 - ciemne tło z siatką kropek;
 - kafelek Węzła ma: zakładkę typu w lewym górnym rogu (PUBLICZNY, PRYWATNY, TOR, DYSKUSJA), zakładkę z liczbą Skilli w prawym górnym rogu, na którą upuszcza się Skill („2 skille”), ikonę, nazwę na środku, krótki stan pod nazwą, pigułkę z awatarem Agenta i modelem na dolnej krawędzi, stos kart pod spodem i porty po bokach;
 - ramki grupujące podgrafy (Subworkflow, Loop, Tory Tablicy) z opisem w lewym górnym rogu;
@@ -101,6 +104,7 @@ Cztery filary:
 **Katalog Węzłów.** W MVP: Start/End, Agent, Parallel, Join, IF, Loop, Dyskusja, Review. Później: Switch, Retry/Fallback, Approval, Memory Read/Write, Subworkflow, Transform, Trigger/Wait, Notification, Model Router.
 
 **Semantyka:**
+
 - Typowane porty i kontrakty wejścia/wyjścia. Warunki operują na danych strukturalnych (wyjście Agenta wg schematu JSON), a nie na swobodnym tekście. Wyrażenia liczy bezpieczny ewaluator, nigdy `eval`.
 - Cykle tylko jako jawny Węzeł Loop z limitem iteracji, czasu i kosztu oraz wyjściem `onExhausted`. Surowa krawędź wstecz to błąd walidacji.
 - Join: polityka all, any albo quorum, timeout i zachowanie przy częściowym błędzie.
@@ -139,16 +143,19 @@ Cztery filary:
 ## 10. Pamięć
 
 **Dwie warstwy** (ADR 0014):
+
 - *Pamięć agenta:* rola, ustawienia i streszczenia wcześniejszych Zadań Agenta stałego. Granice Workspace'ów obowiązują także tutaj, również dla Agenta publicznego. Właściciel może ją przeglądać, ale nie edytuje; zachowanie koryguje Regułami.
 - *Pamięć wspólna:* Tablica Zadań i Rejestr decyzji.
 
 **Rejestr decyzji** (ADR 0008) przechowuje: `title`, `problem`, `context`, `alternatives[]`, `selectedOption`, `rationale`, `participants[]`, `evidenceRefs[]`, `assumptions[]`, `risks[]`, `skillsUsed[]` (z wersjami), `workspaceId`, `runId`, `createdAt`, `reviewDate`, `outcome`, `outcomeEvidence[]`, `confidence`, `status`, `supersedesId`.
+
 - Statusy: `proposed`, `accepted`, `rejected`, `superseded`, `needs_review`.
 - Wynik decyzji: `unknown`, `positive`, `mixed`, `negative`. Chief stale zbiera dowody i proponuje Wynik, a Właściciel wydaje werdykt i może go zmienić.
 
 **Między Workspace'ami.** Chief automatycznie przeszukuje Decyzje ze wszystkich Workspace'ów. Workspace izolowany (opcja, domyślnie wyłączona) nie udostępnia niczego na zewnątrz, a wszystko, co w nim powstaje, jest prywatne.
 
 **Kopia i usuwanie:**
+
 - Codzienna kopia bazy do folderu wskazanego przez Właściciela oraz eksport ręczny.
 - Usunięcie Workspace'u kasuje jego Decyzje, Tablicę, Pamięć agentów z tego Workspace'u oraz jego prywatnych Agentów, Skille i Workflow, po Zgodzie lokalnej z ostrzeżeniem.
 
@@ -157,6 +164,7 @@ Cztery filary:
 ## 11. Uprawnienia i izolacja — krytyczne
 
 **Zasady** (ADR 0003):
+
 - Pusta lista Dozwolonych katalogów oznacza brak dostępu. Przy pierwszym uruchomieniu kreator prosi o wskazanie folderu.
 - Katalogi mają prawa `read`, `write` i opcjonalnie `execute`. Osobne uprawnienia dotyczą terminala, sieci, Git, MCP, a później Chrome i symulatorów.
 - Efektywne uprawnienia to przecięcie polityk Właściciela, Workspace'u, Agenta, Workflow i Narzędzia. Delegowanie zadania może prawa tylko zawężać. Widoczność (publiczny/prywatny) nie zmienia uprawnień.
@@ -167,6 +175,7 @@ Cztery filary:
 **Domyślna lista Zgód** (ADR 0021): usuwanie plików, `git push` i każda publikacja, wysyłanie wiadomości lub maili na zewnątrz, płatności, wejście na nową domenę, przekroczenie Budżetu. Właściciel może w Regułach zdjąć wymóg Zgody z wybranej akcji (np. pozwolić na `git push`), ale tylko lokalnie.
 
 **Izolacja na macOS** (ADR 0020):
+
 - Polecenia Agentów i oficjalne CLI działają w lekkiej maszynie wirtualnej lub kontenerze, do którego zamontowane są wyłącznie Dozwolone katalogi.
 - Chrome i symulatory (po MVP) obsługuje Overmind po stronie macOS, na polecenie Agenta.
 - Gdy izolacji nie da się zapewnić, akcja jest blokowana.
@@ -186,6 +195,7 @@ Cztery filary:
 **USTALONE** (ADR 0018, 0019, 0026): Tauri + React + TypeScript (canvas na React Flow), osobny silnik w TypeScripcie, SQLite. Własny silnik Workflow zamiast frameworka. Jeden język we własnym kodzie, plus dołączony plik binarny herdr w przypiętej wersji jako warstwa terminali.
 
 **Wzorce z herdr** (szczegóły w `docs/research/herdr-analiza.md`):
+
 - silnik jako serwer w tle, a UI, Telegram i CLI jako cienkie klienty przez lokalne gniazdo dostępne tylko dla właściciela;
 - publiczne API JSON ze schematem generowanym z typów, zmiany tylko addytywne;
 - atomowe zapisy i rolujące migawki;
@@ -214,7 +224,7 @@ flowchart TD
 ## 14. Model danych (PROPONOWANE)
 
 | Encja | Pola kluczowe |
-|---|---|
+| --- | --- |
 | Workspace | id, name, allowedRoots, policyId, isolated, budget |
 | OwnerRule | id, workspaceId?, text, consentOverrides, version |
 | ProjectDocRef | workspaceId, path, gitCommit |
@@ -249,10 +259,12 @@ Stosujemy migracje, transakcje, indeksy po run, workspace i status oraz niezmien
 ## 16. MVP i kryteria odbioru
 
 **Zakres** (ADR 0024):
+
 - **w MVP:** Chief i Agenci z czatami; canvas z Węzłami Agent, Parallel, Join, IF, Loop, Dyskusja, Review i przeciąganymi Skillami; Widoczność publiczny/prywatny; Tablica Zadań; Rejestr decyzji; Pamięć agenta; izolacja folderów; praca w tle; CLI `claude` i `codex` z Ollamą jako zapasem; Telegram z czatami, statusem i Zgodami na Run.
 - **później:** klucze API, Chrome i symulatory, głos i pliki w Telegramie, Model Router, synchronizacja Tablicy, Windows i Linux.
 
 **Kryteria odbioru:**
+
 1. Kreator przy pierwszym uruchomieniu wymaga wskazania folderu. Bez niego Agenci nie mają dostępu do niczego.
 2. Właściciel tworzy co najmniej trzech Agentów z różnymi modelami z podłączonych CLI i rozmawia z każdym w osobnym czacie.
 3. Skill przeciągnięty na kafelek jest dostępny dla Agenta we wszystkich Workspace'ach, w których widać oba elementy, a jego użycie (z wersją) widać w historii. Prywatny Agent ani Skill nie pojawia się w innym Workspace.
@@ -307,10 +319,10 @@ Stosujemy migracje, transakcje, indeksy po run, workspace i status oraz niezmien
 
 ## 20. Referencje
 
-- herdr (warstwa terminali, licencja Apache-2.0): https://github.com/herdrdev/herdr, analiza w `docs/research/herdr-analiza.md`
-- Claude Agent SDK, zasady uwierzytelniania: https://code.claude.com/docs/en/agent-sdk/overview
-- Codex z planem ChatGPT: https://help.openai.com/en/articles/11369540-using-codex-with-your-chatgpt-plan
-- React Flow: https://reactflow.dev/learn
-- Telegram Bot API: https://core.telegram.org/bots/api
-- Tauri: https://tauri.app
-- Ollama: https://docs.ollama.com
+- herdr (warstwa terminali, licencja Apache-2.0): <https://github.com/herdrdev/herdr>, analiza w `docs/research/herdr-analiza.md`
+- Claude Agent SDK, zasady uwierzytelniania: <https://code.claude.com/docs/en/agent-sdk/overview>
+- Codex z planem ChatGPT: <https://help.openai.com/en/articles/11369540-using-codex-with-your-chatgpt-plan>
+- React Flow: <https://reactflow.dev/learn>
+- Telegram Bot API: <https://core.telegram.org/bots/api>
+- Tauri: <https://tauri.app>
+- Ollama: <https://docs.ollama.com>

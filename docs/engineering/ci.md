@@ -135,7 +135,7 @@ requested compatible dependency replacements; see
 check passes without exclusions or metadata rewriting. The accepted foundation sequence keeps actual
 boundary/fork/hardware evidence mandatory in ARCH002, SETUP018 and SETUP021 +
 TEST007 respectively; those later tasks remain unfinished until it exists. Negative hosted probes are linked in PR #934:
-#935 (failed test), #936 (lint), #937 (explicit GPL denial), #938 (high production
+\#935 (failed test), #936 (lint), #937 (explicit GPL denial), #938 (high production
 advisories); all are closed without merge. Their corresponding gates and aggregate
 failed. The baseline license failure was independently present. Boundary-check,
 fork-run and physical-isolation evidence remain outstanding.

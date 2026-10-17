@@ -43,6 +43,20 @@ test.skipIf(process.platform !== "darwin" || process.arch !== "arm64")(
           "22.23.3",
         ),
       };
+      await execute(
+        runner,
+        process.execPath,
+        [
+          "--import",
+          "tsx",
+          resolve(root, "tools/package-engine/run.ts"),
+          "--identity",
+          "-",
+          "--out",
+          resolve(work, "runtime-preparation"),
+        ],
+        { cwd: root, timeout: 110000, maxBuffer: 4 * 1024 * 1024 },
+      );
       expect(await fetchRuntime.run(ctx)).toEqual({ ok: true });
       await execute(
         runner,

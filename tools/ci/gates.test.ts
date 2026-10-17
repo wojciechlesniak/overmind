@@ -140,7 +140,7 @@ it("PR title checks retain syntax policy without requiring a nonexistent body", 
   expect(normal.status).not.toBe(0);
 }, 15000);
 
-it("desktop dist policy and Vite configuration require the configuration approval label", () => {
+it("desktop and Markdown policies require the configuration approval label", () => {
   const fixture = mkdtempSync(resolve(tmpdir(), "overmind-desktop-policy-"));
   const env = isolatedGitEnvironment();
   const git = (args: string[]) =>
@@ -152,6 +152,7 @@ it("desktop dist policy and Vite configuration require the configuration approva
     git(["config", "core.hooksPath", "/dev/null"]);
     git(["commit", "--allow-empty", "--quiet", "-m", "chore: baseline"]);
     for (const file of [
+      ".markdownlint-cli2.jsonc",
       "apps/desktop/vite.config.ts",
       "apps/desktop/scripts/check-dist.mjs",
       "apps/desktop/scripts/check-dist.allow.json",

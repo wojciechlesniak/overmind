@@ -5,7 +5,7 @@ const tools = [
   ["check:contracts", "tools/gen-contracts/check-additive.ts", "OVE_ARCH009"],
   ["check:deps", "tools/deps-policy/run.ts", "OVE_SETUP008", "tools/deps-policy/run.int.test.ts"],
   ["check:headers", "tools/check-headers/run.ts", "OVE_OSS001"],
-  ["check:docs", "tools/docs-check/run.ts", "OVE_OSS002"],
+  ["check:docs", "tools/docs-check/run.ts", "OVE_OSS004"],
   ["check:tasks", "tools/tasks/lint.ts", "OVE_SETUP013"],
   ["check:agents-md", "tools/agents-md/check.ts", "OVE_SETUP019"],
 ];

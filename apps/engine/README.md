@@ -102,7 +102,7 @@ linked legal comments and no minification. CJS module URLs are computed from the
 runtime `__filename`, preserving optional-import identity without host build paths.
 `bundleEngine({root?,outfile?})` is
 the packaging entry; the CLI accepts `--out-dir <path>`. Maps use stable
-`file:///overmind/source/` identities and contain no host build paths. The
+virtual file URLs under the `overmind/source/` namespace and contain no host build paths. The
 metafile is checked before files are written: desktop code, React, Tauri,
 undeclared npm packages, escaping source paths and unexpected external imports
 are rejected. Only Node builtins and the two absent optional hooks may remain
