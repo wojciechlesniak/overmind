@@ -58,3 +58,16 @@ verification, independent review or pre-push for this changed head.
 The reusable subprocess boundary, rather than global environment mutation, keeps
 the protection local to every Git call and prevents the same hook inheritance
 from escaping a future fixture or silently selecting a different inventory.
+
+## Integration recovery evidence
+
+The same pre-fix hook run also changed the shared repository configuration to
+bare mode. Its modification time matched the fixture run. The integration
+coordinator retained a private ignored configuration backup and restored only
+that flag. The primary HEAD still points to DEVELOP; its only working change is
+the pre-existing Owner research edit, whose bytes remain unchanged. Before the
+task-index recovery, all 1,862 tracked task files matched HEAD by blob hash and
+mode; the corrupted index was backed up and only that index was restored.
+The disposable-parent regressions cover index, configuration and inventory
+preservation under inherited Git selectors. The next real pre-push must retain
+those invariants as well as pass the normal hooks.
