@@ -65,3 +65,9 @@ The bounded regular-file reader also rejects FIFO inputs before opening them.
 A real FIFO child-process regression first reached its timeout; the corrected
 reader returns invalid-input exit4 without waiting for a writer. O_NONBLOCK plus
 the post-open regular-file check preserves that property if the path is swapped.
+
+The first full post-review run passed lint, types and 331 unit tests, but two
+multi-step real-Git lifecycle scenarios exceeded Vitest's default five-second
+test budget under concurrent builds. Those two scenarios now have a bounded
+30-second test budget; their assertions and subprocess limits are unchanged.
+The failed run remains recorded and is not counted as a passing full check.

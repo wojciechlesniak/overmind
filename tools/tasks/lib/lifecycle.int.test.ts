@@ -144,7 +144,7 @@ it("ranks ready tasks by priority and downstream work, placing live ownership co
   } finally {
     rmSync(f.directory, { recursive: true, force: true });
   }
-});
+}, 30_000);
 
 it("performs a real frozen install and prepare in the new worktree by default", async () => {
   const f = await fixture();
@@ -243,7 +243,7 @@ it("allows release only for an owned claim without implementation commits", asyn
   } finally {
     rmSync(f.directory, { recursive: true, force: true });
   }
-});
+}, 30_000);
 
 it("never releases an implementation commit hidden before a status-only claim, even with maintainer override", async () => {
   const f = await fixture();
