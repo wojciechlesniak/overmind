@@ -6,7 +6,7 @@ kind: docs
 size: S
 priority: P0
 mvp: true
-status: todo
+status: in_progress
 depends_on: [OVE_SETUP001]
 soft_depends_on: [OVE_SETUP006, OVE_SETUP015]
 provides: ["lib:license-files", "lib:license-header-policy", "lib:third-party-notices"]
