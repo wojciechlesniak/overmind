@@ -558,3 +558,29 @@ Capture: `ove026-json-privacy-green.log`. Scoped strict test TypeScript, ESLint
 and changed-source formatting passed. This narrow result does not claim a full
 suite, resolve the recorded deadlines/legacy migration or grant staged acceptance.
 Fresh independent review and all applicable exact-head gates remain required.
+
+### Actual complete-gate attempt and pending-link integration repair
+
+The serial gate attempt at `6960b09` ran the actual `tools/ci/check.ts` list in
+order through an external guarded runner. Only coverage and integration worker
+counts were set to one; assertions, deadlines, thresholds and retry count were
+unchanged. The runner imported the original manifest-schema reader for desktop
+conditional selection and preserved all original security/Rust/SBOM gates.
+
+Covered tests passed 539 across 99 files in 86.75 seconds; integrations passed
+70 across 20 files in 172.84 seconds; build passed. Architecture's dependency
+policy and four real CLI integrations also passed. The run then failed closed
+at `check:docs`: `pending-links.json` still marked this task's newly created
+`docs/adr/README.md` as absent. It reported one stale-entry error and 38 warnings.
+Workflow lint, license/audit, Rust and secret/SBOM gates were not reached; there
+is no full-list PASS. Captures remain `ove026-full-gates-6960b09.log` and
+`ove026-full-gates-6960b09.receipts.jsonl` outside the tracked tree.
+
+The integrator explicitly approved deleting only that stale pending entry.
+The three other pending entries and the strict stale-entry rule remain intact;
+the actual complete-gate failure is the regression evidence for this data fix.
+Fresh delta reviews and a complete exact-head gate attempt remain required.
+This approval grants no staged acceptance or normative criteria change.
+After this correction, actual `pnpm check:docs` returned zero errors and
+38 warnings; capture: `ove026-pending-link-green.log`. Scoped JSON formatting
+also passed. Neither result substitutes for the remaining complete gate list.

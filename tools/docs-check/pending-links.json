@@ -1,6 +1,5 @@
 {
   "NOTICE": "OVE_OSS001",
   "docs/GLOSSARY.md": "OVE_OSS005",
-  "docs/adr/README.md": "OVE_OSS006",
   "docs/design/visual-style.md": "OVE_OSS012"
 }

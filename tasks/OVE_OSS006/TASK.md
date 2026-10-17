@@ -194,3 +194,13 @@ The same one-worker run passed both cases in 987 ms with unchanged child and
 per-test limits. Generated input is never printed by the assertions. Scoped
 strict TypeScript, lint and formatting passed; full gates and independent review
 of this correction remain pending with the existing acceptance blockers.
+
+The complete gate attempt at `6960b09`, using one coverage/integration worker
+with unchanged assertions, limits and thresholds, passed 539 covered tests,
+70 integrations and the build. Architecture validation then correctly rejected
+the pending-link entry for the ADR README now created by this task; later
+security/Rust/SBOM gates were not reached. The integrator approved removing only
+that stale entry, retaining the other three and strict stale-entry enforcement.
+This is a narrow integration repair, not a complete-gate or acceptance pass.
+After the correction, actual `pnpm check:docs` passed with zero errors and
+38 warnings, and scoped JSON formatting passed.
