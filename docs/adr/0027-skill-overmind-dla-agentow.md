@@ -1,6 +1,7 @@
 # Skill „overmind” instalowany każdemu Agentowi w CLI
 
 Każde CLI uruchomione przez Overmind automatycznie dostaje Skill „overmind”. Uczy on Agenta, jak przez lokalne API Overmind:
+
 - raportować postęp i zakończenie Zadania,
 - składać Prośbę o dostęp,
 - pisać do innych Agentów,

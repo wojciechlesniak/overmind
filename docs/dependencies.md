@@ -46,7 +46,8 @@ release age, scripts and the full transitive license graph before adoption.
 | globals | 17.13.0 | 17.13.0 | npm globals@17.13.0 | Installed dev tool. |
 | happy-dom | 21.0.1 | 21.0.3 | npm happy-dom@21.0.1 | Approved MIT replacement for the denied jsdom transitive graph; unit DOM evaluation/network loading disabled. |
 | lefthook | 2.2.1 | 2.2.2 | npm lefthook@2.2.1 | Retain2.2.1; no install build scripts allowed. |
-| markdownlint-cli2 | 0.23.3 | 0.23.3 | npm markdownlint-cli2@0.23.3 | Reserved catalog pin; not yet installed. Owning task rechecks peers and full license graph. |
+| markdownlint | 0.41.1 | 0.41.1 | npm markdownlint@0.41.1; official programmatic API | Owner-approved direct core for OVE_OSS004; same core as CLI2 0.23.3, avoids denied PSF-2.0 and vulnerable braces. |
+| markdownlint-cli2 | 0.23.3 | 0.23.3 | npm markdownlint-cli2@0.23.3 | Uninstalled reserve: blocked by argparse PSF-2.0 and HIGH GHSA-vfj7-8cjw-p6xm; no exception approved. |
 | oxlint | 1.87.0 | 1.88.0 | npm oxlint@1.87.0 | Approved native React hooks/compiler checks; replaces CC-BY-dependent plugin graph. |
 | playwright | 1.64.0 | 1.64.1 | npm playwright@1.64.0 | Reserved catalog pin; not yet installed. Owning task rechecks peers and full license graph. |
 | prettier | 3.9.10 | 3.9.10 | npm prettier@3.9.10 | Installed dev tool. |
@@ -72,14 +73,14 @@ release age, scripts and the full transitive license graph before adoption.
 | @yao-pkg/pkg | 6.23.0 | 6.23.0 | npm registry on review date | Rejected (ADR 0030); direct official SEA avoids the extra packaging abstraction and graph. |
 | esbuild | 0.28.2 | 0.28.2 | npm registry on review date | Build-only CommonJS bundler used by apps/engine (SETUP016, ADR 0030); maps/metafile and dependency guard required; installation scripts stay disabled. |
 | sqlite-vec | candidate 0.1.9 | 0.1.9 | npm registry on review date | SETUP011 evaluates engine packaging/storage; sqlite-vec remains a future feature. Not an adoption. |
-| crate:tauri | 2.12.3 | 2.12.4 | https://crates.io/api/v1/crates/tauri/2.12.3 | SETUP010 native shell; MSRV 1.90; SETUP010 installs exact pins. |
-| crate:tauri-build | 2.7.2 | 2.7.3 | https://crates.io/api/v1/crates/tauri-build/2.7.2 | SETUP010 native shell; MSRV 1.90; SETUP010 installs exact pins. |
-| crate:tauri-plugin-shell | 2.5.0 | 2.5.0 | https://crates.io/api/v1/crates/tauri-plugin-shell/2.5.0 | SETUP010 native shell; MSRV 1.90; SETUP010 installs exact pins. |
-| crate:tauri-plugin-single-instance | 2.5.3 | 2.5.4 | https://crates.io/api/v1/crates/tauri-plugin-single-instance/2.5.3 | SETUP010 native shell; MSRV 1.90; SETUP010 installs exact pins. |
-| crate:tauri-plugin-dialog | 2.8.2 | 2.8.3 | https://crates.io/api/v1/crates/tauri-plugin-dialog/2.8.2 | SETUP010 native shell; MSRV 1.90; SETUP010 installs exact pins. |
-| crate:serde | 1.0.229 | 1.0.229 | https://crates.io/api/v1/crates/serde/1.0.229 | SETUP010 native shell; MSRV 1.56; SETUP010 installs exact pins. |
-| crate:serde_json | 1.0.154 | 1.0.154 | https://crates.io/api/v1/crates/serde_json/1.0.154 | SETUP010 native shell; MSRV 1.71; SETUP010 installs exact pins. |
-| crate:tokio | 1.53.2 | 1.53.3 | https://crates.io/api/v1/crates/tokio/1.53.2 | SETUP010 native shell; MSRV 1.71; SETUP010 installs exact pins. |
+| crate:tauri | 2.12.3 | 2.12.4 | <https://crates.io/api/v1/crates/tauri/2.12.3> | SETUP010 native shell; MSRV 1.90; SETUP010 installs exact pins. |
+| crate:tauri-build | 2.7.2 | 2.7.3 | <https://crates.io/api/v1/crates/tauri-build/2.7.2> | SETUP010 native shell; MSRV 1.90; SETUP010 installs exact pins. |
+| crate:tauri-plugin-shell | 2.5.0 | 2.5.0 | <https://crates.io/api/v1/crates/tauri-plugin-shell/2.5.0> | SETUP010 native shell; MSRV 1.90; SETUP010 installs exact pins. |
+| crate:tauri-plugin-single-instance | 2.5.3 | 2.5.4 | <https://crates.io/api/v1/crates/tauri-plugin-single-instance/2.5.3> | SETUP010 native shell; MSRV 1.90; SETUP010 installs exact pins. |
+| crate:tauri-plugin-dialog | 2.8.2 | 2.8.3 | <https://crates.io/api/v1/crates/tauri-plugin-dialog/2.8.2> | SETUP010 native shell; MSRV 1.90; SETUP010 installs exact pins. |
+| crate:serde | 1.0.229 | 1.0.229 | <https://crates.io/api/v1/crates/serde/1.0.229> | SETUP010 native shell; MSRV 1.56; SETUP010 installs exact pins. |
+| crate:serde_json | 1.0.154 | 1.0.154 | <https://crates.io/api/v1/crates/serde_json/1.0.154> | SETUP010 native shell; MSRV 1.71; SETUP010 installs exact pins. |
+| crate:tokio | 1.53.2 | 1.53.3 | <https://crates.io/api/v1/crates/tokio/1.53.2> | SETUP010 native shell; MSRV 1.71; SETUP010 installs exact pins. |
 | Rust toolchain | 1.90.0 | not adopted | Rust/Tauri MSRV | SETUP010 pins rust-toolchain.toml; private verified toolchain, no global change. |
 | herdr | 0.9.3 | 0.9.5 | SETUP015 vendor/herdr/VERSION | SETUP015 selects a verified mature release; latest is younger than72 hours. |
 | Apple container CLI | minimum 1.5.0 | 1.5.0 | Apple container publisher; SETUP015 | Requires macOS26/Apple silicon; no current runner. |
@@ -100,12 +101,12 @@ release age, scripts and the full transitive license graph before adoption.
 | actions/dependency-review-action | 5.0.0 | 5.0.0 | Exact workflow SHA a1d282b36b6f3519aa1f3fc636f609c47dddb294 | Publisher license at the pinned ref is MIT; no floating action tag. |
 | github/codeql-action/upload-sarif | 4.38.3 | 4.39.0 | Exact workflow SHA 24c54180a607b1449ed407dd24f251e4e9147c8d | Publisher license at the pinned ref is MIT; no floating action tag. |
 
-| crate:nix | 0.31.3 | 0.31.3 | https://crates.io/api/v1/crates/nix/0.31.3 | Exact mature MIT pin; Unix byte transport only. |
-| crate:hyper | 1.12.0 | 1.12.0 | https://crates.io/api/v1/crates/hyper/1.12.0 | Exact mature MIT pin; Unix byte transport only. |
-| crate:hyper-util | 0.1.21 | 0.1.21 | https://crates.io/api/v1/crates/hyper-util/0.1.21 | Exact mature MIT pin; Unix byte transport only. |
-| crate:http-body-util | 0.1.5 | 0.1.5 | https://crates.io/api/v1/crates/http-body-util/0.1.5 | Exact mature MIT pin; Unix byte transport only. |
+| crate:nix | 0.31.3 | 0.31.3 | <https://crates.io/api/v1/crates/nix/0.31.3> | Exact mature MIT pin; Unix byte transport only. |
+| crate:hyper | 1.12.0 | 1.12.0 | <https://crates.io/api/v1/crates/hyper/1.12.0> | Exact mature MIT pin; Unix byte transport only. |
+| crate:hyper-util | 0.1.21 | 0.1.21 | <https://crates.io/api/v1/crates/hyper-util/0.1.21> | Exact mature MIT pin; Unix byte transport only. |
+| crate:http-body-util | 0.1.5 | 0.1.5 | <https://crates.io/api/v1/crates/http-body-util/0.1.5> | Exact mature MIT pin; Unix byte transport only. |
 
-| crate:exacl | 0.13.0 | 0.13.0 | https://crates.io/api/v1/crates/exacl/0.13.0 | Exact mature MIT pin; safe macOS ACL inspection. |
+| crate:exacl | 0.13.0 | 0.13.0 | <https://crates.io/api/v1/crates/exacl/0.13.0> | Exact mature MIT pin; safe macOS ACL inspection. |
 
 ## How to upgrade
 
@@ -189,7 +190,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Native accessibility-tree/keyboard assertions or a policy-compliant audit engine; the owning UI test task must decide.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/@axe-core%2Fplaywright/4.13.0
+- Source: <https://registry.npmjs.org/@axe-core%2Fplaywright/4.13.0>
 
 ### @commitlint/cli
 
@@ -202,7 +203,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: A bespoke regex hook; keep the tested official parser.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/@commitlint%2Fcli/21.2.3
+- Source: <https://registry.npmjs.org/@commitlint%2Fcli/21.2.3>
 
 ### @commitlint/config-conventional
 
@@ -215,7 +216,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Maintain a separate full rule set; use the supported preset plus small project rules.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/@commitlint%2Fconfig-conventional/21.2.3
+- Source: <https://registry.npmjs.org/@commitlint%2Fconfig-conventional/21.2.3>
 
 ### @eslint/js
 
@@ -228,7 +229,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: A handwritten core rule list with independent upgrade maintenance.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/@eslint%2Fjs/10.0.1
+- Source: <https://registry.npmjs.org/@eslint%2Fjs/10.0.1>
 
 ### @playwright/test
 
@@ -241,7 +242,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: WebDriver-based runners or custom browser orchestration.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/@playwright%2Ftest/1.64.0
+- Source: <https://registry.npmjs.org/@playwright%2Ftest/1.64.0>
 
 ### @storybook/addon-a11y
 
@@ -254,7 +255,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Policy-compliant component accessibility assertions; this reserve is not install approval.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/@storybook%2Faddon-a11y/10.6.2
+- Source: <https://registry.npmjs.org/@storybook%2Faddon-a11y/10.6.2>
 
 ### @storybook/react-vite
 
@@ -267,7 +268,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Standalone demo pages or another bundler integration.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/@storybook%2Freact-vite/10.6.2
+- Source: <https://registry.npmjs.org/@storybook%2Freact-vite/10.6.2>
 
 ### @tauri-apps/api
 
@@ -280,7 +281,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: A bespoke native bridge or Electron, excluded by ADR0018.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/@tauri-apps%2Fapi/2.12.3
+- Source: <https://registry.npmjs.org/@tauri-apps%2Fapi/2.12.3>
 
 ### @tauri-apps/cli
 
@@ -293,7 +294,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Manual Cargo/app-bundle orchestration with duplicate platform logic.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/@tauri-apps%2Fcli/2.12.2
+- Source: <https://registry.npmjs.org/@tauri-apps%2Fcli/2.12.2>
 
 ### @testing-library/dom
 
@@ -306,7 +307,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Raw DOM selectors and manually maintained query helpers.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/@testing-library%2Fdom/10.4.2
+- Source: <https://registry.npmjs.org/@testing-library%2Fdom/10.4.2>
 
 ### @testing-library/jest-dom
 
@@ -319,7 +320,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Repeated custom DOM assertions in every UI test.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/@testing-library%2Fjest-dom/7.0.1
+- Source: <https://registry.npmjs.org/@testing-library%2Fjest-dom/7.0.1>
 
 ### @testing-library/react
 
@@ -332,7 +333,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Renderer-internal assertions or a custom React test harness.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/@testing-library%2Freact/16.3.3
+- Source: <https://registry.npmjs.org/@testing-library%2Freact/16.3.3>
 
 ### @types/node
 
@@ -345,7 +346,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Newer Node types would describe APIs unavailable in the adopted runtime.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/@types%2Fnode/22.20.5
+- Source: <https://registry.npmjs.org/@types%2Fnode/22.20.5>
 
 ### @types/react
 
@@ -358,7 +359,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Local ambient declarations with independent maintenance.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/@types%2Freact/19.3.0
+- Source: <https://registry.npmjs.org/@types%2Freact/19.3.0>
 
 ### @types/react-dom
 
@@ -371,7 +372,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Local renderer declarations or mismatched runtime types.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/@types%2Freact-dom/19.3.0
+- Source: <https://registry.npmjs.org/@types%2Freact-dom/19.3.0>
 
 ### @types/semver
 
@@ -384,7 +385,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Local declaration copies; retain the supported declarations.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/@types%2Fsemver/7.8.0
+- Source: <https://registry.npmjs.org/@types%2Fsemver/7.8.0>
 
 ### @vitejs/plugin-react
 
@@ -397,7 +398,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Vite native JSX or a compatible SWC integration after peer/license review in SETUP009.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/@vitejs%2Fplugin-react/6.1.2
+- Source: <https://registry.npmjs.org/@vitejs%2Fplugin-react/6.1.2>
 
 ### @vitest/coverage-v8
 
@@ -410,7 +411,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Istanbul instrumentation adds a separate transform path; keep the matching Vitest version.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/@vitest%2Fcoverage-v8/5.0.4
+- Source: <https://registry.npmjs.org/@vitest%2Fcoverage-v8/5.0.4>
 
 ### @xyflow/react
 
@@ -423,7 +424,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: A custom graph renderer and gesture engine; adoption remains a UI task.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/@xyflow%2Freact/12.12.0
+- Source: <https://registry.npmjs.org/@xyflow%2Freact/12.12.0>
 
 ### dependency-cruiser
 
@@ -436,7 +437,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: ESLint boundaries or a small graph checker; ARCH002 makes the measured choice.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/dependency-cruiser/18.6.0
+- Source: <https://registry.npmjs.org/dependency-cruiser/18.6.0>
 
 ### eslint
 
@@ -449,7 +450,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Oxlint alone does not replace the complete existing project rule set.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/eslint/10.12.0
+- Source: <https://registry.npmjs.org/eslint/10.12.0>
 
 ### eslint-config-prettier
 
@@ -462,7 +463,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Maintain a duplicate conflict list in project configuration.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/eslint-config-prettier/10.1.8
+- Source: <https://registry.npmjs.org/eslint-config-prettier/10.1.8>
 
 ### eslint-plugin-boundaries
 
@@ -475,7 +476,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Dependency-cruiser or a shared small graph checker.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/eslint-plugin-boundaries/7.2.0
+- Source: <https://registry.npmjs.org/eslint-plugin-boundaries/7.2.0>
 
 ### eslint-plugin-react-refresh
 
@@ -488,7 +489,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Custom export-pattern checks; retain the compatible ESLint10 plugin.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/eslint-plugin-react-refresh/0.5.7
+- Source: <https://registry.npmjs.org/eslint-plugin-react-refresh/0.5.7>
 
 ### globals
 
@@ -501,7 +502,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Manual ambient-name lists prone to drift between environments.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/globals/17.13.0
+- Source: <https://registry.npmjs.org/globals/17.13.0>
 
 ### happy-dom
 
@@ -514,7 +515,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: jsdom was rejected by the unchanged transitive-license gate; real browser behavior stays in Playwright.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/happy-dom/21.0.1
+- Source: <https://registry.npmjs.org/happy-dom/21.0.1>
 
 ### lefthook
 
@@ -527,20 +528,33 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Husky or bespoke hook installation; retain the verified pinned binary and denied install build.
 - Risk: Install scripts: postinstall. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/lefthook/2.2.1
+- Source: <https://registry.npmjs.org/lefthook/2.2.1>
 
 ### markdownlint-cli2
 
 - Version: 0.23.3
 - License: MIT
-- Used by: catalog reserve; not installed (future)
-- Added by: OVE_SETUP001
-- Value: Reserve semantic Markdown linting for the OSS documentation task.
+- Used by: blocked catalog reserve; not installed
+- Added by: OVE_OSS004
+- Value: Enforce Markdown semantics for the offline documentation checker; Prettier alone does not validate headings, fences or fragments.
 - Maintenance cost: Upstream-driven release cadence; review every update. 1 npm publisher maintainers; pinned unpacked size 229 KiB.
 - Alternatives considered: Prettier formatting plus custom documentation checks.
-- Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
+- Risk: Adoption blocked by argparse 3.0.2 PSF-2.0 and braces 3.0.3 HIGH GHSA-vfj7-8cjw-p6xm; no license exception or audit suppression.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/markdownlint-cli2/0.23.3
+- Source: <https://registry.npmjs.org/markdownlint-cli2/0.23.3>
+
+### markdownlint
+
+- Version: 0.41.1
+- License: MIT
+- Used by: overmind (dev)
+- Added by: OVE_OSS004
+- Value: Enforce prescribed Markdown semantics through the official API; exact core embedded in CLI2 0.23.3, narrow Owner decision confirmed 2026-10-17 (Europe/Warsaw).
+- Maintenance cost: Review pinned upstream API and generated graph on updates; checker owns file enumeration and reviewed JSON configuration.
+- Alternatives considered: CLI2 0.23.3 is blocked by denied argparse PSF-2.0 and an unpatched HIGH braces advisory; Prettier alone cannot enforce Markdown semantics.
+- Risk: No install scripts in the isolated 49-package MIT graph. Full audit disclosed one LOW KaTeX advisory; no finding is suppressed or waived. Whole-project gates remain mandatory.
+- Last reviewed: 2026-10-17
+- Source: <https://github.com/DavidAnson/markdownlint/blob/v0.41.1/README.md#api>
 
 ### oxlint
 
@@ -553,7 +567,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: The previous hooks plugin required denied metadata dependencies; keep the tested native rule mapping.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/oxlint/1.87.0
+- Source: <https://registry.npmjs.org/oxlint/1.87.0>
 
 ### playwright
 
@@ -566,7 +580,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: WebDriver or direct CDP orchestration.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/playwright/1.64.0
+- Source: <https://registry.npmjs.org/playwright/1.64.0>
 
 ### prettier
 
@@ -579,7 +593,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Per-language formatters with separate configuration and upgrade paths.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/prettier/3.9.10
+- Source: <https://registry.npmjs.org/prettier/3.9.10>
 
 ### react
 
@@ -592,7 +606,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Another UI framework would require revisiting the existing design and test contracts.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/react/19.3.0
+- Source: <https://registry.npmjs.org/react/19.3.0>
 
 ### react-dom
 
@@ -605,7 +619,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: A different renderer would change the desktop UI platform.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/react-dom/19.3.0
+- Source: <https://registry.npmjs.org/react-dom/19.3.0>
 
 ### semver
 
@@ -618,7 +632,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: A custom version parser adds a second interpretation of npm peer ranges.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/semver/7.8.5
+- Source: <https://registry.npmjs.org/semver/7.8.5>
 
 ### spdx-license-ids
 
@@ -631,7 +645,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: A parser package carrying denied CC-BY exception data; no exception-name database is approved.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/spdx-license-ids/3.0.24
+- Source: <https://registry.npmjs.org/spdx-license-ids/3.0.24>
 
 ### storybook
 
@@ -644,7 +658,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Standalone component demo routes; actual adoption must pass the full license graph.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/storybook/10.6.2
+- Source: <https://registry.npmjs.org/storybook/10.6.2>
 
 ### tsx
 
@@ -657,7 +671,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Compile every helper before invocation or maintain duplicate JavaScript entrypoints.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/tsx/4.23.15
+- Source: <https://registry.npmjs.org/tsx/4.23.15>
 
 ### typescript
 
@@ -670,7 +684,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: TypeScript7 is outside the actual typescript-eslint peer range.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/typescript/6.0.3
+- Source: <https://registry.npmjs.org/typescript/6.0.3>
 
 ### typescript-eslint
 
@@ -683,7 +697,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Untyped linting loses the existing type-aware safety checks.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/typescript-eslint/8.71.1
+- Source: <https://registry.npmjs.org/typescript-eslint/8.71.1>
 
 ### vite
 
@@ -696,7 +710,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Vite8 introduces the denied MPL graph; other bundlers require a deliberate reviewed change.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/vite/7.3.7
+- Source: <https://registry.npmjs.org/vite/7.3.7>
 
 ### vitest
 
@@ -709,7 +723,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Another test runner would replace the existing workspace/environment/coverage contracts.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/vitest/5.0.4
+- Source: <https://registry.npmjs.org/vitest/5.0.4>
 
 ### yaml
 
@@ -722,7 +736,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Custom YAML parsing or JSON-only configuration would duplicate existing ecosystem formats.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/yaml/2.9.1
+- Source: <https://registry.npmjs.org/yaml/2.9.1>
 
 ### zod
 
@@ -736,7 +750,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
 - Last reviewed: 2026-10-16
 - Pure layer: pure-layer-ok
-- Source: https://registry.npmjs.org/zod/4.6.6
+- Source: <https://registry.npmjs.org/zod/4.6.6>
 
 ### actionlint
 
@@ -749,7 +763,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Reuse the generic downloader; no paid Gitleaks Action. Syft covers both lockfile ecosystems whereas pnpm SBOM covers JavaScript only.
 - Risk: Third-party native executable; HTTPS and pinned checksum before execution, cached bytes reverified, least-privilege CI and no unchecked fallback.
 - Last reviewed: 2026-10-16
-- Source: https://github.com/rhysd/actionlint/releases
+- Source: <https://github.com/rhysd/actionlint/releases>
 
 ### zizmor
 
@@ -762,7 +776,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Reuse the generic downloader; no paid Gitleaks Action. Syft covers both lockfile ecosystems whereas pnpm SBOM covers JavaScript only.
 - Risk: Third-party native executable; HTTPS and pinned checksum before execution, cached bytes reverified, least-privilege CI and no unchecked fallback.
 - Last reviewed: 2026-10-16
-- Source: https://github.com/zizmorcore/zizmor/releases
+- Source: <https://github.com/zizmorcore/zizmor/releases>
 
 ### cargo-deny
 
@@ -775,7 +789,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Reuse the generic downloader; no paid Gitleaks Action. Syft covers both lockfile ecosystems whereas pnpm SBOM covers JavaScript only.
 - Risk: Third-party native executable; HTTPS and pinned checksum before execution, cached bytes reverified, least-privilege CI and no unchecked fallback.
 - Last reviewed: 2026-10-16
-- Source: https://github.com/EmbarkStudios/cargo-deny/releases
+- Source: <https://github.com/EmbarkStudios/cargo-deny/releases>
 
 ### cargo-audit
 
@@ -788,7 +802,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Reuse the generic downloader; no paid Gitleaks Action. Syft covers both lockfile ecosystems whereas pnpm SBOM covers JavaScript only.
 - Risk: Third-party native executable; HTTPS and pinned checksum before execution, cached bytes reverified, least-privilege CI and no unchecked fallback.
 - Last reviewed: 2026-10-16
-- Source: https://github.com/rustsec/rustsec/releases
+- Source: <https://github.com/rustsec/rustsec/releases>
 
 ### gitleaks
 
@@ -801,7 +815,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Reuse the generic downloader; no paid Gitleaks Action. Syft covers both lockfile ecosystems whereas pnpm SBOM covers JavaScript only.
 - Risk: Third-party native executable; HTTPS and pinned checksum before execution, cached bytes reverified, least-privilege CI and no unchecked fallback.
 - Last reviewed: 2026-10-16
-- Source: https://github.com/gitleaks/gitleaks/releases
+- Source: <https://github.com/gitleaks/gitleaks/releases>
 
 ### syft
 
@@ -814,7 +828,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Reuse the generic downloader; no paid Gitleaks Action. Syft covers both lockfile ecosystems whereas pnpm SBOM covers JavaScript only.
 - Risk: Third-party native executable; HTTPS and pinned checksum before execution, cached bytes reverified, least-privilege CI and no unchecked fallback.
 - Last reviewed: 2026-10-16
-- Source: https://github.com/anchore/syft/releases
+- Source: <https://github.com/anchore/syft/releases>
 
 ### crate:tauri
 
@@ -827,7 +841,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Keep business logic in TypeScript engine/adapters; Rust remains a thin shell.
 - Risk: Native code and possible crate build scripts; SETUP010 must prove licenses, sources, bans, locked install and capabilities before use.
 - Last reviewed: 2026-10-16
-- Source: https://crates.io/api/v1/crates/tauri/2.12.3
+- Source: <https://crates.io/api/v1/crates/tauri/2.12.3>
 
 ### crate:tauri-build
 
@@ -840,7 +854,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Keep business logic in TypeScript engine/adapters; Rust remains a thin shell.
 - Risk: Native code and possible crate build scripts; SETUP010 must prove licenses, sources, bans, locked install and capabilities before use.
 - Last reviewed: 2026-10-16
-- Source: https://crates.io/api/v1/crates/tauri-build/2.7.2
+- Source: <https://crates.io/api/v1/crates/tauri-build/2.7.2>
 
 ### crate:tauri-plugin-shell
 
@@ -853,7 +867,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Keep business logic in TypeScript engine/adapters; Rust remains a thin shell.
 - Risk: Native code and possible crate build scripts; SETUP010 must prove licenses, sources, bans, locked install and capabilities before use.
 - Last reviewed: 2026-10-16
-- Source: https://crates.io/api/v1/crates/tauri-plugin-shell/2.5.0
+- Source: <https://crates.io/api/v1/crates/tauri-plugin-shell/2.5.0>
 
 ### crate:tauri-plugin-single-instance
 
@@ -866,7 +880,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Keep business logic in TypeScript engine/adapters; Rust remains a thin shell.
 - Risk: Native code and possible crate build scripts; SETUP010 must prove licenses, sources, bans, locked install and capabilities before use.
 - Last reviewed: 2026-10-16
-- Source: https://crates.io/api/v1/crates/tauri-plugin-single-instance/2.5.3
+- Source: <https://crates.io/api/v1/crates/tauri-plugin-single-instance/2.5.3>
 
 ### crate:tauri-plugin-dialog
 
@@ -879,7 +893,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Keep business logic in TypeScript engine/adapters; Rust remains a thin shell.
 - Risk: Native code and possible crate build scripts; SETUP010 must prove licenses, sources, bans, locked install and capabilities before use.
 - Last reviewed: 2026-10-16
-- Source: https://crates.io/api/v1/crates/tauri-plugin-dialog/2.8.2
+- Source: <https://crates.io/api/v1/crates/tauri-plugin-dialog/2.8.2>
 
 ### crate:serde
 
@@ -892,7 +906,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Keep business logic in TypeScript engine/adapters; Rust remains a thin shell.
 - Risk: Native code and possible crate build scripts; SETUP010 must prove licenses, sources, bans, locked install and capabilities before use.
 - Last reviewed: 2026-10-16
-- Source: https://crates.io/api/v1/crates/serde/1.0.229
+- Source: <https://crates.io/api/v1/crates/serde/1.0.229>
 
 ### crate:serde_json
 
@@ -905,7 +919,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Keep business logic in TypeScript engine/adapters; Rust remains a thin shell.
 - Risk: Native code and possible crate build scripts; SETUP010 must prove licenses, sources, bans, locked install and capabilities before use.
 - Last reviewed: 2026-10-16
-- Source: https://crates.io/api/v1/crates/serde_json/1.0.154
+- Source: <https://crates.io/api/v1/crates/serde_json/1.0.154>
 
 ### crate:tokio
 
@@ -918,7 +932,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Keep business logic in TypeScript engine/adapters; Rust remains a thin shell.
 - Risk: Native code and possible crate build scripts; SETUP010 must prove licenses, sources, bans, locked install and capabilities before use.
 - Last reviewed: 2026-10-16
-- Source: https://crates.io/api/v1/crates/tokio/1.53.2
+- Source: <https://crates.io/api/v1/crates/tokio/1.53.2>
 
 ### Node.js
 
@@ -931,7 +945,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Node24 migration requires an ADR and compatibility proof.
 - Risk: Executable runtime/package manager; no unchecked install-script execution, exact integrity and least-privilege CI.
 - Last reviewed: 2026-10-16
-- Source: https://nodejs.org/dist/v22.23.3/
+- Source: <https://nodejs.org/dist/v22.23.3/>
 
 ### pnpm
 
@@ -944,7 +958,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: npm or Yarn would replace the reviewed catalog/workspace policy.
 - Risk: Executable runtime/package manager; no unchecked install-script execution, exact integrity and least-privilege CI.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/pnpm/12.11.2
+- Source: <https://registry.npmjs.org/pnpm/12.11.2>
 
 ### actions/checkout
 
@@ -958,7 +972,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Risk: Executable third-party action; least-privilege job tokens, no fork secrets, no automatic merge, no unreviewed floating tags.
 - Last reviewed: 2026-10-16
 - Digest: 3d3c42e5aac5ba805825da76410c181273ba90b1
-- Source: https://github.com/actions/checkout/blob/3d3c42e5aac5ba805825da76410c181273ba90b1/LICENSE
+- Source: <https://github.com/actions/checkout/blob/3d3c42e5aac5ba805825da76410c181273ba90b1/LICENSE>
 
 ### actions/setup-node
 
@@ -972,7 +986,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Risk: Executable third-party action; least-privilege job tokens, no fork secrets, no automatic merge, no unreviewed floating tags.
 - Last reviewed: 2026-10-16
 - Digest: 949feb2413d6458794dcd2491c4babbbce0c15c1
-- Source: https://github.com/actions/setup-node/blob/949feb2413d6458794dcd2491c4babbbce0c15c1/LICENSE
+- Source: <https://github.com/actions/setup-node/blob/949feb2413d6458794dcd2491c4babbbce0c15c1/LICENSE>
 
 ### actions/cache/restore
 
@@ -986,7 +1000,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Risk: Executable third-party action; least-privilege job tokens, no fork secrets, no automatic merge, no unreviewed floating tags.
 - Last reviewed: 2026-10-16
 - Digest: 55cc8345863c7cc4c66a329aec7e433d2d1c52a9
-- Source: https://github.com/actions/cache/blob/55cc8345863c7cc4c66a329aec7e433d2d1c52a9/LICENSE
+- Source: <https://github.com/actions/cache/blob/55cc8345863c7cc4c66a329aec7e433d2d1c52a9/LICENSE>
 
 ### actions/cache/save
 
@@ -1000,7 +1014,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Risk: Executable third-party action; least-privilege job tokens, no fork secrets, no automatic merge, no unreviewed floating tags.
 - Last reviewed: 2026-10-16
 - Digest: 55cc8345863c7cc4c66a329aec7e433d2d1c52a9
-- Source: https://github.com/actions/cache/blob/55cc8345863c7cc4c66a329aec7e433d2d1c52a9/LICENSE
+- Source: <https://github.com/actions/cache/blob/55cc8345863c7cc4c66a329aec7e433d2d1c52a9/LICENSE>
 
 ### actions/upload-artifact
 
@@ -1014,7 +1028,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Risk: Executable third-party action; least-privilege job tokens, no fork secrets, no automatic merge, no unreviewed floating tags.
 - Last reviewed: 2026-10-16
 - Digest: cf430e030ddbb5b0abf93d22962f4752f3646cd9
-- Source: https://github.com/actions/upload-artifact/blob/cf430e030ddbb5b0abf93d22962f4752f3646cd9/LICENSE
+- Source: <https://github.com/actions/upload-artifact/blob/cf430e030ddbb5b0abf93d22962f4752f3646cd9/LICENSE>
 
 ### actions/download-artifact
 
@@ -1028,7 +1042,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Risk: Executable third-party action; least-privilege job tokens, no fork secrets, no automatic merge, no unreviewed floating tags.
 - Last reviewed: 2026-10-16
 - Digest: 9000827ccba6bdab643e8b6fd33ac0654aef8333
-- Source: https://github.com/actions/download-artifact/blob/9000827ccba6bdab643e8b6fd33ac0654aef8333/LICENSE
+- Source: <https://github.com/actions/download-artifact/blob/9000827ccba6bdab643e8b6fd33ac0654aef8333/LICENSE>
 
 ### actions/dependency-review-action
 
@@ -1042,7 +1056,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Risk: Executable third-party action; least-privilege job tokens, no fork secrets, no automatic merge, no unreviewed floating tags.
 - Last reviewed: 2026-10-16
 - Digest: a1d282b36b6f3519aa1f3fc636f609c47dddb294
-- Source: https://github.com/actions/dependency-review-action/blob/a1d282b36b6f3519aa1f3fc636f609c47dddb294/LICENSE
+- Source: <https://github.com/actions/dependency-review-action/blob/a1d282b36b6f3519aa1f3fc636f609c47dddb294/LICENSE>
 
 ### github/codeql-action/upload-sarif
 
@@ -1056,8 +1070,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Risk: Executable third-party action; least-privilege job tokens, no fork secrets, no automatic merge, no unreviewed floating tags.
 - Last reviewed: 2026-10-16
 - Digest: 24c54180a607b1449ed407dd24f251e4e9147c8d
-- Source: https://github.com/github/codeql-action/blob/24c54180a607b1449ed407dd24f251e4e9147c8d/LICENSE
-
+- Source: <https://github.com/github/codeql-action/blob/24c54180a607b1449ed407dd24f251e4e9147c8d/LICENSE>
 
 ### @vitejs/plugin-react-swc
 
@@ -1099,9 +1112,9 @@ solution or obtain an explicit policy decision; no exception is created here.
 
 ## Operational limits and sources
 
-Node22 status and EOL: https://github.com/nodejs/Release/blob/main/schedule.json.
+Node22 status and EOL: <https://github.com/nodejs/Release/blob/main/schedule.json>.
 Registry manifests are the exact version endpoints linked per block; latest was
-checked at https://registry.npmjs.org/<package>/latest on the verification date.
+checked at `https://registry.npmjs.org/<package>/latest` on the verification date.
 Crate metadata uses the exact crates.io API endpoints linked above. Binary release
 pins/checksums remain the publisher-verified values from SETUP006/007; a pin does
 not authorize arbitrary future releases. herdr/container CLI pins remain SETUP015.
@@ -1167,7 +1180,7 @@ Cargo syntax must introduce a reviewed TOML parser rather than extend heuristics
 - Alternatives considered: Unsafe direct libc calls or checking only pathname metadata, which misses peer credentials.
 - Risk: Native dependency; no elevated rights or TCP transport; full Rust license gate is mandatory on every update.
 - Last reviewed: 2026-10-16
-- Source: https://crates.io/api/v1/crates/nix/0.31.3
+- Source: <https://crates.io/api/v1/crates/nix/0.31.3>
 
 ### crate:hyper
 
@@ -1180,7 +1193,7 @@ Cargo syntax must introduce a reviewed TOML parser rather than extend heuristics
 - Alternatives considered: Handwritten HTTP parser and chunk framing with request-smuggling risk.
 - Risk: Native dependency; no elevated rights or TCP transport; full Rust license gate is mandatory on every update.
 - Last reviewed: 2026-10-16
-- Source: https://crates.io/api/v1/crates/hyper/1.12.0
+- Source: <https://crates.io/api/v1/crates/hyper/1.12.0>
 
 ### crate:hyper-util
 
@@ -1193,7 +1206,7 @@ Cargo syntax must introduce a reviewed TOML parser rather than extend heuristics
 - Alternatives considered: Duplicating the runtime IO bridge and pinning internal Hyper interfaces.
 - Risk: Native dependency; no elevated rights or TCP transport; full Rust license gate is mandatory on every update.
 - Last reviewed: 2026-10-16
-- Source: https://crates.io/api/v1/crates/hyper-util/0.1.21
+- Source: <https://crates.io/api/v1/crates/hyper-util/0.1.21>
 
 ### crate:http-body-util
 
@@ -1206,7 +1219,7 @@ Cargo syntax must introduce a reviewed TOML parser rather than extend heuristics
 - Alternatives considered: Manual unbounded buffering or duplicating HTTP body implementations.
 - Risk: Native dependency; no elevated rights or TCP transport; full Rust license gate is mandatory on every update.
 - Last reviewed: 2026-10-16
-- Source: https://crates.io/api/v1/crates/http-body-util/0.1.5
+- Source: <https://crates.io/api/v1/crates/http-body-util/0.1.5>
 
 ### crate:exacl
 
@@ -1219,4 +1232,4 @@ Cargo syntax must introduce a reviewed TOML parser rather than extend heuristics
 - Alternatives considered: Unsafe direct libc ACL calls violate the shell unsafe-code prohibition; parsing ls output is brittle and starts an unnecessary process on every request.
 - Risk: Native dependency wrapping OS ACL APIs; default features disabled, no build-time bindgen, no ACL writes in production. Read failure or any extended ACL fails closed.
 - Last reviewed: 2026-10-16
-- Source: https://crates.io/api/v1/crates/exacl/0.13.0
+- Source: <https://crates.io/api/v1/crates/exacl/0.13.0>

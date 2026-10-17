@@ -70,6 +70,7 @@
     "globals": "catalog:",
     "happy-dom": "catalog:",
     "lefthook": "catalog:",
+    "markdownlint": "catalog:",
     "oxlint": "catalog:",
     "postject": "catalog:",
     "prettier": "catalog:",

@@ -21,7 +21,7 @@ Wybrane 2026-10-13 spośród 10 propozycji i 6 wariantów drugiej rundy (plansze
 ## Paleta
 
 | Rola | Kolor |
-|---|---|
+| --- | --- |
 | Tło aplikacji | `#0A0710` |
 | Rail, nagłówek, panele boczne | `#0D0915` / `#0C0814` |
 | Karty | `#140F20` / `#160F24`, ramki `#241B36` / `#2A2040`, mocna ramka `#5B3E8F` |
@@ -38,6 +38,7 @@ Wybrane 2026-10-13 spośród 10 propozycji i 6 wariantów drugiej rundy (plansze
 ## Kafelek Węzła na canvasie
 
 Wzorowany na zrzucie referencyjnym:
+
 - ramka 2 px w kolorze typu i stos dwóch kart pod spodem;
 - **zakładka typu** w lewym górnym rogu, wypełniona kolorem: PUBLICZNY, PRYWATNY, TOR · BUILD/QA/REVIEW, DYSKUSJA;
 - **zakładka Skilli** w prawym górnym rogu („2 skille”) — to cel przeciągania. Podczas przeciągania ma przerywaną magentową ramkę i napis „upuść → 1 skill”;
@@ -56,16 +57,19 @@ Grupy (pętla, Tory Tablicy) to zaokrąglona ramka z opisem w lewym górnym rogu
 ## Szkielet aplikacji
 
 **Lewy pasek: logo i 7 ikon.**
+
 - Na górze: Workspace'y (pulpit), Chief (czaty z Chiefem i Agentami oraz Dyskusje), Workflow (canvas oraz Runy i Activity), Tablica Zadań, Rejestr decyzji.
 - Pod kreską: Agenci (Agenci i biblioteka Skilli).
 - Na samym dole: Ustawienia (ten Workspace, Połączenia i modele, ustawienia aplikacji).
 
 **Zakładki pod nagłówkiem** w ekranach z kilkoma częściami:
+
 - Workflow: Canvas | Runy i Activity;
 - Agenci: Agenci | Skille;
 - Ustawienia: Ten Workspace | Połączenia i modele | Aplikacja.
 
 **Gdzie trafiły pozostałe funkcje:**
+
 - Zgody i Prośby o dostęp mają przycisk z licznikiem w górnym pasku („3 czekają”), bo to sprawy pilne.
 - Dyskusje są na liście rozmów u Chiefa.
 - Bezpośrednie czaty z Agentami też są na liście rozmów u Chiefa.

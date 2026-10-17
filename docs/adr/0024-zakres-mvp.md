@@ -1,6 +1,7 @@
 # Zakres pierwszego wydania (MVP)
 
 MVP obejmuje:
+
 - Chiefa i Agentów z osobnymi czatami,
 - canvas z Węzłami Agent, Parallel, Join, IF, Loop, Dyskusja i Review oraz Skillami przeciąganymi na kafelki,
 - Tablicę Zadań, Rejestr decyzji i Pamięć agenta,

@@ -1,12 +1,13 @@
 # Analiza herdr jako inspiracji dla Overmind
 
-**Data:** 2026-10-12 | **Źródło:** repozytorium https://github.com/herdrdev/herdr (stan z 12.10.2026, ostatnie 200 commitów), dokumentacja w `docs/`.
+**Data:** 2026-10-12 | **Źródło:** repozytorium <https://github.com/herdrdev/herdr> (stan z 12.10.2026, ostatnie 200 commitów), dokumentacja w `docs/`.
 
 ## 1. Czym jest herdr
 
 herdr to „środowisko uruchomieniowe, w którym żyją agenci programistyczni”. Jest to jeden plik binarny w Ruście, który działa jednocześnie jako CLI, klient terminalowy (TUI) i serwer w tle. Uruchamia w swoich terminalach istniejące narzędzia (Claude Code, Codex, Cursor, opencode, Grok i ok. 20 innych), nie opakowując ich. Pokazuje stan każdego agenta (pracuje, zablokowany, bezczynny) i pozwala agentom sterować sobą nawzajem przez CLI i API.
 
 **Skala i tempo** wskazują na duży sukces:
+
 - 59 wydań od 0.1.0 (27.03.2026) do 0.9.3 (29.09.2026);
 - numery PR-ów w okolicach 5000;
 - formuła w głównym repozytorium Homebrew;
@@ -92,7 +93,7 @@ herdr **nie dotyka żadnych danych logowania**. Kluczy API ani tokenów nie czyt
 ## 4. Co przenieść do Overmind
 
 | Wzorzec z herdr | Co znaczy dla Overmind | Powiązanie |
-|---|---|---|
+| --- | --- | --- |
 | Serwer w tle + cienkie klienty przez gniazdo 0600 | Silnik Overmind jako osobny proces. Okno Tauri, Telegram i CLI to tylko klienci. Na macOS trik z bootstrap namespace | ADR 0005 |
 | Publiczne API JSON generowane z typów, zmiany tylko addytywne | Jedno API silnika dla UI, Telegrama, CLI i Agentów; schemat z typów TypeScript (Zod) | rozdz. 13 spec. |
 | Wykrywanie stanu CLI po ekranie i OSC, manifesty z regułami | Adaptery `claude`/`codex` rozpoznają: pracuje, czeka na zgodę, skończył. Bez tego Chief nie wie, kiedy Agent skończył Zadanie | ADR 0022 |

@@ -1,0 +1,21 @@
+{
+  "config": {
+    "default": true,
+    "MD013": false,
+    "MD024": { "siblings_only": true },
+    "MD025": { "front_matter_title": "" },
+    "MD033": { "allowed_elements": ["details", "summary", "br", "img", "kbd"] },
+    "MD036": false,
+    "MD040": true,
+    "MD041": true,
+    "MD046": { "style": "fenced" },
+    "MD051": true,
+  },
+  "ignores": [
+    "docs/pl/**",
+    "tasks/**",
+    "**/node_modules/**",
+    "THIRD_PARTY_NOTICES.md",
+    "CODE_OF_CONDUCT.md",
+  ],
+}
