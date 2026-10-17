@@ -204,3 +204,24 @@ that stale entry, retaining the other three and strict stale-entry enforcement.
 This is a narrow integration repair, not a complete-gate or acceptance pass.
 After the correction, actual `pnpm check:docs` passed with zero errors and
 38 warnings, and scoped JSON formatting passed.
+
+The actual complete-gate attempt at `00ff7c4` passed 539 covered tests, 70
+integrations, build, architecture/workflow, npm license/audits and Rust
+license/source/bans/fmt/Clippy/33 tests, then failed while downloading the pinned
+cargo-audit archive (`UND_ERR_SOCKET`). The failed run is preserved. After an
+exclusive byte-identical copy of an existing archive verified against the same
+locked checksum, the original installer and only the failed/unreached gates
+passed: cargo-audit, actual manifest-schema selection, both secret scans and
+SBOM. This is a complementary continuation PASS, not an original `pnpm check`
+PASS. Actual production ADR/index commands separately still exit 1 on legacy0001.
+
+New actual public CLI coverage first exposed a 3000 ms deadline on the complete
+31-published-record fixture. A one-time content-free Git diagnostic proved
+repeated immutable tree reads. An invocation-local successful-read cache retains
+at most 32 trees and 4 MiB of UTF-16 text accounting; it changes no history,
+transition, label or error checks. With the same fixture/assertions/3 s child and
+15 s test limits, both actual allocation and renumber/index/check CLI cases
+passed in 11.22 seconds. Full typecheck/lint and source formatting then passed;
+seven ADR integrations passed in 22.45 seconds and 76 shared ADR/docs unit tests
+in 6.68 seconds. Fresh independent review and all exact-new-head gates remain
+required. Current criteria, status and pending Owner acceptance are unchanged.

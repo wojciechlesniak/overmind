@@ -584,3 +584,74 @@ This approval grants no staged acceptance or normative criteria change.
 After this correction, actual `pnpm check:docs` returned zero errors and
 38 warnings; capture: `ove026-pending-link-green.log`. Scoped JSON formatting
 also passed. Neither result substitutes for the remaining complete gate list.
+
+### Exact gate evidence before the public-CLI history optimization
+
+At `00ff7c4`, the real gate list with only one coverage/integration worker passed
+539 covered tests across 99 files (98.95 seconds), 70 integrations across 20
+files (191.24 seconds), build, architecture including four public dependency CLI
+tests, workflow lint, npm licenses/audits and Rust deny/fmt/Clippy/33 tests. The
+original attempt then failed at the original `install("cargo-audit")` download
+with `UND_ERR_SOCKET`. That failure and its receipts remain preserved; there is
+no original complete-wrapper PASS.
+
+The integrator approved repairing only this network prerequisite from an existing
+regular unlinked archive with no symlink components. An exclusive byte-identical
+copy was checked against the unchanged locked SHA before the original installer
+repeated checksum/member/extraction validation. Only the failed/unreached suffix
+then ran, in its original order: cargo-audit, the actual original manifest-schema
+reader/conditional, secret scans and SBOM. Cargo audit passed with its existing
+five allowed warnings; secret scans each found zero secrets and one Keychain
+warning; SBOM contained 886 components. No paired desktop scripts or GitHub event
+were present, so only their original conditional paths were unselected. Actual
+production ADR/index commands separately exited 1 on legacy ADR 0001 metadata.
+
+The truthful result is the failed initial attempt plus a passing complementary
+continuation at the same unchanged source/head. Captures are
+`ove026-full-gates-00ff7c4.log`, `ove026-remaining-gates-00ff7c4.log`, their receipts,
+`ove026-gates-and-legacy-00ff7c4.final-result.json`, and the separate
+`ove026-production-adr-00ff7c4.log`/`ove026-production-index-00ff7c4.log`.
+Primary Owner-file/index/configuration and actual primary HEAD guards remained
+unchanged. No security check was waived or counted before execution.
+
+### Actual public CLI proof and bounded immutable history reads
+
+The new public CLI integration uses a unique real bare origin/local repository,
+isolated Git environment and fresh HOME/XDG, with cleanup on setup failure and
+after each case. The first case proves actual public allocation from local,
+DEVELOP and remote-task reservations and no writes when the origin is unavailable.
+The second retains all 31 published structured ADRs: actual check, new proposal,
+duplicate denial, renumber dry-run/full byte snapshot, apply/link/self-link and
+protected-example assertions, check, index generation/check, stale-table denial
+and final check. The public CLIs run real Node/tsx subprocesses; direct function
+calls do not replace these success assertions.
+
+The initial attempt passed allocation but timed out on the second case's first
+check child at its existing 3000 ms bound; no functional denial was claimed.
+A single external in-process diagnostic, with unchanged limits and no content/
+environment logging, completed 97 Git calls before that bound. It measured 24
+identical tree reads at 577.453 ms total, including 523.913 ms beyond the first.
+Neither the real published history nor its assertions were reduced.
+
+The minimal correction caches only successful validated tree-path reads under
+canonical immutable SHA keys inside one `checkHistory` invocation. Admission is
+bounded to 32 entries and 4 MiB retained UTF-16 text accounting, not a claim of
+exact total heap storage. A full budget skips admission, never validation;
+errors, mutable refs, filesystem state and other Git reads are not cached.
+The existing per-record history/path/output bounds, transition checks and
+approval-label behavior remain unchanged.
+
+The normal observer-free public CLI pair then passed in 11.22 seconds with its
+original 3000 ms child and 15000 ms case limits and one worker. Full workspace
+typecheck and full lint passed. The formatter corrected only new test layout;
+all changed sources then passed formatting and remain below 200 lines. Complete
+ADR integrations passed seven tests across five files in 22.45 seconds; shared
+ADR/docs units passed 76 across 20 files in 6.68 seconds. Original failed and
+diagnostic captures remain separate from GREEN captures; there was no unchanged
+retry, timeout increase or history reduction. New-source full gates and fresh
+independent reviews are still required before any integration/acceptance claim.
+
+The separate OSS014/015 and replacement-staging drafts remain outside this
+worktree for review. No task, dependency, criterion or approval is created by
+those drafts; the tracked normative TASK and current acceptance blockers remain
+unchanged pending an explicit Owner decision.

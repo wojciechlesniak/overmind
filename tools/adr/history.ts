@@ -75,7 +75,25 @@ export function checkHistory(
   if (!/^[a-f0-9]{40}$/u.test(base)) {
     throw new Error("Invalid ADR comparison base");
   }
-  const basePaths = paths(git, base);
+  const pathsByRevision = new Map<string, readonly string[]>();
+  let retainedTextBytes = 0;
+  const readPaths = (revision: string): readonly string[] => {
+    if (!/^[a-f0-9]{40}$/u.test(revision)) {
+      throw new Error("Invalid ADR history commit");
+    }
+    const cached = pathsByRevision.get(revision);
+    if (cached) {
+      return cached;
+    }
+    const found = paths(git, revision);
+    const textBytes = found.reduce((sum, path) => sum + path.length * 2, 0);
+    if (pathsByRevision.size < 32 && textBytes <= 4 * 1024 * 1024 - retainedTextBytes) {
+      pathsByRevision.set(revision, found);
+      retainedTextBytes += textBytes;
+    }
+    return found;
+  };
+  const basePaths = readPaths(base);
   const established = basePaths.includes("docs/adr/slug-map.json")
     ? parseSlugMap(git.run(["show", `${base}:docs/adr/slug-map.json`]))
     : undefined;
@@ -123,7 +141,7 @@ export function checkHistory(
     let previousSource = "";
     const entry = entries.find((item) => item.adr === record.meta.adr);
     for (const sha of commits) {
-      const candidates = paths(git, sha).filter(
+      const candidates = readPaths(sha).filter(
         (path) => path.startsWith(prefix) && numbered.test(path),
       );
       // Keep the established identity when a separate, unmerged proposal collided
