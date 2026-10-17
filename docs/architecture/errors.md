@@ -20,7 +20,8 @@ there is no claim that an expected-failure ESLint rule already exists.
    literal/enum strings are explicit whitelists. Free-form strings require
    `sanitisedText` or `sanitisedRelativePath`, which cap length at 200, strip
    controls and carry `sanitised: true` metadata. Do not mark raw CLI output safe.
-4. Regenerate the aggregate and run the registry discovery test. An independent TypeScript AST scan checks every area file against static
+4. Regenerate the aggregate and run the Tools catalogue integration test below.
+   Its independent TypeScript AST scan checks every area file against static
    generated catalogue metadata and the runtime registry. Duplicate areas
    or codes fail with both repository-relative source names. Generated task
    indexes are unrelated and must not be edited. Add the corresponding locale
@@ -166,8 +167,16 @@ lines += ['] as const;',
 PY
 pnpm exec prettier --write packages/contracts/src/errors/index.generated.ts
 pnpm exec vitest run packages/contracts packages/gateway
+pnpm exec vitest run --config vitest.int.config.ts tools/errors/catalogue-types.int.test.ts
 pnpm typecheck
 ```
+
+The Tools integration command checks the real source inventory and compiles the
+actual contracts registry test against additive/PERM and invalid closed/broad
+code types. Each compiler subprocess is bounded to 4 seconds within the unchanged
+5-second test deadline. The required CI test matrix runs this exact command on
+shard 1 after covered units; a structural mutation test detects a removed or
+bypassed integration step. Contracts runtime tests contain no Node I/O.
 
 The actual browser test bundles the contracts root with existing Vite/Rollup,
 rejects external dependencies and executes no input as code. It tolerates only

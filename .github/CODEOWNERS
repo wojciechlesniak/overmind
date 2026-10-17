@@ -13,6 +13,8 @@
 /tools/pinned-bin/ @wojciechlesniak
 /tools/check-licenses/ @wojciechlesniak
 /tools/ci/ @wojciechlesniak
+# Error catalogue compiler and its required CI regression gate (OVE_ARCH003).
+/tools/errors/ @wojciechlesniak
 /deny.toml @wojciechlesniak
 /.github/actionlint.yaml @wojciechlesniak
 # Secret detection policy and security binaries (OVE_SETUP007).

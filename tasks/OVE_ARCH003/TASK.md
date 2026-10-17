@@ -214,3 +214,41 @@ Blocks every task that returns errors; publish early (a first merge with `Result
   files; formatting and diff checks passed. Full checks and fresh independent
   reviews are still required; this checkpoint does not claim completion or merge
   approval.
+
+## Compiler integration checkpoint (2026-10-17)
+
+- The original complete covered run exposed two compiler-test timeouts. Scoped
+  passes did not establish acceptance. Facade and shared-builder experiments
+  also failed complete runs and were rejected; they are absent from this change.
+- The integrator approved classifying real source/TypeScript compiler work as
+  Tools integration tests. Contracts retains real Vitest runtime assertions,
+  duplicate rejection and native literal/core-code constraints, with no Node I/O.
+  Independent source/metadata/code inventory checks and four separate compiler
+  scenarios now live in `tools/errors/catalogue-types.int.test.ts`.
+- Every scenario still compiles the actual contracts registry test and product
+  declarations, collects all pre-emit diagnostics, preserves legitimate PERM
+  additions and rejects closed/broad code types. Each normal native child keeps
+  its 4000 ms bound within the unchanged 5000 ms test limit. No shared compiler
+  state, framework substitute, coverage exception or new dependency remains.
+- Required CI now invokes the exact integration command after covered units on
+  shard 1. Structural mutations prove that removing/bypassing the step, allowing
+  failure or dropping the required job dependency fails its ordinary unit gate.
+  Approved additive CODEOWNERS/config-change protection covers `tools/errors/`;
+  real Git fixtures prove missing-label denial and approved-label acceptance for
+  the compiler and gate validator, without matching a similarly named prefix.
+- Real verification on the current `90aad1c` integration base: exact hosted
+  integration command 5/5 passed; focused runtime/path/CI/configuration tests
+  18/18 passed. Full `pnpm test:coverage` passed 427/427 across 71 files in 33.25 s,
+  with statements 94.49%, branches 93.15%, functions 96%, lines 94.58% and unchanged
+  package thresholds. Full `pnpm test:int --reporter=verbose` passed 59/59 across
+  13 files in 48.35 s under unchanged two-worker contention. The four compilers
+  took 1466/1474/1468/1336 ms in that full integration run.
+- Full `pnpm typecheck` and `pnpm lint` passed. Direct lint fixes changed only
+  optional-chain/callback syntax, an equivalent bounded-read loop and the unique
+  fixture nonce representation. The strict test-project check and affected
+  protocol/structural-gate tests then passed again (11/11); complete suites were
+  not needlessly repeated. Changed-source formatting passed.
+- Rebase onto the latest DEVELOP, preservation of later SETUP014/OSS004 guards,
+  security checks, fresh independent Standards/Spec reviews and exact-head hosted
+  CI remain required before integration. No completion, live ruleset approval or
+  merge is claimed by this checkpoint.
