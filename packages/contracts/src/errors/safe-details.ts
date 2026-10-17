@@ -2,11 +2,24 @@ import { z } from "zod";
 import type { JsonValue, ErrorDefinition } from "./definition.ts";
 
 // Transitional error-boundary defence; ARCH004 will own shared redaction.
-const sensitive =
-  /(?:(?:^|\s|["'(])\/\S+|[A-Za-z]:[\\/]|\b(?:SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|CREATE)\b|\b(?:Bearer|stderr)\b|(?:sk-|gh[pousr]_|github_pat_|xox[baprs]-)[A-Za-z0-9_-]+|[A-Za-z0-9_-]{16,}\.[A-Za-z0-9_-]{16,}\.[A-Za-z0-9_-]+|-----BEGIN|\bat\s+\S+\s*\(|\p{Cc})/iu;
+const sensitive = [
+  /(?:^|[^\p{L}\p{N}_./-])\/\S+|[A-Za-z]:[\\/]/u,
+  /\b(?:SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|CREATE)\b|\b(?:Bearer|stderr)\b/iu,
+  /(?:sk-|gh[pousr]_|github_pat_|xox[baprs]-)[A-Za-z0-9_-]+/u,
+  /\b(?:AKIA|ASIA)[0-9A-Z]{16}\b/u,
+  /\b\d{8,10}:[A-Za-z0-9_-]{35}(?![A-Za-z0-9_-])/u,
+  /api\.telegram\.org\/bot[^/\s]+/iu,
+  /\bovm_(?:st|at)_[A-Za-z0-9_-]{20,}/u,
+  /[A-Za-z0-9_-]{16,}\.[A-Za-z0-9_-]{16,}\.[A-Za-z0-9_-]+/u,
+  /\beyJ[A-Za-z0-9_-]{8,}\.eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}/u,
+  /-----BEGIN|\bat\s+\S+\s*\(|\p{Cc}/u,
+  /keychain:[A-Za-z0-9._/-]+/iu,
+  /[?&](?:code|access_token|refresh_token|id_token)=[^&\s]+/iu,
+  /[a-z][a-z0-9+.-]*:\/\/[^/\s:@]+:[^/\s@]+@/iu,
+];
 
 export function isSafeText(value: string): boolean {
-  return value.length <= 240 && !sensitive.test(value);
+  return value.length <= 240 && !sensitive.some((pattern) => pattern.test(value));
 }
 
 export const sanitisedText = z
@@ -64,60 +77,107 @@ function approvedBySchema(schema: unknown, value: JsonValue): boolean {
   return true;
 }
 
-function jsonCopy(
-  value: unknown,
-  depth: number,
-  seen: Set<object>,
-  checkStrings = false,
-): JsonValue | undefined {
-  if (value === null || typeof value === "boolean") {
-    return value;
+interface CopyBudget {
+  entries: number;
+  bytes: number;
+  readonly seen: Set<object>;
+  readonly checkStrings: boolean;
+}
+
+function spendBytes(budget: CopyBudget, bytes: number): boolean {
+  budget.bytes -= bytes;
+  return budget.bytes >= 0;
+}
+
+function primitiveBytes(value: null | boolean | number | string): number {
+  let bytes = 0;
+  for (const character of JSON.stringify(value)) {
+    const point = character.codePointAt(0) ?? 0;
+    bytes += point <= 0x7f ? 1 : point <= 0x7ff ? 2 : point <= 0xffff ? 3 : 4;
   }
-  if (typeof value === "number") {
-    return Number.isFinite(value) ? value : undefined;
-  }
-  if (typeof value === "string") {
-    return value.length <= 240 && (!checkStrings || isSafeText(value)) ? value : undefined;
-  }
-  if (typeof value !== "object" || depth > 8 || seen.has(value)) {
+  return bytes;
+}
+
+function jsonCopy(value: unknown, depth: number, budget: CopyBudget): JsonValue | undefined {
+  budget.entries -= 1;
+  if (budget.entries < 0) {
     return undefined;
   }
+  if (
+    value === null ||
+    typeof value === "boolean" ||
+    (typeof value === "number" && Number.isFinite(value)) ||
+    (typeof value === "string" &&
+      value.length <= 240 &&
+      (!budget.checkStrings || isSafeText(value)))
+  ) {
+    return spendBytes(budget, primitiveBytes(value)) ? value : undefined;
+  }
+  if (typeof value !== "object" || depth > 8 || budget.seen.has(value)) {
+    return undefined;
+  }
+  const array = Array.isArray(value);
   const prototype: unknown = Object.getPrototypeOf(value);
-  if (prototype !== Object.prototype && prototype !== null && prototype !== Array.prototype) {
+  if (
+    array ? prototype !== Array.prototype : prototype !== Object.prototype && prototype !== null
+  ) {
     return undefined;
   }
-  seen.add(value);
-  const descriptors = Object.getOwnPropertyDescriptors(value);
-  const output: Record<string, JsonValue> = {};
-  const entries = Object.entries(descriptors).filter(
-    ([key]) => !(Array.isArray(value) && key === "length"),
+  const ownKeys = Reflect.ownKeys(value);
+  if (ownKeys.length > (array ? 101 : 100) || ownKeys.some((key) => typeof key !== "string")) {
+    return undefined;
+  }
+  const keys = ownKeys.filter(
+    (key): key is string => typeof key === "string" && !(array && key === "length"),
   );
-  if (entries.length > 100) {
+  if (keys.length > budget.entries) {
     return undefined;
   }
-  for (const [key, descriptor] of entries) {
+  if (array) {
+    const length: unknown = Object.getOwnPropertyDescriptor(value, "length")?.value;
+    if (length !== keys.length || keys.some((key, index) => key !== String(index))) {
+      return undefined;
+    }
+  }
+  let framingBytes = 2 + Math.max(0, keys.length - 1);
+  for (const key of keys) {
     if (
       !/^[A-Za-z0-9_]{1,64}$/u.test(key) ||
-      ["__proto__", "prototype", "constructor"].includes(key) ||
-      !("value" in descriptor)
+      ["__proto__", "prototype", "constructor"].includes(key)
     ) {
       return undefined;
     }
-    const copied = jsonCopy(descriptor.value, depth + 1, seen, checkStrings);
+    if (!array) {
+      framingBytes += key.length + 3;
+    }
+  }
+  if (!spendBytes(budget, framingBytes)) {
+    return undefined;
+  }
+  budget.seen.add(value);
+  const output: Record<string, JsonValue> = {};
+  for (const key of keys) {
+    const descriptor = Object.getOwnPropertyDescriptor(value, key);
+    if (!descriptor || !descriptor.enumerable || !("value" in descriptor)) {
+      return undefined;
+    }
+    const copied = jsonCopy(descriptor.value, depth + 1, budget);
     if (copied === undefined) {
       return undefined;
     }
     output[key] = copied;
   }
-  seen.delete(value);
-  if (!Array.isArray(value)) {
-    return output;
-  }
-  const length = value.length;
-  if (length !== entries.length) {
-    return undefined;
-  }
-  return Array.from({ length }, (_, index) => output[String(index)] ?? null);
+  budget.seen.delete(value);
+  return array ? keys.map((key) => output[key] ?? null) : output;
+}
+
+function boundedCopy(value: unknown, checkStrings = false): JsonValue | undefined {
+  return jsonCopy(value, 0, {
+    entries: 512,
+    bytes: 16_384,
+    seen: new Set(),
+    checkStrings,
+  });
 }
 
 export function validateDetails(
@@ -128,7 +188,7 @@ export function validateDetails(
     return undefined;
   }
   try {
-    const copy = jsonCopy(input, 0, new Set());
+    const copy = boundedCopy(input);
     if (!copy || typeof copy !== "object" || Array.isArray(copy)) {
       return undefined;
     }
@@ -136,11 +196,10 @@ export function validateDetails(
     if (!parsed.success) {
       return undefined;
     }
-    const validated = jsonCopy(parsed.data, 0, new Set(), true);
+    const validated = boundedCopy(parsed.data, true);
     return validated &&
       typeof validated === "object" &&
       !Array.isArray(validated) &&
-      JSON.stringify(validated).length <= 16_384 &&
       approvedBySchema(z.toJSONSchema(definition.detailsSchema, { io: "input" }), validated)
       ? validated
       : undefined;

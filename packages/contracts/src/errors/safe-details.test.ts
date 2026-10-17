@@ -80,6 +80,9 @@ it("rejects malformed, reflective and oversized detail values without invoking a
     { count: Number.POSITIVE_INFINITY },
     { count: undefined },
     { count: () => 1 },
+    { count: 1, [Symbol("hidden")]: "private fixture value" },
+    Object.defineProperty({}, "count", { value: 1, enumerable: false }),
+    { values: Object.assign([1], { extra: 2 }) },
     { count: new Date(0) },
     cycle,
     accessor,
@@ -115,4 +118,75 @@ it("keeps causes in memory and rejects unsafe registration messages", () => {
       defaultMessage: "/Users/fake/private",
     }),
   ).toThrow("Unsafe error definition.");
+});
+
+it("bounds repeated DAG expansion before schema parsing", () => {
+  let descriptorReads = 0;
+  let schemaCalls = 0;
+  let graph: Record<string, unknown> = new Proxy(
+    { count: 1 },
+    {
+      getOwnPropertyDescriptor(target, key) {
+        descriptorReads += 1;
+        return Reflect.getOwnPropertyDescriptor(target, key);
+      },
+    },
+  );
+  for (let level = 0; level < 7; level += 1) {
+    graph = { a: graph, b: graph, c: graph, d: graph };
+  }
+  const schema = z.strictObject({ value: z.json() }).superRefine(() => {
+    schemaCalls += 1;
+  });
+  const error = createAppError(
+    "gateway.invalid_input",
+    { ...definition, detailsSchema: schema },
+    { value: graph },
+  );
+  expect(error).not.toHaveProperty("details");
+  expect(descriptorReads).toBeLessThanOrEqual(512);
+  expect(schemaCalls).toBe(0);
+});
+
+it("rejects the global serialized size before invoking the details schema", () => {
+  let schemaCalls = 0;
+  const schema = z.strictObject({ values: z.array(sanitisedText) }).superRefine(() => {
+    schemaCalls += 1;
+  });
+  const error = createAppError(
+    "gateway.invalid_input",
+    { ...definition, detailsSchema: schema },
+    { values: Array(100).fill("x".repeat(200)) },
+  );
+  expect(error).not.toHaveProperty("details");
+  expect(schemaCalls).toBe(0);
+});
+
+it("accepts small shared JSON and enforces the global value budget before parsing", () => {
+  let schemaCalls = 0;
+  const schema = z.strictObject({ groups: z.array(z.array(z.number())) }).superRefine(() => {
+    schemaCalls += 1;
+  });
+  const shared = Array.from({ length: 100 }, () => 1);
+  const bounded = { ...definition, detailsSchema: schema };
+  const accepted = { groups: Array.from({ length: 5 }, () => shared) };
+  expect(createAppError("gateway.invalid_input", bounded, accepted).details).toEqual(accepted);
+  expect(schemaCalls).toBe(1);
+  schemaCalls = 0;
+  const denied = { groups: Array.from({ length: 6 }, () => shared) };
+  expect(createAppError("gateway.invalid_input", bounded, denied)).not.toHaveProperty("details");
+  expect(schemaCalls).toBe(0);
+});
+
+it("counts UTF-8 bytes rather than string code units before schema parsing", () => {
+  let schemaCalls = 0;
+  const schema = z.strictObject({ values: z.array(sanitisedText) }).superRefine(() => {
+    schemaCalls += 1;
+  });
+  const details = { values: Array.from({ length: 100 }, () => "ą".repeat(100)) };
+  expect(JSON.stringify(details).length).toBeLessThan(16_384);
+  expect(
+    createAppError("gateway.invalid_input", { ...definition, detailsSchema: schema }, details),
+  ).not.toHaveProperty("details");
+  expect(schemaCalls).toBe(0);
 });

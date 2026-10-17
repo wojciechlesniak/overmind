@@ -77,3 +77,20 @@ Validation must invoke the exact flags on the generated registry and a real
 non-ignored source file, then pass normal commit hooks. No secret-policy or
 lint-rule change is proposed. Synthetic hostile token values are assembled at
 test runtime; the assertions still exercise the identical final token text.
+
+## Review-fix catalogue discovery alignment
+
+The generated seed now exports static catalogue-module descriptors consumed by
+the registry assembly. The existing public-root wiring exports that metadata
+alongside the runtime registry; this remains inside the approved error-catalogue
+surface and adds no dependency.
+
+The registry test reads each area source as data through the existing TypeScript
+compiler's AST, compares its literal declarations with the static descriptors
+and runtime registry, and retains duplicate-area/code checks. It executes no
+variable import, anticipating ARCH002's dynamic-import enforcement without
+requesting an exemption. The seed command in the owned error guide regenerates
+the same descriptors. A compiler-host overlay adds a synthetic new area and
+regenerates the aggregate in memory, then semantically checks the actual registry
+test and literal-code assignments. It proves that the test suite accepts additive
+codes while rejecting a broad string type; no fixture code is executed.

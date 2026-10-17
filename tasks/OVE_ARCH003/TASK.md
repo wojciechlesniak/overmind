@@ -172,3 +172,26 @@ Blocks every task that returns errors; publish early (a first merge with `Result
   an actual `no-explicit-any` violation still failed. Synthetic token strings are
   constructed at runtime with unchanged hostile-value assertions; no secret
   allowlist or existing lint rule was altered.
+
+## Review-fix checkpoint (2026-10-17)
+
+- Rebased the author handoff onto the merged OVE_SETUP013 integration baseline.
+  The three independent-review findings are addressed without changing dependencies,
+  boundary policy, lint rules or secret scanning.
+- Full-response regressions first reproduced nine privacy leaks; the mapper now
+  drops sensitive sanitised details and correlation values across UI, Telegram
+  and notifications. The transitional pattern list covers the ARCH004 token
+  families and Unix paths following diagnostic punctuation.
+- A repeated-reference graph first caused 16,384 leaf descriptor reads, and an
+  oversized input reached its schema. Global limits now apply during both copies:
+  512 expanded values and 16 KiB of UTF-8 JSON, retaining the depth/per-container
+  limits and rejecting accessors, symbols, non-JSON values and cycles.
+- A virtual added area plus regenerated registry first failed actual TypeScript
+  semantic checking with the closed four-code assertion. Open literal/core-code
+  assertions now pass that extension. Static generated catalogue metadata plus
+  an independent TypeScript AST scan replaces the variable import; duplicate,
+  missing and stale catalogue checks remain.
+- Focused verification passed 53 tests in the three affected test files. The
+  documented bootstrap command regenerates the registry byte-for-byte. Scoped
+  formatting and diff whitespace checks passed. Full checks, security gates,
+  fresh independent reviews and integration remain pending; status is unchanged.

@@ -1,35 +1,98 @@
-import { readdirSync } from "node:fs";
-import { pathToFileURL } from "node:url";
+import { readdirSync, readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import ts from "typescript";
 import { expect, expectTypeOf, it } from "vitest";
-import { errorRegistry, isKnownCode, type ErrorCode } from "./index.generated.ts";
+import { catalogueModules, errorRegistry, isKnownCode, type ErrorCode } from "./index.generated.ts";
 import { createErrorRegistry } from "./registry.ts";
 import { internalErrors } from "./internal.errors.ts";
-import type { ErrorCatalogue } from "./definition.ts";
 import { defineErrors } from "./define-errors.ts";
+import type { ErrorCatalogue } from "./definition.ts";
 
-it("keeps the generated registry synchronized with every area catalogue", async () => {
-  const modules: { source: string; errors: ErrorCatalogue }[] = [];
-  for (const source of readdirSync(import.meta.dirname)
-    .filter((name) => name.endsWith(".errors.ts"))
-    .sort()) {
-    const namespace: unknown = await import(pathToFileURL(`${import.meta.dirname}/${source}`).href);
-    const loaded = namespace as Record<string, ErrorCatalogue>;
-    for (const errors of Object.values(loaded)) {
-      modules.push({ source, errors });
-    }
+function catalogueDeclaration(source: string, text: string) {
+  const file = ts.createSourceFile(source, text, ts.ScriptTarget.Latest, true);
+  const registrations = file.statements.flatMap((statement) =>
+    ts.isVariableStatement(statement) &&
+    statement.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword)
+      ? statement.declarationList.declarations.filter(
+          (declaration) =>
+            declaration.initializer &&
+            ts.isCallExpression(declaration.initializer) &&
+            ts.isIdentifier(declaration.initializer.expression) &&
+            declaration.initializer.expression.text === "defineErrors",
+        )
+      : [],
+  );
+  const registration = registrations[0];
+  if (
+    registrations.length !== 1 ||
+    !registration ||
+    !ts.isIdentifier(registration.name) ||
+    !registration.initializer ||
+    !ts.isCallExpression(registration.initializer)
+  ) {
+    throw new Error("Expected one exported error catalogue in " + source);
   }
-  expect(Object.keys(createErrorRegistry(modules)).sort()).toEqual(
-    Object.keys(errorRegistry).sort(),
+  const [area, table] = registration.initializer.arguments;
+  if (
+    !area ||
+    !ts.isStringLiteral(area) ||
+    area.text + ".errors.ts" !== source ||
+    !table ||
+    !ts.isObjectLiteralExpression(table)
+  ) {
+    throw new Error("Expected a literal area and table matching " + source);
+  }
+  const codes = table.properties.map((property) => {
+    if (
+      !ts.isPropertyAssignment(property) ||
+      !(ts.isIdentifier(property.name) || ts.isStringLiteral(property.name))
+    ) {
+      throw new Error("Expected literal error reasons in " + source);
+    }
+    return area.text + "." + property.name.text;
+  });
+  if (new Set(codes).size !== codes.length) {
+    throw new Error("Duplicate error reasons in " + source);
+  }
+  return { source, codes };
+}
+
+it("keeps the generated registry synchronized with every independently scanned catalogue", () => {
+  const declarations = readdirSync(import.meta.dirname)
+    .filter((name) => name.endsWith(".errors.ts"))
+    .sort()
+    .map((source) =>
+      catalogueDeclaration(source, readFileSync(resolve(import.meta.dirname, source), "utf8")),
+    );
+  expect(catalogueModules.map((module) => module.source).sort()).toEqual(
+    declarations.map((declaration) => declaration.source),
+  );
+  for (const declaration of declarations) {
+    const module = catalogueModules.find((entry) => entry.source === declaration.source);
+    if (!module) {
+      throw new Error("Missing generated catalogue metadata.");
+    }
+    const errors: ErrorCatalogue = module.errors;
+    expect(
+      Object.values(errors)
+        .map((factory) => factory.code)
+        .sort(),
+    ).toEqual(declaration.codes.sort());
+  }
+  expect(Object.keys(errorRegistry).sort()).toEqual(
+    declarations.flatMap((declaration) => declaration.codes).sort(),
   );
   expect(isKnownCode("internal.unexpected")).toBe(true);
   expect(isKnownCode("newer.unknown")).toBe(false);
   expect(isKnownCode("toString")).toBe(false);
-  expectTypeOf<ErrorCode>().toEqualTypeOf<
+  expectTypeOf<ErrorCode>().toExtend<string>();
+  expectTypeOf<string>().not.toExtend<ErrorCode>();
+  expectTypeOf<
     | "internal.unexpected"
     | "internal.cancelled"
     | "validation.invalid_input"
     | "validation.malformed_json"
-  >();
+  >().toExtend<ErrorCode>();
 });
 
 it("rejects duplicate codes with both repository-relative source names", () => {
@@ -51,4 +114,70 @@ it("rejects two catalogues for the same area even when their reasons differ", ()
       { source: "two.errors.ts", errors: extra },
     ]),
   ).toThrow(/one\.errors\.ts.*two\.errors\.ts/u);
+});
+
+it("typechecks a regenerated registry with another area without closing ErrorCode", () => {
+  const registryPath = resolve(import.meta.dirname, "index.generated.ts");
+  const extensionPath = resolve(import.meta.dirname, "perm.errors.ts");
+  const assertionPath = resolve(import.meta.dirname, "extension.typecheck.ts");
+  const source = readFileSync(registryPath, "utf8");
+  const extended = source
+    .replace(
+      'import { validationErrors } from "./validation.errors.ts";',
+      'import { validationErrors } from "./validation.errors.ts";\nimport { permErrors } from "./perm.errors.ts";',
+    )
+    .replace("] as const;", '  { source: "perm.errors.ts", errors: permErrors },\n] as const;');
+  const virtual = new Map([
+    [registryPath, extended],
+    [
+      extensionPath,
+      [
+        'import { defineErrors } from "./define-errors.ts";',
+        'export const permErrors = defineErrors("perm", {',
+        '  fixture_extension: { http: 403, severity: "warn", retryable: false,',
+        '    messageKey: "errors:perm.fixture_extension", defaultMessage: "Access was denied.", telegramSafe: true },',
+        "});",
+      ].join("\n"),
+    ],
+    [
+      assertionPath,
+      [
+        'import type { ErrorCode } from "./index.generated.ts";',
+        'const added: ErrorCode = "perm.fixture_extension";',
+        'const core: ErrorCode = "internal.unexpected";',
+        "// @ts-expect-error Unknown values must not widen the literal code union.",
+        'const unknown: ErrorCode = "newer.unknown";',
+        "void [added, core, unknown];",
+      ].join("\n"),
+    ],
+  ]);
+  const root = resolve(import.meta.dirname, "../../../..");
+  const configuration = ts.getParsedCommandLineOfConfigFile(
+    resolve(root, "tsconfig.tests.json"),
+    {},
+    {
+      ...ts.sys,
+      onUnRecoverableConfigFileDiagnostic: () => {
+        throw new Error("Cannot read the test compiler configuration.");
+      },
+    },
+  );
+  if (!configuration || configuration.errors.length > 0) {
+    throw new Error("Invalid test compiler configuration.");
+  }
+  const options = configuration.options;
+  const original = ts.createCompilerHost(options);
+  const host: ts.CompilerHost = {
+    ...original,
+    fileExists: (path) => virtual.has(path) || original.fileExists(path),
+    readFile: (path) => virtual.get(path) ?? original.readFile(path),
+    getSourceFile: (path, version, onError, fresh) => {
+      const text = virtual.get(path);
+      return text === undefined
+        ? original.getSourceFile(path, version, onError, fresh)
+        : ts.createSourceFile(path, text, version, true);
+    },
+  };
+  const program = ts.createProgram([import.meta.filename, assertionPath], options, host);
+  expect(ts.getPreEmitDiagnostics(program).map((diagnostic) => diagnostic.code)).toEqual([]);
 });

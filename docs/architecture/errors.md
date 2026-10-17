@@ -20,7 +20,8 @@ there is no claim that an expected-failure ESLint rule already exists.
    literal/enum strings are explicit whitelists. Free-form strings require
    `sanitisedText` or `sanitisedRelativePath`, which cap length at 200, strip
    controls and carry `sanitised: true` metadata. Do not mark raw CLI output safe.
-4. Regenerate the aggregate and run the registry discovery test. Duplicate areas
+4. Regenerate the aggregate and run the registry discovery test. An independent TypeScript AST scan checks every area file against static
+   generated catalogue metadata and the runtime registry. Duplicate areas
    or codes fail with both repository-relative source names. Generated task
    indexes are unrelated and must not be edited. Add the corresponding locale
    keys through ARCH011/015 when those owning features are implemented.
@@ -112,14 +113,20 @@ use `isKnownCode` for newer engine codes and keep their generic fallback.
 
 Details are copied before schema parsing without invoking property getters.
 Dates, instances, bigint, nonfinite numbers, cycles, prototype keys and oversized
-objects are rejected. Limits are depth 8, 100 entries per container, and 16 KiB
-of serialized validated details. Unsupported schema projections fail closed;
+objects are rejected. Limits are depth 8, 100 entries per container, 512 values across the whole copied tree, and
+16 KiB of serialized UTF-8 JSON. Global value and byte budgets apply during
+each copy, before allocation of further descendants and before schema parsing;
+repeated references spend the budget on each expansion. Shared acyclic input is
+accepted only while its expanded JSON stays within these limits. Unsupported schema projections fail closed;
 recursive references and dynamic record keys are not permission to echo text.
 Relative-path sanitization checks representation only; SEC002 still owns real
 canonical-path, mount and symlink authorization.
 
 The local pattern defence rejects common token, SQL, stack, absolute-path and
-control patterns after schema validation. It is transitional until ARCH004's
+control patterns after schema validation, including Unix paths after diagnostic
+punctuation, AWS keys, Telegram bot/API tokens, Overmind session/agent tokens,
+Keychain references and OAuth codes. The same text guard protects correlation
+identifiers. It is transitional until ARCH004's
 shared pure redaction seam exists; do not introduce an adapter import into L0.
 Pattern matching does not make arbitrary CLI/file contents an approved detail.
 
@@ -147,9 +154,11 @@ for path in sorted(root.glob('*.errors.ts')):
 lines = ['// Generated catalogue seed; regenerate using docs/architecture/errors.md.',
          'import { createErrorRegistry } from "./registry.ts";']
 lines += [f'import {{ {name} }} from "./{file}";' for file, name in rows]
-lines += ['', 'export const errorRegistry = createErrorRegistry([']
+lines += ['', 'export const catalogueModules = [']
 lines += [f'  {{ source: "{file}", errors: {name} }},' for file, name in rows]
-lines += ['] as const);', 'export type ErrorCode = keyof typeof errorRegistry;',
+lines += ['] as const;',
+          'export const errorRegistry = createErrorRegistry(catalogueModules);',
+          'export type ErrorCode = keyof typeof errorRegistry;',
           'export function isKnownCode(code: string): code is ErrorCode {',
           '  return Object.hasOwn(errorRegistry, code);', '}']
 (root / 'index.generated.ts').write_text('\n'.join(lines) + '\n')
