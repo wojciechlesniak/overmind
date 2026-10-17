@@ -350,3 +350,23 @@ integration discovery must include the renamed file. The focused actual public
 command, unchanged complete integration workload, remaining units and all exact
 head gates must pass before claiming this classification fixed the problem.
 If its unchanged budget still fails, retain the failure and stop that claim.
+
+### Independent review repair: proposal self-links
+
+Specification review of `e089c99` found that traversal skipped the proposal being
+renumbered and later rendered its original body. A valid link to its own old
+filename therefore broke when that file was removed. The existing real
+dry-run/apply regression now includes a self-link to a real Confirmation section,
+with a title and fragment, plus an inline-code example that must remain exact.
+Dry-run additionally compares the complete original proposal and slug-map bytes.
+
+Before implementation, the exact named regression failed at its full-body
+comparison: the actual self-link still used 0030 instead of the expected 0031.
+The local capture `ove026-self-link-red.log` retains that real failure (one failed,
+one skipped; 901 ms). The minimal correction applies the existing original-span
+rewriter to the proposal body before rendering its new metadata; there is no new
+parser, public API or link regex. Both complete affected test files then passed
+nine tests in 1.07 seconds, including the preserved code example and prior denied
+cases; capture: `ove026-self-link-green.log`. Full verification, independent
+review of the corrected head, the two recorded timing failures and explicit
+Owner staged acceptance remain unresolved by this focused result.

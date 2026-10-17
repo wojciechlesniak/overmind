@@ -86,11 +86,13 @@ test("renumber defaults to a complete dry run, then fixes only the collided prop
     });
     writeFileSync(resolve(root, "docs/adr/slug-map.json"), JSON.stringify(map));
     const old = "docs/adr/0030-proposed-change.md";
+    const selfLinks =
+      '\n## Confirmation\n\n[ADR 0030](0030-proposed-change.md#confirmation "Self confirmation")\n\n`[ADR 0030](0030-proposed-change.md#confirmation)`\n';
     writeFileSync(
       resolve(root, old),
       template
         .replace("adr: 0", "adr: 30")
-        .replaceAll("Choose one clear decision", "Propose a change"),
+        .replaceAll("Choose one clear decision", "Propose a change") + selfLinks,
     );
     writeFileSync(
       resolve(root, "docs/notes.md"),
@@ -116,12 +118,26 @@ test("renumber defaults to a complete dry run, then fixes only the collided prop
       ].join("\n"),
     );
     const original = readFileSync(resolve(root, "docs/notes.md"), "utf8");
+    const originalProposal = readFileSync(resolve(root, old), "utf8");
+    const originalMap = readFileSync(resolve(root, "docs/adr/slug-map.json"), "utf8");
     const plan = renumberAdr(root, 30, 31, false);
     expect(plan).toContain("docs/notes.md");
     expect(existsSync(resolve(root, old))).toBe(true);
     expect(readFileSync(resolve(root, "docs/notes.md"), "utf8")).toBe(original);
+    expect(readFileSync(resolve(root, old), "utf8")).toBe(originalProposal);
+    expect(readFileSync(resolve(root, "docs/adr/slug-map.json"), "utf8")).toBe(originalMap);
     renumberAdr(root, 30, 31, true);
     expect(existsSync(resolve(root, old))).toBe(false);
+    const renamedProposal = parseAdr(
+      "0031-proposed-change.md",
+      readFileSync(resolve(root, "docs/adr/0031-proposed-change.md"), "utf8"),
+    );
+    expect(renamedProposal.body).toBe(
+      parseAdr("0030-proposed-change.md", originalProposal).body.replace(
+        selfLinks,
+        '\n## Confirmation\n\n[ADR 0031](0031-proposed-change.md#confirmation "Self confirmation")\n\n`[ADR 0030](0030-proposed-change.md#confirmation)`\n',
+      ),
+    );
     expect(readFileSync(resolve(root, "docs/notes.md"), "utf8")).toBe(
       [
         "[ADR 0031](adr/0031-proposed-change.md#confirmation)",

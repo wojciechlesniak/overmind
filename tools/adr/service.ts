@@ -108,7 +108,13 @@ export function renumberAdr(root: string, old: number, next: number, apply = fal
       }
     }
     const original = files.read(before);
-    const content = renderAdr({ ...record.meta, adr: next }, record.body);
+    const body = rewriteAdrLinks(
+      record.body,
+      files.path(before),
+      files.path(before),
+      files.path(after, true),
+    );
+    const content = renderAdr({ ...record.meta, adr: next }, body);
     const plan = [
       `${before} -> ${after}`,
       "docs/adr/slug-map.json",

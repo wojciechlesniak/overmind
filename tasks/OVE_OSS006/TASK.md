@@ -176,3 +176,12 @@ byte-preserving classification with mandatory hosted execution is recorded for
 the real CLI safety test; it is not applied or approved yet. These failures,
 remaining exact-head gates/reviews and Owner staged acceptance still block
 completion.
+
+Independent specification review found an omitted proposal-body self-link during
+renumbering. A meaningful real dry-run/apply regression reproduced the broken
+old filename before implementation; the existing span rewriter now updates the
+proposal body before rendering. Both affected test files passed nine tests in
+1.07 seconds while preserving the fragment, title, inline-code example and exact
+dry-run bytes. This focused repair does not resolve the previously recorded
+timeouts, legacy migration failure or pending Owner acceptance. Fresh review of
+the corrected exact head remains required.
