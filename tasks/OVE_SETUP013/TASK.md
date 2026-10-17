@@ -6,7 +6,7 @@ kind: infra
 size: M
 priority: P0
 mvp: true
-status: in_progress
+status: in_review
 depends_on: [OVE_SETUP001, OVE_SETUP002]
 soft_depends_on: [OVE_SETUP004, OVE_SETUP005]
 provides: ["lib:task-tools", "lib:task-model", "lib:worktree-tools"]
@@ -109,15 +109,15 @@ One task model (`TaskFrontMatter` zod schema, `loadTasks`) for all task tools; O
 
 ## 11. Acceptance criteria
 
-- [ ] Given a ready task, `pnpm task:claim OVE_X001` creates `../wt/OVE_X001`, commits `status: in_progress`, pushes `task/OVE_X001` and installs dependencies; the branch exists on the remote with exactly one new commit.
-- [ ] Given two simultaneous claims of the same task (integration test with two clones and a bare remote), exactly one exits 0 and the other exits 3 with a clean filesystem.
-- [ ] Given a task with an undone dependency, claim exits 2 and lists it.
-- [ ] Given an ID like `OVE_X001; rm -rf /` or `../x`, claim exits 4 before running git.
-- [ ] `task:next` orders ready tasks by priority, unblocking power and conflict risk, and `--json` validates against its schema.
-- [ ] `task:release` refuses to delete a branch with more than the claim commit.
-- [ ] `task:cleanup --merged` removes a merged clean worktree and refuses a dirty one; remote branches are never touched.
-- [ ] `task:finish` produces the PR body with the criteria checklist and sets the right statuses; `--done` makes `status: done` the last commit.
-- [ ] `parseTask` rejects front matter missing keys or with wrong types, files over 256 KiB, and YAML with custom tags.
+- [x] Given a ready task, `pnpm task:claim OVE_X001` creates `../wt/OVE_X001`, commits `status: in_progress`, pushes `task/OVE_X001` and installs dependencies; the branch exists on the remote with exactly one new commit.
+- [x] Given two simultaneous claims of the same task (integration test with two clones and a bare remote), exactly one exits 0 and the other exits 3 with a clean filesystem.
+- [x] Given a task with an undone dependency, claim exits 2 and lists it.
+- [x] Given an ID like `OVE_X001; rm -rf /` or `../x`, claim exits 4 before running git.
+- [x] `task:next` orders ready tasks by priority, unblocking power and conflict risk, and `--json` validates against its schema.
+- [x] `task:release` refuses to delete a branch with more than the claim commit.
+- [x] `task:cleanup --merged` removes a merged clean worktree and refuses a dirty one; remote branches are never touched.
+- [x] `task:finish` produces the PR body with the criteria checklist and sets the right statuses; `--done` makes `status: done` the last commit.
+- [x] `parseTask` rejects front matter missing keys or with wrong types, files over 256 KiB, and YAML with custom tags.
 
 ## 12. Test plan
 
@@ -133,3 +133,22 @@ Parallel with OVE_SETUP010..012 after OVE_SETUP002. OVE_SETUP022, 023, 020 depen
 - ASSUMPTION: stale-claim threshold is 3 days and informational only; maintainers decide releases.
 - ASSUMPTION: the `gh` CLI is optional.
 - Open question: whether agents may claim several tasks sequentially in one worktree. Default no: one task, one worktree, one branch.
+
+## Implementation evidence (2026-10-17)
+
+Implementation `80d4eb2a37441282b487238b3c88c125c9d6e93d`, based on DEVELOP
+`7815088b2756ef180a7fec49838fd32a4f199006`, passed independent Standards and Spec
+reviews with zero findings after the original release/install-race findings were
+reproduced and corrected. The complete local `pnpm check` passed: 331 unit tests,
+54 integration tests, four architecture-tool integration tests and 29 Rust tests,
+with format, lint, types, build, coverage, license/dependency controls, audits,
+secret scans and SBOM. Two pre-existing allowed Rust warnings and one Keychain
+reference warning remain explicit; secret findings were zero. Earlier timed-out
+runs are not counted as passing evidence. Fixture concurrency and safe retention
+are documented in the integration proposal.
+
+The real `task:next --limit 5 --json` also completed against fetched DEVELOP and
+the current remote claims. Mutation tests use real isolated bare remotes, frozen
+offline workspace installs and independent clones. GitHub finish evidence uses
+validated API fixtures; it is not fabricated hosted CI. Hosted CI/security and
+the final status-only head review remain required before merge into DEVELOP.
