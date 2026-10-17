@@ -1122,7 +1122,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: Bun changes the accepted runtime; pkg replaces the official runtime supply chain; loose runtime files replace the standalone sidecar contract.
 - Risk: Exact alpha pin is intentional; installation scripts remain denied. Injection only touches a fresh task-owned copy of the checksum-verified official runtime.
 - Last reviewed: 2026-10-17
-- Source: https://registry.npmjs.org/postject/1.0.0-alpha.6
+- Source: <https://registry.npmjs.org/postject/1.0.0-alpha.6>
 
 ## Operational limits and sources
 

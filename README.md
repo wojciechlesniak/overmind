@@ -130,7 +130,7 @@ Inventory entries, including reserved tooling:
 - `cargo-audit`, `gitleaks`, `syft`, `crate:tauri`, `crate:tauri-build`, `crate:tauri-plugin-shell`
 - `crate:tauri-plugin-single-instance`, `crate:tauri-plugin-dialog`, `crate:serde`, `crate:serde_json`, `crate:tokio`, `Node.js`
 - `pnpm`, `actions/checkout`, `actions/setup-node`, `actions/cache/restore`, `actions/cache/save`, `actions/upload-artifact`
-- `actions/download-artifact`, `actions/dependency-review-action`, `github/codeql-action/upload-sarif`, `@vitejs/plugin-react-swc`, `esbuild`, `crate:nix`
-- `crate:hyper`, `crate:hyper-util`, `crate:http-body-util`, `crate:exacl`
+- `actions/download-artifact`, `actions/dependency-review-action`, `github/codeql-action/upload-sarif`, `@vitejs/plugin-react-swc`, `esbuild`, `postject`
+- `crate:nix`, `crate:hyper`, `crate:hyper-util`, `crate:http-body-util`, `crate:exacl`
 
 <!-- docs-credits:end -->

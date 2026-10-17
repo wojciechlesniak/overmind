@@ -225,3 +225,24 @@ File | Normalized content
 Primary Owner file SHA-256 remains
 `3541ad5be1f54235df1a4a5ce0dfcd56fe272ba018f19a290b23ad47939cc920`.
 Parent will hold primary fast-forward on overlap; no stash/reset is authorized.
+
+## Integration after DEVELOP d88ec66
+
+The integrator approved one additional mechanical Source autolink on 2026-10-17:
+`postject` 1.0.0-alpha.6 in `docs/dependencies.md`. Preflight after rebase reported
+MD034 at line 1125. Only angle brackets are added around that exact existing URL;
+the version, license, rationale, date and all other metadata remain unchanged.
+README credits are regenerated from the actual dependency headings to include
+postject. The engineering index adds the real engine-packaging guide and replaces
+the parallel-agent placeholder with its existing guide; their owners remain
+OVE_SETUP017 and OVE_SETUP013. No other legacy repair is added.
+
+The rebase had two actual conflicts: pnpm generated the combined lockfile, and
+the configuration guard retained both the merged engine-packaging path protection
+and this task's exact Markdown configuration protection. The generated package
+and snapshot maps are exactly the union of both approved inputs (419 entries
+each), with zero additional, missing or altered entries. The final frozen install
+passed the unchanged supply-chain checks (404 entries). Rust, packager and SBOM
+source files match DEVELOP byte-for-byte. Final offline documentation preflight
+passed with 0 errors and 40 existing warnings; renewed full checks and independent
+reviews remain required for the resulting head.
