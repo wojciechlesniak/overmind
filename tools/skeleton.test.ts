@@ -40,7 +40,7 @@ expectedEdges["engine"] = Object.keys(expectedEdges).filter(
 
 function collectManifests(directory = root): string[] {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    if (["node_modules", ".git", "tasks", "docs"].includes(entry.name)) {
+    if (["node_modules", ".git", ".cache", "tasks", "docs"].includes(entry.name)) {
       return [];
     }
     const path = resolve(directory, entry.name);

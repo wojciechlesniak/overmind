@@ -26,6 +26,7 @@ const files = [
   "docs/SPECIFICATION.md",
   "docs/architecture/ARCHITECTURE.md",
   "docs/dependencies.md",
+  "tools/tasks/README.md",
   "GLOSSARY.md",
   "docs/adr/0016-dokumentacja-projektu-zrodlem-prawdy.md",
   "docs/adr/0017-jezyk-angielski-w-projekcie.md",

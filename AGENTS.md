@@ -22,10 +22,10 @@
 - The Owner has authorized agents to merge into DEVELOP only after real tests,
   security checks and independent code and specification reviews pass for the
   exact head being merged. A different session must establish its own authority.
-- Finish with `pnpm task:finish`. Reserved scripts are not proof of working tools:
-  verify their implementation exists before running them. OVE_SETUP013 supplies
-  the task commands. Until it is merged, record a manual claim commit, push a new
-  remote branch atomically and stop if the branch is already claimed.
+- Follow the [task tools guide](tools/tasks/README.md) and finish with
+  `pnpm task:finish`. Claims are atomic; stop if the branch is already claimed.
+  Reserved scripts are not proof of working tools: verify their implementation
+  exists before running them. The task linter and ownership gate have separate owners.
 
 ## Scope rules
 
