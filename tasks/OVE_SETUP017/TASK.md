@@ -6,7 +6,7 @@ kind: infra
 size: M
 priority: P0
 mvp: true
-status: in_review
+status: done
 depends_on: [OVE_SETUP006, OVE_SETUP011, OVE_SETUP016]
 soft_depends_on: [OVE_SETUP006, OVE_SETUP010, OVE_SETUP014]
 provides: ["lib:engine-executable", "lib:engine-manifest"]
