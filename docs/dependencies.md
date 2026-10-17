@@ -1084,6 +1084,19 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Last reviewed: 2026-10-16
 - Source: https://registry.npmjs.org/esbuild/0.28.2
 
+### postject
+
+- Version: 1.0.0-alpha.6
+- License: MIT
+- Used by: tools/package-engine (build-only development dependency)
+- Added by: OVE_SETUP017
+- Value: Node-maintained Mach-O SEA blob injector selected by ADR 0030; installs locally for offline build invocation.
+- Maintenance cost: Long-lived alpha release; review upstream injector and commander dependency integrity before upgrades.
+- Alternatives considered: Bun changes the accepted runtime; pkg replaces the official runtime supply chain; loose runtime files replace the standalone sidecar contract.
+- Risk: Exact alpha pin is intentional; installation scripts remain denied. Injection only touches a fresh task-owned copy of the checksum-verified official runtime.
+- Last reviewed: 2026-10-17
+- Source: https://registry.npmjs.org/postject/1.0.0-alpha.6
+
 ## Operational limits and sources
 
 Node22 status and EOL: https://github.com/nodejs/Release/blob/main/schedule.json.

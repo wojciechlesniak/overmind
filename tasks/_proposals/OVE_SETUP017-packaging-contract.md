@@ -1,6 +1,7 @@
 # OVE_SETUP017 packaging implementation contract
 
-Status: proposed for integrator review; no packaging implementation yet.
+Status: coordination approved by the integrator; exact runtime scope explicitly
+approved by the Owner on 2026-10-17.
 Base: DEVELOP `969aff9f011667b8e6219da265c5640e7e1603e4`.
 Task: [OVE_SETUP017](../OVE_SETUP017/TASK.md), GitHub issue #14.
 
@@ -95,3 +96,46 @@ is source commit `ba898762b78a2bc95bc09f270f96c665495daeea`; its same-directory
 hash equality does not establish independent-directory reproducibility, and it
 does not establish actual Tauri placement/execution. No packaging code, signature
 verification, SEA build, new dependency install or Tauri build is claimed here.
+
+## Integrator-approved implementation coordination
+
+The integrator authorized the exact postject catalog/root dependency/generated
+lock and dependency justification, single-pin catalog regression, conditional
+SBOM file component/schema/negative tests, and these additional scoped changes:
+
+- `.gitignore`: only `/build/engine-tmp/` and `/build/engine-provenance/`.
+- Tauri config and existing policy tests: exact source-to-destination resource
+  mappings for `binaries/overmind-engine.resources/engine.cjs.map` to
+  `engine/engine.cjs.map` and `binaries/overmind-engine.resources/LICENSE` to
+  `engine/LICENSE`. Manifest companion paths are relative to deployed
+  `Contents/Resources`, not source paths. No directory/glob resource allowance.
+- Actual Tauri bundling failed with `No matching IconType` for the existing PNG.
+  Derive `icons/icon.icns` mechanically using native sips/iconutil, include the
+  exact icon entry, and test its protection. Existing PNG SHA-256 is
+  `f12ddfea20dcca2fa350d75d5ed2ae76a4fffbcdfd2b8f2357558b90072dab9f`;
+  resulting ICNS SHA-256 is
+  `415b0732610f92d18d6cd3ffe14c3c7febbef2293b1c69f70609a917d1524bb2`.
+  Native conversion uses temporary `.cache/ove014-icons.iconset/` PNGs resized by
+  `sips -z` for sizes 16, 32, 64, 128, 256, 512, 1024, then `iconutil --convert
+  icns --output apps/desktop/src-tauri/icons/icon.icns`. No new artwork.
+- `.github/CODEOWNERS`: exact `/tools/package-engine/` Owner protection;
+  `tools/ci/config-integrity.ts` and its actual Git-diff regression cover the
+  same prefix. The PR requires `config-change`.
+- The Owner explicitly approved the exact binary-only runtime ledger on
+  2026-10-17: Node 22.23.3 darwin-arm64, the archive/notice hashes and only
+  `bin/node` plus `LICENSE`, with the seven additional terms in
+  [the notice inventory](OVE_SETUP017-runtime-notices.md). No other archive,
+  version, extraction recipe or terms are approved. Proposed/missing approval
+  and changed identities still fail closed. npm/Rust policy is unchanged.
+
+Source-map deployment uses an explicit canonical map plus offline symbolication.
+A real signed, relocated SEA throw fixture recovered its original TypeScript
+line; ordinary engine diagnostics remain redacted, not silently converted to
+full stack logs. Actual Tauri debug bundling/execution and both deployed resource
+hashes passed with the exact static resource mappings. These measured results
+will be rerun for the final source head; Developer ID/notarization are unclaimed.
+
+The integrator also approved excluding only `.cache` from the existing manifest
+discovery traversal in `tools/skeleton.test.ts`, matching SETUP012 fix `86c9552`.
+This prevents a real concurrent pinned-bin fixture cleanup race; package graph
+assertions remain unchanged.

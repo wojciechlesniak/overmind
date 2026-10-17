@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
 import { test } from "vitest";
 import { readManifest, readWorkspace } from "./test-support/json.parse-boundary.ts";
+import { approvedCatalogPin } from "./package-engine/policy.ts";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const readJson = (path: string) => readManifest(resolve(root, path));
@@ -127,7 +128,7 @@ test("runtime, package manager integrity and catalog versions are pinned", () =>
   const entries = Object.entries(workspace.catalog);
   assert.ok(entries.length >= 39);
   for (const [name, version] of entries) {
-    assert.match(version, /^\d+\.\d+\.\d+$/, name);
+    assert.ok(approvedCatalogPin(name, version), name);
   }
   assert.equal(workspace.catalog["typescript"], "6.0.3");
 });

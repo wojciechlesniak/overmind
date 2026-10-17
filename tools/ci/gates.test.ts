@@ -163,6 +163,9 @@ it("desktop dist policy and Vite configuration require the configuration approva
       "tools/check-licenses/rust-approvals.json",
       "tools/check-licenses/rust-policy.ts",
       "third-party/rust/README.md",
+      "tools/package-engine/node.lock.json",
+      "tools/package-engine/runtime-licenses.json",
+      "tools/package-engine/runtimeLicenses.parse-boundary.ts",
     ]) {
       const base = git(["rev-parse", "HEAD"]).trim();
       mkdirSync(dirname(resolve(fixture, file)), { recursive: true });
