@@ -41,6 +41,29 @@ test("strict ADR parsing rejects malformed metadata and misleading Markdown stru
   expect(() => parseAdr("0001-Upper_Case.md", record)).toThrow();
 });
 
+test.each([
+  ["indented second H1", record + "\n  # An indented second decision\n"],
+  [
+    "Consequences only in an HTML comment",
+    record.replace("## Consequences", "<!--\n## Consequences\n-->"),
+  ],
+  [
+    "Consequences only in an indented fence",
+    record.replace("## Consequences", "  ```markdown\n## Consequences\n  ```"),
+  ],
+] as const)("Markdown parser rejects %s", (_description, source) => {
+  expect(() => parseAdr("0001-choose-one-boundary.md", source)).toThrow("Consequences");
+});
+
+test("real headings ignore H1 examples in indented fenced code and HTML comments", () => {
+  expect(() =>
+    parseAdr(
+      "0001-choose-one-boundary.md",
+      record + "\n  ```markdown\n# A fenced example\n  ```\n\n<!--\n# A commented example\n-->\n",
+    ),
+  ).not.toThrow();
+});
+
 test("the normative original map contains exactly the 28 prescribed English names", () => {
   const map = parseSlugMap(
     readFileSync(resolve(import.meta.dirname, "../../docs/adr/slug-map.json"), "utf8"),

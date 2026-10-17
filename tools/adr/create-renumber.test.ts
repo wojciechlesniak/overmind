@@ -94,7 +94,7 @@ test("renumber defaults to a complete dry run, then fixes only the collided prop
     );
     writeFileSync(
       resolve(root, "docs/notes.md"),
-      "[ADR 0030](adr/0030-proposed-change.md#confirmation)\n[Existing ADR 0030](adr/0030-engine-packaging-and-sqlite-driver.md)\n[External](https://example.invalid/0030-proposed-change.md)\n[ADR 0030][proposal]\n[proposal]: adr/0030-proposed-change.md#confirmation\n",
+      '[ADR 0030](adr/0030-proposed-change.md#confirmation)\n[ADR 0030](adr/0030-proposed-change.md "title")\n[ADR 0030](<adr/0030-proposed-change.md> "title")\n[Existing ADR 0030](adr/0030-engine-packaging-and-sqlite-driver.md)\n[External](https://example.invalid/0030-proposed-change.md)\n[ADR 0030][proposal]\n[proposal]: adr/0030-proposed-change.md#confirmation\n',
     );
     const original = readFileSync(resolve(root, "docs/notes.md"), "utf8");
     const plan = renumberAdr(root, 30, 31, false);
@@ -104,7 +104,7 @@ test("renumber defaults to a complete dry run, then fixes only the collided prop
     renumberAdr(root, 30, 31, true);
     expect(existsSync(resolve(root, old))).toBe(false);
     expect(readFileSync(resolve(root, "docs/notes.md"), "utf8")).toBe(
-      "[ADR 0031](adr/0031-proposed-change.md#confirmation)\n[Existing ADR 0030](adr/0030-engine-packaging-and-sqlite-driver.md)\n[External](https://example.invalid/0030-proposed-change.md)\n[ADR 0031][proposal]\n[proposal]: adr/0031-proposed-change.md#confirmation\n",
+      '[ADR 0031](adr/0031-proposed-change.md#confirmation)\n[ADR 0031](adr/0031-proposed-change.md "title")\n[ADR 0031](<adr/0031-proposed-change.md> "title")\n[Existing ADR 0030](adr/0030-engine-packaging-and-sqlite-driver.md)\n[External](https://example.invalid/0030-proposed-change.md)\n[ADR 0031][proposal]\n[proposal]: adr/0031-proposed-change.md#confirmation\n',
     );
     const changed = parseSlugMap(readFileSync(resolve(root, "docs/adr/slug-map.json"), "utf8"));
     expect(() => {

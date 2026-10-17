@@ -143,3 +143,14 @@ source dates are unavailable. No blanket legacy exemption or fabricated
 production pass is used. See [the integration and staged-acceptance proposal](../_proposals/OVE_OSS006-integration-and-acceptance.md).
 Owner staged acceptance, full repository/CI gates and final independent reviews
 remain pending; this task is not done.
+
+
+Independent review of checkpoint 416e8ca found an archival-rename lifecycle bypass
+and Markdown parsing/rewriting gaps. The rename/history and production Git
+configuration repairs now pass 4 real-Git integration regressions (3 files,
+9.99 seconds) and the pure Git-environment regression. Each fixture Git
+subprocess remains isolated; the production port retains normal Owner config.
+Markdown indented-heading/comment/fence and titled/angle-link regressions remain
+RED pending the approved shared parser integration after OSS004 merges. No new
+runtime dependency or unmerged import was added. These repairs are not a final
+acceptance/review result; full checks and normal publication remain pending.

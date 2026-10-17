@@ -51,7 +51,10 @@ inputs and publishes files with replacement checks; filesystem failures remain
 errors and require inspection rather than pretending a multi-file commit occurred.
 
 The strict checker validates metadata, contiguous numbering, mutual supersession,
-references, append-only Git history and the original map identities. Index titles
+references, append-only Git history and published map identities. A mapped rename
+retains its earlier same-number history; archival proof never waives lifecycle or
+body checks. Original names and published additional names/provenance stay fixed;
+working titles may change and new unpublished proposals may be renumbered. Index titles
 are escaped as data. Files are canonical, owner-controlled and on the repository
 volume; reads reject symlinks, special files, invalid UTF-8, size overflow and
 changes while reading. New records use an injected Clock and Git port.
@@ -66,7 +69,9 @@ uses `status`; provenance adds `translation_of`, `source_sha256`, `translated_on
 
 The current original Polish records await OSS005/OSS010/OSS011 and the separately
 owned [ADR 0029](0029-backlog-w-github-issues-i-ochrona-master.md) migration. Source creation timestamps are absent and must not be
-invented. Strict check/index commands currently fail on their missing metadata.
+invented. Strict check/index commands currently fail on their missing metadata. Historical
+legacy metadata also needs an explicitly reviewed migration; missing dates or
+lifecycle evidence are not inferred by the tools.
 The table below has not been populated with fabricated dates or acceptance.
 See the [staged acceptance proposal](../../tasks/_proposals/OVE_OSS006-integration-and-acceptance.md).
 

@@ -1,18 +1,39 @@
 import { execFileSync } from "node:child_process";
-import { isolatedGitEnvironment } from "../hooks/git-test-environment.ts";
 export interface Clock {
   today(): string;
 }
 export interface Git {
   run(args: readonly string[]): string;
 }
-export function nodeGit(root: string): Git {
+const transportVariables = new Set([
+  "GIT_SSH",
+  "GIT_SSH_COMMAND",
+  "GIT_SSH_VARIANT",
+  "GIT_ASKPASS",
+  "GIT_SSL_CAINFO",
+  "GIT_SSL_CAPATH",
+  "GIT_PROXY_COMMAND",
+]);
+/** Hooks may select another repository; normal Owner config discovery must survive. */
+export function productionGitEnvironment(
+  environment: NodeJS.ProcessEnv = process.env,
+): NodeJS.ProcessEnv {
+  return {
+    ...Object.fromEntries(
+      Object.entries(environment).filter(
+        ([name]) => !name.startsWith("GIT_") || transportVariables.has(name),
+      ),
+    ),
+    GIT_TERMINAL_PROMPT: "0",
+  };
+}
+export function nodeGit(root: string, environment: NodeJS.ProcessEnv = process.env): Git {
   return {
     run(args) {
       try {
         return execFileSync("git", [...args], {
           cwd: root,
-          env: isolatedGitEnvironment(),
+          env: productionGitEnvironment(environment),
           encoding: "utf8",
           timeout: 15000,
           maxBuffer: 2 * 1024 * 1024,
