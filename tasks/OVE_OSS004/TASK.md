@@ -113,6 +113,13 @@ remain unchanged, while the CLI reports the requested fixture's actual content.
 The pre-fix RED evidence and shared-helper correction are recorded in
 [the isolation follow-up](../_proposals/OVE_OSS004-git-environment-isolation.md).
 
+The integrator-approved cold-cache packaging integration repair uses the existing
+bounded public CLI subprocess before the relocated SEA test consumes its verified
+runtime archive. Vitest's network denial, the 120-second test timeout and all
+relocation/source-map assertions remain unchanged. The actual single cold RED and
+GREEN, cache preservation and exact shared scope are recorded in
+[the cold-cache follow-up](../_proposals/OVE_OSS004-cold-packaging-test.md).
+
 ## 13. Parallelization notes
 
 Parallel with OVE_OSS001..003, 005, 006. Hotspots: `docs/README.md` and the folder index pages are append-only by other tasks (one line per document, alphabetical to keep merges trivial). `tools/docs-check/pending-links.json` entries are removed by the task that creates the target.
