@@ -11,4 +11,12 @@ config.test.include = [
   "tools/**/*.int.test.ts",
 ];
 config.test.exclude = ["**/node_modules/**", "**/.tsbuild/**"];
-export default defineConfig(config);
+export default defineConfig({
+  ...config,
+  test: {
+    ...config.test,
+    // Integration files launch real compilers, Git clients and engine processes.
+    // Match the unit suite's bounded workers rather than oversubscribe the host.
+    maxWorkers: 2,
+  },
+});

@@ -74,3 +74,10 @@ a bounded 30-second per-test fixture budget; assertions and production subproces
 limits are unchanged. Failed runs remain recorded and are not counted as passing
 full checks. Installation inventory also opens files nonblocking and verifies
 their regular-file type after open, preventing a file-to-FIFO swap from blocking.
+
+The new real-Git/install scenarios exposed an unbounded integration-file worker
+pool: concurrent engine subprocess fixtures also exceeded their unchanged budgets.
+The integrator authorizes the single shared `vitest.int.config.ts` change to cap
+file workers at two, matching the existing unit-suite resource limit. Test cases,
+assertions, retries, subprocess limits, coverage and security gates are unchanged.
+Heavy full-suite runs across task worktrees are coordinated serially as well.
