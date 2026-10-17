@@ -1,4 +1,13 @@
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  realpathSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { expect, it } from "vitest";
 import { isolatedGitEnvironment } from "../../hooks/git-test-environment.ts";
@@ -6,7 +15,7 @@ import { createGit, createRunner, gitText } from "./git.ts";
 import { loadTasks } from "./load.ts";
 
 it("loads committed task metadata independently of dirty working-tree edits", async () => {
-  const root = mkdtempSync("/private/tmp/ove-task-load-");
+  const root = realpathSync(mkdtempSync(join(tmpdir(), "ove-task-load-")));
   const git = createGit(root, createRunner(isolatedGitEnvironment()));
   const path = "tasks/OVE_FIX001/TASK.md";
   const text = readFileSync(
@@ -33,7 +42,7 @@ it("loads committed task metadata independently of dirty working-tree edits", as
 });
 
 it("refuses symlinked working-tree task inputs even when their target is inside the repository", async () => {
-  const root = mkdtempSync("/private/tmp/ove-task-symlink-");
+  const root = realpathSync(mkdtempSync(join(tmpdir(), "ove-task-symlink-")));
   const text = readFileSync(
     new URL("../fixtures/tasks/OVE_FIX001/TASK.md", import.meta.url),
     "utf8",

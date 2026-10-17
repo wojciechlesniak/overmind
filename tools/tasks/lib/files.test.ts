@@ -1,12 +1,13 @@
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { expect, it } from "vitest";
 import { nodeFiles } from "./files.ts";
 
 it("reads bounded regular inputs and rejects oversized files", () => {
-  const directory = mkdtempSync("/private/tmp/ove-task-files-");
+  const directory = realpathSync(mkdtempSync(join(tmpdir(), "ove-task-files-")));
   try {
     const path = join(directory, "TASK.md");
     writeFileSync(path, "bounded input");
@@ -18,7 +19,7 @@ it("reads bounded regular inputs and rejects oversized files", () => {
 });
 
 it("refuses a FIFO without waiting for a writer", () => {
-  const directory = mkdtempSync("/private/tmp/ove-task-fifo-");
+  const directory = realpathSync(mkdtempSync(join(tmpdir(), "ove-task-fifo-")));
   try {
     const path = join(directory, "TASK.md");
     expect(spawnSync("mkfifo", [path]).status).toBe(0);

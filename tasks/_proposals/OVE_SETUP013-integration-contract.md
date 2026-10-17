@@ -89,3 +89,10 @@ The integrator authorizes excluding exactly `.cache` from that collector. It is
 not a workspace path in pnpm-workspace.yaml; all package-count, dependency,
 placeholder and supply-chain assertions remain unchanged. The failed push did
 not update the remote claim. The normal pre-push suite must pass on retry.
+
+Hosted Linux shard 3 then exposed a test-fixture portability defect: macOS's
+`/private/tmp` does not exist on the Linux runner. All nine task-tool temporary
+fixture roots now use Node's `tmpdir()` and canonicalize the created directory,
+preserving the symlink/identity assertions on macOS as well. No production
+behavior or test assertion changes. The failed hosted run is retained as
+evidence; the corrected head requires fresh hosted checks.

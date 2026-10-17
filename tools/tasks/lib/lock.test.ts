@@ -1,10 +1,11 @@
-import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { expect, it } from "vitest";
 import { withTaskLock } from "./lock.ts";
 
 it("excludes a second local operation and releases its own lock on success and failure", async () => {
-  const directory = mkdtempSync("/private/tmp/ove-task-lock-");
+  const directory = realpathSync(mkdtempSync(join(tmpdir(), "ove-task-lock-")));
   let release: () => void = () => {
     throw new Error("Lock did not start");
   };
@@ -40,7 +41,7 @@ it("excludes a second local operation and releases its own lock on success and f
 });
 
 it("ignores a stale dead-owner lock without deleting it or stealing a live old lock", async () => {
-  const directory = mkdtempSync("/private/tmp/ove-task-stale-lock-");
+  const directory = realpathSync(mkdtempSync(join(tmpdir(), "ove-task-stale-lock-")));
   const path = join(directory, "overmind-task.lock");
   const record = { token: "00000000-0000-4000-8000-000000000001", pid: 12345, createdAt: 1000 };
   try {

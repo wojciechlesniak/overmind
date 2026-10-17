@@ -1,4 +1,5 @@
-import { chmodSync, existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { expect, it } from "vitest";
 import { createRunner } from "./git.ts";
@@ -7,7 +8,7 @@ import { isolatedGitEnvironment } from "../../hooks/git-test-environment.ts";
 import { readJsonRecord } from "../../test-support/json.parse-boundary.ts";
 
 it("rejects hostile command IDs before starting Git and emits the stable error schema", async () => {
-  const directory = mkdtempSync("/private/tmp/ove-task-cli-");
+  const directory = realpathSync(mkdtempSync(join(tmpdir(), "ove-task-cli-")));
   const marker = join(directory, "git-was-called");
   writeFileSync(join(directory, "git"), `#!/bin/sh\ntouch '${marker}'\nexit 91\n`);
   chmodSync(join(directory, "git"), 0o700);

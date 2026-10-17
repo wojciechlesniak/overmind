@@ -1,4 +1,13 @@
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  realpathSync,
+  rmSync,
+  symlinkSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { expect, it, vi } from "vitest";
 import { isolatedGitEnvironment } from "../../hooks/git-test-environment.ts";
@@ -13,7 +22,7 @@ import { outputSchema } from "./output.ts";
 vi.setConfig({ testTimeout: 30_000 });
 
 async function fixture() {
-  const directory = mkdtempSync("/private/tmp/ove-task-life-");
+  const directory = realpathSync(mkdtempSync(join(tmpdir(), "ove-task-life-")));
   const remote = join(directory, "remote.git");
   const root = join(directory, "a", "repo");
   mkdirSync(root, { recursive: true });

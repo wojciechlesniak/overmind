@@ -3,11 +3,13 @@ import {
   mkdirSync,
   mkdtempSync,
   readFileSync,
+  realpathSync,
   rmSync,
   readlinkSync,
   symlinkSync,
   writeFileSync,
 } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { expect, it, vi } from "vitest";
 import { isolatedGitEnvironment } from "../../hooks/git-test-environment.ts";
@@ -19,7 +21,7 @@ import { runCommand } from "./service.ts";
 vi.setConfig({ testTimeout: 30_000 });
 
 async function installedRace(change?: (path: string) => void, inventoryUnavailable = false) {
-  const directory = mkdtempSync("/private/tmp/ove-install-claim-");
+  const directory = realpathSync(mkdtempSync(join(tmpdir(), "ove-install-claim-")));
   try {
     const remote = join(directory, "remote.git");
     const root = join(directory, "a/repo");
