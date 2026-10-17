@@ -92,6 +92,7 @@ export function checkCommands(
   md: string,
   scripts: ReadonlySet<string>,
   file = "README.md",
+  workspaces: ReadonlyMap<string, ReadonlySet<string>> = new Map(),
 ): Diagnostic[] {
   const builtins = new Set(["install", "exec", "audit", "why", "list", "licenses", "store"]);
   const errors: Diagnostic[] = [];
@@ -108,11 +109,25 @@ export function checkCommands(
       continue;
     }
     let index = 0;
+    let selected: ReadonlySet<string> | undefined = scripts;
+    let selectors = 0;
     while (index < tokens.length) {
       const option = tokens[index] ?? "";
       if (["--filter", "-F", "--dir", "-C"].includes(option)) {
+        const selector = tokens[index + 1] ?? "";
+        selected = workspaces.get(
+          option === "--dir" || option === "-C"
+            ? `dir:${selector.replace(/^\.\//u, "")}`
+            : selector,
+        );
+        selectors++;
         index += 2;
       } else if (/^--(?:filter|dir)=\S/u.test(option)) {
+        const selector = option.slice(option.indexOf("=") + 1);
+        selected = workspaces.get(
+          option.startsWith("--dir=") ? `dir:${selector.replace(/^\.\//u, "")}` : selector,
+        );
+        selectors++;
         index++;
       } else {
         break;
@@ -120,9 +135,18 @@ export function checkCommands(
     }
     const explicitRun = tokens[index] === "run";
     const command = tokens[index + (explicitRun ? 1 : 0)] ?? "";
-    if (!scripts.has(command) && (explicitRun || !builtins.has(command))) {
+    if (
+      !selected ||
+      selectors > 1 ||
+      (!selected.has(command) && (explicitRun || !builtins.has(command)))
+    ) {
       errors.push(
-        diagnostic(file, row.line, "unknown-command", "Command names an unknown root script."),
+        diagnostic(
+          file,
+          row.line,
+          "unknown-command",
+          "Command names an unavailable script or workspace.",
+        ),
       );
     }
   }

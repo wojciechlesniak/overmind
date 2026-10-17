@@ -90,6 +90,22 @@ export function rootScripts(text: string): ReadonlySet<string> {
   );
 }
 
+export function workspacePatterns(text: string): string[] {
+  const raw: unknown = parse(text);
+  return z.object({ packages: z.array(z.string()) }).parse(raw).packages;
+}
+
+export function workspaceManifest(text: string): { name: string; scripts: ReadonlySet<string> } {
+  const raw: unknown = JSON.parse(text);
+  const manifest = z
+    .object({
+      name: z.string().min(1).max(214),
+      scripts: z.record(z.string(), z.string()).optional(),
+    })
+    .parse(raw);
+  return { name: manifest.name, scripts: new Set(Object.keys(manifest.scripts ?? {})) };
+}
+
 export function pendingLinks(text: string): ReadonlyMap<string, string> {
   const raw: unknown = JSON.parse(text);
   const parsed = z

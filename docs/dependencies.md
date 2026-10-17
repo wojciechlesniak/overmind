@@ -1095,7 +1095,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Alternatives considered: TypeScript alone does not bundle workspace modules; Bun changes the approved runtime; a handwritten bundler duplicates established tooling.
 - Risk: Native build tool; installation scripts remain denied, exact catalog pin and lockfile integrity retained, bundle inputs are checked before publication.
 - Last reviewed: 2026-10-16
-- Source: https://registry.npmjs.org/esbuild/0.28.2
+- Source: <https://registry.npmjs.org/esbuild/0.28.2>
 
 ### postject
 

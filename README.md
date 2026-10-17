@@ -47,7 +47,7 @@ flowchart TD
   WF --> DB[SQLite events and checkpoints]
 ```
 
-The [architecture document](docs/architecture/ARCHITECTURE.md) is owned by OVE_ARCH001. Dependencies point inward toward contracts, domain rules and application ports.
+The [architecture document](docs/architecture/ARCHITECTURE.md) defines the target package and process boundaries. Dependencies point inward toward contracts, domain rules and application ports; OVE_ARCH002 supplies their executable enforcement.
 
 ## Security model
 
@@ -130,7 +130,7 @@ Inventory entries, including reserved tooling:
 - `gitleaks`, `syft`, `crate:tauri`, `crate:tauri-build`, `crate:tauri-plugin-shell`, `crate:tauri-plugin-single-instance`
 - `crate:tauri-plugin-dialog`, `crate:serde`, `crate:serde_json`, `crate:tokio`, `Node.js`, `pnpm`
 - `actions/checkout`, `actions/setup-node`, `actions/cache/restore`, `actions/cache/save`, `actions/upload-artifact`, `actions/download-artifact`
-- `actions/dependency-review-action`, `github/codeql-action/upload-sarif`, `@vitejs/plugin-react-swc`, `crate:nix`, `crate:hyper`, `crate:hyper-util`
-- `crate:http-body-util`, `crate:exacl`
+- `actions/dependency-review-action`, `github/codeql-action/upload-sarif`, `@vitejs/plugin-react-swc`, `esbuild`, `crate:nix`, `crate:hyper`
+- `crate:hyper-util`, `crate:http-body-util`, `crate:exacl`
 
 <!-- docs-credits:end -->

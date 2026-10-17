@@ -37,7 +37,29 @@ it("validates pnpm Bash commands while allowing the documented install builtin",
 it("handles documented global options and still validates explicit run script names", () => {
   const md =
     "```bash\npnpm --version\npnpm --filter @overmind/desktop dev\npnpm run install\npnpm --filter=x run missing\n```\n";
-  expect(checkCommands(md, new Set(["dev"])).map((d) => d.line)).toEqual([4, 5]);
+  expect(
+    checkCommands(
+      md,
+      new Set(["dev"]),
+      "README.md",
+      new Map([["@overmind/desktop", new Set(["dev"])]]),
+    ).map((d) => d.line),
+  ).toEqual([4, 5]);
+});
+
+it("validates filtered scripts against the actual selected workspace rather than the root", () => {
+  const md =
+    "```bash\npnpm --filter @overmind/engine start\npnpm --filter @overmind/engine missing\npnpm --filter @overmind/unknown build\n```\n";
+  const workspaces = new Map([["@overmind/engine", new Set(["start"])]]);
+  expect(checkCommands(md, new Set(["build"]), "README.md", workspaces).map((d) => d.line)).toEqual(
+    [3, 4],
+  );
+});
+
+it("validates commands inside real nested fences and ignores literal reference examples", () => {
+  const md = "> ```bash\n> pnpm missing\n> ```\n\n- ```text\n  ADR 9999\n  ```\n";
+  expect(checkCommands(md, new Set()).map((d) => d.line)).toEqual([2]);
+  expect(checkReferences(new Map([["README.md", md]]), new Set())).toEqual([]);
 });
 
 it("fails closed on local paths, contact details, unowned TODOs and publication markers without echoing values", () => {

@@ -24,6 +24,11 @@ the server does not support HEAD. Redirects, credentials and nonpublic addresses
 are denied; IPv6-only hosts conservatively produce a warning. No cookies or tokens
 are sent, and response bodies are not consumed.
 
+Unfiltered script commands are checked against the root manifest. Literal
+`--filter` or `--dir` selections are checked against the real tracked manifest
+selected by `pnpm-workspace.yaml`; unknown workspaces and scripts fail. Complex
+filter expressions and multiple selectors are unsupported and fail closed.
+
 ## Configuration and generated sections
 
 The historical `.markdownlint-cli2.jsonc` filename is retained, but its contents

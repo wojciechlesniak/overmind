@@ -23,6 +23,7 @@ export interface CheckContext {
   config: Configuration;
   pending: ReadonlyMap<string, string>;
   flags: Flags;
+  workspaces?: ReadonlyMap<string, ReadonlySet<string>>;
 }
 export async function checkDocuments(ctx: CheckContext): Promise<Diagnostic[]> {
   const selected = new Map(
@@ -41,7 +42,7 @@ export async function checkDocuments(ctx: CheckContext): Promise<Diagnostic[]> {
   for (const [file, md] of selected) {
     errors.push(
       ...checkContent(file, md, ctx.flags.publish),
-      ...checkCommands(md, ctx.scripts, file),
+      ...checkCommands(md, ctx.scripts, file, ctx.workspaces),
     );
   }
   for (const [file, md] of selected) {

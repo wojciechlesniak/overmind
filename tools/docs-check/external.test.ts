@@ -41,3 +41,21 @@ it("pins a public resolved IP, falls back from HEAD to GET and never follows red
   expect(result).toHaveLength(1);
   expect(result[0]?.severity).toBe("warning");
 });
+
+it("bounds unresolved DNS with a ten-second deadline and never sends a request after abort", async () => {
+  const controller = new AbortController();
+  const deadline = vi.spyOn(AbortSignal, "timeout").mockReturnValue(controller.signal);
+  const request = vi.fn<ExternalPort["request"]>();
+  try {
+    const checked = checkExternalLinks(
+      new Map([["README.md", "# Root\n\n[link](https://public.example/a)\n"]]),
+      { resolve: () => new Promise<string[]>(() => undefined), request },
+    );
+    controller.abort();
+    expect((await checked)[0]?.severity).toBe("warning");
+    expect(deadline).toHaveBeenCalledWith(10_000);
+    expect(request).not.toHaveBeenCalled();
+  } finally {
+    deadline.mockRestore();
+  }
+});

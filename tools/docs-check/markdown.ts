@@ -20,36 +20,25 @@ export interface MarkdownLine {
 }
 
 export function markdownLines(md: string): MarkdownLine[] {
-  let fence: { marker: string; length: number; language: string } | undefined;
-  let frontMatter = md.startsWith("---\n");
-  const rows: MarkdownLine[] = [];
-  for (const [index, text] of md.replace(/\r\n?/gu, "\n").split("\n").entries()) {
-    if (frontMatter) {
-      if (index > 0 && /^(?:---|\.\.\.)\s*$/u.test(text)) {
-        frontMatter = false;
-      }
-      rows.push({ text: "", line: index + 1 });
-      continue;
+  const { tokens, offset } = parseMarkdown(md);
+  const rows: MarkdownLine[] = md
+    .replace(/\r\n?/gu, "\n")
+    .split("\n")
+    .map((text, index) => ({ text: index < offset ? "" : text, line: index + 1 }));
+  for (const block of flatten(tokens).filter(
+    (token) => token.type === "codeFenced" || token.type === "codeIndented",
+  )) {
+    const children = flatten(block.children);
+    const language = children.find((token) => token.type === "codeFencedFenceInfo")?.text ?? "";
+    for (let line = block.startLine + offset; line <= block.endLine + offset; line++) {
+      rows[line - 1] = { text: "", line, code: language };
     }
-    const match = /^ {0,3}(`{3,}|~{3,})(.*)$/u.exec(text);
-    const run = match?.[1] ?? "";
-    const rest = match?.[2] ?? "";
-    if (fence) {
-      if (run.startsWith(fence.marker) && run.length >= fence.length && /^[\t ]*$/u.test(rest)) {
-        fence = undefined;
-        rows.push({ text: "", line: index + 1 });
-      } else {
-        rows.push({ text, line: index + 1, code: fence.language });
-      }
-    } else if (match && (run.startsWith("~") || !rest.includes("`"))) {
-      fence = {
-        marker: run[0] ?? "",
-        length: run.length,
-        language: rest.trim().split(/\s/u)[0] ?? "",
+    for (const value of children.filter((token) => token.type === "codeFlowValue")) {
+      rows[value.startLine + offset - 1] = {
+        text: value.text,
+        line: value.startLine + offset,
+        code: language,
       };
-      rows.push({ text: "", line: index + 1 });
-    } else {
-      rows.push({ text, line: index + 1 });
     }
   }
   return rows;

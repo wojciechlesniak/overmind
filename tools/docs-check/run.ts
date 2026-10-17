@@ -1,13 +1,19 @@
 import { execFileSync } from "node:child_process";
 import { realpath, rename, unlink, writeFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
-import { dirname, resolve } from "node:path";
+import { dirname, matchesGlob, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { checkDocuments, type Flags } from "./checker.ts";
 import { diagnostic, type Diagnostic } from "./policy.ts";
 import { checkExternalLinks, type ExternalPort } from "./external.ts";
 import { canonicalFile, readRepositoryFile } from "./files.ts";
-import { lintConfiguration, pendingLinks, rootScripts } from "./input.parse-boundary.ts";
+import {
+  lintConfiguration,
+  pendingLinks,
+  rootScripts,
+  workspacePatterns,
+  workspaceManifest,
+} from "./input.parse-boundary.ts";
 import { runPlugins } from "./plugins.ts";
 import { updateGenerated } from "./generated.ts";
 
@@ -138,6 +144,24 @@ export async function run(root: string, args: string[], network?: ExternalPort):
       await readRepositoryFile(base, ".markdownlint-cli2.jsonc", true),
     );
     const scripts = rootScripts(await readRepositoryFile(base, "package.json", true));
+    const workspaces = new Map<string, ReadonlySet<string>>();
+    if (paths.has("pnpm-workspace.yaml")) {
+      const patterns = workspacePatterns(
+        await readRepositoryFile(base, "pnpm-workspace.yaml", true),
+      );
+      for (const file of tracked.filter(
+        (path) =>
+          path.endsWith("/package.json") &&
+          patterns.some((pattern) => matchesGlob(dirname(path), pattern)),
+      )) {
+        const manifest = workspaceManifest(await readRepositoryFile(base, file, true));
+        if (workspaces.has(manifest.name)) {
+          throw new Error("Duplicate workspace name.");
+        }
+        workspaces.set(manifest.name, manifest.scripts);
+        workspaces.set(`dir:${dirname(file)}`, manifest.scripts);
+      }
+    }
     const pending = pendingLinks(
       await readRepositoryFile(base, "tools/docs-check/pending-links.json", true),
     );
@@ -156,7 +180,9 @@ export async function run(root: string, args: string[], network?: ExternalPort):
     if (flags.fixToc) {
       await fixGenerated(base, files);
     }
-    errors.push(...(await checkDocuments({ files, paths, scripts, config, pending, flags })));
+    errors.push(
+      ...(await checkDocuments({ files, paths, scripts, config, pending, flags, workspaces })),
+    );
     errors.push(...(await runPlugins({ root: base, files, paths, flags })));
     if (flags.external) {
       errors.push(
