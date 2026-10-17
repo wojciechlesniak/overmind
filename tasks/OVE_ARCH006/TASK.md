@@ -6,7 +6,7 @@ kind: infra
 size: M
 priority: P0
 mvp: true
-status: todo
+status: in_progress
 depends_on: [OVE_ARCH001, OVE_ARCH003]
 soft_depends_on: [OVE_ARCH002]
 provides: ["lib:di-conventions", "lib:composition-root", "lib:port-token", "lib:multi-token", "port:DefineModule"]
