@@ -36,3 +36,19 @@ it("extracts autolinks and ignores escaped brackets and indented code", () => {
     ),
   ).toEqual([{ target: "https://example.test/a", line: 3 }]);
 });
+
+it("checks allowed HTML image sources so a missing README hero cannot bypass publication", () => {
+  expect(
+    extractLinks(
+      '# Root\n\n<img src="docs/assets/readme-hero.png" alt="Preview">\n\n<!-- <img src="ignored.png"> -->\n',
+    ),
+  ).toEqual([{ target: "docs/assets/readme-hero.png", line: 3 }]);
+});
+
+it("does not confuse other image attributes with the actual source", () => {
+  expect(
+    extractLinks(
+      '# Root\n\n<img alt=\' src="ignored.png"\' data-src="ignored.png" src="docs/assets/readme-hero.png">\n',
+    ),
+  ).toEqual([{ target: "docs/assets/readme-hero.png", line: 3 }]);
+});

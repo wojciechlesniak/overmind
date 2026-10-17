@@ -112,6 +112,25 @@ export function extractLinks(md: string): DocLink[] {
     }
   }
   const links: DocLink[] = [];
+  for (const token of all.filter(
+    (t) => t.type === "htmlFlow" || (t.type === "htmlText" && t.parent?.type !== "htmlFlow"),
+  )) {
+    const html = token.text.replace(/<!--[^]*?(?:-->|$)/gu, (comment) =>
+      comment.replace(/[^\n]/gu, " "),
+    );
+    for (const tag of html.matchAll(/<img\b((?:"[^"]*"|'[^']*'|[^'">])*)>/giu)) {
+      for (const attribute of (tag[1] ?? "").matchAll(
+        /([^\s/=<>`"']+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/gu,
+      )) {
+        if (attribute[1]?.toLowerCase() === "src") {
+          links.push({
+            target: attribute[2] ?? attribute[3] ?? attribute[4] ?? "",
+            line: token.startLine + offset + html.slice(0, tag.index).split("\n").length - 1,
+          });
+        }
+      }
+    }
+  }
   for (const token of all.filter((t) => ["link", "image", "autolink"].includes(t.type))) {
     const resource = token.children.find((child) => child.type === "resource");
     const referenceToken = token.children.find((child) => child.type === "reference");
@@ -131,7 +150,9 @@ export function extractLinks(md: string): DocLink[] {
       links.push({ target, line: token.startLine + offset });
     }
   }
-  return links;
+  // The public parser may expose an HTML span through both flow and text views.
+  // Checking an identical line/destination once also avoids duplicate requests.
+  return [...new Map(links.map((link) => [`${String(link.line)}\0${link.target}`, link])).values()];
 }
 
 export function headings(
