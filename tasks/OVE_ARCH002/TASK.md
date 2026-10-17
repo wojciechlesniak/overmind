@@ -6,7 +6,7 @@ kind: infra
 size: M
 priority: P0
 mvp: true
-status: todo
+status: in_progress
 depends_on: [OVE_ARCH001, OVE_SETUP003]
 soft_depends_on: [OVE_SETUP006]
 provides: ["lib:boundary-lint", "ci:boundaries"]
