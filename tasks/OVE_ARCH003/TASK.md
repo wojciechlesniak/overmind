@@ -252,3 +252,27 @@ Blocks every task that returns errors; publish early (a first merge with `Result
   security checks, fresh independent Standards/Spec reviews and exact-head hosted
   CI remain required before integration. No completion, live ruleset approval or
   merge is claimed by this checkpoint.
+
+## Integration rebase checkpoint (2026-10-17)
+
+- Rebased on DEVELOP `b2354d43a9730c25b521e5b14a7019d4f90962df` after SETUP017 and
+  OSS004 integration. Only config-integrity.ts conflicted; its resolution retains
+  the exact Markdown configuration check, package-engine protection and all
+  existing guards, adding only the approved errors-tooling prefix.
+- The first five task patches are unchanged in the range-diff. All other files
+  merged automatically. The lockfile differs from the new base only by the
+  existing contracts Zod 4.6.6 importer; no hand edit or regeneration occurred.
+  Normal frozen install passed 404 supply-chain entries with zero downloads and
+  normal prepare hooks.
+- Strict test-project typing passed. Actual focused protection/CI regression
+  fixtures passed 10 tests, with three unrelated cases filtered out; resolved-file
+  format and lint passed. The integrator-approved architecture-index row now
+  links the existing errors guide instead of describing it as planned.
+- The newly available `pnpm check:docs` passed with zero errors and 40 existing
+  legacy/pending-target warnings. It caught a one-space table-alignment drift in
+  the approved index row, which was corrected without changing the rule. Metadata
+  hash checks after rebase/install/focused Git fixtures confirmed the common Git
+  configuration and primary checkout index unchanged.
+- Full canonical checks, security gates, new independent reviews and exact-head
+  hosted CI on this integration base remain pending. The prior complete-suite
+  evidence is historical; this checkpoint does not claim acceptance or merge.

@@ -375,3 +375,32 @@ protocol/structural gates passed again (11/11).
 This is local evidence for the simplified seam on the current 90aad1c base, not
 approval to merge. Required rebase, later guard preservation, security checks,
 both fresh independent reviews and exact-head hosted execution remain pending.
+
+### Integration rebase and architecture index, approved 2026-10-17
+
+The integrator approved replacing the architecture index's planned error-model
+row with the existing errors.md link, typed Result/error catalogue purpose and
+ARCH003 owner. This exact row is now applied after rebase on DEVELOP
+b2354d43a9730c25b521e5b14a7019d4f90962df; no other index entry was changed.
+
+The actual rebase had one conflict, in tools/ci/config-integrity.ts. Resolution
+starts from the incoming OSS004 file and adds only the approved tools/errors
+prefix: the explicit Markdown configuration check, package-engine prefix and
+every existing label check remain intact. The range-diff preserves the first
+five task patches unchanged; the sixth differs only in that integration union.
+
+The lockfile merged automatically. Its entire difference from the new integration
+base is the existing contracts Zod 4.6.6 importer; no lock regeneration or manual
+edit occurred. A normal frozen install verified all 404 supply-chain entries,
+reused the already pinned dependency graph, downloaded nothing and ran normal
+prepare hooks. Strict test-project typing and focused configuration tests passed
+(10 passed, three unrelated cases filtered out), as did format/lint of the
+resolved file. Complete canonical checks and reviews on the new base remain
+pending; the earlier 427/59 full passes do not substitute for them.
+
+The actual merged documentation gate then passed with zero errors and its 40
+existing legacy/pending-target warnings. It first detected one-space alignment
+drift in the approved architecture-index row; only that row's spacing was fixed,
+without changing the Markdown rule. Read-only hashes after rebase, frozen install
+and focused Git fixtures confirmed the common Git configuration and primary
+checkout's index unchanged.
