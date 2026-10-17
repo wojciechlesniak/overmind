@@ -6,7 +6,7 @@ if (pr) {
     encoding: "utf8",
   }).split("\0");
   const protectedFiles = files.filter((file) =>
-    /^(?:(?:AGENTS|CLAUDE)\.md|lefthook(?:-secrets)?\.yml|commitlint\.config\.mjs|eslint\.config[^/]*(?:\/.*)?|\.oxlintrc\.json|vitest(?:\.shared|\.ci\.config)\.ts|\.github\/actionlint\.yaml|\.github\/workflows\/.*|\.github\/actions\/.*|apps\/desktop\/(?:vite\.config\.ts|scripts\/(?:check-dist[^/]*\.(?:mjs|json)|check-tauri-config\.mjs|tauri-permission-allowlist\.json)|src-tauri\/.*)|third-party\/rust\/.*|rust-toolchain\.toml|renovate\.json|docs\/dependencies\.md|deny\.toml|\.gitleaks\.toml|tools\/secret-scan\/safe-sarif\.tmpl|tools\/secret-scan\/(?:policy|gitleaks\.lock|syft\.lock|default-config\.lock)\.json|tools\/pinned-bin\/lock\.json|tools\/check-licenses\/.*|tools\/commitlint\/.*)$/u.test(
+    /^(?:(?:AGENTS|CLAUDE)\.md|lefthook(?:-secrets)?\.yml|commitlint\.config\.mjs|eslint\.config[^/]*(?:\/.*)?|\.oxlintrc\.json|vitest(?:\.shared|\.ci\.config)\.ts|\.github\/actionlint\.yaml|\.github\/workflows\/.*|\.github\/actions\/.*|apps\/desktop\/(?:vite\.config\.ts|scripts\/(?:check-dist[^/]*\.(?:mjs|json)|check-tauri-config\.mjs|tauri-permission-allowlist\.json)|src-tauri\/.*)|third-party\/rust\/.*|rust-toolchain\.toml|renovate\.json|docs\/dependencies\.md|deny\.toml|\.gitleaks\.toml|tools\/secret-scan\/safe-sarif\.tmpl|tools\/secret-scan\/(?:policy|gitleaks\.lock|syft\.lock|default-config\.lock)\.json|tools\/pinned-bin\/lock\.json|tools\/package-engine\/.*|tools\/check-licenses\/.*|tools\/commitlint\/.*)$/u.test(
       file,
     ),
   );

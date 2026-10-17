@@ -1,0 +1,2 @@
+const message: string = "OVE017_SOURCE_MAP_PROBE";
+throw new Error(message);

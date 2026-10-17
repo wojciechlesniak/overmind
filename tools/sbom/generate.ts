@@ -16,7 +16,8 @@ import { dirname, relative, resolve, sep } from "node:path";
 import { randomUUID } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { installSecurityTool } from "../secret-scan/install.ts";
-import { desktopWorkspaceIdentity, readSBOM } from "./input.parse-boundary.ts";
+import { desktopWorkspaceIdentity, parseSBOM, readSBOM } from "./input.parse-boundary.ts";
+import { readEngineComponent } from "../package-engine/sbom.ts";
 import { completeLicenseEvidence, validateSBOM } from "./validate.ts";
 
 function lockfile(root: string, path: string) {
@@ -137,8 +138,29 @@ export async function generateSBOM(
     const workspace = paths.includes(desktopLock)
       ? desktopWorkspaceIdentity(readFileSync(resolve(snapshot, desktopLock), "utf8"), sha)
       : undefined;
+    const sourceDocument = readSBOM(raw, workspace);
+    const engine = readEngineComponent(root, sha);
+    if (engine !== undefined) {
+      for (const source of [
+        "tools/package-engine/node.lock.json",
+        "tools/package-engine/runtime-licenses.json",
+      ]) {
+        const committed = execFileSync("git", ["show", `${sha}:${source}`], {
+          cwd: root,
+          env: options.gitEnv,
+          maxBuffer: 64 * 1024,
+        });
+        if (!readFileSync(lockfile(root, source)).equals(committed)) {
+          throw new Error("Engine SBOM policy source differs from the stated commit");
+        }
+      }
+    }
     const document = validateSBOM(
-      completeLicenseEvidence(readSBOM(raw, workspace)),
+      completeLicenseEvidence(
+        engine === undefined
+          ? sourceDocument
+          : parseSBOM({ ...sourceDocument, components: [...sourceDocument.components, engine] }),
+      ),
       paths.length > 1,
     );
     const directory = resolve(root, "sbom");

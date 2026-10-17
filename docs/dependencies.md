@@ -1,6 +1,6 @@
 # Dependency policy and register
 
-Verified on: 2026-10-16
+Verified on: 2026-10-17
 
 The catalog is the exact source of pins. Registry latest is evidence, never an
 instruction to upgrade. This review retains the Owner-approved SETUP006 tooling
@@ -1083,6 +1083,19 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Risk: Native build tool; installation scripts remain denied, exact catalog pin and lockfile integrity retained, bundle inputs are checked before publication.
 - Last reviewed: 2026-10-16
 - Source: https://registry.npmjs.org/esbuild/0.28.2
+
+### postject
+
+- Version: 1.0.0-alpha.6
+- License: MIT
+- Used by: tools/package-engine (build-only development dependency)
+- Added by: OVE_SETUP017
+- Value: Node-maintained Mach-O SEA blob injector selected by ADR 0030; installs locally for offline build invocation.
+- Maintenance cost: Long-lived alpha release; review upstream injector and commander dependency integrity before upgrades.
+- Alternatives considered: Bun changes the accepted runtime; pkg replaces the official runtime supply chain; loose runtime files replace the standalone sidecar contract.
+- Risk: Exact alpha pin is intentional; installation scripts remain denied. Injection only touches a fresh task-owned copy of the checksum-verified official runtime.
+- Last reviewed: 2026-10-17
+- Source: https://registry.npmjs.org/postject/1.0.0-alpha.6
 
 ## Operational limits and sources
 

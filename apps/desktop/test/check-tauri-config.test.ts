@@ -28,6 +28,13 @@ describe("Tauri deny-by-default configuration", () => {
   it("accepts the actual shell configuration", () => {
     expect(probe().status).toBe(0);
   });
+  it("rejects removing the macOS icon needed by real app bundling", () => {
+    expect(
+      probe((root) => {
+        edit(root, "tauri.conf.json", '"icons/icon.png", "icons/icon.icns"', '"icons/icon.png"');
+      }).status,
+    ).not.toBe(0);
+  });
   it.each([
     ["capabilities/main.json", '"allow-pick-directory"', '"shell:allow-execute"'],
     ["tauri.conf.json", "script-src 'self';", "script-src 'self' 'unsafe-eval';"],
@@ -59,6 +66,17 @@ describe("Tauri deny-by-default configuration", () => {
     expect(
       probe((root) => {
         edit(root, "tauri.conf.json", '"licenses/rust/"', '"elsewhere/"');
+      }).status,
+    ).not.toBe(0);
+  });
+  it.each([
+    ['"engine/engine.cjs.map"', '"elsewhere/engine.cjs.map"'],
+    ['"engine/LICENSE"', '"elsewhere/LICENSE"'],
+    ['"binaries/overmind-engine.resources/LICENSE"', '"binaries/overmind-engine.resources/*"'],
+  ])("rejects missing or broadened engine resource mapping %s", (from, to) => {
+    expect(
+      probe((root) => {
+        edit(root, "tauri.conf.json", from, to);
       }).status,
     ).not.toBe(0);
   });

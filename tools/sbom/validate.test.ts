@@ -41,6 +41,32 @@ it("SBOM validation requires populated components, identity, licenses and actual
   }
   expect(() => validateSBOM(good(), true)).toThrow(/tauri/u);
 });
+it("only the exact engine manifest can supply a generic file component", () => {
+  const digest = "1".repeat(64);
+  const component = {
+    type: "file",
+    name: "overmind-engine.manifest.json",
+    version: "0.0.0",
+    purl: `pkg:generic/overmind-engine-manifest@0.0.0?checksum=sha256:${digest}`,
+    hashes: [{ alg: "SHA-256", content: digest }],
+    licenses: [{ license: { id: "Apache-2.0" } }],
+    properties: [{ name: "overmind:engine-manifest", value: "{}" }],
+  };
+  expect(
+    validateSBOM({ ...good(), components: [...good().components, component] }).components,
+  ).toHaveLength(3);
+  for (const change of [
+    { name: "other.json" },
+    { hashes: [] },
+    { type: "library" },
+    { purl: "pkg:npm/fake@1.0.0" },
+    { hashes: [{ alg: "SHA-256", content: "2".repeat(64) }] },
+  ]) {
+    expect(() =>
+      validateSBOM({ ...good(), components: [...good().components, { ...component, ...change }] }),
+    ).toThrow();
+  }
+});
 it("NOASSERTION is accepted only with explicit lockfile evidence, never as license permission", () => {
   const raw = {
     ...good(),

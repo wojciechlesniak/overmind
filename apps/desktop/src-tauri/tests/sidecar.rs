@@ -7,8 +7,45 @@ use std::{
     path::PathBuf,
     process::{Command, Stdio},
     sync::Mutex,
+    time::Instant,
 };
 static HELPER_LOCK: Mutex<()> = Mutex::new(());
+// Tauri copies real sidecars beside Cargo artifacts, so execute each fixture in
+// its own private layout instead of creating a helper in the build directory.
+fn run_isolated() -> bool {
+    let test = std::thread::current()
+        .name()
+        .expect("Rust test thread has its exact test name")
+        .to_owned();
+    const CHILD_TEST: &str = "OVERMIND_ISOLATED_SIDECAR_TEST";
+    if std::env::var(CHILD_TEST).as_deref() == Ok(test.as_str()) {
+        return false;
+    }
+    let fixture = Fixture::new();
+    let deps = fixture.root.join("deps");
+    fs::create_dir(&deps).unwrap();
+    let executable = deps.join("sidecar-tests");
+    fs::copy(std::env::current_exe().unwrap(), &executable).unwrap();
+    let mut child = Command::new(&executable)
+        .args(["--exact", test.as_str(), "--nocapture"])
+        .env(CHILD_TEST, &test)
+        .spawn()
+        .unwrap();
+    let started = Instant::now();
+    let status = loop {
+        if let Some(status) = child.try_wait().unwrap() {
+            break status;
+        }
+        if started.elapsed() > Duration::from_secs(60) {
+            child.kill().unwrap();
+            child.wait().unwrap();
+            panic!("isolated sidecar test exceeded its deadline");
+        }
+        std::thread::sleep(Duration::from_millis(10));
+    };
+    assert!(status.success(), "isolated sidecar test failed: {test}");
+    true
+}
 struct Helper(PathBuf);
 impl Helper {
     fn create(script: &str) -> Self {
@@ -52,6 +89,9 @@ fn app() -> tauri::App<tauri::test::MockRuntime> {
 }
 #[test]
 fn exact_sidecar_arguments_and_service_survive_app_drop() {
+    if run_isolated() {
+        return;
+    }
     let _lock = HELPER_LOCK.lock().unwrap();
     let f = Fixture::new();
     let socket = f.paths.engine.to_str().unwrap();
@@ -79,6 +119,9 @@ fn exact_sidecar_arguments_and_service_survive_app_drop() {
 }
 #[test]
 fn outer_timeout_kills_hung_helper_and_reports_safe_error() {
+    if run_isolated() {
+        return;
+    }
     let _lock = HELPER_LOCK.lock().unwrap();
     let f = Fixture::new();
     let pidfile = f.root.join("helper.pid");

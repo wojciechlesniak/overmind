@@ -147,3 +147,68 @@ fn native_resource_copy_preserves_complete_mpl_sources_and_notices() {
         .sum();
     assert_eq!(count, 29);
 }
+
+#[path = "../build_config.rs"]
+mod build_config;
+
+fn packaging_config() -> serde_json::Value {
+    serde_json::from_str(include_str!("../tauri.conf.json")).unwrap()
+}
+
+#[test]
+fn source_only_rust_build_omits_only_generated_engine_resources() {
+    let mut original = packaging_config();
+    original["bundle"]["resources"]["extra-notice.txt"] = serde_json::json!("licenses/extra.txt");
+    let mut expected = original.clone();
+    expected["bundle"]["externalBin"] = serde_json::json!([]);
+    expected["bundle"]["resources"] = serde_json::json!({
+        "../../../third-party/rust/": "licenses/rust/",
+        "extra-notice.txt": "licenses/extra.txt"
+    });
+    expected["version"] = serde_json::json!("0.0.0");
+    assert_eq!(
+        build_config::development_config(original, "debug", false, &serde_json::json!("0.0.0")),
+        Some(expected)
+    );
+}
+
+#[test]
+fn release_build_never_omits_missing_engine_resources() {
+    assert!(
+        build_config::development_config(
+            packaging_config(),
+            "release",
+            false,
+            &serde_json::json!("0.0.0")
+        )
+        .is_none()
+    );
+}
+
+#[test]
+fn packaged_debug_build_retains_required_engine_resources() {
+    assert!(
+        build_config::development_config(
+            packaging_config(),
+            "debug",
+            true,
+            &serde_json::json!("0.0.0")
+        )
+        .is_none()
+    );
+}
+
+#[test]
+fn source_only_rust_build_rejects_implicit_resource_maps() {
+    let mut malformed = packaging_config();
+    malformed["bundle"]["resources"] = serde_json::json!([]);
+    assert!(
+        std::panic::catch_unwind(|| build_config::development_config(
+            malformed,
+            "debug",
+            false,
+            &serde_json::json!("0.0.0")
+        ))
+        .is_err()
+    );
+}

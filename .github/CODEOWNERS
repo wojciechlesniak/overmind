@@ -44,3 +44,6 @@
 /CLAUDE.md @wojciechlesniak
 /tools/agents-md/ @wojciechlesniak
 /.github/CODEOWNERS @wojciechlesniak
+
+# Engine runtime pins, binary license ledger and packaging policy (OVE_SETUP017).
+/tools/package-engine/ @wojciechlesniak

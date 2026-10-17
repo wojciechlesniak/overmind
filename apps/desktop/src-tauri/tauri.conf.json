@@ -41,13 +41,15 @@
     "active": true,
     "targets": ["app", "dmg"],
     "externalBin": ["binaries/overmind-engine"],
-    "icon": ["icons/icon.png"],
+    "icon": ["icons/icon.png", "icons/icon.icns"],
     "macOS": {
       "minimumSystemVersion": "26.0",
       "hardenedRuntime": true
     },
     "resources": {
-      "../../../third-party/rust/": "licenses/rust/"
+      "../../../third-party/rust/": "licenses/rust/",
+      "binaries/overmind-engine.resources/engine.cjs.map": "engine/engine.cjs.map",
+      "binaries/overmind-engine.resources/LICENSE": "engine/LICENSE"
     }
   }
 }

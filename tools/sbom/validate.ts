@@ -32,7 +32,8 @@ export function validateSBOM(raw: unknown, hasRust = false): SBOM {
         (item) =>
           ("expression" in item && item.expression === "NOASSERTION") ||
           ("license" in item &&
-            (item.license.name === "NOASSERTION" || item.license.id === "NOASSERTION")),
+            (("name" in item.license && item.license.name === "NOASSERTION") ||
+              item.license.id === "NOASSERTION")),
       ) &&
       !component.properties?.some(
         (item) => item.name === "overmind:license-evidence" && item.value === missingLicenseReason,

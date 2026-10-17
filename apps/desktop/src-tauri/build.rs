@@ -1,5 +1,6 @@
 #![forbid(unsafe_code)]
 use std::{env, fs, path::PathBuf};
+mod build_config;
 fn main() {
     println!("cargo:rerun-if-changed=tauri.conf.json");
     println!("cargo:rerun-if-changed=../package.json");
@@ -10,18 +11,23 @@ fn main() {
             "pick_directory",
         ]));
     let target = env::var("TARGET").expect("Cargo target unavailable");
-    if env::var("PROFILE").as_deref() != Ok("release")
-        && !PathBuf::from(format!("binaries/overmind-engine-{target}")).is_file()
-    {
-        let mut config: serde_json::Value =
+    let profile = env::var("PROFILE").expect("Cargo profile unavailable");
+    let sidecar_present = PathBuf::from(format!("binaries/overmind-engine-{target}")).is_file();
+    if profile != "release" && !sidecar_present {
+        let config: serde_json::Value =
             serde_json::from_slice(&fs::read("tauri.conf.json").expect("Tauri config unavailable"))
                 .expect("Invalid Tauri config");
         let package: serde_json::Value = serde_json::from_slice(
             &fs::read("../package.json").expect("Desktop manifest unavailable"),
         )
         .expect("Invalid desktop manifest");
-        config["bundle"]["externalBin"] = serde_json::json!([]);
-        config["version"] = package["version"].clone();
+        let config = build_config::development_config(
+            config,
+            &profile,
+            sidecar_present,
+            &package["version"],
+        )
+        .expect("Source-only development configuration required");
         let directory = PathBuf::from(env::var_os("OUT_DIR").expect("Cargo output unavailable"))
             .join("dev-config");
         fs::create_dir_all(&directory).expect("Cannot create dev build config");

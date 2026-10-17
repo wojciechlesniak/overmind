@@ -10,7 +10,7 @@ const license = z.union([
       .refine((item) => Boolean(item.id ?? item.name)),
   }),
 ]);
-const component = z
+const packageComponent = z
   .object({
     name: z.string().min(1),
     version: z.string().min(1),
@@ -18,7 +18,35 @@ const component = z
     licenses: z.array(license).optional(),
     properties: z.array(property).optional(),
   })
-  .loose();
+  .loose()
+  .refine((item) => item["type"] !== "file", "Package components cannot claim file identity");
+const fileComponent = z
+  .object({
+    type: z.literal("file"),
+    name: z.literal("overmind-engine.manifest.json"),
+    version: z.string().regex(/^\d+\.\d+\.\d+(?:-[\w.-]+)?$/u),
+    purl: z
+      .string()
+      .regex(/^pkg:generic\/overmind-engine-manifest@[^?]+\?checksum=sha256:[a-f0-9]{64}$/u),
+    hashes: z
+      .array(
+        z
+          .object({ alg: z.literal("SHA-256"), content: z.string().regex(/^[a-f0-9]{64}$/u) })
+          .strict(),
+      )
+      .length(1),
+    licenses: z
+      .array(z.object({ license: z.object({ id: z.literal("Apache-2.0") }).strict() }).strict())
+      .length(1),
+    properties: z.array(property),
+  })
+  .strict()
+  .refine(
+    (item) =>
+      item.purl ===
+      `pkg:generic/overmind-engine-manifest@${item.version}?checksum=sha256:${item.hashes[0]?.content ?? ""}`,
+  );
+const component = z.union([packageComponent, fileComponent]);
 const document = z
   .object({
     bomFormat: z.literal("CycloneDX"),

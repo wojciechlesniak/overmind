@@ -108,9 +108,14 @@ same(
 same(config.identifier, "dev.overmind.app", "application identifier");
 same(config.version, "../package.json", "application version");
 same(config.bundle?.externalBin, ["binaries/overmind-engine"], "sidecar");
+same(config.bundle?.icon, ["icons/icon.png", "icons/icon.icns"], "application icons");
 same(
   config.bundle?.resources,
-  { "../../../third-party/rust/": "licenses/rust/" },
+  {
+    "../../../third-party/rust/": "licenses/rust/",
+    "binaries/overmind-engine.resources/engine.cjs.map": "engine/engine.cjs.map",
+    "binaries/overmind-engine.resources/LICENSE": "engine/LICENSE",
+  },
   "third-party license resources",
 );
 same(config.bundle?.targets, ["app", "dmg"], "bundle targets");
