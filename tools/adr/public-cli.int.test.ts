@@ -35,6 +35,64 @@ test("public allocation honors real local and remote reservations and denies an 
   }
 }, 15000);
 
+test("public allocation includes a local reservation above every published number", () => {
+  const { parent, root, git, cli } = fixture();
+  try {
+    const head = git(["rev-parse", "HEAD"]).trim();
+    const reserved = resolve(root, "docs/adr/0037-local-highest.md");
+    writeFileSync(reserved, "Local reservation only.\n");
+    const created = cli("new.ts", ["Choose local reservation"]);
+    expect(created.status).toBe(0);
+    expect(created.stdout.trim()).toBe("docs/adr/0038-choose-local-reservation.md");
+    const record = parseAdr(
+      "0038-choose-local-reservation.md",
+      readFileSync(resolve(root, created.stdout.trim()), "utf8"),
+    );
+    expect(record.meta.adr).toBe(38);
+    expect(record.meta.status).toBe("proposed");
+    expect(readFileSync(reserved, "utf8")).toBe("Local reservation only.\n");
+    expect(git(["rev-parse", "HEAD"]).trim()).toBe(head);
+  } finally {
+    rmSync(parent, { recursive: true, force: true });
+  }
+}, 15000);
+
+test("public allocation fetches a newer remote DEVELOP without changing the checkout", () => {
+  const { parent, root, remote, git, cli } = fixture();
+  try {
+    const head = git(["rev-parse", "HEAD"]).trim();
+    const peer = resolve(parent, "publisher");
+    git(["clone", "--quiet", "--branch", "DEVELOP", remote, peer], parent);
+    git(["config", "user.name", "ADR publisher"], peer);
+    git(["config", "user.email", "adr-publisher@example.invalid"], peer);
+    writeFileSync(
+      resolve(peer, "docs/adr/0044-remote-develop.md"),
+      "Remote DEVELOP reservation only.\n",
+    );
+    git(["add", "."], peer);
+    git(["commit", "--quiet", "-m", "docs: publish a newer reservation"], peer);
+    git(["push", "--quiet", "origin", "DEVELOP"], peer);
+    const published = git(["rev-parse", "HEAD"], peer).trim();
+    expect(published).not.toBe(head);
+    expect(git(["rev-parse", "origin/DEVELOP"]).trim()).toBe(head);
+    const created = cli("new.ts", ["Choose fetched DEVELOP"]);
+    expect(created.status).toBe(0);
+    expect(created.stdout.trim()).toBe("docs/adr/0045-choose-fetched-develop.md");
+    const record = parseAdr(
+      "0045-choose-fetched-develop.md",
+      readFileSync(resolve(root, created.stdout.trim()), "utf8"),
+    );
+    expect(record.meta.adr).toBe(45);
+    expect(record.meta.status).toBe("proposed");
+    expect(git(["rev-parse", "origin/DEVELOP"]).trim()).toBe(published);
+    expect(git(["rev-parse", "HEAD"]).trim()).toBe(head);
+    expect(git(["branch", "--show-current"]).trim()).toBe("DEVELOP");
+    expect(existsSync(resolve(root, "docs/adr/0044-remote-develop.md"))).toBe(false);
+  } finally {
+    rmSync(parent, { recursive: true, force: true });
+  }
+}, 15000);
+
 test("public renumber and index commands leave a complete conforming repository checkable", () => {
   const { parent, root, cli } = fixture(true);
   try {

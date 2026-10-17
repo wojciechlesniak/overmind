@@ -655,3 +655,28 @@ The separate OSS014/015 and replacement-staging drafts remain outside this
 worktree for review. No task, dependency, criterion or approval is created by
 those drafts; the tracked normative TASK and current acceptance blockers remain
 unchanged pending an explicit Owner decision.
+
+### Independent public allocation-source verification
+
+Spec review of `088f2bd` found a coverage gap: a remote task number above both
+the local and DEVELOP numbers could hide an implementation omitting either
+lower source. The original reservation/unavailable-origin and full published
+history renumber/index cases remain unchanged. Two separate actual CLI cases
+now exercise each other source as the deciding maximum.
+
+The local case keeps published numbers at 30, adds local reservation 37 and
+requires the public CLI to create 38 while preserving that reservation and HEAD.
+The DEVELOP case uses a real second clone to commit/push reservation 44 after
+the tested checkout exists. It first verifies that checkout's remote-tracking
+ref is stale, then requires the public CLI to fetch and allocate 45, advance the
+tracking ref to the actual published commit, and preserve the local HEAD/branch
+without checking out the remote file. Every fixture Git call stays isolated
+with fresh HOME/XDG; all fixtures clean up normally. No production change was
+necessary.
+
+The one ordinary baseline passed all four public CLI cases in 17.51 seconds,
+with unchanged 3000 ms child/15000 ms case deadlines, one worker and no observer
+or retries. Capture: `ove026-public-cli-independent-sources-baseline-088f2bd.log`.
+Configured formatting, full workspace typecheck and scoped lint then passed;
+no tests were repeated after layout-only formatting. Current criteria/status,
+unapproved staged scope and all exact-new-head gate/review obligations remain.

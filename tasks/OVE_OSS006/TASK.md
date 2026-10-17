@@ -225,3 +225,12 @@ passed in 11.22 seconds. Full typecheck/lint and source formatting then passed;
 seven ADR integrations passed in 22.45 seconds and 76 shared ADR/docs unit tests
 in 6.68 seconds. Fresh independent review and all exact-new-head gates remain
 required. Current criteria, status and pending Owner acceptance are unchanged.
+
+Fresh Spec review identified that one remote task reservation dominated the
+earlier allocation case, so it could not independently prove the lower local
+and DEVELOP sources. Two additional actual CLI cases now prove local-highest
+37 selects 38, and a separately pushed remote DEVELOP 44 is fetched to select
+45 while the local checkout stays unchanged. All four public CLI cases passed
+in 17.51 seconds with the original limits and one worker. Only test coverage and
+factual evidence changed; formatting, full typecheck and scoped lint passed.
+Fresh exact-head reviews/gates and Owner scope acceptance remain pending.
