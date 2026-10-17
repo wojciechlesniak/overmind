@@ -404,3 +404,16 @@ drift in the approved architecture-index row; only that row's spacing was fixed,
 without changing the Markdown rule. Read-only hashes after rebase, frozen install
 and focused Git fixtures confirmed the common Git configuration and primary
 checkout's index unchanged.
+
+### Public-root review correction
+
+Fresh specification review identified private executable/type imports in the
+Tools catalogue integration. The integrator approved the minimal correction:
+catalogueModules, errorRegistry and ErrorCatalogue now come from the already
+exported contracts public index. Private catalogue AST files are still read only
+as source data. No declaration, manifest, dependency or product export changed.
+
+Strict test typing and formatting passed; all five exact integration checks
+passed in 6.10 s, with four independent compiler scenarios at
+1470/1363/1336/1396 ms under the original 4 s / 5 s deadlines. Updated independent
+reviews and complete canonical/hosted checks remain required.

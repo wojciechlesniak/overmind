@@ -6,8 +6,8 @@ import { expect, it } from "vitest";
 import {
   catalogueModules,
   errorRegistry,
-} from "../../packages/contracts/src/errors/index.generated.ts";
-import type { ErrorCatalogue } from "../../packages/contracts/src/errors/definition.ts";
+  type ErrorCatalogue,
+} from "../../packages/contracts/src/index.ts";
 
 const root = resolve(import.meta.dirname, "../..");
 const sourceDirectory = resolve(root, "packages/contracts/src/errors");

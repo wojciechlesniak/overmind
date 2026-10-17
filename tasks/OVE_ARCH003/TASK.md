@@ -276,3 +276,17 @@ Blocks every task that returns errors; publish early (a first merge with `Result
 - Full canonical checks, security gates, new independent reviews and exact-head
   hosted CI on this integration base remain pending. The prior complete-suite
   evidence is historical; this checkpoint does not claim acceptance or merge.
+
+## Public-root integration review fix (2026-10-17)
+
+- Fresh specification review found that the Tools integration imported generated
+  metadata and its catalogue type through private contracts modules. It now
+  imports all three from the existing public contracts index. No new product
+  export, dependency or boundary exception was added; private source inspection
+  remains data-only for the independent AST check.
+- Strict test-project typing and changed-file formatting passed. The exact five
+  compiler integrations passed in 6.10 s; independent child scenarios took
+  1470/1363/1336/1396 ms with unchanged 4000 ms child / 5000 ms test deadlines and
+  all pre-emit diagnostics. No broad suite was rerun for this focused correction.
+- Both reviews must assess the updated head, and complete canonical/security and
+  hosted checks on the rebased branch remain pending.
