@@ -2,17 +2,30 @@ import { parse } from "yaml";
 import { z } from "zod";
 import type { Configuration } from "markdownlint";
 import type { Diagnostic } from "./policy.ts";
+import { markdownFrontMatter } from "./markdown.ts";
 
 export function translationStatus(md: string): string | undefined {
-  const source = md.replace(/^\uFEFF/u, "").replace(/\r\n?/gu, "\n");
-  const match = /^---\n([^]*?)\n(?:---|\.\.\.)(?:\n|$)/u.exec(source);
-  if (!match) {
-    if (source.startsWith("---\n")) {
-      throw new Error("Unclosed translation front matter.");
+  const lines = [...markdownFrontMatter(md)];
+  if (!lines.length) {
+    const first = md
+      .replace(/^\uFEFF/u, "")
+      .split(/\r\n?|\n/u, 1)[0]
+      ?.trimEnd();
+    if (first && ["---", "+++", "{"].includes(first)) {
+      throw new Error("Unrecognized translation front matter.");
     }
     return undefined;
   }
-  const raw: unknown = parse(match[1] ?? "");
+  if (lines.shift()?.trimEnd() !== "---") {
+    throw new Error("Translation front matter must use YAML.");
+  }
+  while (lines.at(-1)?.trim() === "") {
+    lines.pop();
+  }
+  if (lines.pop()?.trimEnd() !== "---") {
+    throw new Error("Unsupported translation front matter delimiter.");
+  }
+  const raw: unknown = parse(lines.join("\n"));
   return z.object({ status: z.string().optional() }).loose().parse(raw).status;
 }
 

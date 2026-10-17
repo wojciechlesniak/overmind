@@ -25,8 +25,12 @@ it("checks publication prerequisites, stale pending entries and malformed links 
   );
 });
 
-it("rejects draft front matter after a UTF-8 BOM during actual publication checking", async () => {
-  const source = "\uFEFF---\nstatus: draft\n---\n# Draft\n";
+it.each([
+  "---\nstatus: draft\n---\n# Draft\n",
+  "--- \nstatus: draft\n--- \n# Draft\n",
+  "---\t\nstatus: draft\n---\t\n# Draft\n",
+  "\uFEFF--- \t\r\nstatus: draft\r\n--- \t\r\n\r\n# Draft\r\n",
+])("rejects renderer-recognized draft front matter during publication: %j", async (source) => {
   const diagnostics = await checkDocuments({
     files: new Map([["README.md", source]]),
     paths: new Set(["README.md", "LICENSE"]),
@@ -37,3 +41,18 @@ it("rejects draft front matter after a UTF-8 BOM during actual publication check
   });
   expect(diagnostics.map((d) => d.rule)).toContain("draft-translation");
 });
+
+it.each(['+++\nstatus = "draft"\n+++\n# Draft\n', '{\n"status": "draft"\n}\n# Draft\n'])(
+  "fails publication closed for recognized unsupported metadata: %j",
+  async (source) => {
+    const diagnostics = await checkDocuments({
+      files: new Map([["README.md", source]]),
+      paths: new Set(["README.md", "LICENSE"]),
+      scripts: new Set(),
+      config: {},
+      pending: new Map(),
+      flags: { publish: true, i18n: false, fixToc: false, github: false, external: false },
+    });
+    expect(diagnostics.map((d) => d.rule)).toContain("front-matter");
+  },
+);

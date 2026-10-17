@@ -46,9 +46,13 @@ export function markdownLines(md: string): MarkdownLine[] {
 
 // Use the approved core's public parser seam instead of interpreting Markdown
 // with overlapping regular expressions. This remains deterministic and I/O-free.
-function parseMarkdown(md: string): { tokens: MicromarkToken[]; offset: number } {
+function parseMarkdown(md: string): {
+  tokens: MicromarkToken[];
+  offset: number;
+  frontMatter: readonly string[];
+} {
   let tokens: MicromarkToken[] = [];
-  let offset = 0;
+  let frontMatter: readonly string[] = [];
   const collect: Rule = {
     names: ["overmind-doc-data"],
     description: "Collect documentation syntax",
@@ -56,7 +60,7 @@ function parseMarkdown(md: string): { tokens: MicromarkToken[]; offset: number }
     parser: "micromark",
     function: (params) => {
       tokens = params.parsers.micromark.tokens;
-      offset = params.frontMatterLines.length;
+      frontMatter = params.frontMatterLines;
     },
   };
   lint({
@@ -65,7 +69,11 @@ function parseMarkdown(md: string): { tokens: MicromarkToken[]; offset: number }
     customRules: [collect],
     noInlineConfig: true,
   });
-  return { tokens, offset };
+  return { tokens, offset: frontMatter.length, frontMatter };
+}
+
+export function markdownFrontMatter(md: string): readonly string[] {
+  return parseMarkdown(md).frontMatter;
 }
 
 function flatten(tokens: readonly MicromarkToken[]): MicromarkToken[] {

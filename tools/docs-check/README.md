@@ -54,8 +54,10 @@ the repository on the same device. Binary assets are checked without reading
 their contents. Document reads open without following the final symlink or
 blocking on a FIFO, validate descriptor identity/type/size before content access,
 and stop after at most one MiB plus a single overflow-detection byte. Changed
-documents fail. Translation metadata supports a leading UTF-8 BOM and both YAML
-end markers; incomplete front matter fails publication.
+documents fail. Translation metadata uses the same public `frontMatterLines`
+parser result as Markdown checks, including a leading UTF-8 BOM, CRLF and trailing
+delimiter whitespace. Only renderer-recognized YAML metadata is interpreted;
+TOML, JSON, incomplete metadata and unsupported delimiters fail publication.
 
 ## Translation extension
 

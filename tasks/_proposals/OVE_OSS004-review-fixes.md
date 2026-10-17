@@ -6,7 +6,7 @@ integrator's CPU reservation; scoped regressions use unique temporary fixtures.
 
 | Finding | Real RED evidence | Implemented correction |
 | --- | --- | --- |
-| BOM draft front matter | Full pure publication check returned no diagnostics | Recognize BOM and both YAML end markers; reject incomplete metadata |
+| BOM draft front matter | Full pure publication check returned no diagnostics | Use renderer-recognized YAML metadata; reject incomplete or unsupported metadata |
 | Precheck/open/read race | A real grown file was read before denial; raced FIFO requested a blocking open | Nonblocking no-follow open, descriptor validation before content, bounded positional reads, identity/change checks |
 | Character references | Numeric/named headings became empty anchors; encoded destinations lost characters before policy checks | Decode recognized references through the approved public entities API as inert data |
 | Inventory used as existence proof | Real deleted tracked assets/LICENSE and escaping asset/LICENSE symlinks returned exit 0 | Keep trusted inventory separate from actual canonical same-device regular-file targets |
@@ -37,3 +37,22 @@ The narrowly approved direct entities 7.0.1 adoption is recorded separately in
 [its dependency proposal](OVE_OSS004-entities-adoption.md). The generated lockfile
 changes only catalog/importer links, with zero package-version/transitive changes.
 No private primary worktree file was edited.
+
+## Renderer front-matter follow-up after 95ab3b8
+
+Standards review found that the metadata regex still omitted trailing delimiter
+whitespace accepted by markdownlint. Real full `checkDocuments` publication
+regressions were RED for spaces and tabs (no diagnostics), BOM plus CRLF (only the
+existing line-ending diagnostic), and recognized TOML/JSON (no metadata error).
+The CRLF case was already blocked by line-ending policy and is not claimed as a
+complete publication bypass.
+
+Metadata now comes from the existing public custom-rule `params.frontMatterLines`
+result, shared with Markdown token collection. No private imports, dependency or
+new front-matter recognition regex is added. Supported YAML delimiter lines are
+removed from that recognized result before the existing YAML/schema validation.
+Recognized TOML/JSON, malformed data and unrecognized or incomplete metadata fail
+closed. In particular, `...` is not a YAML end delimiter recognized by the actual
+core; it now fails safely instead of being interpreted by a separate dialect.
+The previous incomplete-input denial remains. All five new full-path regression
+cases are GREEN after this correction.
