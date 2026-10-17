@@ -6,7 +6,7 @@ kind: contract
 size: M
 priority: P0
 mvp: true
-status: in_progress
+status: in_review
 depends_on: [OVE_ARCH001, OVE_SETUP002]
 soft_depends_on: [OVE_ARCH008]
 provides: ["lib:result", "contract:AppError", "contract:ErrorCode", "lib:error-catalogue", "lib:error-mapper"]
