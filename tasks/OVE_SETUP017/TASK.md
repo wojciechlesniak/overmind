@@ -95,7 +95,7 @@ Tooling in `tools/package-engine/`. Pure planning functions (`planSteps(variant)
 - [x] `--check-reproducible` either passes or the documented exception exists.
 - [x] A release-mode run with an entitlements file containing `disable-library-validation` fails.
 - [x] The produced file name ends with `-aarch64-apple-darwin` and Tauri's `tauri build --debug` places it in `Contents/MacOS/` (manual check in PR).
-- [ ] Unit tests (Linux) for step planning, manifest builder, lock validation and entitlement guard pass in CI.
+- [x] Unit tests (Linux) for step planning, manifest builder, lock validation and entitlement guard pass in CI.
 
 ## 12. Test plan
 
@@ -110,3 +110,19 @@ Starts after OVE_SETUP011 and 016. Parallel with OVE_SETUP014 (shares the entitl
 - ASSUMPTION: Node SEA variant per default rule of OVE_SETUP011.
 - ASSUMPTION: arm64 only; universal binaries are not produced.
 - Open question: embed a code cache for faster startup (adds platform specificity); default off.
+
+## Acceptance evidence (2026-10-17)
+
+- Exact implementation head `d75db297d5fb37e9e4a293b2bcaf234b797fc6b5` passed
+  the complete local check: 358 unit, 57 integration and 29 Rust tests, plus
+  four standalone dependency-policy CLI fixtures. License, audit, secret and
+  SBOM gates passed under the unchanged policies.
+- Real macOS packaging reproduced the unsigned binary in independent directories.
+  The actual Tauri debug application included the sidecar and both resources;
+  strict codesign, version/protocol/build identity and all deployed hashes passed.
+- Independent Standards and Spec reviews passed the implementation and the
+  isolated Rust fixture fix with zero findings.
+- All three Linux test shards passed in CI run 39030851097; Security run
+  39030851112 passed. This confirms the final portable-unit acceptance item.
+- This evidence update is status/documentation only. Its fresh CI, final done
+  commit reviews and final exact-head checks remain required before integration.
