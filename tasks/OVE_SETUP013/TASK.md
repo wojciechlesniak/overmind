@@ -152,3 +152,7 @@ the current remote claims. Mutation tests use real isolated bare remotes, frozen
 offline workspace installs and independent clones. GitHub finish evidence uses
 validated API fixtures; it is not fabricated hosted CI. Hosted CI/security and
 the final status-only head review remain required before merge into DEVELOP.
+
+The first pre-push exposed an ignored-cache traversal race in the existing
+skeleton test collector. Its exact `.cache` exclusion preserves every workspace
+and supply-chain assertion; the proposal records the failure and narrow fix.

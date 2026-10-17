@@ -81,3 +81,11 @@ The integrator authorizes the single shared `vitest.int.config.ts` change to cap
 file workers at two, matching the existing unit-suite resource limit. Test cases,
 assertions, retries, subprocess limits, coverage and security gates are unchanged.
 Heavy full-suite runs across task worktrees are coordinated serially as well.
+
+The first pre-push after the passing full check exposed a pre-existing collector
+race in `tools/skeleton.test.ts`: it recursively traversed ignored `.cache`
+while the binary-installer fixtures created and removed temporary cache entries.
+The integrator authorizes excluding exactly `.cache` from that collector. It is
+not a workspace path in pnpm-workspace.yaml; all package-count, dependency,
+placeholder and supply-chain assertions remain unchanged. The failed push did
+not update the remote claim. The normal pre-push suite must pass on retry.
