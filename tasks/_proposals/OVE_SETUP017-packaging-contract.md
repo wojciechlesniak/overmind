@@ -145,3 +145,9 @@ publication policy before integration. Its literal virtual file URL triggered
 the existing local-URL rule. The guide now describes the same synthetic
 `overmind/source/` namespace in prose; the rule and runtime identities are
 unchanged. The real content and Markdown checks pass after that wording fix.
+
+The final full check exposed that the register verification header still
+preceded the recorded postject review date. The integrator advanced that header
+to 2026-10-17, the actual review date; individual entries, exact pins, accepted
+licenses and all date-validation rules remain unchanged. The existing actual-CLI
+integration cases are rerun rather than weakening their positive/negative checks.

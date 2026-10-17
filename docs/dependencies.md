@@ -1,6 +1,6 @@
 # Dependency policy and register
 
-Verified on: 2026-10-16
+Verified on: 2026-10-17
 
 The catalog is the exact source of pins. Registry latest is evidence, never an
 instruction to upgrade. This review retains the Owner-approved SETUP006 tooling
