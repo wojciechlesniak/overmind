@@ -131,6 +131,11 @@ stack offline:
 pnpm exec tsx tools/package-engine/symbolicate.ts --map <engine.cjs.map> --stack <stack.txt>
 ```
 
+The offline CLI opens only regular files without following the final symbolic
+link or blocking on a named pipe. It reads at most 16 MiB + 1 byte for a map and
+1 MiB + 1 byte for a stack, and rejects growth or identity/metadata changes
+between opening and finishing the read. It never opens source paths in a map.
+
 Automatic TypeScript stack mapping is not claimed. A real thrown stack from a
 signed, relocated SEA fixture recovered the original TypeScript line with this
 mechanism. The actual app debug bundle was also built and its sidecar executed
