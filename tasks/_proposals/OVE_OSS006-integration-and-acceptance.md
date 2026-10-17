@@ -370,3 +370,23 @@ nine tests in 1.07 seconds, including the preserved code example and prior denie
 cases; capture: `ove026-self-link-green.log`. Full verification, independent
 review of the corrected head, the two recorded timing failures and explicit
 Owner staged acceptance remain unresolved by this focused result.
+
+### Independent review repair: private JSON diagnostics
+
+Standards review of `e089c99` identified that native JSON parse diagnostics could
+repeat file contents through the CLI's error message. Two real public CLI
+regressions use short runtime-generated markers in malformed slug-map and event
+JSON. Each captures bounded child output and uses boolean assertions so neither
+the input nor marker is exposed by a failed test report. Both cases genuinely
+failed because the captured output contained the marker; the original capture
+is `ove026-json-privacy-red.log` (two failed, one skipped; 1.06 seconds).
+
+The minimal correction catches parser/schema failure directly at each affected
+JSON boundary, emitting only `Invalid ADR slug-map JSON` or
+`Invalid GitHub event JSON`. It adds no redaction pattern, framework, dependency
+or permissive fallback. The same two CLI cases passed with one worker in 987 ms;
+the existing 3000 ms child and default 5000 ms per-test limits are unchanged.
+Capture: `ove026-json-privacy-green.log`. Scoped strict test TypeScript, ESLint
+and changed-source formatting passed. This narrow result does not claim a full
+suite, resolve the recorded deadlines/legacy migration or grant staged acceptance.
+Fresh independent review and all applicable exact-head gates remain required.

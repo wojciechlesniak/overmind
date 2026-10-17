@@ -98,7 +98,11 @@ const slugMap = z
   );
 export type SlugMap = z.infer<typeof slugMap>;
 export function parseSlugMap(source: string): SlugMap {
-  return slugMap.parse(JSON.parse(source));
+  try {
+    return slugMap.parse(JSON.parse(source));
+  } catch {
+    throw new Error("Invalid ADR slug-map JSON");
+  }
 }
 export function parseAdr(file: string, source: string): Adr {
   const name = /^(\d{4})-[a-z0-9]+(?:-[a-z0-9]+)*\.md$/u.exec(file);
@@ -136,10 +140,14 @@ export function renderAdr(meta: Metadata, body: string): string {
   return `---\n${stringify(metadataSchema.parse(meta), { lineWidth: 0 })}---\n${body.replace(/^# .+$/mu, () => `# ${meta.title}`)}`;
 }
 export function parseLabels(source: string): string[] {
-  const event = z
-    .object({
-      pull_request: z.object({ labels: z.array(z.object({ name: text })).max(100) }).optional(),
-    })
-    .parse(JSON.parse(source));
-  return event.pull_request?.labels.map((label) => label.name) ?? [];
+  try {
+    const event = z
+      .object({
+        pull_request: z.object({ labels: z.array(z.object({ name: text })).max(100) }).optional(),
+      })
+      .parse(JSON.parse(source));
+    return event.pull_request?.labels.map((label) => label.name) ?? [];
+  } catch {
+    throw new Error("Invalid GitHub event JSON");
+  }
 }

@@ -1,4 +1,5 @@
 import { execFileSync, spawnSync } from "node:child_process";
+import { randomBytes } from "node:crypto";
 import {
   copyFileSync,
   mkdirSync,
@@ -11,6 +12,7 @@ import {
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { expect, test } from "vitest";
+import { isolatedGitEnvironment } from "../hooks/git-test-environment.ts";
 import { Files } from "./files.ts";
 
 const sourceRoot = resolve(import.meta.dirname, "../..");
@@ -63,3 +65,43 @@ test.skipIf(process.platform === "win32")(
     }
   },
 );
+
+test.each([
+  ["slug map", "new.ts", "Invalid ADR slug-map JSON"],
+  ["event labels", "check.ts", "Invalid GitHub event JSON"],
+] as const)("public ADR CLI keeps malformed %s contents private", (kind, entry, diagnostic) => {
+  const root = realpathSync(mkdtempSync(resolve(tmpdir(), "ove-adr-json-private-")));
+  try {
+    mkdirSync(resolve(root, "docs/adr"), { recursive: true });
+    const marker = randomBytes(3).toString("hex");
+    const path = resolve(root, kind === "slug map" ? "docs/adr/slug-map.json" : "event.json");
+    writeFileSync(path, `{"${marker}":}`);
+    const result = spawnSync(
+      process.execPath,
+      [
+        "--import",
+        import.meta.resolve("tsx"),
+        resolve(sourceRoot, "tools/adr", entry),
+        ...(kind === "slug map" ? ["Privacy probe"] : []),
+      ],
+      {
+        cwd: root,
+        env: {
+          ...isolatedGitEnvironment(),
+          GITHUB_EVENT_PATH: kind === "event labels" ? path : undefined,
+        },
+        encoding: "utf8",
+        timeout: 3000,
+        maxBuffer: 16 * 1024,
+      },
+    );
+    expect(result.error).toBeUndefined();
+    expect(result.status).toBe(1);
+    const output = result.stdout + result.stderr;
+    // Boolean assertions keep the generated input out of failure diagnostics.
+    expect(output.includes(marker)).toBe(false);
+    expect(output === `${diagnostic}\n`).toBe(true);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});

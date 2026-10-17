@@ -185,3 +185,12 @@ proposal body before rendering. Both affected test files passed nine tests in
 dry-run bytes. This focused repair does not resolve the previously recorded
 timeouts, legacy migration failure or pending Owner acceptance. Fresh review of
 the corrected exact head remains required.
+
+Independent standards review also reproduced disclosure of malformed slug-map
+and event-label JSON through the public CLI error diagnostic. Two actual CLI
+regressions first failed their privacy assertions, then passed after each JSON
+parse boundary replaced parser/schema details with its own fixed safe message.
+The same one-worker run passed both cases in 987 ms with unchanged child and
+per-test limits. Generated input is never printed by the assertions. Scoped
+strict TypeScript, lint and formatting passed; full gates and independent review
+of this correction remain pending with the existing acceptance blockers.
