@@ -139,3 +139,9 @@ The integrator also approved excluding only `.cache` from the existing manifest
 discovery traversal in `tools/skeleton.test.ts`, matching SETUP012 fix `86c9552`.
 This prevents a real concurrent pinned-bin fixture cleanup race; package graph
 assertions remain unchanged.
+
+The integrator checked the packaging guide against the completed OVE_OSS004
+publication policy before integration. Its literal virtual file URL triggered
+the existing local-URL rule. The guide now describes the same synthetic
+`overmind/source/` namespace in prose; the rule and runtime identities are
+unchanged. The real content and Markdown checks pass after that wording fix.

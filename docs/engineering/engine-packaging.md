@@ -123,7 +123,8 @@ Apache-2.0 label describes first-party metadata, not approval of Node's licenses
 
 ## Source maps and verification evidence
 
-The canonical map has `file:///overmind/source/` identities without host paths.
+The canonical map uses virtual file URLs rooted at `overmind/source/`; those
+identities contain no host paths.
 It is shipped beside the app's runtime notices and can symbolicate an available
 stack offline:
 
