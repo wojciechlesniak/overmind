@@ -20,7 +20,14 @@ export interface FileSystem {
 
 export const nodeFiles: FileSystem = {
   readText(path, maxBytes = 256 * 1024) {
-    const descriptor = openSync(path, constants.O_RDONLY | constants.O_NOFOLLOW);
+    const before = lstatSync(path);
+    if (!before.isFile() || before.size > maxBytes) {
+      throw new TaskToolError(4, "Input must be a bounded regular file");
+    }
+    const descriptor = openSync(
+      path,
+      constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK,
+    );
     try {
       const stat = fstatSync(descriptor);
       if (!stat.isFile() || stat.size > maxBytes) {

@@ -22,7 +22,7 @@ export async function finish(repo: Repository, input: CommandInput) {
   if ((await gitText(work, "branch", "--show-current")).trim() !== `task/${id}`) {
     throw new TaskToolError(2, "Worktree branch does not match the task ID");
   }
-  await ensureClean(work, false, false);
+  await ensureClean(work, false);
   await refresh(repo);
   const task = (await loadTasks("WORKTREE", { root: repo.root, git: work })).get(id);
   if (!task || !["in_progress", "in_review"].includes(task.status)) {

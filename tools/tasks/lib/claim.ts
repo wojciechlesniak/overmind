@@ -3,6 +3,8 @@ import { lstatSync } from "node:fs";
 import { join } from "node:path";
 import { gitText } from "./git.ts";
 import { TaskToolError } from "./errors.ts";
+import { captureInstallArtifacts, unchangedInstallArtifacts } from "./install-artifacts.ts";
+import type { InstallArtifacts } from "./install-artifacts.ts";
 import { readiness } from "./graph.ts";
 import { ownsOverlap } from "./glob.ts";
 import {
@@ -69,11 +71,14 @@ export async function claim(repo: Repository, input: CommandInput) {
   managedPath(repo, id, true);
   await gitText(repo.git, "worktree", "add", "-b", branch, path, integrationRef);
   const work = repo.git.at(path);
+  await ensureClean(work);
+  let installedArtifacts: InstallArtifacts | undefined;
   if (input.install) {
     const installed = await repo.runner.run("pnpm", ["install", "--frozen-lockfile"], path);
     if (installed.exitCode !== 0) {
       throw new TaskToolError(4, `Frozen install failed; inspect ${path}`);
     }
+    installedArtifacts = await captureInstallArtifacts(work, path);
   }
   changeStatus(join(path, task.path), "in_progress");
   const identity = (await gitText(work, "config", "user.name")).trim();
@@ -90,12 +95,32 @@ export async function claim(repo: Repository, input: CommandInput) {
   if (pushed.exitCode !== 0) {
     const remote = (await remoteClaims(work)).get(id);
     if (remote && remote !== commit) {
-      await ensureClean(work, input.install);
-      if ((await gitText(work, "rev-parse", "HEAD")).trim() !== commit) {
-        throw new TaskToolError(2, "Claim worktree changed; preserve it after lost race");
+      let clean = false;
+      try {
+        await ensureClean(work, !input.install);
+        clean =
+          (await gitText(work, "rev-parse", "HEAD")).trim() === commit &&
+          (!input.install || (await unchangedInstallArtifacts(work, path, installedArtifacts)));
+      } catch {
+        // Unknown or changed data must survive even though the remote race is lost.
       }
-      await gitText(repo.git, "worktree", "remove", path);
-      await gitText(repo.git, "update-ref", "--no-deref", "-d", `refs/heads/${branch}`, commit);
+      if (!clean) {
+        throw new TaskToolError(3, `Lost the race; worktree retained for inspection: ${path}`);
+      }
+      const removed = await repo.git.run("worktree", "remove", path);
+      if (removed.exitCode !== 0) {
+        throw new TaskToolError(3, `Lost the race; worktree retained for inspection: ${path}`);
+      }
+      const deleted = await repo.git.run(
+        "update-ref",
+        "--no-deref",
+        "-d",
+        `refs/heads/${branch}`,
+        commit,
+      );
+      if (deleted.exitCode !== 0) {
+        throw new TaskToolError(3, "Lost the race; local branch retained for inspection");
+      }
       throw new TaskToolError(3, "Lost the race; remote claim belongs to another invocation");
     }
     if (remote !== commit) {

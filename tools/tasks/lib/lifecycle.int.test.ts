@@ -245,6 +245,48 @@ it("allows release only for an owned claim without implementation commits", asyn
   }
 });
 
+it("never releases an implementation commit hidden before a status-only claim, even with maintainer override", async () => {
+  const f = await fixture();
+  const path = join(f.directory, "a/wt/OVE_FIX001");
+  try {
+    writeFileSync(join(f.root, "implementation.txt"), "unmerged developer implementation");
+    await gitText(f.git, "add", "implementation.txt");
+    await gitText(f.git, "commit", "-m", "unmerged implementation before claim");
+    mkdirSync(join(f.directory, "a/wt"));
+    await gitText(f.git, "worktree", "add", "-b", "task/OVE_FIX001", path, "HEAD");
+    const work = f.git.at(path);
+    const taskPath = join(path, "tasks/OVE_FIX001/TASK.md");
+    writeFileSync(
+      taskPath,
+      readFileSync(taskPath, "utf8").replace("status: todo", "status: in_progress"),
+    );
+    await gitText(work, "add", "tasks/OVE_FIX001/TASK.md");
+    await gitText(
+      work,
+      "commit",
+      "-m",
+      "chore(fix): claim OVE_FIX001\n\nRefs: OVE_FIX001\nClaimed-By: Fixture\n",
+    );
+    await gitText(work, "push", "origin", "HEAD:refs/heads/task/OVE_FIX001");
+    const head = (await gitText(work, "rev-parse", "HEAD")).trim();
+    expect(await gitText(work, "rev-list", "--count", "origin/DEVELOP..HEAD")).toBe("2\n");
+    await gitText(f.git, "config", "overmind.maintainer", "true");
+    for (const flags of [[], ["--force-owner"]]) {
+      await expect(
+        runCommand("release", ["OVE_FIX001", ...flags], { root: f.root, runner: f.runner }),
+      ).rejects.toMatchObject({ exitCode: 2 });
+      expect(
+        await gitText(f.git, "ls-remote", "--heads", "origin", "refs/heads/task/OVE_FIX001"),
+      ).toContain(head);
+      expect(readFileSync(join(path, "implementation.txt"), "utf8")).toBe(
+        "unmerged developer implementation",
+      );
+    }
+  } finally {
+    rmSync(f.directory, { recursive: true, force: true });
+  }
+});
+
 it("cleans only merged fully pushed worktrees and retains remote branches and dirty data", async () => {
   const f = await fixture();
   try {

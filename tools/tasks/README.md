@@ -43,6 +43,15 @@ removes only its newly created worktree/branch and exits3. A failed or uncertain
 operation preserves any state that cannot be proved safe to remove and reports it.
 Never retry with an unconditional force push.
 
+Cleanup after a confirmed lost race requires an unchanged claim HEAD and no
+tracked/untracked work. With installation enabled, a bounded in-memory receipt
+must also match the exact ignored node_modules inventory from this invocation's
+successful frozen install. File bytes, identities, metadata and symlink targets
+are checked without following links. Unknown or modified ignored data, inventory
+failure or hook-created caches retain the worktree and local branch for inspection;
+the confirmed lost race still exits3. The receipt is limited to100,000 entries and
+512 MiB. A successful claim does not require automatic-cleanup proof.
+
 Every operation holds a common Git-directory advisory lock. A live owner blocks
 other calls even after ten minutes. Dead stale records advance to an O_EXCL-created
 numbered generation without unlinking a possibly replaced live lock. Malformed
@@ -64,7 +73,8 @@ for the configured number of days; it is informational and never triggers deleti
 ## Release and cleanup
 
 Release accepts only the single claim commit, with its expected message and sole
-status-line change. Your Git name/email must match its author. Maintainer override
+status-line change, whose parent is an ancestor of fetched DEVELOP. Your Git
+name/email must match its author. Maintainer override
 requires `gh` admin/maintain permission or explicitly trusted local configuration
 `git config overmind.maintainer true`; it changes identity eligibility only.
 It never permits removal of implementation commits.

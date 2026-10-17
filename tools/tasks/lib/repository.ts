@@ -102,11 +102,7 @@ export function managedPath(repo: Repository, id: string, createParent = false):
   return join(parent, id);
 }
 
-export async function ensureClean(
-  git: Git,
-  allowInstalledDependencies = false,
-  inspectIgnored = true,
-): Promise<void> {
+export async function ensureClean(git: Git, inspectIgnored = true): Promise<void> {
   const status = await gitText(
     git,
     "status",
@@ -116,7 +112,7 @@ export async function ensureClean(
     ...(inspectIgnored ? ["--ignored"] : []),
   );
   const entries = status.split("\0").filter(Boolean);
-  if (entries.some((entry) => !(allowInstalledDependencies && entry === "!! node_modules/"))) {
+  if (entries.length) {
     throw new TaskToolError(
       2,
       "Worktree contains changes or ignored files; preserve and inspect it",

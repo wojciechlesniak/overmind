@@ -28,6 +28,9 @@ Open the printed worktree and read its complete TASK.md: dependencies, scope,
 owns, Security, tests and acceptance criteria. Never use a title alone as the spec.
 If the branch already exists, choose another task. If another clone wins the atomic
 push, exit3 means lost race; the clean loser removes only its own new claim.
+An installed loser is removed only when its exact installation receipt is
+unchanged. Unknown files, edits, inventory failures and hook-created build/cache
+outputs keep the worktree for inspection, with the same lost-race exit3.
 
 Use `--install=false` only when you have arranged the needed dependencies yourself.
 It disables installation, not commit/push hooks. An uncertain failure may leave a
@@ -90,7 +93,8 @@ may permit an agent to execute the reviewed merge in the Owner's session.
 ## Release unused claims and retain work
 
 Use `pnpm task:release` with an ID only for a claim that has no implementation
-commits. Git identity must match the claim author. Maintainer override does not
+commits before or after the claim; its parent must already belong to fetched
+DEVELOP. Git identity must match the claim author. Maintainer override does not
 permit deletion of extra commits. Work, unknown ignored files and unpushed commits
 are always preserved; submit a PR or coordinate with the maintainer instead.
 

@@ -6,6 +6,7 @@ import type { CommandInput } from "./arguments.ts";
 import {
   ensureClean,
   fetchClaim,
+  integrationRef,
   managedPath,
   refresh,
   remoteClaims,
@@ -83,6 +84,13 @@ export async function release(repo: Repository, input: CommandInput) {
   const parent = parents[0];
   if (parents.length !== 1 || !parent) {
     throw new TaskToolError(2, "Branch is not a single claim commit");
+  }
+  const ancestor = await repo.git.run("merge-base", "--is-ancestor", parent, integrationRef);
+  if (ancestor.exitCode === 1) {
+    throw new TaskToolError(2, "Branch contains unmerged work before the claim; preserve it");
+  }
+  if (ancestor.exitCode !== 0) {
+    throw new TaskToolError(4, "Cannot establish the claim's integration ancestry");
   }
   const before = (await loadTasks(parent, { root: repo.root, git: repo.git })).get(id);
   const after = (await loadTasks(sha, { root: repo.root, git: repo.git })).get(id);

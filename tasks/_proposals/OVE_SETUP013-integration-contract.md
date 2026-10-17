@@ -48,3 +48,20 @@ The next-command acceptance criterion explicitly includes unblocking power. With
 the detailed priority/layer ordering, direct unfinished dependent count therefore
 breaks ties before size and ID. Conflict-risk candidates always sort last. This
 resolves the task's two slightly different ordering descriptions explicitly.
+
+Independent review found and reproduced two lifecycle defects at 28b7688. Release
+now proves the claim parent's ancestry in fetched DEVELOP, so an implementation
+commit before a status-only claim cannot be deleted, including by an override.
+The real default-install two-clone race also covers root and nested node_modules.
+A bounded in-memory receipt fingerprints only this invocation's installation
+artifacts. Automatic loser cleanup requires unchanged HEAD, clean tracked/untracked
+work and an identical receipt. Unknown/changed ignored files, hook-produced caches,
+unavailable inventory or cleanup failure preserve local state and explicitly report
+inspection with lost-race exit3. This follows the task's no-data-loss rule; evidence
+does not claim unconditional cleanup with the repository's full hook output set.
+There is no general node_modules, build-cache or ignored-file exemption.
+
+The bounded regular-file reader also rejects FIFO inputs before opening them.
+A real FIFO child-process regression first reached its timeout; the corrected
+reader returns invalid-input exit4 without waiting for a writer. O_NONBLOCK plus
+the post-open regular-file check preserves that property if the path is swapped.
