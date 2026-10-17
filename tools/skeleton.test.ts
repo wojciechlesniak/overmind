@@ -53,7 +53,7 @@ function collectManifests(directory = root): string[] {
 }
 const manifestPaths = collectManifests();
 
-test("all 17 packages encode exactly the required Clean Architecture graph", () => {
+test("all 17 packages encode exactly the required Clean Architecture graph", async () => {
   assert.equal(manifestPaths.length, 17);
   const names = manifestPaths.map((path) => readJson(path).name.replace("@overmind/", "")).sort();
   assert.deepEqual(names, Object.keys(expectedEdges).sort());
@@ -80,10 +80,17 @@ test("all 17 packages encode exactly the required Clean Architecture graph", () 
       assert.equal(manifest.sideEffects, false);
     }
     const source = readFileSync(resolve(root, path, "../src/index.ts"), "utf8");
-    assert.match(
-      source,
-      /^\/\/ PLACEHOLDER\(OVE_[A-Z]+\d{3}\): replaced wholesale by the owner task\.\nexport \{\};\n$/,
-    );
+    if (name === "contracts") {
+      const contracts = await import("../packages/contracts/src/index.ts");
+      assert.deepEqual(contracts.ok(1), { ok: true, value: 1 });
+      assert.equal(contracts.fromThrown("foreign failure").code, "internal.unexpected");
+      assert.equal(contracts.isKnownCode("internal.unexpected"), true);
+    } else {
+      assert.match(
+        source,
+        /^\/\/ PLACEHOLDER\(OVE_[A-Z]+\d{3}\): replaced wholesale by the owner task\.\nexport \{\};\n$/,
+      );
+    }
   }
 });
 

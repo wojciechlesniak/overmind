@@ -138,3 +138,37 @@ Blocks every task that returns errors; publish early (a first merge with `Result
 - ASSUMPTION: codes use dotted `area.reason` strings (readable in logs, stable on the wire) rather than numeric codes.
 - ASSUMPTION: HTTP-like status classes are used even if ENGINE picks NDJSON framing; the field is then `status` in the envelope.
 - Open: whether `AppError.details` should carry a `docsUrl` for troubleshooting; default no.
+
+## Implementation checkpoint (2026-10-17)
+
+- Implemented the pure Result helpers, class-free AppError factory and foreign-error
+  boundary, per-area typed catalogues, generated registry seed, safe UserMessage
+  contract and gateway mapper. The public root remains browser-safe; existing Zod
+  is the only contracts runtime dependency.
+- The integrator approved the exact shared package-root, manifest/lockfile,
+  dependency-register and contracts scaffold-test edits in
+  `tasks/_proposals/OVE_ARCH003-public-exports.md`. No policy or package version
+  changes were made. The aggregate regeneration command is documented and was
+  compared byte-for-byte with the generated seed.
+- Real focused verification: `pnpm exec vitest run packages/contracts packages/gateway`
+  passed all 32 tests in 9 files, including a Vite browser build, serialised
+  UI/Telegram response validation, hostile error/correlation fixtures, bounded
+  detail schemas, reflection failures and type assertions. `pnpm typecheck` and
+  `pnpm lint` passed; the latter includes the existing React and Tauri guards.
+- The first full `pnpm test:coverage` completed with 336 passed and 4 failed tests.
+  Three unchanged tooling integration tests exceeded their existing time budgets
+  while other worktrees were running heavy suites. The browser test initially
+  rejected Zod's own internal cycle; the focused rerun now permits only pinned-Zod
+  internal cycles/PURE warnings and still rejects unresolved/external imports.
+  No existing test timeout or security gate was changed.
+- Full unit/coverage rerun, dependency/license/audit checks, independent Standards
+  and Spec reviews, fresh CI and integration remain pending. The integrator has
+  reserved heavy checks serially across worktrees; this checkpoint is not a merge
+  approval or completed task. Status remains `in_progress`.
+- The normal commit hooks exposed an existing generated-file/ESLint CLI warning
+  conflict. The integrator approved the single `--no-warn-ignored` hook flag in
+  the same proposal. Its exact command accepts the intentionally ignored
+  generated registry and normal source; an unstaged temporary source containing
+  an actual `no-explicit-any` violation still failed. Synthetic token strings are
+  constructed at runtime with unchanged hostile-value assertions; no secret
+  allowlist or existing lint rule was altered.
