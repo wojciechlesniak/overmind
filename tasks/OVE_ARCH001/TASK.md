@@ -6,7 +6,7 @@ kind: docs
 size: M
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: [OVE_SETUP001]
 soft_depends_on: []
 provides: ["doc:architecture", "lib:boundaries-manifest"]
@@ -120,13 +120,13 @@ The architecture document is the home of the trust boundaries: Owner, desktop UI
 
 ## 11. Acceptance criteria
 
-- [ ] `ARCHITECTURE.md` exists with all 14 sections in the specified order and every package of PLAN section 1 appears in the catalogue.
-- [ ] The dependency matrix in the Markdown and `boundaries.json` agree cell by cell (a reviewer can diff them; ARCH002 later automates it).
-- [ ] The three sequence diagrams render in a Mermaid preview without errors.
-- [ ] Every enforceable rule names the task that enforces it.
-- [ ] Trust boundary identifiers (TB-*) are defined and listed.
-- [ ] The document contains the "Rules checklist" (at most 20 lines).
-- [ ] No statement contradicts CONVENTIONS sections 5-7 (or a proposal file exists).
+- [x] `ARCHITECTURE.md` exists with all 14 sections in the specified order and every package of PLAN section 1 appears in the catalogue.
+- [x] The dependency matrix in the Markdown and `boundaries.json` agree cell by cell (a reviewer can diff them; ARCH002 later automates it).
+- [x] The three sequence diagrams render in a Mermaid preview without errors.
+- [x] Every enforceable rule names the task that enforces it.
+- [x] Trust boundary identifiers (TB-*) are defined and listed.
+- [x] The document contains the "Rules checklist" (at most 20 lines).
+- [x] No statement contradicts CONVENTIONS sections 5-7 (or a proposal file exists).
 
 ## 12. Test plan
 
@@ -142,3 +142,68 @@ Blocks ARCH002, ARCH006, ARCH012, SEC001 (soft). Everything else can start in pa
 - ASSUMPTION: UI to engine transport is forwarded by the Rust shell (webview cannot open Unix sockets); ENGINE finalises the mechanism, the `Transport` seam in `api-client` stays.
 - ASSUMPTION: `application` exposes two entry points, `@overmind/application` and `@overmind/application/ports`, via the `exports` map.
 - Open: whether `workflow-runtime` may import `adapters/*` types for checkpoints: default NO, it uses ports only.
+
+
+### Implementation evidence (2026-10-16)
+
+The architecture document is the target, not a claim that the future product
+architecture is implemented. It has 14 ordered sections, a complete 24-entry
+catalogue (17 existing npm workspaces, five planned packages, native shell and
+Skill content), 12 stable trust-boundary IDs and an 18-rule review checklist.
+The version-1 JSON uses only the specified keys. Four Mermaid sources exactly
+match their embedded blocks.
+
+Real Node JSON.parse passed. A temporary independent validator checked every
+required task-matrix cell against Markdown and every one of the 140 projection
+cells against JSON/overlays, all adapter policies, package schema/reference
+integrity, catalogue/path coverage, source/block identity, section/line counts,
+all local/task links and all 17 actual workspace paths. This validates data and
+document consistency, not ARCH002's future enforcement or product isolation.
+Prettier was invoked explicitly for the owned documents because the generic
+repository config ignores docs. No runtime code, package manifest, dependency,
+live setting or user research file was changed. The parent integrator authorized
+minimal AGENTS.md/CONTRIBUTING.md link-availability updates in this same PR.
+
+mmdc and markdownlint are not installed. No extra dependency was installed to
+pretend those commands ran. Real Mermaid rendering is assigned to the parent
+through the published GitHub Markdown preview; its acceptance checkbox remains
+open until actual rendering is verified. Independent Standards/Spec review and
+exact-head hosted CI remain required before merge. Conflicts and proposed owner
+alignment are recorded in tasks/_proposals/OVE_ARCH001-conventions-fix.md.
+
+
+### Review corrections
+
+The parent verified the C4 diagram through the actual GitHub renderer; the three
+initial sequence previews failed on semicolon delimiters in labels. Those labels
+now use commas, and their source files and embedded blocks remain identical.
+The adapter-only application/ports checklist wording is corrected. Shared agent
+and contributor instructions now link the architecture document in this same PR,
+under the integrator's coordination. The render checkbox remains open until the
+parent verifies all three corrected sequences at the newly published head.
+Independent delta reviews and exact-head hosted checks remain required.
+
+
+The coordinated AGENTS test-fixture inventory now includes the newly linked
+architecture file. The first pre-push found nine incomplete positive fixtures;
+no guard policy or assertions were relaxed. The actual instruction checker and
+all 75 focused guard/configuration-gate tests pass after that inventory correction.
+
+### Final acceptance evidence (2026-10-17)
+
+The parent verified all four diagrams in the real GitHub Markdown renderer at
+be64b90f6d9fe87c333f80d69ae0ef098d6fd529. All three corrected sequence diagrams
+rendered without parse errors; the Owner-message diagram was also visually checked.
+The separately audited markdownlint 0.41.1 official API returned zero diagnostics
+for ARCHITECTURE.md with the prescribed OSS004 rules and inline suppression
+disabled. This was an isolated semantic check, not the absent CLI command, and
+added no repository dependency.
+
+Independent Standards and Spec final reviews both passed with zero findings at
+be64b90. Final code CI 38965727745, Security 38965727544 and isolation admission
+38965719798 passed at that exact head. Earlier runs superseded by the ready/label
+events were cancelled and are not counted as evidence. Physical isolation and
+ARCH002 enforcement remain their owning tasks' required evidence.
+
+This final commit changes only acceptance metadata. It requires fresh exact-head
+hosted checks and independent metadata-delta reviews before integration.

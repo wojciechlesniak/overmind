@@ -1,0 +1,446 @@
+{
+  "version": 1,
+  "packages": [
+    {
+      "id": "contracts",
+      "path": "packages/contracts",
+      "layer": 0,
+      "allowedImports": [],
+      "allowedSubpaths": {},
+      "forbiddenBuiltins": [
+        "node:fs",
+        "node:fs/promises",
+        "node:net",
+        "node:http",
+        "node:https",
+        "node:http2",
+        "node:dgram",
+        "node:child_process",
+        "node:os",
+        "node:worker_threads",
+        "node:crypto",
+        "node:timers",
+        "node:timers/promises",
+        "node:process",
+        "node:perf_hooks",
+        "node:readline",
+        "node:readline/promises",
+        "node:tls",
+        "node:dns",
+        "node:dns/promises"
+      ],
+      "forbiddenGlobals": [
+        "Date.now",
+        "new Date()",
+        "Math.random",
+        "process.env",
+        "fetch",
+        "console",
+        "setTimeout",
+        "setInterval",
+        "eval",
+        "new Function"
+      ],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "domain",
+      "path": "packages/domain",
+      "layer": 1,
+      "allowedImports": ["contracts"],
+      "allowedSubpaths": {},
+      "forbiddenBuiltins": [
+        "node:fs",
+        "node:fs/promises",
+        "node:net",
+        "node:http",
+        "node:https",
+        "node:http2",
+        "node:dgram",
+        "node:child_process",
+        "node:os",
+        "node:worker_threads",
+        "node:crypto",
+        "node:timers",
+        "node:timers/promises",
+        "node:process",
+        "node:perf_hooks",
+        "node:readline",
+        "node:readline/promises",
+        "node:tls",
+        "node:dns",
+        "node:dns/promises"
+      ],
+      "forbiddenGlobals": [
+        "Date.now",
+        "new Date()",
+        "Math.random",
+        "process.env",
+        "fetch",
+        "console",
+        "setTimeout",
+        "setInterval",
+        "eval",
+        "new Function"
+      ],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "application",
+      "path": "packages/application",
+      "layer": 2,
+      "allowedImports": ["contracts", "domain"],
+      "allowedSubpaths": {
+        "application": ["ports"]
+      },
+      "forbiddenBuiltins": [
+        "node:fs",
+        "node:fs/promises",
+        "node:net",
+        "node:http",
+        "node:https",
+        "node:http2",
+        "node:dgram",
+        "node:child_process",
+        "node:os",
+        "node:worker_threads",
+        "node:crypto",
+        "node:timers",
+        "node:timers/promises",
+        "node:process",
+        "node:perf_hooks",
+        "node:readline",
+        "node:readline/promises",
+        "node:tls",
+        "node:dns",
+        "node:dns/promises"
+      ],
+      "forbiddenGlobals": [
+        "Date.now",
+        "new Date()",
+        "Math.random",
+        "process.env",
+        "fetch",
+        "console",
+        "setTimeout",
+        "setInterval",
+        "eval",
+        "new Function"
+      ],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "workflow-runtime",
+      "path": "packages/workflow-runtime",
+      "layer": 3,
+      "allowedImports": ["contracts", "domain", "application"],
+      "allowedSubpaths": {
+        "application": ["ports"]
+      },
+      "forbiddenBuiltins": [
+        "node:fs",
+        "node:fs/promises",
+        "node:net",
+        "node:http",
+        "node:https",
+        "node:http2",
+        "node:dgram",
+        "node:child_process",
+        "node:os",
+        "node:worker_threads",
+        "node:crypto",
+        "node:timers",
+        "node:timers/promises",
+        "node:process",
+        "node:perf_hooks",
+        "node:readline",
+        "node:readline/promises",
+        "node:tls",
+        "node:dns",
+        "node:dns/promises"
+      ],
+      "forbiddenGlobals": [
+        "Date.now",
+        "new Date()",
+        "Math.random",
+        "process.env",
+        "fetch",
+        "console",
+        "setTimeout",
+        "setInterval",
+        "eval",
+        "new Function"
+      ],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "gateway",
+      "path": "packages/gateway",
+      "layer": 3,
+      "allowedImports": ["contracts", "application"],
+      "allowedSubpaths": {
+        "application": ["ports"]
+      },
+      "forbiddenBuiltins": [],
+      "forbiddenGlobals": ["eval", "new Function"],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "api-client",
+      "path": "packages/api-client",
+      "layer": 3,
+      "allowedImports": ["contracts"],
+      "allowedSubpaths": {},
+      "forbiddenBuiltins": [],
+      "forbiddenGlobals": ["eval", "new Function"],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "ui-kit",
+      "path": "packages/ui-kit",
+      "layer": -1,
+      "allowedImports": [],
+      "allowedSubpaths": {},
+      "forbiddenBuiltins": ["node:*"],
+      "forbiddenGlobals": ["eval", "new Function"],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "adapters/sqlite",
+      "path": "packages/adapters/sqlite",
+      "layer": 3,
+      "allowedImports": ["contracts", "domain"],
+      "allowedSubpaths": {
+        "application": ["ports"]
+      },
+      "forbiddenBuiltins": [],
+      "forbiddenGlobals": ["eval", "new Function"],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "adapters/herdr",
+      "path": "packages/adapters/herdr",
+      "layer": 3,
+      "allowedImports": ["contracts", "domain"],
+      "allowedSubpaths": {
+        "application": ["ports"]
+      },
+      "forbiddenBuiltins": [],
+      "forbiddenGlobals": ["eval", "new Function"],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "adapters/sandbox-macos",
+      "path": "packages/adapters/sandbox-macos",
+      "layer": 3,
+      "allowedImports": ["contracts", "domain"],
+      "allowedSubpaths": {
+        "application": ["ports"]
+      },
+      "forbiddenBuiltins": [],
+      "forbiddenGlobals": ["eval", "new Function"],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "adapters/providers",
+      "path": "packages/adapters/providers",
+      "layer": 3,
+      "allowedImports": ["contracts", "domain"],
+      "allowedSubpaths": {
+        "application": ["ports"]
+      },
+      "forbiddenBuiltins": [],
+      "forbiddenGlobals": ["eval", "new Function"],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "adapters/telegram",
+      "path": "packages/adapters/telegram",
+      "layer": 3,
+      "allowedImports": ["contracts", "api-client"],
+      "allowedSubpaths": {
+        "application": ["ports"]
+      },
+      "forbiddenBuiltins": [],
+      "forbiddenGlobals": ["eval", "new Function"],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "adapters/keychain-macos",
+      "path": "packages/adapters/keychain-macos",
+      "layer": 3,
+      "allowedImports": ["contracts", "domain"],
+      "allowedSubpaths": {
+        "application": ["ports"]
+      },
+      "forbiddenBuiltins": [],
+      "forbiddenGlobals": ["eval", "new Function"],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "adapters/notifications-macos",
+      "path": "packages/adapters/notifications-macos",
+      "layer": 3,
+      "allowedImports": ["contracts", "domain"],
+      "allowedSubpaths": {
+        "application": ["ports"]
+      },
+      "forbiddenBuiltins": [],
+      "forbiddenGlobals": ["eval", "new Function"],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "adapters/system",
+      "path": "packages/adapters/system",
+      "layer": 3,
+      "allowedImports": ["contracts", "domain"],
+      "allowedSubpaths": {
+        "application": ["ports"]
+      },
+      "forbiddenBuiltins": [],
+      "forbiddenGlobals": ["eval", "new Function"],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "adapters/logging",
+      "path": "packages/adapters/logging",
+      "layer": 3,
+      "allowedImports": ["contracts", "domain"],
+      "allowedSubpaths": {
+        "application": ["ports"]
+      },
+      "forbiddenBuiltins": [],
+      "forbiddenGlobals": ["eval", "new Function"],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "adapters/i18n",
+      "path": "packages/adapters/i18n",
+      "layer": 3,
+      "allowedImports": ["contracts", "domain"],
+      "allowedSubpaths": {
+        "application": ["ports"]
+      },
+      "forbiddenBuiltins": [],
+      "forbiddenGlobals": ["eval", "new Function"],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "adapters/service-macos",
+      "path": "packages/adapters/service-macos",
+      "layer": 3,
+      "allowedImports": ["contracts", "domain"],
+      "allowedSubpaths": {
+        "application": ["ports"]
+      },
+      "forbiddenBuiltins": [],
+      "forbiddenGlobals": ["eval", "new Function"],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "testing",
+      "path": "packages/testing",
+      "layer": -1,
+      "allowedImports": ["contracts", "domain"],
+      "allowedSubpaths": {
+        "application": ["ports"]
+      },
+      "forbiddenBuiltins": [],
+      "forbiddenGlobals": ["eval", "new Function"],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "apps/engine",
+      "path": "apps/engine",
+      "layer": 4,
+      "allowedImports": [
+        "contracts",
+        "domain",
+        "application",
+        "workflow-runtime",
+        "gateway",
+        "adapters/sqlite",
+        "adapters/herdr",
+        "adapters/sandbox-macos",
+        "adapters/providers",
+        "adapters/telegram",
+        "adapters/keychain-macos",
+        "adapters/notifications-macos",
+        "adapters/system",
+        "adapters/logging",
+        "adapters/i18n",
+        "adapters/service-macos"
+      ],
+      "allowedSubpaths": {
+        "application": ["ports"]
+      },
+      "forbiddenBuiltins": [],
+      "forbiddenGlobals": ["eval", "new Function"],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "apps/desktop",
+      "path": "apps/desktop",
+      "layer": 4,
+      "allowedImports": ["contracts", "api-client", "ui-kit"],
+      "allowedSubpaths": {},
+      "forbiddenBuiltins": ["node:*"],
+      "forbiddenGlobals": ["eval", "new Function"],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "apps/desktop/src-tauri",
+      "path": "apps/desktop/src-tauri",
+      "layer": 4,
+      "allowedImports": [],
+      "allowedSubpaths": {},
+      "forbiddenBuiltins": [],
+      "forbiddenGlobals": [],
+      "forbiddenPackages": []
+    },
+    {
+      "id": "tools",
+      "path": "tools",
+      "layer": -1,
+      "allowedImports": [
+        "contracts",
+        "domain",
+        "application",
+        "workflow-runtime",
+        "gateway",
+        "api-client",
+        "ui-kit",
+        "adapters/sqlite",
+        "adapters/herdr",
+        "adapters/sandbox-macos",
+        "adapters/providers",
+        "adapters/telegram",
+        "adapters/keychain-macos",
+        "adapters/notifications-macos",
+        "adapters/system",
+        "adapters/logging",
+        "adapters/i18n",
+        "adapters/service-macos",
+        "testing"
+      ],
+      "allowedSubpaths": {
+        "application": ["ports"]
+      },
+      "forbiddenBuiltins": [],
+      "forbiddenGlobals": ["eval", "new Function"],
+      "forbiddenPackages": ["@tauri-apps/*"]
+    },
+    {
+      "id": "skills/overmind",
+      "path": "skills/overmind",
+      "layer": -1,
+      "allowedImports": [],
+      "allowedSubpaths": {},
+      "forbiddenBuiltins": [],
+      "forbiddenGlobals": [],
+      "forbiddenPackages": []
+    }
+  ],
+  "testOnly": ["testing"],
+  "toolsMayImportAny": true
+}

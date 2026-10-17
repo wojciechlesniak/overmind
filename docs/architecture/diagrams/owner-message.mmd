@@ -1,0 +1,26 @@
+sequenceDiagram
+  actor Owner
+  participant UI as React feature
+  participant Client as api-client / Transport
+  participant Shell as Rust shell
+  participant GW as Gateway pipeline
+  participant UC as SendChiefMessage use case
+  participant Repo as Message and event ports
+  participant Chief as Chief scheduling
+  Owner->>UI: Send message with Workspace context
+  UI->>Client: Typed request and cancellation signal
+  Client->>Shell: Opaque gateway frame
+  Shell->>GW: Inject authentication, owner-only socket
+  GW->>GW: Authenticate, authorize, validate, audit
+  GW->>UC: Validated DTO plus caller context
+  UC->>Repo: Persist message and append event atomically
+  Repo-->>UC: Result with durable message id
+  UC->>Chief: Schedule through injected application boundary
+  UC-->>GW: Result with accepted message DTO
+  GW-->>Shell: Versioned response envelope
+  Shell-->>Client: Filtered response, never session token
+  Client-->>UI: Result for rendering
+  Chief->>Repo: Append progress and reply events
+  Repo-->>GW: Event stream through injected subscription port
+  GW-->>Client: Authorized subscription via shell Transport
+  Client-->>UI: Render current shared engine state

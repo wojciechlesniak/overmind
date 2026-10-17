@@ -63,10 +63,10 @@ English domain terminology: Owner, Chief, Agent, Workspace, Run and Approval.
 Read the source [glossary](GLOSSARY.md) and use those terms consistently in code,
 tests and documentation.
 
-The full architecture document will live at `docs/architecture/ARCHITECTURE.md`
-([OVE_ARCH001](tasks/OVE_ARCH001/TASK.md)). Its planned path is recorded below
-rather than linked to a missing file. The glossary's Polish source and the
-conventions' English terminology table are available now.
+Read the [architecture document](docs/architecture/ARCHITECTURE.md)
+([OVE_ARCH001](tasks/OVE_ARCH001/TASK.md)) for package, layer and process
+boundaries. The glossary's Polish source and the conventions' English terminology
+table are available now.
 
 The Owner's rules and Project Documentation are the source of truth
 ([ADR 0016](docs/adr/0016-dokumentacja-projektu-zrodlem-prawdy.md)). Product behavior
@@ -158,7 +158,8 @@ Clean Architecture dependencies point inward:
 The desktop depends on `ui-kit`, `api-client` and `contracts`. Domain and application
 code perform no I/O; ports belong to application and adapters implement them.
 The UI does not access the filesystem, database, Keychain or provider CLIs directly.
-See the architecture summary in the backlog conventions until ARCHITECTURE exists.
+See the [architecture document](docs/architecture/ARCHITECTURE.md) and its
+machine-readable dependency matrix.
 
 Use KISS, DRY and SOLID to keep interfaces small and responsibilities clear.
 Reuse existing contracts, adapters and `ui-kit` primitives before adding abstractions.
@@ -269,7 +270,7 @@ Read [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) before participating. It covers is
 PRs, Discussions and agent-generated content posted from human accounts.
 For a vulnerability, follow [SECURITY.md](SECURITY.md) instead of a public issue.
 
-Open questions and planned references: `docs/architecture/ARCHITECTURE.md` is
-pending documentation; `AGENTS.md`, `tools/dev/run.ts`, the
+The [architecture document](docs/architecture/ARCHITECTURE.md) is available.
+Open questions and planned references: `AGENTS.md`, `tools/dev/run.ts`, the
 trusted list and public-contribution templates are assigned above. Public contact
 markers in the conduct and security documents must be resolved before publication.

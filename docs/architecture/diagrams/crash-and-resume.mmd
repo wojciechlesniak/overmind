@@ -1,0 +1,25 @@
+sequenceDiagram
+  participant Runtime as Workflow runtime
+  participant Ledger as Checkpoint and action-ledger ports
+  participant Effect as Injected effect port
+  participant Service as User service manager
+  participant Engine as Restarted composition root
+  actor Owner
+  Runtime->>Ledger: Persist pinned WorkflowVersion and action intent
+  Ledger-->>Runtime: Durable started marker
+  Runtime->>Effect: Execute one authorized non-idempotent action
+  Note over Runtime,Effect: Engine crashes before outcome is durably confirmed
+  Service->>Engine: Restart independently of the desktop window
+  Engine->>Engine: Validate config, data permissions and adapters
+  Engine->>Ledger: Load Run checkpoint and incomplete action intents
+  Ledger-->>Engine: Action started, completion unknown
+  Engine->>Engine: Reconcile evidence, do not blindly execute again
+  alt Verified completion evidence exists
+    Engine->>Ledger: Record reconciled result and append recovery event
+    Engine->>Runtime: Resume from next safe transition
+  else Side effect remains ambiguous
+    Engine->>Ledger: Record waiting or escalation state
+    Engine-->>Owner: Request a decision with redacted evidence
+    Note over Engine,Effect: No automatic replay, including after timeout or retry
+  end
+  Note over Service,Owner: Closing the window does not stop the service, sleep stops progress
