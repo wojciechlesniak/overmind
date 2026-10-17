@@ -6,7 +6,7 @@ kind: docs
 size: S
 priority: P0
 mvp: true
-status: in_progress
+status: in_review
 depends_on: [OVE_SETUP001]
 soft_depends_on: [OVE_OSS004, OVE_OSS005]
 provides: ["lib:adr-template", "lib:adr-index", "lib:adr-tooling", "lib:adr-slug-map"]
@@ -120,7 +120,7 @@ Docs under `docs/adr/` and tooling in `tools/adr/` (pure parsing/rendering funct
 - [ ] `pnpm check:adr` passes on the 28 translated ADRs and fails for: gap in numbers, duplicate number, non-mutual supersede link, deleted ADR (fixture), body edit without label (fixture), wrong file name.
 - [ ] `pnpm gen:adr-index` produces the table with ADR 0001 shown as superseded by 0023; `--check` fails after a manual edit between markers.
 - [ ] `adr:renumber` dry run lists all link rewrites; apply updates them and `check:adr` passes afterwards.
-- [ ] `docs/adr/README.md` explains the process and the status meanings.
+- [x] `docs/adr/README.md` explains the process and the status meanings.
 
 ## 12. Test plan
 
@@ -135,3 +135,11 @@ Parallel with OVE_OSS001..005. Translation tasks OVE_OSS010/011 depend on the sl
 - ASSUMPTION: ADR dates for the existing 28 come from the project's document creation timestamps (all 2026-10-12 or 2026-10-13); the Owner may correct them.
 - ASSUMPTION: the Owner is the sole acceptor of ADRs for now.
 - Open question: the extra fields `tags` and `deciders` are additions to the Owner's minimal format; they are optional for the translated originals.
+
+Implementation checkpoint: strict tools, real conforming/denied fixtures and the
+25-line template are ready for independent review. The actual repository
+`check:adr` and index check still fail on unmigrated legacy ADR 0001 metadata;
+source dates are unavailable. No blanket legacy exemption or fabricated
+production pass is used. See [the integration and staged-acceptance proposal](../_proposals/OVE_OSS006-integration-and-acceptance.md).
+Owner staged acceptance, full repository/CI gates and final independent reviews
+remain pending; this task is not done.

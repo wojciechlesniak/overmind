@@ -50,7 +50,11 @@
     "task:cleanup": "tsx tools/tasks/cleanup.ts",
     "test:int": "vitest run --config vitest.int.config.ts --project \"*-int\" --passWithNoTests",
     "check:tauri": "node apps/desktop/scripts/check-tauri-config.mjs",
-    "check:agents-md": "tsx tools/agents-md/check.ts"
+    "check:agents-md": "tsx tools/agents-md/check.ts",
+    "adr:new": "tsx tools/adr/new.ts",
+    "gen:adr-index": "tsx tools/adr/gen-index.ts",
+    "check:adr": "tsx tools/adr/check.ts",
+    "adr:renumber": "tsx tools/adr/renumber.ts"
   },
   "devDependencies": {
     "@commitlint/cli": "catalog:",

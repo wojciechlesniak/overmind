@@ -167,6 +167,9 @@ it("desktop and Markdown policies require the configuration approval label", () 
       "tools/package-engine/node.lock.json",
       "tools/package-engine/runtime-licenses.json",
       "tools/package-engine/runtimeLicenses.parse-boundary.ts",
+      "tools/adr/check.ts",
+      "docs/adr/slug-map.json",
+      "docs/adr/_template.md",
     ]) {
       const base = git(["rev-parse", "HEAD"]).trim();
       mkdirSync(dirname(resolve(fixture, file)), { recursive: true });
