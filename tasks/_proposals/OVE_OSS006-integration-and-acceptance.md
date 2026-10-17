@@ -25,15 +25,183 @@ the original 28 translation tasks and needs an explicitly owned migration.
 2. Keep `check:adr` strict: its actual nonzero legacy-input findings remain
    visible. Do not add a legacy pass flag, fabricate metadata/dates, rewrite old
    decisions, or call a fixture pass a repository migration result.
-3. OSS005 imports source timestamps/notices, OSS010/011 translate 0001-0028 using
-   this map/template, and an explicitly assigned task migrates ADR 0029. Those
-   owners update the index and demonstrate strict repository validation.
-4. Activate unconditional production CI enforcement only after that migration
-   passes the same strict command. Security protection for map/tools is added
-   with this task. No translation/publication acceptance is granted here.
+3. OSS005 imports its original 33 documents with source timestamps/notices.
+   A separately approved migration follow-up supplies ADR 0029 provenance and
+   a narrowly reviewed historical-metadata bridge; translating current files
+   alone cannot make the current historical checker pass. OSS010/011 translate
+   0001-0028 using the map/template and preserve all source decisions.
+4. The migration follow-up coordinates the final collection, generated index
+   and strict historical validation, then adds unconditional production CI
+   enforcement only after the actual migrated set passes. Security protection
+   for map/tools is added now; no translation/publication acceptance is granted.
 
 This sequence requires an explicit Owner decision before treating OSS006 as
 accepted. The previous SETUP006 staged acceptance does not authorize this one.
+
+## Proposed acceptance split for an explicit Owner decision
+
+Status: proposed, not approved. This section makes the requested sequence
+reviewable; it does not change TASK section 11, check any remaining criterion,
+authorize a merge or turn a failed command into a successful gate. Source
+checkpoint `db53c0083188722dc1cacc498684c40fcd230f2c` includes the independently
+requested self-link and JSON-privacy repairs. Their focused results are recorded
+below; complete exact-head verification and reviews are still required.
+
+### Exact proposed replacement for TASK section 11
+
+`task:finish --done` compares the PR's checked criteria with the current task;
+dependency readiness requires that task to be `done`. Leaving the current
+production-migration boxes unchecked cannot unblock the dependent tasks. The
+requested scope decision therefore includes replacing section 11 with the
+following tooling-stage criteria, only after explicit Owner approval. These are
+proposed text, not present acceptance evidence or edits to TASK:
+
+- [ ] `slug-map.json` contains the exact 28 original identities, their canonical English slugs and preserved Polish names, separately from later ADRs; schema and duplicate/identity-denial fixtures pass.
+- [ ] The template is shorter than 60 lines, contains the documented ADR and translation metadata, and the process README explains lifecycle, publication limits and the actual incomplete migration.
+- [ ] The real public allocation CLI creates a valid next-free proposal in an isolated conforming Git repository, accounts for local, DEVELOP and remote task reservations, and refuses collisions or unavailable remote state without modifying existing ADRs.
+- [ ] The strict checker passes a conforming fixture collection and rejects malformed metadata/JSON, missing or duplicate numbers, invalid names/references, deletion, unpreserved rename, invalid lifecycle transitions and unauthorized accepted/superseded body changes, including real Git history and filesystem boundary regressions.
+- [ ] Real public index generation followed by `--check` succeeds on a conforming repository and rejects a changed generated table; real renumber dry-run preserves every input byte, apply preserves protected examples/archives and rewrites all affected links, and the strict checker passes the conforming result.
+- [ ] The actual unmigrated repository's ADR/index checks are recorded as failures, with the exact deferred criteria and assigned migration owner below; no legacy-pass mode, invented dates, fixture index or false migration/publication success is introduced.
+- [ ] All applicable exact-head tests, type/lint/build/security checks and independent Standards/Spec reviews pass, required hosted checks pass, and normal task/commit/merge protections remain in force.
+
+Criteria for public allocation and conforming renumber/index validation are
+deliverable now and are not deferred to production translation. Existing
+function-level or real-Git fixtures do not substitute for any still-missing
+public-command end-to-end evidence. That evidence must be produced before these
+proposed boxes can be checked. After approval, the integrator would update the
+TASK and PR criteria to this exact scope, discharge them with actual evidence,
+then use normal `task:finish --done`. No task-tool readiness bypass is requested.
+
+### Original criteria deferred to the migration owner
+
+| TASK section 11 criterion | Current limitation | Required follow-up evidence |
+| --- | --- | --- |
+| 1. Original 28 mappings and every Polish original | The map supplies the 28 fixed original identities, but `docs/pl/adr/` and the source manifest do not yet exist. This is not a completed source-to-translation correspondence check. | OVE_OSS005 imports exact Owner sources and their verified hashes; OVE_OSS010/011 use those mapped names. Check one-to-one correspondence against the actual imported files. |
+| 3. Strict check passes on translated originals | The actual command exits 1 at ADR 0001. Current files lack canonical metadata, and `history.ts` also parses their pre-migration Git versions. Current-file translation alone cannot fix this. Denied-case fixture coverage remains a current tooling criterion. | OVE_OSS005 supplies the original source provenance; OVE_OSS010/011 translate 0001-0028. The proposed migration owner supplies ADR 0029 and the separately reviewed exact historical bridge, then proves strict validation of the complete actual collection. |
+| 4. Generated production index, including the 0001/0023 relationship | Pure rendering/staleness fixtures exist, but the live index cannot be generated from invalid legacy records. Its strict public check currently exits 1. | Generate the real index after migration, verify the reciprocal 0001/0023 metadata and notes, commit the generated result and prove `--check` succeeds. |
+| 5. Validation of the final migrated production set after a renumber | Real conforming-repository renumber/check evidence is required in the current tooling stage; only the final migrated production-set proof is deferred. | The proposed migration owner proves strict final collection validation, retaining all link, archive and denied regressions. |
+
+Original criterion 2 remains in the replacement's immediate public-CLI proof;
+its historical 0029/0030 examples mean next-free allocation, not permission to
+overwrite the existing records. Original criterion 6 remains in the immediate
+README criterion. The replacement does not represent either as deferred.
+
+### Bounded follow-up proposed for coordinator assignment
+
+Proposed task title: **Legacy ADR provenance, historical validation and migration
+closure**. The coordinator must allocate its ID, record a concrete implementer
+and obtain the affected owners' scope approval before this split is accepted.
+This proposal creates no task or claim. Hard prerequisites are OSS005's source
+import and OSS006's accepted tooling stage; OSS010/011 are coordinated migration
+inputs, not a new hard dependency that prevents historical preparation before
+their translations can be validated. The follow-up prepares historical proof
+first and closes only after the actual translations are integrated/validated.
+
+Its proposed bounded ownership is:
+
+- ADR 0029 only: obtain the exact Owner source/export and a verifiable source
+  creation date, archive its bytes at
+  `docs/pl/adr/0029-backlog-w-github-issues-i-ochrona-master.md`, register its hash,
+  source date and English mapping through the OSS005 manifest/importer contract,
+  and produce its faithful canonical English ADR with full provenance. OSS005's
+  current 33-document requirement ends at ADR 0028; it is not silently expanded.
+  If date/source evidence is unavailable, this portion remains blocked for an
+  explicit Owner source decision; Git commit time is not substituted silently.
+- The exact historical-metadata proof and its narrowly scoped reader in
+  `tools/adr/history.ts`, plus real positive/negative historical regressions.
+  New proof data would have an explicitly owned path under `docs/adr/`, protected
+  by the existing Owner configuration policy; its schema/path require design
+  and security review before implementation.
+- Final collection closure: coordinate the OSS010/011 outputs, regenerate
+  `docs/adr/README.md` from real validated records, prove strict ADR/index checks
+  against the complete current set, and make those commands mandatory in the
+  existing architecture CI registry with protected negative workflow tests.
+  Shared CI edits belong to the integrator; no duplicate permissive checker is
+  introduced. Publication remains blocked until its separate translation review
+  and Owner approval requirements pass.
+
+OSS010/011 retain ownership of translations 0001-0028; their requirements,
+statuses and scope are not edited here. The coordinator must record how their
+existing validation criteria are discharged on the combined migrated candidate,
+rather than inventing a pass on a partially translated set. OSS013 retains
+translation review. The follow-up's exact scope/criteria and owner assignments
+must be accepted with this split; a vague promise of a later fix is insufficient.
+
+### Historical metadata is a separate migration boundary
+
+The current `history.ts` enumerates same-number revisions and calls `parseAdr`
+on every historical blob before lifecycle checks. Old Polish blobs lack that
+metadata. Neither an English HEAD nor an archived copy changes those Git blobs.
+The current implementation therefore remains correctly nonzero after a mere
+current-file translation, and its final passing result cannot be promised
+without additional reviewed migration work. Git history must not be rewritten.
+
+The follow-up must propose a finite, Owner-reviewed mapping of exact historical
+commit/path/blob hashes to evidenced metadata and source lineage. It must retain
+the actual legacy body bytes and validate meaningful lifecycle/body invariants
+between those historical versions, rather than skipping an arbitrary prefix of
+history. Unknown hashes, omitted revisions, duplicate identity, missing archive,
+unproved status/date or changed proof must fail closed. Creation dates and
+historical status changes require source evidence or an explicit Owner decision.
+
+The legacy-to-English transition additionally needs exact preserved source
+hashes and reviewed translation provenance. An accepted-body translation must
+remain an explicit reviewed edit; an already superseded legacy decision needs
+a specifically reviewed translation boundary that preserves the immutable raw
+source and establishes the exact reviewed English body. Subsequent changes must
+still obey the normal immutable-body/lifecycle rules. No generic label, date
+cutoff, unbounded hash exception, catch-and-continue or legacy-pass switch can
+stand in for that proof. Tests must reject source/body tampering on either side
+of the transition, missing history entries and unsupported new legacy inputs.
+The precise proof schema and algorithm are intentionally not implemented here;
+they require their own Spec/Standards/security approval before production use.
+
+### Interim behavior and integration blockers
+
+The proposed first stage delivers the map, template, process documentation and
+strict tools so the dependent migration can proceed. Existing ADR files remain
+unchanged; preserved Polish archives must stay byte-identical. Allocation denies
+unavailable remote state. Parsing, immutable-history checks, configuration
+approval protections and malformed-input privacy continue to fail closed.
+Both live ADR/index commands must continue to report their actual legacy failure
+until the inputs conform. The generated index must not be replaced with fixture
+rows, guessed dates or a table falsely presented as validated production data.
+
+Integration is blocked now by the absence of explicit staged acceptance, the
+remaining complete exact-head test/security/hosted results and fresh independent
+reviews. The recorded shared-unit deadline failures are unresolved evidence,
+not waived checks. The separate safety-test classification section remains a
+proposal; acceptance of staging alone would not authorize that workflow change,
+extend any timeout or excuse a failing test. Rebase/shared integrations and normal
+task/commit/PR protections still have to pass before any agent merge to DEVELOP.
+
+Public release remains blocked by the untranslated/unreviewed originals and
+their existing translation/publication requirements. Successful tooling-stage
+integration would not imply a publishable ADR collection or change the Owner's
+security decisions.
+
+### What explicit approval would change
+
+The requested decision would authorize the exact tooling-stage replacement
+criteria above, creation/assignment of the bounded migration follow-up, and
+integration of OSS006 only after the replacement criteria actually pass. Normal
+`task:finish --done` could then establish dependency readiness without pretending
+the original production-migration criteria were fulfilled. Those original
+obligations move explicitly to the accepted follow-up and translation scopes;
+they are not deleted or checked. Approval alone checks no tooling criterion.
+
+The sequence is OSS006 tooling, OSS005 source import, reviewed historical proof
+preparation, coordinated OSS010/011 and ADR 0029 migration, then actual final
+index/check results and unconditional production enforcement. The final history
+reader can change only through the separately reviewed bounded migration design
+above; this decision is not approval of an unimplemented exception mechanism.
+
+Approval would not waive security, tests, independent review, exact-head hosted
+checks, source provenance, translation fidelity or final publication approval.
+It would not authorize translations here, changes to normative decisions,
+fabricated creation dates, a legacy-pass mode or unconditional enforcement while
+the production command still fails. Until the Owner explicitly approves this
+specific split, OVE_OSS006 remains unaccepted and no staged merge is authorized.
 
 ## Shared changes requested from the integrator
 
