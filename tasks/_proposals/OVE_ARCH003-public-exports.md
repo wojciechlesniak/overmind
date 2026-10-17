@@ -469,3 +469,63 @@ index, common Git configuration and Owner research file unchanged. Complete
 covered/integration/canonical checks, fresh independent delta reviews and required
 hosted execution must still pass for the repaired head. This focused evidence
 does not establish final acceptance.
+
+
+### Inherited suppression-CLI fixture repair, approved 2026-10-17
+
+The repaired-head original covered suite at 8463318 passed 505 of 506 tests, then
+failed the inherited ESLint suppression test at 6817 ms against its unchanged
+5000 ms limit. Original full typing/lint passed first; both independent reviews
+of 8463318 passed. The whole ESLint file took 72.956 s in that run. The same
+suppression test took 1144 ms in the pre-ARCH003 OSS004 canonical run, and
+1074/982 ms in the earlier c982943 runs. Its production scanner and test were
+unchanged from the merged OSS004 baseline.
+
+The integrator requested bounded diagnosis before selecting a repair. Every
+scanner-eligible JS/TS count beneath the named generated output roots was zero;
+all inventories completed without following symlinks or mounts. The unchanged
+scanner passed the actual worktree in 4137.1 ms. The same executable passed a
+unique tracked-source copy containing 260 files / 622649 bytes in 3421.7 ms, with
+zero output in both cases. The existing focused test then passed once in 4303 ms,
+leaving little margin within its original budget. These measurements falsify the
+specific retained-generated-JS hypothesis for this worktree; they do not justify
+changing production exclusions or accepting the failed complete suite.
+
+The integrator approved replacing only the mixed test's final whole-root CLI
+invocation with a unique disposable real-CLI fixture. All 15 pure parser
+assertions stay byte-for-byte unchanged in the same existing test, with its
+unchanged 5000 ms outer budget and test count. The actual scanner first checks a
+literal directive-looking string and a nested file with a properly reasoned
+suppression, expecting exit 0 and empty output. The fixture is then changed to
+include one actual unreasoned directive, expecting exit 1 and exactly its known
+line-2 diagnostic. Each real child now has a stricter 3000 ms deadline and 16 KiB
+output bound; the old child was unbounded. Diagnostics are asserted as booleans
+or lengths so a failure does not print source contents or local fixture paths.
+The unique fixture is removed in finally.
+
+Production scanner code, source scope, ignores, dependency graph and every other
+ESLint test/budget remain unchanged. The package lint script still executes the
+identical whole-root scanner in the mandatory format-lint CI job; the fixture
+does not replace that gate. No new API, mock, parser substitute, retry, cache,
+coverage exception or timeout increase is introduced. The new negative fixture
+uses already working production behavior; no failing production-denial result
+is claimed. Focused timing, typing, lint/format and complete covered/integration
+checks still require execution after the reserved CPU slot is released.
+
+
+The first new fixture run completed both real CLI status checks within 3143 ms
+but failed its exact diagnostic assertion: the temporary-directory alias differed
+from the child's canonical working-directory path. No diagnostic contents or
+local paths were printed. The integrator approved canonicalising only the new
+fixture root. After that correction, the same existing test passed in 2742 ms;
+the complete seven-test ESLint file passed once in 65.43 s, with this case taking
+2709 ms. All original test deadlines remain unchanged and both children retain
+the stricter 3000 ms bounds. Strict test-project typing and scoped ESLint passed.
+
+Source comparison proves the original 15 pure assertions, production scanner and
+entire package.json bytes unchanged. The fixture now checks genuine CLI success
+and failure without coupling a unit test to the full checkout size. The earlier
+whole-root timeout remains real evidence; the failing diagnostic was a fixture
+path bug, not a production redaction/denial failure. Complete coverage,
+integration, canonical/security checks, fresh delta reviews and hosted execution
+remain necessary before integration.

@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
-import { execFileSync, spawnSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
 import {
   existsSync,
   readdirSync,
   mkdtempSync,
+  realpathSync,
+  mkdirSync,
   symlinkSync,
   unlinkSync,
   writeFileSync,
@@ -172,7 +174,45 @@ test("only real ESLint suppression comments require a reason", () => {
     findMissingDisableReasons("/* eslint-disable no-eval -- OVE_TEST001 deliberate fixture */"),
     [],
   );
-  execFileSync(process.execPath, ["tools/eslint/check-disable-reasons.mjs"], { cwd: root });
+  const fixture = realpathSync(mkdtempSync(join(tmpdir(), "ove037-eslint-suppression-")));
+  try {
+    writeFileSync(
+      join(fixture, "source.ts"),
+      'export const message = "// eslint-disable no-console";\n',
+    );
+    mkdirSync(join(fixture, "nested"));
+    writeFileSync(
+      join(fixture, "nested/valid.ts"),
+      "// eslint-disable-next-line no-console -- OVE_ARCH003 deliberate fixture\nconsole.log(1);\n",
+    );
+    const run = () =>
+      spawnSync(process.execPath, [resolve(root, "tools/eslint/check-disable-reasons.mjs")], {
+        cwd: fixture,
+        encoding: "utf8",
+        timeout: 3000,
+        maxBuffer: 16_384,
+      });
+    const allowed = run();
+    assert.equal(allowed.error === undefined, true, "The valid fixture CLI must complete.");
+    assert.equal(allowed.status, 0);
+    assert.equal(allowed.stdout.length, 0);
+    assert.equal(allowed.stderr.length, 0);
+    writeFileSync(
+      join(fixture, "source.ts"),
+      'export const message = "// eslint-disable no-console";\n// eslint-disable-next-line no-console\nconsole.log(1);\n',
+    );
+    const denied = run();
+    assert.equal(denied.error === undefined, true, "The invalid fixture CLI must complete.");
+    assert.equal(denied.status, 1);
+    assert.equal(denied.stdout.length, 0);
+    assert.equal(
+      denied.stderr === `${join(fixture, "source.ts")}:2: eslint-disable requires -- reason\n`,
+      true,
+      "The CLI must report exactly the expected fixture diagnostic.",
+    );
+  } finally {
+    rmSync(fixture, { recursive: true, force: true });
+  }
 });
 
 test(

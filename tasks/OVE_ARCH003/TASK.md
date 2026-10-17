@@ -315,3 +315,34 @@ Blocks every task that returns errors; publish early (a first merge with `Result
   primary Git index, common configuration and Owner research unchanged. Complete
   canonical/hosted execution and both independent delta reviews remain required;
   this is not merge approval.
+
+
+## Inherited suppression CLI fixture repair (2026-10-17)
+
+- At the clean repaired checkpoint 8463318, original full typing/lint passed and
+  both independent reviews passed. Original full covered execution then passed
+  505/506 tests: an inherited mixed ESLint parser/whole-root CLI test exceeded its
+  existing 5000 ms budget at 6817 ms. No full integration rerun or merge followed.
+- Bounded diagnosis found zero scanner-eligible JS/TS bytes in the named generated
+  roots, so no production exclusion change is warranted. The same scanner passed
+  the current root in 4137.1 ms and a clean 260-file / 622649-byte tracked-source
+  fixture in 3421.7 ms. The unchanged focused test passed once in 4303 ms; this
+  does not erase the complete-suite failure.
+- The integrator approved preserving all 15 pure assertions in the same 5000 ms
+  test and replacing only its redundant whole-root invocation with a unique
+  disposable real CLI fixture. A valid string/reasoned-comment fixture must exit
+  0; adding an actual missing reason must exit 1 with the expected line-2
+  diagnostic. New children are bounded at 3000 ms / 16 KiB, fixture cleanup is
+  unconditional and failure assertions avoid printing source or local paths.
+- Production scanner scope and the mandatory full pnpm lint scanner remain
+  unchanged. This harness change is pending focused and complete verification;
+  no fabricated production RED, passed aggregate or merge approval is claimed.
+
+- The first fixture run completed both real status checks in 3143 ms but its
+  exact diagnostic comparison detected a temporary-path alias mismatch. Only the
+  new fixture root was canonicalised, as approved; no private diagnostic was
+  printed. The same existing test then passed in 2742 ms. All seven ESLint tests
+  passed once in 65.43 s, with the repaired case at 2709 ms. Strict test-project
+  typing and scoped lint passed. Source comparison confirms all 15 pure
+  assertions, production scanner and package.json bytes unchanged. Full coverage,
+  integration, canonical/security, delta review and hosted gates remain pending.
