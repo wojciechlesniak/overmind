@@ -82,16 +82,27 @@ Uses `loadTasks`, graph helpers and the front-matter model from OVE_SETUP013; di
 
 ## 11. Acceptance criteria
 
-- [ ] `pnpm gen:task-index` twice in a row produces no diff the second time.
-- [ ] Changing a task title and not regenerating makes `pnpm gen:task-index --check` fail with a diff.
-- [ ] `--write-blocks` adds correct reverse edges; running again changes nothing.
-- [ ] Given a cycle, the generator exits 1 and leaves the files untouched.
-- [ ] INDEX contains no status or date; DEPENDENCIES contains critical path and capability table.
-- [ ] A title with `|` and backticks renders safely (test).
+- [x] `pnpm gen:task-index` twice in a row produces no diff the second time.
+- [x] Changing a task title and not regenerating makes `pnpm gen:task-index --check` fail with a diff.
+- [x] `--write-blocks` adds correct reverse edges; running again changes nothing.
+- [x] Given a cycle, the generator exits 1 and leaves the files untouched.
+- [x] INDEX contains no status or date; DEPENDENCIES contains critical path and capability table.
+- [x] A title with `|` and backticks renders safely (test).
 
 ## 12. Test plan
 
 Unit tests for the render functions with builders; golden-file tests with small fixtures under `tools/tasks/fixtures/render/` (goldens regenerated deliberately with a flag, never automatically); text-edit tests for `applyBlocks` (comments preserved). Commands: `pnpm test -- tools/tasks`, `pnpm gen:task-index --check`.
+
+Checkpoint evidence (2026-10-18): `pnpm typecheck`, `pnpm lint` and
+`pnpm format:check` passed. Two actual `pnpm gen:task-index` runs, each followed by
+`--check`, produced identical output hashes. The single-worker focused command
+`pnpm exec vitest run --maxWorkers=1 tools/tasks/render tools/tasks/lib/model.test.ts tools/tasks/lib/files.test.ts tools/ci/gates.test.ts`
+passed 41 tests, including 20 actual CLI cases. The actual architecture-to-generator
+integration passed with `pnpm exec vitest run --maxWorkers=1 --config vitest.int.config.ts tools/tasks/render/architecture.int.test.ts`.
+Full repository suites, security checks, independent reviews and hosted CI remain
+separate completion gates; these focused results do not substitute for them.
+OVE_SETUP022 task lint and OVE_SETUP020 ownership enforcement are unavailable at
+this task's integration base and are not recorded as passed.
 
 ## 13. Parallelization notes
 

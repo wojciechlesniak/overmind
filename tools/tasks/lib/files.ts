@@ -45,7 +45,13 @@ export const nodeFiles: FileSystem = {
       if (length > maxBytes) {
         throw new TaskToolError(4, "Input exceeds its size limit");
       }
-      return buffer.subarray(0, length).toString("utf8");
+      try {
+        return new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(
+          buffer.subarray(0, length),
+        );
+      } catch {
+        throw new TaskToolError(4, "Input must contain valid UTF-8");
+      }
     } finally {
       closeSync(descriptor);
     }

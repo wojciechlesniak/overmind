@@ -44,3 +44,16 @@ it("refuses metadata whose ID does not match the task file being loaded", () => 
   expect(parseTask("tasks/OVE_FIX002/TASK.md", text).ok).toBe(false);
   expect(parseTask(path, text.replace("area: FIX", "area: FI")).ok).toBe(false);
 });
+
+it("accepts optional generated reverse edges without permitting unrelated fields", () => {
+  const withBlocks = text.replace("adr_refs: []", "adr_refs: []\nblocks: [OVE_FIX002]");
+  const parsed = parseTask(path, withBlocks);
+  expect(parsed.ok).toBe(true);
+  if (parsed.ok) {
+    expect(parsed.value.blocks).toEqual(["OVE_FIX002"]);
+  }
+  expect(parseTask(path, text.replace("adr_refs: []", "adr_refs: []\nextra: true")).ok).toBe(false);
+  expect(parseTask(path, withBlocks.replace("blocks: [OVE_FIX002]", "blocks: [invalid]")).ok).toBe(
+    false,
+  );
+});
