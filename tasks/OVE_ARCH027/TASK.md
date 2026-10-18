@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: in_review
+status: done
 depends_on: ["OVE_SETUP017", "OVE_OSS004"]
 soft_depends_on: []
 provides: ["lib:relocated-build-prerequisites"]
