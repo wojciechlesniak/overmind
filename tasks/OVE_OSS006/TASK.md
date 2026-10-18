@@ -116,13 +116,13 @@ Docs under `docs/adr/` and tooling in `tools/adr/` (pure parsing/rendering funct
 
 ## 11. Acceptance criteria
 
-- [ ] `slug-map.json` contains the exact 28 original identities, canonical English slugs and preserved Polish names, separately from later ADRs; schema and duplicate/identity-denial fixtures pass.
-- [ ] The template is shorter than 60 lines, contains documented ADR/translation metadata, and the process README explains lifecycle, publication limits and the actual incomplete migration.
-- [ ] The real public allocation CLI creates a valid next-free proposal in an isolated conforming Git repository, independently accounts for local, freshly fetched DEVELOP and remote task reservations, and refuses collisions/unavailable remote state without modifying existing ADRs.
-- [ ] The strict checker passes a conforming collection and rejects malformed metadata/JSON, gaps, duplicates, invalid names/references, deletion, unpreserved rename, invalid lifecycle transitions and unauthorized accepted/superseded body changes, including real Git history and filesystem boundaries.
-- [ ] Real public index generation then --check succeeds on a conforming repository and rejects a changed table; real renumber dry-run preserves every input byte, apply preserves protected examples/archives and rewrites all affected links, and the strict checker passes afterwards.
-- [ ] Actual unmigrated production ADR/index failures are recorded with all original production obligations allocated to OVE_OSS005/014/010/011/015 below; no legacy-pass mode, invented dates, fixture index or false migration/publication success exists.
-- [ ] All applicable exact-head tests, type/lint/build/security and independent Standards/Spec reviews pass, required hosted checks pass, and normal task/commit/merge protections remain in force.
+- [x] `slug-map.json` contains the exact 28 original identities, canonical English slugs and preserved Polish names, separately from later ADRs; schema and duplicate/identity-denial fixtures pass.
+- [x] The template is shorter than 60 lines, contains documented ADR/translation metadata, and the process README explains lifecycle, publication limits and the actual incomplete migration.
+- [x] The real public allocation CLI creates a valid next-free proposal in an isolated conforming Git repository, independently accounts for local, freshly fetched DEVELOP and remote task reservations, and refuses collisions/unavailable remote state without modifying existing ADRs.
+- [x] The strict checker passes a conforming collection and rejects malformed metadata/JSON, gaps, duplicates, invalid names/references, deletion, unpreserved rename, invalid lifecycle transitions and unauthorized accepted/superseded body changes, including real Git history and filesystem boundaries.
+- [x] Real public index generation then --check succeeds on a conforming repository and rejects a changed table; real renumber dry-run preserves every input byte, apply preserves protected examples/archives and rewrites all affected links, and the strict checker passes afterwards.
+- [x] Actual unmigrated production ADR/index failures are recorded with all original production obligations allocated to OVE_OSS005/014/010/011/015 below; no legacy-pass mode, invented dates, fixture index or false migration/publication success exists.
+- [x] All applicable exact-head tests, type/lint/build/security and independent Standards/Spec reviews pass, required hosted checks pass, and normal task/commit/merge protections remain in force.
 
 ## 12. Test plan
 
@@ -196,6 +196,30 @@ Final current-source regressions passed 26 ADR integrations across 9 files and
 Captures: `ove026-title-whitespace-20261018-*` in the retained evidence directory.
 All guards passed; fresh exact-head full gates/reviews remain due. The criteria,
 status and production-migration allocation remain unchanged.
+
+### Final tooling-stage source validation (2026-10-18)
+
+Source revision `9e6ac12b6f20a368d74f8897718e47de6db84574` passed all 21
+applicable local gate commands: 571 covered unit tests, 92 integrations, four
+architecture CLI cases, 33 Rust tests, types, lint, formatting, build, workflow,
+npm/Cargo license and audit checks, sources/bans, secret scans and SBOM.
+The exact source also passed independent Standards and Specification reviews
+with zero findings, normal commit/push hooks and public `task:finish`.
+
+PR #990's exact-source hosted CI (39164479736), Security (39164479834) and
+Isolation policy (39164479725) all completed successfully. The initial runs
+cancelled by the configuration-label event remain recorded; they are not
+reported as successes. Real isolation escape, desktop E2E and visual checks
+were not performed. The actual legacy production ADR/index failures remain
+allocated to OSS005/014/010/011/015 under the approved staging decision.
+
+The current seven tooling-stage criteria are checked against this actual source
+evidence. Earlier pending statements are retained revision-specific history.
+This acceptance metadata and the final status-only commit still require fresh
+hosted checks and independent review before integration into DEVELOP. Evidence:
+`ove026-source-ready-9e6ac12-20261018.json`,
+`ove026-source-ci-9e6ac12-20261018.json` and the two
+`ove026-final-{standards,spec}-9e6ac12-20261018.json` review receipts.
 
 ## 13. Parallelization notes
 
