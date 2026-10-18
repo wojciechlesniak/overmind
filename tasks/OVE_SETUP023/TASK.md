@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: in_progress
+status: in_review
 depends_on: [OVE_SETUP013]
 soft_depends_on: [OVE_SETUP022, OVE_SETUP006]
 provides: ["lib:task-index-generator"]
