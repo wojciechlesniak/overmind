@@ -170,6 +170,9 @@ it("desktop and Markdown policies require the configuration approval label", () 
       "tools/adr/check.ts",
       "docs/adr/slug-map.json",
       "docs/adr/_template.md",
+      "tools/build/desktop/check-dist.mjs",
+      "tools/vite/desktop.config.ts",
+      "tools/vitest-projects/apps/desktop/vitest.config.ts",
     ]) {
       const base = git(["rev-parse", "HEAD"]).trim();
       mkdirSync(dirname(resolve(fixture, file)), { recursive: true });

@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: ["OVE_SETUP017", "OVE_OSS004"]
 soft_depends_on: []
 provides: ["lib:relocated-build-prerequisites"]
@@ -76,10 +76,10 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 11. Acceptance criteria
 
-- [ ] Actual generated lock and frozen install resolve the exact existing versions under unchanged dependency/license/script policy.
-- [ ] Every new sensitive destination requires config-change and applicable Owner approval; each previously protected prefix remains protected.
-- [ ] Current app builds still work from old paths until their own relocation; no premature dependency removal.
-- [ ] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
+- [x] Actual generated lock and frozen install resolve the exact existing versions under unchanged dependency/license/script policy.
+- [x] Every new sensitive destination requires config-change and applicable Owner approval; each previously protected prefix remains protected.
+- [x] Current app builds still work from old paths until their own relocation; no premature dependency removal.
+- [x] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
 
 ## 12. Test plan
 
@@ -98,3 +98,37 @@ Exact overlapping shared paths have sequential writers; wait for the owner, neve
 Registration alone supplies no implementation or acceptance proof; claim only after the definition lands on DEVELOP.
 Measured scope and line/move/generated-doc metrics belong in the external manifest/PR, not recursive TASK text.
 OVE_ARCH002 retains all nine original criteria, including actual hosted forbidden-import and aggregate rejection.
+
+
+### Acceptance evidence (2026-10-18)
+
+- Source `7bd59957a3a7e167a6a5562cd29e95a97d56ea38` preserves the exact
+  esbuild0.28.2/SWC4.3.3 pins, existing importers, dependency policy and protections.
+  Actual package-manager lock generation and frozen install passed. Parsed complete
+  lock documents differ only in the Tools importer; no new package graph or exception.
+- The actual missing-label regression failed before the protection change and passed
+  afterward for all three new destinations while retaining the original matrix.
+- Actual local results: 571 covered unit tests, 92 integration tests, four dependency
+  CLI cases inside the architecture gate, 33 Rust tests, current app builds, formatting,
+  lint, native typing, npm/Rust licenses and audits, both secret scans and SBOM.
+  All 21 original command passes are consolidated at the unchanged source head;
+  no single successful full-wrapper execution is claimed. Earlier registry-date
+  failures, a native 5-second Git-environment timeout and a download socket failure
+  remain retained. The unchanged complete integration suite passed after diagnosis;
+  the unchanged installer verified the exact cached cargo-audit archive before use.
+- Independent complete-source Standards and Spec reviews passed with zero findings.
+  Normal public task:finish produced only the in_review status change at
+  `9288568d8c20f2dcdaded063077f39be91aa98eb`; both independent continuity reviews
+  verified identical implementation objects and zero findings.
+- Exact-head hosted CI 39169121611, Security 39169121623 and Isolation 39169121674
+  passed for that in-review head. Required rollup checks passed without an unexpected
+  skip or failed/cancelled result. PR: https://github.com/wojciechlesniak/overmind/pull/991.
+- Retained local evidence: `/private/tmp/ove027-source-ready-7bd5995-20261018.json`,
+  `/private/tmp/ove027-inreview-ci-final-9288568-20261018.json` and the corresponding
+  independent review receipts. Cargo audit retains five policy-allowed warnings;
+  local secret scans report zero findings and one Keychain warning each.
+- This accepts build prerequisites only. Parent OVE_ARCH002 acceptance, production
+  ADR migration/index, absent desktop E2E/visual scripts and unavailable real Mac
+  isolation escape are not accepted. Hosted isolation gating is not real escape proof.
+  Acceptance metadata and the final done head still require fresh hosted checks and
+  independent reviews before normal DEVELOP integration.
