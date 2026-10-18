@@ -115,34 +115,40 @@ function validateRegistryMode(mode: unknown): void {
   }
 }
 
+async function readRegistryOutput(root: string, tracked: readonly string[]): Promise<string> {
+  try {
+    if (!tracked.includes(registryPath)) {
+      throw new Error("Untracked registry output.");
+    }
+    const previous = await readRepositoryFile(root, registryPath, true);
+    if (previous.startsWith("\uFEFF") || new Files(root).read(registryPath) !== previous) {
+      throw new Error("Noncanonical registry output.");
+    }
+    return previous;
+  } catch {
+    throw new Error(outputFailure);
+  }
+}
+
 export async function generatePluginRegistry(
   root: string,
   mode: "write" | "check",
 ): Promise<readonly string[]> {
   validateRegistryMode(mode);
   const inventory = await trackedInventory(root);
-  const files = new Files(inventory.root);
-  let previous: string;
-  try {
-    if (!inventory.paths.includes(registryPath)) {
-      throw new Error("Untracked registry output.");
-    }
-    previous = await readRepositoryFile(inventory.root, registryPath, true);
-    if (previous.startsWith("\uFEFF") || files.read(registryPath) !== previous) {
-      throw new Error("Noncanonical registry output.");
-    }
-  } catch {
-    throw new Error(outputFailure);
-  }
+  const previous = await readRegistryOutput(inventory.root, inventory.paths);
   const paths = await admitPluginPaths(inventory.root, inventory.paths);
   const source = renderPluginRegistry(paths);
+  if ((await readRegistryOutput(inventory.root, inventory.paths)) !== previous) {
+    throw new Error(outputFailure);
+  }
   if (mode === "check") {
     if (previous !== source) {
       throw new Error("Documentation plugin registry is stale.");
     }
   } else if (previous !== source) {
     try {
-      files.write(registryPath, source, previous);
+      new Files(inventory.root).write(registryPath, source, previous);
     } catch {
       throw new Error(outputFailure);
     }

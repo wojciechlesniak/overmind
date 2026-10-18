@@ -30,8 +30,12 @@ is canonical UTF-8 without a BOM and bounded to one MiB. Only existing-target
 atomic replacement is allowed; the public generator never bootstraps an absent
 output or falls back to direct creation. Check mode writes nothing.
 
-The initial empty output will be bootstrapped through the actual renderer only
-after actual current Git inventory verification. It has not yet been created.
+The 198-byte empty output was bootstrapped exclusively through the actual renderer
+after the real current Git inventory returned zero candidates. Public check and
+two repeated writes preserved bytes and file identity; independent real Git-to-
+TypeScript-AST comparison passed. The normal source commit was 3c084c7, with actual
+hooks and zero secret findings. Receipt:
+`ove049-bootstrap-normal-source-commit-20261018.json`.
 Task050 owns public CLI/consumer wiring. No Task050 file is changed here.
 
 ## Actual evidence and pending controls
@@ -48,13 +52,33 @@ Task050 owns public CLI/consumer wiring. No Task050 file is changed here.
 - Owned inventory/discovery/generator: actual24 collected,3 passed21 semantic
   behavior failures at explicit unimplemented seams, not startup or collection
   errors; receipt `ove049-discovery-generator-red-20261018.json` retains exit1.
-- Minimal owned implementation is now prepared after that RED. Five additional
-  cases cover BOM/symlink/hardlink/untracked output refusal and independent real
-  Git-versus-TypeScript-AST import/key comparison across tracked add/remove. They
-  have not run. Original24 assertions and native budgets/retry0 remain unchanged.
+- Actual 29/29 owned tests passed after implementation. Full native typecheck
+  passed. The first full lint failed 5 checks (four shared style checks and one
+  owned typed-mode guard); its failure is retained. Minimal repairs kept runtime
+  denial, ownership checks and assertions unchanged. Fresh full native typecheck,
+  full lint and scoped format then passed, followed by 41/41 focused tests
+  (29 registry + 8 shared reader + 4 shared writer). Receipt:
+  `ove049-native-complete-checkpoint-20261018.json`.
+- Independent whole-source Standards and Spec reviews of 3c084c7 failed on an
+  output race and stale proposal evidence. Four real-I/O regressions then ran
+  against unchanged production: 33 collected, 29 passed 4 failed because the public
+  generator returned success after output replacement/unlink during candidate
+  admission. Mutation and competing-output preservation assertions passed first.
+  This actual RED is retained in `ove049-output-race-red-20261018.json`.
+- The repair reuses a private strict output reader before and after asynchronous
+  candidate admission, requires the fresh output to equal the ORIGINAL captured
+  previous bytes before check/no-op/write, and retains the native writer's final
+  previous-content guard. Competing replacements/absence deny and are preserved;
+  an ordinary initially stale output remains eligible for intentional generation.
+  The unchanged 33 registry tests and 12 shared tests then passed 45/45, including
+  all four real admission-race regressions. Fresh full native typecheck, full
+  lint and scoped formatter checks passed. Receipts:
+  `ove049-native-typecheck-review-race-repair-20261018.json`,
+  `ove049-native-lint-review-race-repair-20261018.json` and
+  `ove049-native-focused-review-race-repair-20261018.json`.
 
-No whole-task acceptance item is checked. Actual owned GREEN, remaining denial and
-race proof, native format/typecheck/lint, full normal/security gates, independent
+No whole-task acceptance item is checked. Fresh whole-source reviews, rebase on
+the latest DEVELOP, full normal/security gates, independent
 exact-head Standards/Spec review and fresh hosted CI remain required before the
 normal public finish/done and authorized DEVELOP merge. No isolated tool check
 proves macOS isolation or product penetration testing.

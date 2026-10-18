@@ -6,6 +6,7 @@ import {
   mkdtempSync,
   realpathSync,
   readFileSync,
+  renameSync,
   lstatSync,
   readdirSync,
   linkSync,
@@ -14,9 +15,11 @@ import {
   unlinkSync,
   writeFileSync,
 } from "node:fs";
+import { open } from "node:fs/promises";
+import type * as FileSystemPromises from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
-import { expect, it } from "vitest";
+import { expect, it, vi } from "vitest";
 import * as ts from "typescript";
 import { isolatedGitEnvironment } from "../hooks/git-test-environment.ts";
 import { documentationPluginPaths } from "./input.parse-boundary.ts";
@@ -25,6 +28,11 @@ import {
   generatePluginRegistry,
   renderPluginRegistry,
 } from "./plugin-registry.ts";
+
+vi.mock("node:fs/promises", async (importOriginal) => {
+  const actual = await importOriginal<typeof FileSystemPromises>();
+  return { ...actual, open: vi.fn(actual.open) };
+});
 
 const header =
   "// SPDX-License-Identifier: Apache-2.0\n" +
@@ -362,3 +370,63 @@ it("regenerates all literal imports and keys after real tracked additions and re
     rmSync(fixture.root, { recursive: true, force: true });
   }
 });
+
+const outputAdmissionRaces: readonly {
+  mode: "check" | "write";
+  change: "replace" | "unlink";
+}[] = [
+  { mode: "check", change: "replace" },
+  { mode: "check", change: "unlink" },
+  { mode: "write", change: "replace" },
+  { mode: "write", change: "unlink" },
+];
+
+it.each(outputAdmissionRaces)(
+  "denies $mode after an output $change during real candidate admission",
+  async ({ mode, change }) => {
+    const fixture = registryFixture();
+    const actual = await vi.importActual<typeof FileSystemPromises>("node:fs/promises");
+    const foreign = "// Another fixture operation owns this output.\n";
+    let mutated = false;
+    try {
+      writeFileSync(fixture.output, renderPluginRegistry([fixture.file]));
+      vi.mocked(open).mockImplementation(async (path, flags, options) => {
+        if (!mutated && path === resolve(fixture.root, fixture.file)) {
+          mutated = true;
+          if (change === "replace") {
+            const replacement = resolve(fixture.root, "replacement-registry.ts");
+            writeFileSync(replacement, foreign);
+            renameSync(replacement, fixture.output);
+          } else {
+            unlinkSync(fixture.output);
+          }
+        }
+        return actual.open(path, flags, options);
+      });
+      let failure: unknown;
+      try {
+        await generatePluginRegistry(fixture.root, mode);
+      } catch (error) {
+        failure = error;
+      }
+
+      expect(mutated).toBe(true);
+      if (change === "replace") {
+        expect(readFileSync(fixture.output, "utf8")).toBe(foreign);
+      } else {
+        expect(existsSync(fixture.output)).toBe(false);
+      }
+      expect(existsSync(fixture.marker)).toBe(false);
+      expect(readdirSync(resolve(fixture.root, "tools/docs-check"))).toEqual(
+        change === "replace" ? ["plugin-registry.generated.ts"] : [],
+      );
+      expect(failure).toBeInstanceOf(Error);
+      expect(failure).toMatchObject({
+        message: "Documentation plugin registry output is unavailable.",
+      });
+    } finally {
+      vi.mocked(open).mockReset().mockImplementation(actual.open);
+      rmSync(fixture.root, { recursive: true, force: true });
+    }
+  },
+);
