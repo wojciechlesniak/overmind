@@ -53,3 +53,8 @@
 # Append-only architecture decisions and their strict tooling (OVE_OSS006).
 /docs/adr/ @wojciechlesniak
 /tools/adr/ @wojciechlesniak
+
+# Relocated development build and test configuration (OVE_ARCH027).
+/tools/build/ @wojciechlesniak
+/tools/vite/ @wojciechlesniak
+/tools/vitest-projects/ @wojciechlesniak

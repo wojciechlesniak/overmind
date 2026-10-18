@@ -1090,25 +1090,25 @@ solution or obtain an explicit policy decision; no exception is created here.
 
 - Version: 4.3.3
 - License: MIT
-- Used by: apps/desktop (dev)
+- Used by: apps/desktop (dev); tools (dev, OVE_ARCH027 relocation prerequisites)
 - Added by: OVE_SETUP009
-- Value: Official React Fast Refresh integration compatible with the adopted Vite7 without the denied Babel/browser-data graph.
+- Value: Official React Fast Refresh integration compatible with the adopted Vite7 without the denied Babel/browser-data graph. OVE_ARCH027 declares the same pin directly in Tools for the later Vite configuration relocation; desktop keeps its declaration until that relocation works.
 - Maintenance cost: Vite-maintained plugin, upstream-driven cadence; two npm publisher maintainers, 41170 bytes unpacked. Review SWC native platform dependencies on upgrades.
-- Alternatives considered: plugin-react6 requires the denied Vite8 graph; plugin-react5 introduces Babel/caniuse-lite; handwritten refresh integration duplicates official tooling.
+- Alternatives considered: plugin-react6 requires the denied Vite8 graph; plugin-react5 introduces Babel/caniuse-lite; handwritten refresh integration duplicates official tooling. Relying on the desktop importer from Tools would leave the relocated helper without its own declared dependency.
 - Risk: Transitive @swc/core native packages; postinstall remains explicitly denied. Development transforms use installed platform binaries without granting install scripts or network access.
-- Last reviewed: 2026-10-16
+- Last reviewed: 2026-10-18
 
 ### esbuild
 
 - Version: 0.28.2
 - License: MIT
-- Used by: apps/engine (build-only development dependency)
+- Used by: apps/engine and tools (build-only development dependency; Tools importer added by OVE_ARCH027)
 - Added by: OVE_SETUP016
-- Value: Single-file Node22 CommonJS bundle, external source maps and inspectable metafile for the standalone engine.
+- Value: Single-file Node22 CommonJS bundle, external source maps and inspectable metafile for the standalone engine. The Tools declaration prepares build-helper relocation with the existing 0.28.2 pin; the engine keeps its declaration until its actual relocation.
 - Maintenance cost: Review upstream version and native platform package integrity with the packaging pipeline.
-- Alternatives considered: TypeScript alone does not bundle workspace modules; Bun changes the approved runtime; a handwritten bundler duplicates established tooling.
+- Alternatives considered: TypeScript alone does not bundle workspace modules; Bun changes the approved runtime; a handwritten bundler duplicates established tooling. An app-only declaration would make relocated Tools helpers rely on another importer instead of declaring their build dependency.
 - Risk: Native build tool; installation scripts remain denied, exact catalog pin and lockfile integrity retained, bundle inputs are checked before publication.
-- Last reviewed: 2026-10-16
+- Last reviewed: 2026-10-18
 - Source: <https://registry.npmjs.org/esbuild/0.28.2>
 
 ### postject

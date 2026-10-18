@@ -6,5 +6,9 @@
   "license": "Apache-2.0",
   "exports": {
     ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react-swc": "catalog:",
+    "esbuild": "catalog:"
   }
 }
