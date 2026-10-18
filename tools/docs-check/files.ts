@@ -54,7 +54,13 @@ export async function readBoundedFile(handle: ReadableFile, expected?: Stats): P
   if (total !== before.size || after.ctimeMs !== before.ctimeMs) {
     throw new Error("Repository file changed while reading.");
   }
-  return Buffer.concat(chunks, total).toString("utf8");
+  try {
+    return new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(
+      Buffer.concat(chunks, total),
+    );
+  } catch {
+    throw new Error("Repository file is not valid UTF-8.");
+  }
 }
 
 export async function canonicalTarget(

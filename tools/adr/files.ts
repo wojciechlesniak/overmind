@@ -110,14 +110,36 @@ export class Files {
       throw new Error("ADR output changed during planning");
     }
     const temporary = resolve(dirname(path), `.adr-${randomUUID()}.tmp`);
+    const descriptor = openSync(temporary, "wx", 0o644);
+    let owned: BigIntStats | undefined;
     try {
-      writeFileSync(temporary, text, { flag: "wx", mode: 0o644 });
+      owned = fstatSync(descriptor, { bigint: true });
+      writeFileSync(descriptor, text);
       if (this.read(path) !== previous) {
         throw new Error("ADR output changed during publication");
       }
+      const current = lstatSync(temporary, { bigint: true, throwIfNoEntry: false });
+      const written = fstatSync(descriptor, { bigint: true });
+      if (
+        !current ||
+        !current.isFile() ||
+        written.nlink !== 1n ||
+        identity(current) !== identity(written)
+      ) {
+        throw new Error("ADR temporary output changed before publication");
+      }
       renameSync(temporary, path);
     } finally {
-      rmSync(temporary, { force: true });
+      try {
+        if (owned) {
+          const current = lstatSync(temporary, { bigint: true, throwIfNoEntry: false });
+          if (current?.dev === owned.dev && current.ino === owned.ino) {
+            rmSync(temporary, { force: true });
+          }
+        }
+      } finally {
+        closeSync(descriptor);
+      }
     }
   }
   remove(path: string, previous: string): void {

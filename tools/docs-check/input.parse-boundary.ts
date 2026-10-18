@@ -157,3 +157,26 @@ export function pluginModule(raw: unknown): { name: string; run: (ctx: unknown) 
     .strict()
     .parse(namespace.default);
 }
+
+export function documentationPluginPaths(raw: unknown): readonly string[] {
+  try {
+    const paths = z.array(z.string().min(1)).parse(raw);
+    const candidate = /^tools\/docs-[a-z0-9-]+\/check\.ts$/u;
+    if (
+      new Set(paths).size !== paths.length ||
+      paths.some(
+        (path) =>
+          path.startsWith("/") ||
+          path.includes("\\") ||
+          /\p{Cc}/u.test(path) ||
+          path.split("/").some((part) => !part || part === "." || part === "..") ||
+          (/^tools\/docs-/iu.test(path) && /\/check\.ts$/iu.test(path) && !candidate.test(path)),
+      )
+    ) {
+      throw new Error("Invalid inventory path.");
+    }
+    return Object.freeze(paths.filter((path) => candidate.test(path)).sort());
+  } catch {
+    throw new Error("Invalid documentation plugin inventory.");
+  }
+}
