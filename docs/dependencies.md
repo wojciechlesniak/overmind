@@ -12,6 +12,10 @@ with pinned license/checksum evidence and bundled compliance artifacts; see
 Reserved catalog packages are not installed; their owning task must prove peers,
 release age, scripts and the full transitive license graph before adoption.
 
+OVE_ARCH027 reviewed only the Tools importer declarations, generated lockfile and
+existing protections on 2026-10-18. The package review dates and registry snapshot
+above remain unchanged; this importer review adds no package version or exception.
+
 ## Compatibility matrix
 
 | Package | Pinned | Registry latest on review date | Constraint source | Note |
@@ -1096,7 +1100,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Maintenance cost: Vite-maintained plugin, upstream-driven cadence; two npm publisher maintainers, 41170 bytes unpacked. Review SWC native platform dependencies on upgrades.
 - Alternatives considered: plugin-react6 requires the denied Vite8 graph; plugin-react5 introduces Babel/caniuse-lite; handwritten refresh integration duplicates official tooling. Relying on the desktop importer from Tools would leave the relocated helper without its own declared dependency.
 - Risk: Transitive @swc/core native packages; postinstall remains explicitly denied. Development transforms use installed platform binaries without granting install scripts or network access.
-- Last reviewed: 2026-10-18
+- Last reviewed: 2026-10-16
 
 ### esbuild
 
@@ -1108,7 +1112,7 @@ solution or obtain an explicit policy decision; no exception is created here.
 - Maintenance cost: Review upstream version and native platform package integrity with the packaging pipeline.
 - Alternatives considered: TypeScript alone does not bundle workspace modules; Bun changes the approved runtime; a handwritten bundler duplicates established tooling. An app-only declaration would make relocated Tools helpers rely on another importer instead of declaring their build dependency.
 - Risk: Native build tool; installation scripts remain denied, exact catalog pin and lockfile integrity retained, bundle inputs are checked before publication.
-- Last reviewed: 2026-10-18
+- Last reviewed: 2026-10-16
 - Source: <https://registry.npmjs.org/esbuild/0.28.2>
 
 ### postject
