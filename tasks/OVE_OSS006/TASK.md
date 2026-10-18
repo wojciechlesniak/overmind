@@ -27,7 +27,7 @@ adr_refs: [8, 16, 17]
 
 ## 1. Summary
 
-Give architectural decision records a template, a generated index and a lifecycle check, and fix the English file names of the 28 existing ADRs so the translation tasks and all links agree. ADRs are append-only (decisions are superseded, never deleted), in the same spirit as the product's own Decision Register (ADR 0008).
+Give architectural decision records a template, a generated index and a lifecycle check, and fix the English file names of the 28 existing ADRs so the translation tasks and all links agree. ADRs are append-only (decisions are superseded, never deleted), in the same spirit as the product's own Decision Register (ADR 0008). The approved 2026-10-18 split accepts only a strictly tested tooling stage here: OVE_OSS014 prepares the historical-proof/ADR 0029 boundary, and OVE_OSS015 closes the real production collection/index/CI after OVE_OSS010/011. No production migration result or historical exception is approved by this split.
 
 ## 2. Context
 
@@ -43,6 +43,7 @@ SPEC 19.8 and CONVENTIONS section 8 require new architectural decisions to be re
 - Translating ADR content: OVE_OSS010 (0001-0014) and OVE_OSS011 (0015-0028).
 - Writing new ADRs for other areas (their tasks do).
 - A docs website index.
+- Source import and actual correspondence: OVE_OSS005; separately reviewed finite historical proof and ADR 0029 provenance/translation: OVE_OSS014. Complete production current/history/correspondence/index/renumber validation and unconditional required ADR/index CI: OVE_OSS015 after OVE_OSS010/011. Conforming real public CLI proof remains immediate here.
 
 ## 5. Detailed requirements
 
@@ -78,7 +79,7 @@ SPEC 19.8 and CONVENTIONS section 8 require new architectural decisions to be re
    Resulting names: `docs/adr/NNNN-<slug>.md`. The JSON also stores, per ADR, the Polish original file name and the English title (the H1 of the translation, filled by the translation tasks, initially the descriptive working title). A title change never renames the file.
 2. **Template (`_template.md`).** Front matter keys: `adr` (integer), `title`, `status` (`proposed` | `accepted` | `superseded` | `deprecated`), `date` (ISO), `deciders` (list, default `[Owner]`), `supersedes` (list of integers), `superseded_by` (list), `tags` (list from: architecture, security, product, process, tooling, legal). Body: `# <Title as the decision, one sentence>`; one paragraph "what we decided, in which context, and the main reason, including rejected alternatives with a reason each" (the existing ADR style: short); `## Consequences` bullets (positive and negative, follow-up obligations); optional `## Alternatives considered` when more than one sentence of detail is needed; optional `## Confirmation` (how the decision is verified, for example a prototype or test, with date and link). Length guideline: under 60 lines. Translated ADRs additionally carry the translation keys of OVE_OSS005.
 3. **Existing status data.** Statuses of the Owner's ADRs: all `accepted` except 0001 `superseded` (`superseded_by: [23]`), dates from the project's document creation dates (2026-10-12 or 2026-10-13 as given in the manifest `projectCreatedAt`); ADR 0023's `supersedes: [1]`. `deciders: [Owner]`.
-4. **`pnpm adr:new "<title>"`:** computes the next number as max(numbers in `docs/adr/` on the current branch, numbers in `origin/main`, and numbers in files added by open `task/*` branches found with `git ls-remote` + `git diff --name-only`) + 1, zero-pads to 4 digits, derives a kebab-case ASCII slug (max 6 words, 60 characters), writes the template with filled front matter (status `proposed`, today's date from an injected Clock), prints the path. It refuses when the number already exists. Concurrent allocation can still collide; `check:adr` catches it in CI and `adr:renumber <old> <new>` renames the file, updates the front matter and rewrites links to it across `docs/` and `tasks/` (dry run by default).
+4. **`pnpm adr:new "<title>"`:** computes the next number as max(numbers in `docs/adr/` on the current branch, numbers in `origin/DEVELOP`, and numbers in files added by open `task/*` branches found with `git ls-remote` + `git diff --name-only`) + 1, zero-pads to 4 digits, derives a kebab-case ASCII slug (max 6 words, 60 characters), writes the template with filled front matter (status `proposed`, today's date from an injected Clock), prints the path. It refuses when the number already exists. Concurrent allocation can still collide; `check:adr` catches it in CI and `adr:renumber <old> <new>` renames the file, updates the front matter and rewrites links to it across `docs/` and `tasks/` (dry run by default).
 5. **`pnpm check:adr` rules:** every ADR has valid front matter; `adr` equals the file number; numbers are unique and contiguous (no gaps); file name equals `<NNNN>-<slug>.md` with a lower-case kebab slug; exactly one H1; `Consequences` section exists unless status is `proposed`; `supersedes`/`superseded_by` are mutual and refer to existing ADRs; a `superseded` ADR has `superseded_by` non-empty and its file content is unchanged except for front matter once superseded (compared with the git history: `git log -p` shows only front matter changes after the status flips); an `accepted` ADR's decision paragraph may not be edited except for typo fixes (heuristic: PRs touching accepted ADR bodies need label `adr-edit`); status transitions allowed: `proposed -> accepted -> (superseded | deprecated)`; the slug map contains the ADR; ADR numbers mentioned in other docs exist. Deleting an ADR file is an error (checked against the base branch).
 6. **Index (`gen:adr-index`).** `docs/adr/README.md` = hand-written intro (what ADRs are, how to propose a new one, the append-only rule, the status meanings, link to the template and to ADR 0008 as the philosophy) + a generated table between markers `<!-- adr-index:start -->` and `<!-- adr-index:end -->` with columns `# | Decision | Status | Date | Tags | Notes` (notes show "superseded by 0023" or "supersedes 0001"); rows sorted by number; titles link to files; `--check` fails when the committed table differs.
 7. **Process rules (in the README):** who may propose (anyone via an accepted issue or a task of kind `decision`/`spike`), who accepts (the Owner; an ADR PR merged by the Owner = accepted), that an ADR must exist before code that depends on a hard-to-reverse decision lands, that a decision change needs a new ADR that supersedes the old one, and that task files reference ADRs by number (`adr_refs`).
@@ -115,18 +116,21 @@ Docs under `docs/adr/` and tooling in `tools/adr/` (pure parsing/rendering funct
 
 ## 11. Acceptance criteria
 
-- [ ] `slug-map.json` has 28 entries and every Polish original file in `docs/pl/adr/` (after OVE_OSS005) maps to exactly one English name.
-- [ ] `pnpm adr:new "Use X for Y"` creates `docs/adr/0029-use-x-for-y.md` (next free number) with valid front matter; on a repository where `origin/main` already has 0029 it picks 0030.
-- [ ] `pnpm check:adr` passes on the 28 translated ADRs and fails for: gap in numbers, duplicate number, non-mutual supersede link, deleted ADR (fixture), body edit without label (fixture), wrong file name.
-- [ ] `pnpm gen:adr-index` produces the table with ADR 0001 shown as superseded by 0023; `--check` fails after a manual edit between markers.
-- [ ] `adr:renumber` dry run lists all link rewrites; apply updates them and `check:adr` passes afterwards.
-- [x] `docs/adr/README.md` explains the process and the status meanings.
+- [ ] `slug-map.json` contains the exact 28 original identities, canonical English slugs and preserved Polish names, separately from later ADRs; schema and duplicate/identity-denial fixtures pass.
+- [ ] The template is shorter than 60 lines, contains documented ADR/translation metadata, and the process README explains lifecycle, publication limits and the actual incomplete migration.
+- [ ] The real public allocation CLI creates a valid next-free proposal in an isolated conforming Git repository, independently accounts for local, freshly fetched DEVELOP and remote task reservations, and refuses collisions/unavailable remote state without modifying existing ADRs.
+- [ ] The strict checker passes a conforming collection and rejects malformed metadata/JSON, gaps, duplicates, invalid names/references, deletion, unpreserved rename, invalid lifecycle transitions and unauthorized accepted/superseded body changes, including real Git history and filesystem boundaries.
+- [ ] Real public index generation then --check succeeds on a conforming repository and rejects a changed table; real renumber dry-run preserves every input byte, apply preserves protected examples/archives and rewrites all affected links, and the strict checker passes afterwards.
+- [ ] Actual unmigrated production ADR/index failures are recorded with all original production obligations allocated to OVE_OSS005/014/010/011/015 below; no legacy-pass mode, invented dates, fixture index or false migration/publication success exists.
+- [ ] All applicable exact-head tests, type/lint/build/security and independent Standards/Spec reviews pass, required hosted checks pass, and normal task/commit/merge protections remain in force.
 
 ## 12. Test plan
 
-Unit tests for slug creation, next-number computation (fake git: local, main and branch numbers), status transition rules, mutual-link check, index rendering (golden), renumber rewrites (fixture tree). Integration test on a temp git repo for immutability and deletion detection. Commands: `pnpm test -- tools/adr`, `pnpm check:adr`, `pnpm gen:adr-index --check`.
+Unit tests for slug creation, next-number computation (fake git: local, DEVELOP and branch numbers), status transition rules, mutual-link check, index rendering (golden), renumber rewrites (fixture tree). Integration test on a temp git repo for immutability and deletion detection. Commands: `pnpm test -- tools/adr`, `pnpm check:adr`, `pnpm gen:adr-index --check`.
 
 ## 13. Parallelization notes
+
+Approved sequence: OSS006 tooling -> OSS005 + OSS014 historical preparation -> complete reviewed OSS010/011 candidate -> OSS015 production closure -> OSS013 final review -> separate Owner publication approval. OSS014 depends on OSS005/006; OSS010/011 additionally depend on OSS014; OSS015 depends on OSS014/010/011; OSS013 additionally depends on OSS015. No readiness or partial-set bypass is permitted. See the full coordinated transfer contract in [OSS015](../OVE_OSS015/TASK.md).
 
 Parallel with OVE_OSS001..005. Translation tasks OVE_OSS010/011 depend on the slug map. Hotspot: `docs/adr/README.md` table (regenerate on conflicts, never merge by hand); new ADRs add their own file only.
 
@@ -135,6 +139,8 @@ Parallel with OVE_OSS001..005. Translation tasks OVE_OSS010/011 depend on the sl
 - ASSUMPTION: ADR dates for the existing 28 come from the project's document creation timestamps (all 2026-10-12 or 2026-10-13); the Owner may correct them.
 - ASSUMPTION: the Owner is the sole acceptor of ADRs for now.
 - Open question: the extra fields `tags` and `deciders` are additions to the Owner's minimal format; they are optional for the translated originals.
+
+The following checkpoint paragraphs are retained historical evidence at their stated revisions. Their then-pending scope approvals were superseded by the integrator's Owner-delegated 2026-10-18 decision; failed commands remain failures. No criterion is checked or status advanced by that decision.
 
 Implementation checkpoint: strict tools, real conforming/denied fixtures and the
 25-line template are ready for independent review. The actual repository
@@ -234,3 +240,8 @@ and DEVELOP sources. Two additional actual CLI cases now prove local-highest
 in 17.51 seconds with the original limits and one worker. Only test coverage and
 factual evidence changed; formatting, full typecheck and scoped lint passed.
 Fresh exact-head reviews/gates and Owner scope acceptance remain pending.
+
+
+Approved tooling-stage allocation (2026-10-18): original criterion 1's fixed map is immediate, while actual imported-source correspondence is OSS005/010/011 and final OSS015 validation. Original criterion 2 is immediate public allocation (historical 0029/0030 examples mean next-free, not overwriting existing records). Original criterion 3's denied-case tooling proof is immediate; actual complete production current/history PASS belongs to OSS014 preparation plus OSS010/011 inputs and OSS015 closure. Original criterion 4's conforming public generation/staleness proof is immediate, while the actual production table/0001-0023 notes are OSS015. Original criterion 5's conforming public dry-run/apply/check is immediate; final migrated production correspondence/renumber/link validation is OSS015. Original criterion 6's README is immediate. No obligation is erased or represented as completed by allocation.
+
+Exact source a3f6a3ec9ef05583bd4f0d5b41efccd7c8ad8b73 passed the original applicable gate list once using the approved one-worker coverage/integration scheduling: 539 covered tests, 74 integrations, four architecture CLI cases, 33 Rust tests, types/lint/format/build, npm/Cargo license/audit/source/bans, workflow, secrets and SBOM (886 components). Original installer and actual Zod readManifest conditional selection ran. Production npm audit had no findings; development audit retained one LOW finding and Cargo retained five allowed warnings. Both secret scans found zero with one Keychain warning each. The earlier failed00ff attempt remains separate; this fresh run exited0. Independently, actual check:adr and gen:adr-index both exited1 at legacy ADR0001; no production migration PASS is claimed. Captures: ove026-full-gates-a3f6a3e.log/receipts/controller-result and ove026-gates-and-legacy-a3f6a3e.final-result under the retained session evidence directory. This new normative metadata delta needs its own reviews and exact-head gates before normal finish/merge; status stays in_review and all current criteria remain unchecked pending integrator verification.
