@@ -6,7 +6,7 @@ kind: docs
 size: S
 priority: P0
 mvp: true
-status: in_review
+status: done
 depends_on: [OVE_SETUP001]
 soft_depends_on: [OVE_OSS004, OVE_OSS005]
 provides: ["lib:adr-template", "lib:adr-index", "lib:adr-tooling", "lib:adr-slug-map"]
