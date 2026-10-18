@@ -208,3 +208,26 @@ test("public renumber and index commands leave a complete conforming repository 
     rmSync(parent, { recursive: true, force: true });
   }
 }, 15000);
+
+test.each(["Use `literal` identifiers", "Use *literal* emphasis"])(
+  "public allocation renders the literal title %s as valid Markdown data",
+  (title) => {
+    const { parent, root, cli } = fixture();
+    try {
+      const created = cli("new.ts", [title]);
+      expect(created.status, created.stderr).toBe(0);
+      const path = created.stdout.trim();
+      expect(path).toMatch(/^docs\/adr\/0031-[a-z0-9-]+\.md$/u);
+      const record = parseAdr(
+        path.slice("docs/adr/".length),
+        readFileSync(resolve(root, path), "utf8"),
+      );
+      expect(record.meta.title).toBe(title);
+      const checked = cli("check.ts");
+      expect(checked.status, checked.stderr).toBe(0);
+    } finally {
+      rmSync(parent, { recursive: true, force: true });
+    }
+  },
+  15000,
+);

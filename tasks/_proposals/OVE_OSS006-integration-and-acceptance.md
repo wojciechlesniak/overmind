@@ -568,3 +568,27 @@ evidence directory. This is scoped proof only: fresh rebased exact-head complete
 gates, independent reviews, generated task views and hosted checks remain due.
 The approved production-migration allocation, unchecked criteria and task status
 are unchanged.
+
+
+### Independent-review repairs (2026-10-18)
+
+Independent review rejected revision `628c49d` despite its actual 21-gate PASS
+(570 covered tests, 84 integrations, four architecture CLI cases and 33 Rust
+tests). That result remains historical, not a pass for the corrected source.
+
+Each confirmed defect first failed a meaningful real regression: literal-title
+allocation and protected-heading preservation; duplicate unpublished identities
+in strict check/index; invalid UTF-8 through batched and individual historical
+reads; and an observed real editor update during renumber planning. The adjacent
+mapped-but-absent target also failed both real dry-run/apply CLI denials. Minimal
+corrections then passed the unchanged assertions and budgets, retaining temporary
+old-ID collision repair, BOM bytes and fixed safe decoding diagnostics.
+
+Full typecheck, full lint and scoped formatting passed. One actual unbound-method
+lint failure was preserved and corrected by binding the original real reader;
+no rule was disabled. Final current-source regressions passed 25 ADR integrations
+across 9 files and 42 ADR/Markdown units across 9 files with one worker.
+Captures: `ove026-review-repairs-20261018-*` in the retained evidence directory.
+Primary/source guards passed. Fresh exact-head complete gates and independent
+reviews remain required; production legacy failures, all unchecked criteria and
+the in_review status are unchanged.

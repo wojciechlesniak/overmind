@@ -137,7 +137,26 @@ export function parseAdr(file: string, source: string): Adr {
 }
 
 export function renderAdr(meta: Metadata, body: string): string {
-  return `---\n${stringify(metadataSchema.parse(meta), { lineWidth: 0 })}---\n${body.replace(/^# .+$/mu, () => `# ${meta.title}`)}`;
+  const metadata = metadataSchema.parse(meta);
+  const titles = headings(body).filter((heading) => heading.level === 1);
+  const heading = titles[0];
+  if (titles.length !== 1 || !heading) {
+    throw new Error("ADR body needs exactly one visible title");
+  }
+  if (heading.text !== metadata.title) {
+    const rows = body.split(/(\r\n|\r|\n)/u);
+    const index = (heading.line - 1) * 2;
+    if (!/^ {0,3}#(?:[ \t]|$)/u.test(rows[index] ?? "")) {
+      throw new Error("ADR template needs an editable ATX title");
+    }
+    const literal = metadata.title.replace(
+      /[\p{P}\p{S}]/gu,
+      (character) => `&#${String(character.codePointAt(0))};`,
+    );
+    rows[index] = `# ${literal}`;
+    body = rows.join("");
+  }
+  return `---\n${stringify(metadata, { lineWidth: 0 })}---\n${body}`;
 }
 export function parseLabels(source: string): string[] {
   try {

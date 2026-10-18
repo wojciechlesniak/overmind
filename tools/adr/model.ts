@@ -36,6 +36,9 @@ export function checkRecords(
   records: readonly Adr[],
   entries: readonly { adr: number; slug: string }[],
 ): void {
+  if (new Set(entries.map((entry) => entry.adr)).size !== entries.length) {
+    throw new Error("ADR slug map identities must be unique");
+  }
   const ids = records.map((item) => item.meta.adr).sort((a, b) => a - b);
   if (!ids.length || ids.some((id, index) => id !== index + 1)) {
     throw new Error("ADR numbers must be unique and contiguous from 0001");

@@ -6,13 +6,17 @@ import { checkRecords, renderIndex, updateIndex } from "./model.ts";
 import { checkHistory } from "./history.ts";
 import type { HistoryGit } from "./ports.ts";
 
-export function loadRecords(files: Files): Adr[] {
+export interface LoadedAdr extends Adr {
+  readonly source: string;
+}
+export function loadRecords(files: Files): LoadedAdr[] {
   return files
     .markdown("docs/adr")
     .filter((path) => !["README.md", "_template.md"].includes(basename(path)))
     .map((path) => {
       try {
-        return parseAdr(relative(files.path("docs/adr"), path), files.read(path));
+        const source = files.read(path);
+        return { ...parseAdr(relative(files.path("docs/adr"), path), source), source };
       } catch {
         throw new Error(
           `Invalid ADR metadata or filename: ${basename(path)}; legacy migration is required`,

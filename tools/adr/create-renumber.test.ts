@@ -10,7 +10,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
-import { expect, test } from "vitest";
+import { expect, test, vi } from "vitest";
 import { createAdr, renumberAdr } from "./service.ts";
 import { parseAdr, parseSlugMap } from "./input.parse-boundary.ts";
 import { generateIndex, loadRecords } from "./repository.ts";
@@ -86,11 +86,17 @@ test("renumber defaults to a complete dry run, then fixes only the collided prop
     });
     writeFileSync(resolve(root, "docs/adr/slug-map.json"), JSON.stringify(map));
     const old = "docs/adr/0030-proposed-change.md";
+    const protectedExamples =
+      "```markdown\n# Fenced heading example\n```\n\n<!--\n# Commented heading example\n-->\n\n";
     const selfLinks =
       '\n## Confirmation\n\n[ADR 0030](0030-proposed-change.md#confirmation "Self confirmation")\n\n`[ADR 0030](0030-proposed-change.md#confirmation)`\n';
     writeFileSync(
       resolve(root, old),
       template
+        .replace(
+          "\n# Choose one clear decision",
+          `\n${protectedExamples}# Choose one clear decision`,
+        )
         .replace("adr: 0", "adr: 30")
         .replaceAll("Choose one clear decision", "Propose a change") + selfLinks,
     );
@@ -132,6 +138,7 @@ test("renumber defaults to a complete dry run, then fixes only the collided prop
       "0031-proposed-change.md",
       readFileSync(resolve(root, "docs/adr/0031-proposed-change.md"), "utf8"),
     );
+    expect(renamedProposal.body).toContain(protectedExamples);
     expect(renamedProposal.body).toBe(
       parseAdr("0030-proposed-change.md", originalProposal).body.replace(
         selfLinks,
@@ -187,6 +194,65 @@ test("renumber defaults to a complete dry run, then fixes only the collided prop
     expect(readFileSync(resolve(root, "docs/adr/slug-map.json"), "utf8")).toBe(mapBeforeDenial);
     expect(existsSync(resolve(root, proposal))).toBe(true);
     expect(existsSync(resolve(root, "docs/adr/0033-preserve-history.md"))).toBe(false);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("renumber refuses an editor update after its actual planning read", () => {
+  const root = fixture();
+  try {
+    const before = "docs/adr/0031-preserve-concurrent-edits.md";
+    const after = "docs/adr/0032-preserve-concurrent-edits.md";
+    const mapPath = resolve(root, "docs/adr/slug-map.json");
+    const map = parseSlugMap(readFileSync(mapPath, "utf8"));
+    map.additional.push({
+      adr: 31,
+      slug: "preserve-concurrent-edits",
+      polishOriginal: null,
+      title: "Preserve concurrent edits",
+    });
+    const mapSource = JSON.stringify(map, null, 2) + "\n";
+    writeFileSync(mapPath, mapSource);
+    const source = readFileSync(resolve(root, "docs/adr/_template.md"), "utf8")
+      .replace("adr: 0", "adr: 31")
+      .replaceAll("Choose one clear decision", "Preserve concurrent edits");
+    const edited = source + "\nA newer editor paragraph must survive.\n";
+    writeFileSync(resolve(root, before), source);
+    const notes = "[ADR 0031](adr/0031-preserve-concurrent-edits.md)\n";
+    writeFileSync(resolve(root, "docs/notes.md"), notes);
+    let observed = false;
+    const originalRead = Files.prototype.read.bind(new Files(root));
+    const observer = vi.spyOn(Files.prototype, "read").mockImplementation(function (
+      this: Files,
+      path,
+    ) {
+      const actual = originalRead(path);
+      if (!observed && this.path(path) === resolve(root, before)) {
+        observed = true;
+        writeFileSync(resolve(root, before), edited);
+      }
+      return actual;
+    });
+    try {
+      let failure: unknown;
+      try {
+        renumberAdr(root, 31, 32, true);
+      } catch (error) {
+        failure = error;
+      }
+      expect(observed).toBe(true);
+      expect(failure).toBeInstanceOf(Error);
+      expect(failure instanceof Error ? failure.message : "").toBe(
+        "ADR renumber input changed during planning",
+      );
+      expect(readFileSync(resolve(root, before), "utf8")).toBe(edited);
+      expect(readFileSync(mapPath, "utf8")).toBe(mapSource);
+      expect(readFileSync(resolve(root, "docs/notes.md"), "utf8")).toBe(notes);
+      expect(existsSync(resolve(root, after))).toBe(false);
+    } finally {
+      observer.mockRestore();
+    }
   } finally {
     rmSync(root, { recursive: true, force: true });
   }

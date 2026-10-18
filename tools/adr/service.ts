@@ -82,6 +82,9 @@ export function renumberAdr(root: string, old: number, next: number, apply = fal
     }
     const mapSource = files.read("docs/adr/slug-map.json");
     const map = parseSlugMap(mapSource);
+    if ([...map.originals, ...map.additional].some((item) => item.adr === next)) {
+      throw new Error("Renumber target is already mapped");
+    }
     const entry = map.additional.find(
       (item) =>
         item.adr === old && `${String(old).padStart(4, "0")}-${item.slug}.md` === record.file,
@@ -107,7 +110,10 @@ export function renumberAdr(root: string, old: number, next: number, apply = fal
         changes.push({ path: relative(files.root, path), before: source, after: rewritten });
       }
     }
-    const original = files.read(before);
+    const original = record.source;
+    if (files.read(before) !== original) {
+      throw new Error("ADR renumber input changed during planning");
+    }
     const body = rewriteAdrLinks(
       record.body,
       files.path(before),

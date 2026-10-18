@@ -1,3 +1,4 @@
+import { decodeGitText } from "./git-text.ts";
 import { execFileSync } from "node:child_process";
 import { readHistoryBlobs } from "./history-blobs.ts";
 export interface Clock {
@@ -47,7 +48,7 @@ export function nodeGit(root: string, environment: NodeJS.ProcessEnv = process.e
     }
   };
   return {
-    run: (args) => execute(args).toString("utf8"),
+    run: (args) => decodeGitText(execute(args)),
     readBlobs: (requests) => readHistoryBlobs(requests, execute),
   };
 }

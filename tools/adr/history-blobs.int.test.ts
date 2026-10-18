@@ -25,9 +25,14 @@ test("real Git blob batching preserves UTF-8, CRLF and header-looking source byt
     const first = "docs/adr/0091-byte-source.md";
     const second = "docs/adr/0092-other-source.md";
     const source = Buffer.from(
-      ["# Byte fixture", "", "Unicode: café, żółć, 🙂.", "a".repeat(40) + " blob 9", "", ""].join(
-        "\r\n",
-      ),
+      [
+        "\uFEFF# Byte fixture",
+        "",
+        "Unicode: café, żółć, 🙂.",
+        "a".repeat(40) + " blob 9",
+        "",
+        "",
+      ].join("\r\n"),
       "utf8",
     );
     writeFileSync(resolve(root, first), source);

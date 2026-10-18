@@ -1,3 +1,4 @@
+import { decodeGitText } from "./git-text.ts";
 export const historyBlobRequestLimit = 32;
 export const historyBlobInputLimit = 8192;
 type ExecuteGit = (args: readonly string[], input: string) => Buffer;
@@ -40,7 +41,7 @@ export function readHistoryBlobs(
   if (metadata.length > outputLimit || !metadata.length || metadata.at(-1) !== 10) {
     throw invalidResponse();
   }
-  const lines = metadata.toString("utf8").slice(0, -1).split("\n");
+  const lines = decodeGitText(metadata).slice(0, -1).split("\n");
   if (lines.length !== unique.length) {
     throw invalidResponse();
   }
@@ -84,8 +85,8 @@ export function readHistoryBlobs(
     if (response.at(end) !== 10) {
       throw invalidResponse();
     }
-    // Byte framing precedes the same UTF-8 decoding as the existing individual show port.
-    sources.set(request, response.subarray(offset, end).toString("utf8"));
+    // Validate byte framing before the shared fatal, BOM-preserving Git text decoding.
+    sources.set(request, decodeGitText(response.subarray(offset, end)));
     offset = end + 1;
   }
   if (offset !== response.length) {
