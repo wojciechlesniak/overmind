@@ -592,3 +592,18 @@ Captures: `ove026-review-repairs-20261018-*` in the retained evidence directory.
 Primary/source guards passed. Fresh exact-head complete gates and independent
 reviews remain required; production legacy failures, all unchecked criteria and
 the in_review status are unchanged.
+
+
+### Literal whitespace title data (2026-10-18)
+
+A further actual public allocation case with both leading and trailing spaces
+first failed ADR parsing even though allocation returned success. The existing
+literal encoder now also entity-encodes admitted whitespace; it never trims the
+Owner's title or changes metadata validation. The unchanged new case and both
+previous literal-title cases passed with exact metadata-title equality and actual
+public checker success. Full typecheck, full lint and scoped formatting passed.
+Final current-source regressions passed 26 ADR integrations across 9 files and
+42 ADR/Markdown units across 9 files, with one worker and unchanged limits.
+Captures: `ove026-title-whitespace-20261018-*` in the retained evidence directory.
+All guards passed; fresh exact-head full gates/reviews remain due. The criteria,
+status and production-migration allocation remain unchanged.

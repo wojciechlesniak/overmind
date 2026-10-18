@@ -182,6 +182,21 @@ Primary/source guards passed. Fresh exact-head complete gates and independent
 reviews remain required; production legacy failures, all unchecked criteria and
 the in_review status are unchanged.
 
+
+### Literal whitespace title data (2026-10-18)
+
+A further actual public allocation case with both leading and trailing spaces
+first failed ADR parsing even though allocation returned success. The existing
+literal encoder now also entity-encodes admitted whitespace; it never trims the
+Owner's title or changes metadata validation. The unchanged new case and both
+previous literal-title cases passed with exact metadata-title equality and actual
+public checker success. Full typecheck, full lint and scoped formatting passed.
+Final current-source regressions passed 26 ADR integrations across 9 files and
+42 ADR/Markdown units across 9 files, with one worker and unchanged limits.
+Captures: `ove026-title-whitespace-20261018-*` in the retained evidence directory.
+All guards passed; fresh exact-head full gates/reviews remain due. The criteria,
+status and production-migration allocation remain unchanged.
+
 ## 13. Parallelization notes
 
 Approved sequence: OSS006 tooling -> OSS005 + OSS014 historical preparation -> complete reviewed OSS010/011 candidate -> OSS015 production closure -> OSS013 final review -> separate Owner publication approval. OSS014 depends on OSS005/006; OSS010/011 additionally depend on OSS014; OSS015 depends on OSS014/010/011; OSS013 additionally depends on OSS015. No readiness or partial-set bypass is permitted. See the full coordinated transfer contract in [OSS015](../OVE_OSS015/TASK.md).

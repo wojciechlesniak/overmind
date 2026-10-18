@@ -209,7 +209,7 @@ test("public renumber and index commands leave a complete conforming repository 
   }
 }, 15000);
 
-test.each(["Use `literal` identifiers", "Use *literal* emphasis"])(
+test.each(["Use `literal` identifiers", "Use *literal* emphasis", "  Use literal spacing  "])(
   "public allocation renders the literal title %s as valid Markdown data",
   (title) => {
     const { parent, root, cli } = fixture();

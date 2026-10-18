@@ -150,7 +150,7 @@ export function renderAdr(meta: Metadata, body: string): string {
       throw new Error("ADR template needs an editable ATX title");
     }
     const literal = metadata.title.replace(
-      /[\p{P}\p{S}]/gu,
+      /[\p{P}\p{S}\s]/gu,
       (character) => `&#${String(character.codePointAt(0))};`,
     );
     rows[index] = `# ${literal}`;
