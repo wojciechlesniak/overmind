@@ -53,3 +53,22 @@ It passed 41/41 focused tests and the real architecture integration. No timeout,
 retry, threshold, assertion or repository testing policy was weakened. Native
 typecheck, lint, formatting and actual generated-output hash comparison passed.
 Full suites/security/independent review/hosted CI are still required before merge.
+
+Independent review rejected candidate `78de095` with three P2 findings. Each
+received an actual CLI red-to-green regression: Git's effective canonical
+worktree must match the task root before the dirty-tree decision; zero-length
+unified diff ranges use the preceding line count and apply through real Git;
+and an existing blocks field is always moved immediately after ADR metadata.
+The canonical-worktree regression also proves a valid `core.worktree` remains
+accepted. Existing timeout budgets and every earlier assertion are preserved.
+
+The root-coordinated full-gate run for `78de095` was interrupted with exit 130
+after installation, formatting, lint, typecheck and 533 covered unit tests in
+95 files passed; integration was in progress. This is incomplete evidence, not
+a complete full-gate pass. A new candidate requires fresh full gates and reviews.
+
+The revised author checkpoint passed native typecheck, lint, formatting and the
+actual generated-output check. The unchanged-budget single-worker affected suite
+passed 45/45 tests, including 24 actual CLI cases; the real architecture
+integration passed 1/1. This does not replace fresh independent review, normal
+pre-push hooks or a complete full-gate run on the new candidate.

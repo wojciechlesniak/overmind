@@ -93,7 +93,7 @@ Uses `loadTasks`, graph helpers and the front-matter model from OVE_SETUP013; di
 
 Unit tests for the render functions with builders; golden-file tests with small fixtures under `tools/tasks/fixtures/render/` (goldens regenerated deliberately with a flag, never automatically); text-edit tests for `applyBlocks` (comments preserved). Commands: `pnpm test -- tools/tasks`, `pnpm gen:task-index --check`.
 
-Checkpoint evidence (2026-10-18): `pnpm typecheck`, `pnpm lint` and
+Initial author checkpoint evidence (2026-10-18): `pnpm typecheck`, `pnpm lint` and
 `pnpm format:check` passed. Two actual `pnpm gen:task-index` runs, each followed by
 `--check`, produced identical output hashes. The single-worker focused command
 `pnpm exec vitest run --maxWorkers=1 tools/tasks/render tools/tasks/lib/model.test.ts tools/tasks/lib/files.test.ts tools/ci/gates.test.ts`
@@ -103,6 +103,17 @@ Full repository suites, security checks, independent reviews and hosted CI remai
 separate completion gates; these focused results do not substitute for them.
 OVE_SETUP022 task lint and OVE_SETUP020 ownership enforcement are unavailable at
 this task's integration base and are not recorded as passed.
+
+Independent review rejected candidate `78de095` for a redirected Git-worktree
+check, zero-length diff ranges and blocks adjacency. Three sequential actual
+CLI red-to-green regressions cover the fixes, including real Git patch
+application and idempotence. The full-gate run at that head was interrupted
+(exit 130) during integration after installation, format/lint/typecheck and 533
+covered unit tests in 95 files passed; it is not a complete full-gate pass.
+The revised author checkpoint passed typecheck, lint, formatting and the actual
+`gen:task-index --check`, plus 45 focused tests (24 actual CLI cases) and the real
+architecture integration with one worker. A fresh exact-head review and full-gate
+run remain required.
 
 ## 13. Parallelization notes
 

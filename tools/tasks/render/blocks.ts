@@ -34,8 +34,7 @@ export function applyBlocks(text: string, blocks: readonly string[]): string {
       replacement += "\n";
     }
     const remaining = text.slice(0, range.keyStart) + text.slice(range.nodeEnd);
-    const at =
-      range.keyStart < fields.adr.keyStart ? blockFields(remaining).adr.nodeEnd : range.keyStart;
+    const at = blockFields(remaining).adr.nodeEnd;
     edited = remaining.slice(0, at) + replacement + remaining.slice(at);
   }
   blockFields(edited);

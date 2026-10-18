@@ -30,7 +30,7 @@ import { isolatedGitEnvironment } from "../../hooks/git-test-environment.ts";
 
 async function requireTaskOnlyDirty(root: string) {
   const git = createGit(root, createRunner(isolatedGitEnvironment()));
-  const read = async (...args: string[]) => {
+  const run = async (...args: string[]) => {
     const result = await git.run(
       "--no-optional-locks",
       "-c",
@@ -43,13 +43,27 @@ async function requireTaskOnlyDirty(root: string) {
     if (
       result.exitCode ||
       Buffer.byteLength(value) > 16 * 1024 * 1024 ||
-      value.includes("\ufffd") ||
-      (value && !value.endsWith("\0"))
+      value.includes("\ufffd")
     ) {
+      throw new TaskToolError(4, "Cannot safely inspect repository state");
+    }
+    return value;
+  };
+  const read = async (...args: string[]) => {
+    const value = await run(...args);
+    if (value && !value.endsWith("\0")) {
       throw new TaskToolError(4, "Cannot safely inspect repository state");
     }
     return value ? value.slice(0, -1).split("\0") : [];
   };
+  const effective = await run("rev-parse", "--path-format=absolute", "--show-toplevel");
+  if (
+    !effective.endsWith("\n") ||
+    effective.includes("\0") ||
+    realpathSync(effective.slice(0, -1)) !== root
+  ) {
+    throw new TaskToolError(4, "Repository state belongs to a different worktree");
+  }
   const names = await read("config", "--null", "--name-only", "--list");
   if (names.some((name) => /^filter\.[\s\S]*\.(?:clean|smudge|process)$/iu.test(name))) {
     throw new TaskToolError(4, "Repository filters prevent safe inspection");
@@ -232,11 +246,13 @@ export async function generate(directory: string, args: readonly string[]): Prom
       ) {
         end++;
       }
+      const removed = oldLines.length - start - end;
+      const added = newLines.length - start - end;
       console.log(
         [
           `--- tasks/${name}`,
           `+++ tasks/${name}`,
-          `@@ -${String(oldLines.length ? start + 1 : 0)},${String(oldLines.length - start - end)} +${String(start + 1)},${String(newLines.length - start - end)} @@`,
+          `@@ -${String(removed ? start + 1 : start)},${String(removed)} +${String(added ? start + 1 : start)},${String(added)} @@`,
           ...oldLines.slice(start, oldLines.length - end).map((line) => `-${line}`),
           ...(before && !before.endsWith("\n") ? ["\\ No newline at end of file"] : []),
           ...newLines.slice(start, newLines.length - end).map((line) => `+${line}`),

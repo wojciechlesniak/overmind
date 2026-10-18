@@ -377,3 +377,81 @@ it("preserves newer task bytes when a real Git observer changes input after load
     rmSync(f.root, { recursive: true, force: true });
   }
 });
+
+it("binds maintainer dirty checks to the actual canonical task worktree", () => {
+  const f = repository();
+  const redirected = realpathSync(mkdtempSync(join(tmpdir(), "ove-index-other-")));
+  try {
+    f.run();
+    const paths = ["tasks/OVE_FIX001/TASK.md", "tasks/INDEX.md", "tasks/DEPENDENCIES.md"];
+    const original = paths.map((path) => readFileSync(join(f.root, path)));
+    f.git("init", "--initial-branch=DEVELOP");
+    f.git("config", "core.worktree", redirected);
+    writeFileSync(join(f.root, "outside.txt"), "harmless fixture change");
+    expect(f.git("rev-parse", "--show-toplevel").trim()).toBe(redirected);
+    expect(f.git("status", "--porcelain=v1", "--untracked-files=all")).toBe("");
+    const denied = f.result("--write-blocks");
+    expect(denied.status).toBe(1);
+    expect(paths.map((path) => readFileSync(join(f.root, path)))).toEqual(original);
+    expect(readFileSync(join(f.root, "outside.txt"), "utf8")).toBe("harmless fixture change");
+    f.git("config", "core.worktree", f.root);
+    unlinkSync(join(f.root, "outside.txt"));
+    expect(f.result("--write-blocks").status).toBe(0);
+  } finally {
+    rmSync(f.root, { recursive: true, force: true });
+    rmSync(redirected, { recursive: true, force: true });
+  }
+});
+
+it.each([
+  ["insertion", "@@ -0,0 +1,1 @@"],
+  ["deletion", "@@ -1,1 +0,0 @@"],
+])("prints an applicable %s-only diff with correct zero-length ranges", (kind, expectedRange) => {
+  const f = repository();
+  try {
+    f.run();
+    f.git("init", "--initial-branch=DEVELOP");
+    const path = join(f.root, "tasks/INDEX.md");
+    const canonical = readFileSync(path, "utf8");
+    const changed =
+      kind === "insertion"
+        ? canonical.slice("# Task index\n".length)
+        : "Unexpected fixture line\n" + canonical;
+    writeFileSync(path, changed);
+    const result = f.result("--check");
+    expect(result.status).toBe(1);
+    expect(result.stdout).toContain(expectedRange);
+    expect(readFileSync(path, "utf8")).toBe(changed);
+    execFileSync("git", ["apply", "--unidiff-zero", "-p0"], {
+      cwd: f.root,
+      env: f.env,
+      input: result.stdout,
+    });
+    expect(readFileSync(path, "utf8")).toBe(canonical);
+  } finally {
+    rmSync(f.root, { recursive: true, force: true });
+  }
+});
+
+it("moves an existing blocks field immediately after ADR metadata and is idempotent", () => {
+  const f = repository();
+  try {
+    const base = fixture.replace("reads: []\n", "");
+    const before = base.replace(
+      "adr_refs: []",
+      "adr_refs: [] # ADR comment\nreads: [] # reader comment\nblocks: [OVE_FIX999] # reverse comment\n# standalone comment",
+    );
+    const expected = base.replace(
+      "adr_refs: []",
+      "adr_refs: [] # ADR comment\nblocks: [] # reverse comment\nreads: [] # reader comment\n# standalone comment",
+    );
+    writeFileSync(join(f.root, "tasks/OVE_FIX001/TASK.md"), before);
+    f.git("init", "--initial-branch=DEVELOP");
+    f.run("--write-blocks");
+    expect(readFileSync(join(f.root, "tasks/OVE_FIX001/TASK.md"), "utf8")).toBe(expected);
+    f.run("--write-blocks");
+    expect(readFileSync(join(f.root, "tasks/OVE_FIX001/TASK.md"), "utf8")).toBe(expected);
+  } finally {
+    rmSync(f.root, { recursive: true, force: true });
+  }
+});
