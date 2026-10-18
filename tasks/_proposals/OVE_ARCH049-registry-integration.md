@@ -77,8 +77,8 @@ Task050 owns public CLI/consumer wiring. No Task050 file is changed here.
   `ove049-native-lint-review-race-repair-20261018.json` and
   `ove049-native-focused-review-race-repair-20261018.json`.
 
-No whole-task acceptance item is checked. Fresh whole-source reviews, rebase on
-the latest DEVELOP, full normal/security gates, independent
-exact-head Standards/Spec review and fresh hosted CI remain required before the
-normal public finish/done and authorized DEVELOP merge. No isolated tool check
-proves macOS isolation or product penetration testing.
+These focused checkpoints do not themselves establish whole-task acceptance.
+Rebase onto the latest DEVELOP, full normal/security gates, independent exact-head
+reviews and fresh hosted CI must also be evidenced before normal finish/done and
+an authorized merge. No isolated tool check proves macOS isolation or product
+penetration testing.
