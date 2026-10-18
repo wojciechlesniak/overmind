@@ -1,0 +1,1607 @@
+{
+  "schemaVersion": 1,
+  "kind": "Owner-approved normative ARCH002 decomposition; no implementation acceptance",
+  "issue": "https://github.com/wojciechlesniak/overmind/issues/36",
+  "registrationBase": "5d0c9c9a03636fd83bd709433d412741386cb709",
+  "reviewedDefinitionBase": "6bbfcb06c41520e8a0ba5eabeb4c9548cade827b",
+  "reviewedSourceManifestSha256": "58a8ecabd4cde78313d08558049b303a082c536ec04b8688ccc334e6754cd1c5",
+  "reviewedSourceBundleReceiptSha256": "533bfbd0ebf40a4ac3aa128c0e5c44e936223359e892a368cb9f89083cfbf931",
+  "reviewedNormativePatchSha256": "fb324ad58b0e9f75dcc106692dc82c64a9413f95ffafaee1f4fc419e2b18bdce",
+  "historicalSnapshotManifestSha256": "49e9be4702adb5e878261329ff8c4a8b560f6753fd2fe203c8e36ca04d8e48e3",
+  "scope": "Register only the 33 pinned TASK definitions plus this proposal/manifest and actual generated task views. No old implementation patch, runtime, lint, hook, CI, dependency, policy or permission change.",
+  "preservation": {
+    "newTasks": 32,
+    "allNewTasksStatus": "todo",
+    "allNewAcceptanceCriteriaUnchecked": true,
+    "parentStatus": "todo",
+    "originalParentDetailedRequirementsByteIdentical": true,
+    "originalNineParentAcceptanceCriteriaByteIdentical": true,
+    "historicalImplementationStatesBytesModesVerifiedUnchanged": 160,
+    "primaryOwnerCheckoutGuardsVerified": true,
+    "implementationClaimsTransferred": false
+  },
+  "tasks": [
+    {
+      "id": "OVE_ARCH002",
+      "path": "tasks/OVE_ARCH002/TASK.md",
+      "sha256": "eeb2a5f962de4fcc66834a6f0259d60a41e45edaacf7cce0925a4f96e8a10e7c"
+    },
+    {
+      "id": "OVE_ARCH016",
+      "path": "tasks/OVE_ARCH016/TASK.md",
+      "sha256": "ee9ef3d6bd607d5d9ee9286dd14f6b32977746b813291cd267d5e16c9d443923"
+    },
+    {
+      "id": "OVE_ARCH017",
+      "path": "tasks/OVE_ARCH017/TASK.md",
+      "sha256": "d112e942991e23cca25d6b872d9567df41fa2d9a6601953e3e0c26a330c96cb4"
+    },
+    {
+      "id": "OVE_ARCH018",
+      "path": "tasks/OVE_ARCH018/TASK.md",
+      "sha256": "165a79a79805214b0adb13841f55d5980554eb17a26906da9ec35eaa5b7c989e"
+    },
+    {
+      "id": "OVE_ARCH019",
+      "path": "tasks/OVE_ARCH019/TASK.md",
+      "sha256": "bd1ddb04e408dd514c7836277b947b4ac1604875ae78f4b27ce711a080285fdf"
+    },
+    {
+      "id": "OVE_ARCH020",
+      "path": "tasks/OVE_ARCH020/TASK.md",
+      "sha256": "d52e0676bcca7dcd26ca0cfb624721ba910f7f8b1a4f93caef022d1ed98df896"
+    },
+    {
+      "id": "OVE_ARCH021",
+      "path": "tasks/OVE_ARCH021/TASK.md",
+      "sha256": "a50d17ace8cfb0eac213a61e40b5b4b4732627fb5b35cd19a29175a20091af36"
+    },
+    {
+      "id": "OVE_ARCH022",
+      "path": "tasks/OVE_ARCH022/TASK.md",
+      "sha256": "f99c9abbcfc9de6db0c37d96bd99c9cefaf81b9c792dfafc3cf4594bf2d31feb"
+    },
+    {
+      "id": "OVE_ARCH023",
+      "path": "tasks/OVE_ARCH023/TASK.md",
+      "sha256": "5084c22d2c8445b6e5d1c3c96a94e52c440ccc559d3be6286271cc284521ac0f"
+    },
+    {
+      "id": "OVE_ARCH024",
+      "path": "tasks/OVE_ARCH024/TASK.md",
+      "sha256": "0d3f44eb94d0f36cbd58e2cffe5a251bea2050440e424479dc913efed7d5dbbc"
+    },
+    {
+      "id": "OVE_ARCH026",
+      "path": "tasks/OVE_ARCH026/TASK.md",
+      "sha256": "7957089d7d899058a4b084dcf7eecd5c79adc9026ac1c224e00f136dd7129c3e"
+    },
+    {
+      "id": "OVE_ARCH027",
+      "path": "tasks/OVE_ARCH027/TASK.md",
+      "sha256": "03d57ec372fb1e701f14a9544ac09a36837fd50a238d263f8dafcfc686ea58bb"
+    },
+    {
+      "id": "OVE_ARCH028",
+      "path": "tasks/OVE_ARCH028/TASK.md",
+      "sha256": "edaef8a4b7c4ce1747777fa8122d6eb346967f8d151b65cd5cec4044aa82f3ba"
+    },
+    {
+      "id": "OVE_ARCH029",
+      "path": "tasks/OVE_ARCH029/TASK.md",
+      "sha256": "9288c0403848738b98a00734ad5fbb72efe5092fd9176372d8170c88f007982b"
+    },
+    {
+      "id": "OVE_ARCH030",
+      "path": "tasks/OVE_ARCH030/TASK.md",
+      "sha256": "fae4e955680baf8f1a678820fc159a1fa1f54aa86e71eed4899f9a8c8e2a5fcd"
+    },
+    {
+      "id": "OVE_ARCH031",
+      "path": "tasks/OVE_ARCH031/TASK.md",
+      "sha256": "23b825ddcc410b8421e61cff03fdb880fc821331d9aa2373427d04f743d5e342"
+    },
+    {
+      "id": "OVE_ARCH032",
+      "path": "tasks/OVE_ARCH032/TASK.md",
+      "sha256": "5b78d1f48a9389ecc5b3616bad11cfa48d0ee3d17fb3b2e8cbdf288c7f92a877"
+    },
+    {
+      "id": "OVE_ARCH033",
+      "path": "tasks/OVE_ARCH033/TASK.md",
+      "sha256": "d1476ded6822fc7595192bdf322a09b6d6ee4b3fe671809cd98e451074961f74"
+    },
+    {
+      "id": "OVE_ARCH034",
+      "path": "tasks/OVE_ARCH034/TASK.md",
+      "sha256": "4dcdc61e612fe86990495909a0982307623a24b2f4ce38abf6b939f845ed5f58"
+    },
+    {
+      "id": "OVE_ARCH035",
+      "path": "tasks/OVE_ARCH035/TASK.md",
+      "sha256": "11494ac31d87c7cb9ad20bfff6255ad8c9cb7de5ec24f96dca534a1327315399"
+    },
+    {
+      "id": "OVE_ARCH036",
+      "path": "tasks/OVE_ARCH036/TASK.md",
+      "sha256": "a715a324540d33f34676b75a4a675d68ad6af52c3a574e12732acd7d3fe1e553"
+    },
+    {
+      "id": "OVE_ARCH037",
+      "path": "tasks/OVE_ARCH037/TASK.md",
+      "sha256": "08c3e3ec431604520b0a918d003c3a9ba168e5986c3a28bdc58a298de8ae64f8"
+    },
+    {
+      "id": "OVE_ARCH039",
+      "path": "tasks/OVE_ARCH039/TASK.md",
+      "sha256": "bc60fa4b0036689c60c1e743709452db82a931075e37b98d8e0cca2f345aa228"
+    },
+    {
+      "id": "OVE_ARCH041",
+      "path": "tasks/OVE_ARCH041/TASK.md",
+      "sha256": "02a094c7c6909bce2b447e2a61b60831dba42cae04679bc15d1ef482ee7e69f4"
+    },
+    {
+      "id": "OVE_ARCH043",
+      "path": "tasks/OVE_ARCH043/TASK.md",
+      "sha256": "7c4b6aca20162c65b46b6a1fa2f629acd0da9157828b743a15a55df1b261b3f9"
+    },
+    {
+      "id": "OVE_ARCH045",
+      "path": "tasks/OVE_ARCH045/TASK.md",
+      "sha256": "769cfed82890cca4a88114cad30e53093d1c272344bccb763d25315b11a87271"
+    },
+    {
+      "id": "OVE_ARCH046",
+      "path": "tasks/OVE_ARCH046/TASK.md",
+      "sha256": "caae90045ae75950556471d9d0113a7ec724a4365886361477d9ddf0313b53ea"
+    },
+    {
+      "id": "OVE_ARCH048",
+      "path": "tasks/OVE_ARCH048/TASK.md",
+      "sha256": "d0bffefc85ee8c3ce4132fe77348461986d72678a3b5bf5339e1cbd1870122d7"
+    },
+    {
+      "id": "OVE_ARCH049",
+      "path": "tasks/OVE_ARCH049/TASK.md",
+      "sha256": "653077fc7f7d5019eb21a1355b2835965a4b905277a756a32ca2bab2690c670f"
+    },
+    {
+      "id": "OVE_ARCH050",
+      "path": "tasks/OVE_ARCH050/TASK.md",
+      "sha256": "31e5d4a84cfb8e783e349c5ccd67e5824a21dcaddcad8881ebdf4166c3b9130c"
+    },
+    {
+      "id": "OVE_ARCH051",
+      "path": "tasks/OVE_ARCH051/TASK.md",
+      "sha256": "f81fa4a7f7771a4557e32be8a887f6ac09cb9921a629c372224949380455ea5e"
+    },
+    {
+      "id": "OVE_ARCH052",
+      "path": "tasks/OVE_ARCH052/TASK.md",
+      "sha256": "6d4214b1eb9a337619e86bf7c4a0288ba97ec6e61a223942b5602bc152c07275"
+    },
+    {
+      "id": "OVE_ARCH053",
+      "path": "tasks/OVE_ARCH053/TASK.md",
+      "sha256": "1bc1be24327081716ccb2727e401ee93d0cec6876c070f417acdc178d66f7f70"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "OVE_ARCH016",
+      "title": "Implement confined policy reader and matrix consistency",
+      "dependsOn": ["OVE_ARCH001", "OVE_SETUP003"],
+      "provides": ["lib:boundary-policy-inputs"],
+      "needs": [],
+      "owns": [
+        "tools/boundaries/policy.parse-boundary.ts",
+        "tools/boundaries/consistency.test.ts",
+        "tools/boundaries-fixtures/workspace.ts",
+        "tools/boundaries/policy.test.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH017",
+      "title": "Implement workspace and TypeScript configuration resolution",
+      "dependsOn": ["OVE_ARCH016"],
+      "provides": ["lib:boundary-workspace-resolution"],
+      "needs": ["lib:boundary-policy-inputs"],
+      "owns": [
+        "tools/boundaries/workspace.parse-boundary.ts",
+        "tools/boundaries/compiler-options.parse-boundary.ts",
+        "tools/boundaries/ts-resolve.ts",
+        "tools/boundaries/resolution.test.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH018",
+      "title": "Implement eSLint static import resolution",
+      "dependsOn": ["OVE_ARCH017"],
+      "provides": ["lib:boundary-eslint-resolution"],
+      "needs": ["lib:boundary-workspace-resolution"],
+      "owns": [
+        "eslint-rules/boundaries/resolve-package.ts",
+        "eslint-rules/boundaries/import-nodes.ts",
+        "eslint-rules/boundaries/import-capabilities.ts",
+        "eslint-rules/boundaries/resolution.test.ts",
+        "eslint-rules/boundaries/tsconfig.json",
+        "eslint-rules/boundaries/vitest.config.ts",
+        "vitest.config.ts",
+        "tsconfig.tests.json"
+      ]
+    },
+    {
+      "id": "OVE_ARCH019",
+      "title": "Implement structural ESLint rules",
+      "dependsOn": ["OVE_ARCH018"],
+      "provides": ["lib:boundary-structural-rules"],
+      "needs": ["lib:boundary-eslint-resolution"],
+      "owns": [
+        "eslint-rules/boundaries/allowed-imports.ts",
+        "eslint-rules/boundaries/no-deep-imports.ts",
+        "eslint-rules/boundaries/test-only.ts",
+        "eslint-rules/boundaries/no-cross-adapter.ts",
+        "eslint-rules/boundaries/no-disable.ts",
+        "eslint-rules/boundaries/allowed-imports.test.ts",
+        "eslint-rules/boundaries/no-deep-imports.test.ts",
+        "eslint-rules/boundaries/test-only.test.ts",
+        "eslint-rules/boundaries/no-cross-adapter.test.ts",
+        "eslint-rules/boundaries/no-disable.test.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH020",
+      "title": "Implement forbidden builtins and ambient capability rules",
+      "dependsOn": ["OVE_ARCH018"],
+      "provides": ["lib:boundary-capability-rules"],
+      "needs": ["lib:boundary-eslint-resolution"],
+      "owns": [
+        "eslint-rules/boundaries/no-forbidden-builtins.ts",
+        "eslint-rules/boundaries/no-forbidden-globals.ts",
+        "eslint-rules/boundaries/no-forbidden-builtins.test.ts",
+        "eslint-rules/boundaries/no-forbidden-globals.test.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH021",
+      "title": "Implement independent TypeScript syntax analysis",
+      "dependsOn": ["OVE_ARCH017"],
+      "provides": ["lib:boundary-ts-analysis"],
+      "needs": ["lib:boundary-workspace-resolution"],
+      "owns": [
+        "tools/boundaries/ts-imports.ts",
+        "tools/boundaries/ts-globals.ts",
+        "tools/boundaries/ts-comments.ts",
+        "tools/boundaries/syntax.test.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH022",
+      "title": "Implement standalone static workspace scanner",
+      "dependsOn": ["OVE_ARCH017", "OVE_ARCH021"],
+      "provides": ["lib:boundary-workspace-scanner"],
+      "needs": ["lib:boundary-workspace-resolution", "lib:boundary-ts-analysis"],
+      "owns": [
+        "tools/boundaries/scan.ts",
+        "tools/boundaries/imports.test.ts",
+        "tools/boundaries/safety.test.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH023",
+      "title": "Implement public checker and complete local plugin",
+      "dependsOn": ["OVE_ARCH019", "OVE_ARCH020", "OVE_ARCH022"],
+      "provides": ["lib:boundary-public-tools"],
+      "needs": [
+        "lib:boundary-structural-rules",
+        "lib:boundary-capability-rules",
+        "lib:boundary-workspace-scanner"
+      ],
+      "owns": [
+        "tools/boundaries/check.ts",
+        "tools/boundaries/cli.int.test.ts",
+        "eslint-rules/boundaries/index.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH024",
+      "title": "Prove the complete independent boundary fixture oracle",
+      "dependsOn": ["OVE_ARCH023"],
+      "provides": ["lib:boundary-proving-oracle"],
+      "needs": ["lib:boundary-public-tools"],
+      "owns": [
+        "tools/boundaries-fixtures/cases/apps/desktop/src/bad-adapter.ts.txt",
+        "tools/boundaries-fixtures/cases/apps/desktop/src/bad-domain.ts.txt",
+        "tools/boundaries-fixtures/cases/apps/desktop/src/bad-fs.ts.txt",
+        "tools/boundaries-fixtures/cases/apps/desktop/src/bad-tauri.ts.txt",
+        "tools/boundaries-fixtures/cases/apps/desktop/src/features/one/bad-peer.ts.txt",
+        "tools/boundaries-fixtures/cases/packages/adapters/herdr/src/bad-runtime.ts.txt",
+        "tools/boundaries-fixtures/cases/packages/adapters/sqlite/src/bad-peer.ts.txt",
+        "tools/boundaries-fixtures/cases/packages/api-client/src/bad-application.ts.txt",
+        "tools/boundaries-fixtures/cases/packages/application/src/bad-adapter.ts.txt",
+        "tools/boundaries-fixtures/cases/packages/application/src/bad-deep.ts.txt",
+        "tools/boundaries-fixtures/cases/packages/application/src/bad-gateway.ts.txt",
+        "tools/boundaries-fixtures/cases/packages/application/src/bad-relative.ts.txt",
+        "tools/boundaries-fixtures/cases/packages/contracts/src/bad-domain.ts.txt",
+        "tools/boundaries-fixtures/cases/packages/domain/src/bad-clock.ts.txt",
+        "tools/boundaries-fixtures/cases/packages/domain/src/bad-disable.ts.txt",
+        "tools/boundaries-fixtures/cases/packages/domain/src/bad-dynamic.ts.txt",
+        "tools/boundaries-fixtures/cases/packages/domain/src/bad-env.ts.txt",
+        "tools/boundaries-fixtures/cases/packages/domain/src/bad-fs.ts.txt",
+        "tools/boundaries-fixtures/cases/packages/domain/src/bad-layer.ts.txt",
+        "tools/boundaries-fixtures/cases/packages/domain/src/bad-testing.ts.txt",
+        "tools/boundaries-fixtures/cases/packages/domain/src/bad.generated.ts.txt",
+        "tools/boundaries-fixtures/cases/packages/gateway/src/bad-adapter.ts.txt",
+        "tools/boundaries-fixtures/cases/packages/gateway/src/bad-domain.ts.txt",
+        "tools/boundaries-fixtures/cases/packages/ui-kit/src/bad-contracts.ts.txt",
+        "tools/boundaries-fixtures/handwritten/boundaries.json.txt",
+        "tools/boundaries-fixtures/boundaries.fixtures.test.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH026",
+      "title": "Implement static engine protocol source reader",
+      "dependsOn": ["OVE_ARCH016"],
+      "provides": ["lib:engine-static-protocol"],
+      "needs": ["lib:boundary-policy-inputs"],
+      "owns": [
+        "tools/build/engine/protocol.parse-boundary.ts",
+        "tools/build/engine/protocol.test.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH027",
+      "title": "Implement same-pin build dependencies and destination protection",
+      "dependsOn": ["OVE_SETUP017", "OVE_OSS004"],
+      "provides": ["lib:relocated-build-prerequisites"],
+      "needs": [],
+      "owns": [
+        "tools/package.json",
+        "pnpm-lock.yaml",
+        "docs/dependencies.md",
+        ".github/CODEOWNERS",
+        "tools/ci/config-integrity.ts",
+        "tools/ci/gates.test.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH028",
+      "title": "Implement desktop distribution guard relocation",
+      "dependsOn": ["OVE_ARCH027"],
+      "provides": ["lib:desktop-dist-guard-tooling"],
+      "needs": ["lib:relocated-build-prerequisites"],
+      "owns": [
+        "apps/desktop/scripts/check-dist.mjs",
+        "tools/build/desktop/check-dist.mjs",
+        "apps/desktop/test/check-dist.test.ts",
+        "tools/build/desktop/check-dist.test.ts",
+        "apps/desktop/package.json",
+        "tools/ci/gates.test.ts",
+        "apps/desktop/scripts/build.int.test.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH029",
+      "title": "Implement tauri configuration guard relocation",
+      "dependsOn": ["OVE_ARCH027", "OVE_ARCH028"],
+      "provides": ["lib:desktop-tauri-guard-tooling"],
+      "needs": ["lib:relocated-build-prerequisites", "lib:desktop-dist-guard-tooling"],
+      "owns": [
+        "apps/desktop/scripts/check-tauri-config.mjs",
+        "tools/build/desktop/check-tauri-config.mjs",
+        "apps/desktop/test/check-tauri-config.test.ts",
+        "tools/build/desktop/check-tauri-config.test.ts",
+        "package.json",
+        "tools/ci/gates.test.ts",
+        "apps/desktop/package.json"
+      ]
+    },
+    {
+      "id": "OVE_ARCH030",
+      "title": "Implement vite configuration relocation",
+      "dependsOn": ["OVE_ARCH027", "OVE_ARCH028", "OVE_ARCH029"],
+      "provides": ["lib:desktop-vite-tooling"],
+      "needs": [
+        "lib:relocated-build-prerequisites",
+        "lib:desktop-dist-guard-tooling",
+        "lib:desktop-tauri-guard-tooling"
+      ],
+      "owns": [
+        "apps/desktop/vite.config.ts",
+        "tools/vite/desktop.config.ts",
+        "apps/desktop/tsconfig.node.json",
+        "apps/desktop/package.json",
+        "tools/package.json",
+        "pnpm-lock.yaml",
+        "tsconfig.json",
+        "tools/ts-config.test.ts",
+        "tools/skeleton.test.ts",
+        ".github/workflows/ci.yml",
+        "tools/ci/gates.test.ts",
+        "apps/desktop/scripts/dev-server.int.test.ts",
+        "apps/desktop/scripts/build.int.test.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH031",
+      "title": "Implement desktop integration test relocation",
+      "dependsOn": ["OVE_ARCH028", "OVE_ARCH029", "OVE_ARCH030"],
+      "provides": ["lib:desktop-acceptance-tooling"],
+      "needs": [
+        "lib:desktop-dist-guard-tooling",
+        "lib:desktop-tauri-guard-tooling",
+        "lib:desktop-vite-tooling"
+      ],
+      "owns": [
+        "apps/desktop/scripts/build.int.test.ts",
+        "tools/build/desktop/build.int.test.ts",
+        "apps/desktop/scripts/dev-server.int.test.ts",
+        "tools/build/desktop/dev-server.int.test.ts",
+        ".github/workflows/ci.yml",
+        "tools/ci/gates.test.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH032",
+      "title": "Implement engine bundler relocation",
+      "dependsOn": ["OVE_ARCH026", "OVE_ARCH027", "OVE_ARCH030"],
+      "provides": ["lib:engine-bundler-tooling"],
+      "needs": [
+        "lib:engine-static-protocol",
+        "lib:relocated-build-prerequisites",
+        "lib:desktop-vite-tooling"
+      ],
+      "owns": [
+        "apps/engine/build/bundle.mjs",
+        "tools/build/engine/bundle.mjs",
+        "apps/engine/build/bundle.d.mts",
+        "tools/build/engine/bundle.d.mts",
+        "apps/engine/package.json",
+        "tools/package.json",
+        "pnpm-lock.yaml",
+        "tools/package-engine/steps/bundle.ts",
+        "tools/package-engine/pipeline.test.ts",
+        "tools/package-engine/run.ts",
+        "tools/package-engine/symbolicate.int.test.ts",
+        "apps/engine/test/process.int.test.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH033",
+      "title": "Implement engine lifecycle integration relocation",
+      "dependsOn": ["OVE_ARCH032"],
+      "provides": ["lib:engine-lifecycle-tooling"],
+      "needs": ["lib:engine-bundler-tooling"],
+      "owns": [
+        "apps/engine/test/process.int.test.ts",
+        "tools/build/engine/process.int.test.ts",
+        "tools/tsconfig.json"
+      ]
+    },
+    {
+      "id": "OVE_ARCH034",
+      "title": "Implement engine foundation marker alignment",
+      "dependsOn": ["OVE_ARCH032", "OVE_ARCH033"],
+      "provides": ["lib:engine-foundation-markers"],
+      "needs": ["lib:engine-bundler-tooling", "lib:engine-lifecycle-tooling"],
+      "owns": [
+        "apps/engine/src/compose/index.ts",
+        "apps/engine/src/service/index.ts",
+        "apps/engine/src/cli.ts",
+        "apps/engine/src/commands/run.ts",
+        "apps/engine/src/commands/ensure-running.ts",
+        "apps/engine/test/cli.test.ts",
+        "apps/engine/package.json",
+        "apps/engine/tsconfig.json",
+        "apps/engine/README.md",
+        "tools/skeleton.test.ts",
+        "pnpm-lock.yaml"
+      ]
+    },
+    {
+      "id": "OVE_ARCH035",
+      "title": "Implement telegram exact manifest edges",
+      "dependsOn": ["OVE_ARCH001", "OVE_ARCH034"],
+      "provides": ["lib:telegram-boundary-alignment"],
+      "needs": ["lib:engine-foundation-markers"],
+      "owns": [
+        "packages/adapters/telegram/package.json",
+        "packages/adapters/telegram/tsconfig.json",
+        "pnpm-lock.yaml",
+        "tools/skeleton.test.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH036",
+      "title": "Implement dual Vitest discovery and coverage transition",
+      "dependsOn": ["OVE_SETUP004", "OVE_SETUP017", "OVE_ARCH018", "OVE_ARCH033"],
+      "provides": ["lib:vitest-dual-discovery"],
+      "needs": ["lib:boundary-eslint-resolution", "lib:engine-lifecycle-tooling"],
+      "owns": [
+        "tools/vitest-projects/discovery.ts",
+        "tools/vitest-projects/discovery.test.ts",
+        "tools/vitest-projects/coverage.ts",
+        "vitest.config.ts",
+        "vitest.shared.ts",
+        "tsconfig.tests.json",
+        "tools/ci/coverage-merge.test.ts",
+        "tools/vitest-setup/README.md",
+        "tools/tsconfig.json"
+      ]
+    },
+    {
+      "id": "OVE_ARCH037",
+      "title": "Relocate four Vitest configurations: desktop, engine, api-client and ui-kit",
+      "dependsOn": ["OVE_ARCH036"],
+      "provides": ["lib:vitest-relocation-batch-one"],
+      "needs": ["lib:vitest-dual-discovery"],
+      "owns": [
+        "apps/desktop/vitest.config.ts",
+        "tools/vitest-projects/apps/desktop/vitest.config.ts",
+        "apps/engine/vitest.config.ts",
+        "tools/vitest-projects/apps/engine/vitest.config.ts",
+        "tools/vitest-projects/discovery.ts",
+        "tools/vitest-projects/discovery.test.ts",
+        "tools/vitest-projects/coverage.ts",
+        "packages/api-client/vitest.config.ts",
+        "tools/vitest-projects/packages/api-client/vitest.config.ts",
+        "packages/ui-kit/vitest.config.ts",
+        "tools/vitest-projects/packages/ui-kit/vitest.config.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH039",
+      "title": "Relocate four Vitest configurations: application, domain, contracts and gateway",
+      "dependsOn": ["OVE_ARCH037"],
+      "provides": ["lib:vitest-relocation-batch-two"],
+      "needs": ["lib:vitest-relocation-batch-one"],
+      "owns": [
+        "packages/application/vitest.config.ts",
+        "tools/vitest-projects/packages/application/vitest.config.ts",
+        "packages/domain/vitest.config.ts",
+        "tools/vitest-projects/packages/domain/vitest.config.ts",
+        "tools/vitest-projects/discovery.ts",
+        "tools/vitest-projects/discovery.test.ts",
+        "tools/vitest-projects/coverage.ts",
+        "packages/contracts/vitest.config.ts",
+        "tools/vitest-projects/packages/contracts/vitest.config.ts",
+        "packages/gateway/vitest.config.ts",
+        "tools/vitest-projects/packages/gateway/vitest.config.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH041",
+      "title": "Relocate four Vitest configurations: workflow-runtime, herdr, keychain and notifications",
+      "dependsOn": ["OVE_ARCH039"],
+      "provides": ["lib:vitest-relocation-batch-three"],
+      "needs": ["lib:vitest-relocation-batch-two"],
+      "owns": [
+        "packages/workflow-runtime/vitest.config.ts",
+        "tools/vitest-projects/packages/workflow-runtime/vitest.config.ts",
+        "packages/adapters/herdr/vitest.config.ts",
+        "tools/vitest-projects/packages/adapters/herdr/vitest.config.ts",
+        "tools/vitest-projects/discovery.ts",
+        "tools/vitest-projects/discovery.test.ts",
+        "tools/vitest-projects/coverage.ts",
+        "packages/adapters/keychain-macos/vitest.config.ts",
+        "tools/vitest-projects/packages/adapters/keychain-macos/vitest.config.ts",
+        "packages/adapters/notifications-macos/vitest.config.ts",
+        "tools/vitest-projects/packages/adapters/notifications-macos/vitest.config.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH043",
+      "title": "Relocate four Vitest configurations: providers, sandbox, sqlite and telegram",
+      "dependsOn": ["OVE_ARCH041"],
+      "provides": ["lib:vitest-relocation-batch-four"],
+      "needs": ["lib:vitest-relocation-batch-three"],
+      "owns": [
+        "packages/adapters/providers/vitest.config.ts",
+        "tools/vitest-projects/packages/adapters/providers/vitest.config.ts",
+        "packages/adapters/sandbox-macos/vitest.config.ts",
+        "tools/vitest-projects/packages/adapters/sandbox-macos/vitest.config.ts",
+        "tools/vitest-projects/discovery.ts",
+        "tools/vitest-projects/discovery.test.ts",
+        "tools/vitest-projects/coverage.ts",
+        "packages/adapters/sqlite/vitest.config.ts",
+        "tools/vitest-projects/packages/adapters/sqlite/vitest.config.ts",
+        "packages/adapters/telegram/vitest.config.ts",
+        "tools/vitest-projects/packages/adapters/telegram/vitest.config.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH045",
+      "title": "Remove completed Vitest transition",
+      "dependsOn": ["OVE_ARCH043"],
+      "provides": ["lib:vitest-static-discovery"],
+      "needs": ["lib:vitest-relocation-batch-four"],
+      "owns": [
+        "tools/vitest-projects/discovery.ts",
+        "tools/vitest-projects/discovery.test.ts",
+        "tools/vitest-projects/coverage.ts",
+        "vitest.config.ts",
+        "vitest.shared.ts",
+        "tools/tsconfig.json",
+        "tools/boundaries/vitest-projects.test.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH046",
+      "title": "Retain timezone proofs in all four pure-package fixtures",
+      "dependsOn": ["OVE_ARCH041", "OVE_ARCH023"],
+      "provides": ["lib:pure-timezone-fixtures"],
+      "needs": ["lib:vitest-relocation-batch-three", "lib:boundary-public-tools"],
+      "owns": [
+        "packages/application/src/index.test.ts",
+        "packages/domain/src/index.test.ts",
+        "packages/contracts/src/index.test.ts",
+        "packages/workflow-runtime/src/index.test.ts",
+        "tools/boundaries/pure-fixtures.int.test.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH048",
+      "title": "Implement dOM fixture capability alignment",
+      "dependsOn": ["OVE_ARCH037", "OVE_ARCH023"],
+      "provides": ["lib:dom-boundary-fixture"],
+      "needs": ["lib:vitest-relocation-batch-one", "lib:boundary-public-tools"],
+      "owns": [
+        "packages/api-client/src/dom-environment.test.ts",
+        "tools/boundaries/dom-fixture.int.test.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH049",
+      "title": "Implement automatic documentation plugin registry generation",
+      "dependsOn": ["OVE_OSS004"],
+      "provides": ["lib:docs-plugin-static-registry"],
+      "needs": [],
+      "owns": [
+        "tools/docs-check/plugin-registry.ts",
+        "tools/docs-check/plugin-registry.test.ts",
+        "tools/docs-check/plugin-registry.generated.ts",
+        "tools/docs-check/input.parse-boundary.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH050",
+      "title": "Implement documentation registry caller and public CLI proof",
+      "dependsOn": ["OVE_ARCH049"],
+      "provides": ["lib:docs-plugin-registry-cli"],
+      "needs": ["lib:docs-plugin-static-registry"],
+      "owns": [
+        "tools/docs-check/plugins.ts",
+        "tools/docs-check/plugins.test.ts",
+        "tools/docs-check/run.ts",
+        "tools/docs-check/registry.int.test.ts",
+        "package.json",
+        "tools/docs-check/README.md"
+      ]
+    },
+    {
+      "id": "OVE_ARCH051",
+      "title": "Implement static ESLint module inventory",
+      "dependsOn": ["OVE_ARCH023"],
+      "provides": ["lib:eslint-static-inventory"],
+      "needs": ["lib:boundary-public-tools"],
+      "owns": [
+        "tools/eslint/config-inventory.mjs",
+        "tools/eslint/config-inventory.d.mts",
+        "tools/eslint/config.test.ts"
+      ]
+    },
+    {
+      "id": "OVE_ARCH052",
+      "title": "Implement actual hook fixture integration",
+      "dependsOn": ["OVE_ARCH023", "OVE_ARCH051"],
+      "provides": ["lib:boundary-hook-fixture"],
+      "needs": ["lib:boundary-public-tools", "lib:eslint-static-inventory"],
+      "owns": ["tools/hooks/hooks.int.test.ts"]
+    },
+    {
+      "id": "OVE_ARCH053",
+      "title": "Implement final activation and sensitive configuration integration",
+      "dependsOn": [
+        "OVE_ARCH024",
+        "OVE_ARCH031",
+        "OVE_ARCH033",
+        "OVE_ARCH034",
+        "OVE_ARCH035",
+        "OVE_ARCH045",
+        "OVE_ARCH046",
+        "OVE_ARCH048",
+        "OVE_ARCH050",
+        "OVE_ARCH051",
+        "OVE_ARCH052"
+      ],
+      "provides": ["ci:boundary-tools-activated"],
+      "needs": [
+        "lib:boundary-proving-oracle",
+        "lib:desktop-acceptance-tooling",
+        "lib:engine-lifecycle-tooling",
+        "lib:engine-foundation-markers",
+        "lib:telegram-boundary-alignment",
+        "lib:vitest-static-discovery",
+        "lib:pure-timezone-fixtures",
+        "lib:dom-boundary-fixture",
+        "lib:docs-plugin-registry-cli",
+        "lib:eslint-static-inventory",
+        "lib:boundary-hook-fixture"
+      ],
+      "owns": [
+        "eslint.config.d/boundaries.mjs",
+        "eslint.config.mjs",
+        "lefthook.yml",
+        "package.json",
+        "tools/ci/architecture.ts",
+        "tools/ci/config-integrity.ts",
+        "tools/ci/gates.test.ts",
+        ".github/CODEOWNERS",
+        ".github/workflows/ci.yml",
+        "AGENTS.md",
+        "tools/boundaries/ci-job.yml",
+        "tools/hooks/hooks.int.test.ts",
+        "tools/eslint/config-inventory.mjs",
+        "tools/eslint/config.test.ts"
+      ]
+    }
+  ],
+  "historicalAllocationSemantics": "160 unique historical paths retain one primary move/allocation each. This is NOT exclusive ownership and does not count all owns occurrences; earlier caller updates and later moves are listed separately.",
+  "historicalPrimaryAllocations": [
+    {
+      "path": ".github/CODEOWNERS",
+      "primaryCandidateOwner": "OVE_ARCH027",
+      "sequentialWriters": ["OVE_ARCH027", "OVE_ARCH053"]
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "primaryCandidateOwner": "OVE_ARCH030",
+      "sequentialWriters": ["OVE_ARCH030", "OVE_ARCH031", "OVE_ARCH053"]
+    },
+    {
+      "path": "AGENTS.md",
+      "primaryCandidateOwner": "OVE_ARCH053",
+      "sequentialWriters": ["OVE_ARCH053"]
+    },
+    {
+      "path": "apps/desktop/package.json",
+      "primaryCandidateOwner": "OVE_ARCH028",
+      "sequentialWriters": ["OVE_ARCH028", "OVE_ARCH029", "OVE_ARCH030"]
+    },
+    {
+      "path": "apps/desktop/scripts/build.int.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH031",
+      "sequentialWriters": ["OVE_ARCH028", "OVE_ARCH030", "OVE_ARCH031"]
+    },
+    {
+      "path": "apps/desktop/scripts/check-dist.mjs",
+      "primaryCandidateOwner": "OVE_ARCH028",
+      "sequentialWriters": ["OVE_ARCH028"]
+    },
+    {
+      "path": "apps/desktop/scripts/check-tauri-config.mjs",
+      "primaryCandidateOwner": "OVE_ARCH029",
+      "sequentialWriters": ["OVE_ARCH029"]
+    },
+    {
+      "path": "apps/desktop/scripts/dev-server.int.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH031",
+      "sequentialWriters": ["OVE_ARCH030", "OVE_ARCH031"]
+    },
+    {
+      "path": "apps/desktop/test/check-dist.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH028",
+      "sequentialWriters": ["OVE_ARCH028"]
+    },
+    {
+      "path": "apps/desktop/test/check-tauri-config.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH029",
+      "sequentialWriters": ["OVE_ARCH029"]
+    },
+    {
+      "path": "apps/desktop/tsconfig.node.json",
+      "primaryCandidateOwner": "OVE_ARCH030",
+      "sequentialWriters": ["OVE_ARCH030"]
+    },
+    {
+      "path": "apps/desktop/vite.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH030",
+      "sequentialWriters": ["OVE_ARCH030"]
+    },
+    {
+      "path": "apps/desktop/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH037",
+      "sequentialWriters": ["OVE_ARCH037"]
+    },
+    {
+      "path": "apps/engine/README.md",
+      "primaryCandidateOwner": "OVE_ARCH034",
+      "sequentialWriters": ["OVE_ARCH034"]
+    },
+    {
+      "path": "apps/engine/build/bundle.d.mts",
+      "primaryCandidateOwner": "OVE_ARCH032",
+      "sequentialWriters": ["OVE_ARCH032"]
+    },
+    {
+      "path": "apps/engine/build/bundle.mjs",
+      "primaryCandidateOwner": "OVE_ARCH032",
+      "sequentialWriters": ["OVE_ARCH032"]
+    },
+    {
+      "path": "apps/engine/package.json",
+      "primaryCandidateOwner": "OVE_ARCH032",
+      "sequentialWriters": ["OVE_ARCH032", "OVE_ARCH034"]
+    },
+    {
+      "path": "apps/engine/src/cli.ts",
+      "primaryCandidateOwner": "OVE_ARCH034",
+      "sequentialWriters": ["OVE_ARCH034"]
+    },
+    {
+      "path": "apps/engine/src/commands/ensure-running.ts",
+      "primaryCandidateOwner": "OVE_ARCH034",
+      "sequentialWriters": ["OVE_ARCH034"]
+    },
+    {
+      "path": "apps/engine/src/commands/run.ts",
+      "primaryCandidateOwner": "OVE_ARCH034",
+      "sequentialWriters": ["OVE_ARCH034"]
+    },
+    {
+      "path": "apps/engine/src/compose/index.ts",
+      "primaryCandidateOwner": "OVE_ARCH034",
+      "sequentialWriters": ["OVE_ARCH034"]
+    },
+    {
+      "path": "apps/engine/src/service/index.ts",
+      "primaryCandidateOwner": "OVE_ARCH034",
+      "sequentialWriters": ["OVE_ARCH034"]
+    },
+    {
+      "path": "apps/engine/test/cli.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH034",
+      "sequentialWriters": ["OVE_ARCH034"]
+    },
+    {
+      "path": "apps/engine/test/process.int.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH033",
+      "sequentialWriters": ["OVE_ARCH032", "OVE_ARCH033"]
+    },
+    {
+      "path": "apps/engine/tsconfig.json",
+      "primaryCandidateOwner": "OVE_ARCH034",
+      "sequentialWriters": ["OVE_ARCH034"]
+    },
+    {
+      "path": "apps/engine/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH037",
+      "sequentialWriters": ["OVE_ARCH037"]
+    },
+    {
+      "path": "docs/dependencies.md",
+      "primaryCandidateOwner": "OVE_ARCH027",
+      "sequentialWriters": ["OVE_ARCH027"]
+    },
+    {
+      "path": "eslint-rules/boundaries/allowed-imports.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH019",
+      "sequentialWriters": ["OVE_ARCH019"]
+    },
+    {
+      "path": "eslint-rules/boundaries/allowed-imports.ts",
+      "primaryCandidateOwner": "OVE_ARCH019",
+      "sequentialWriters": ["OVE_ARCH019"]
+    },
+    {
+      "path": "eslint-rules/boundaries/import-capabilities.ts",
+      "primaryCandidateOwner": "OVE_ARCH018",
+      "sequentialWriters": ["OVE_ARCH018"]
+    },
+    {
+      "path": "eslint-rules/boundaries/import-nodes.ts",
+      "primaryCandidateOwner": "OVE_ARCH018",
+      "sequentialWriters": ["OVE_ARCH018"]
+    },
+    {
+      "path": "eslint-rules/boundaries/index.ts",
+      "primaryCandidateOwner": "OVE_ARCH023",
+      "sequentialWriters": ["OVE_ARCH023"]
+    },
+    {
+      "path": "eslint-rules/boundaries/no-cross-adapter.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH019",
+      "sequentialWriters": ["OVE_ARCH019"]
+    },
+    {
+      "path": "eslint-rules/boundaries/no-cross-adapter.ts",
+      "primaryCandidateOwner": "OVE_ARCH019",
+      "sequentialWriters": ["OVE_ARCH019"]
+    },
+    {
+      "path": "eslint-rules/boundaries/no-deep-imports.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH019",
+      "sequentialWriters": ["OVE_ARCH019"]
+    },
+    {
+      "path": "eslint-rules/boundaries/no-deep-imports.ts",
+      "primaryCandidateOwner": "OVE_ARCH019",
+      "sequentialWriters": ["OVE_ARCH019"]
+    },
+    {
+      "path": "eslint-rules/boundaries/no-disable.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH019",
+      "sequentialWriters": ["OVE_ARCH019"]
+    },
+    {
+      "path": "eslint-rules/boundaries/no-disable.ts",
+      "primaryCandidateOwner": "OVE_ARCH019",
+      "sequentialWriters": ["OVE_ARCH019"]
+    },
+    {
+      "path": "eslint-rules/boundaries/no-forbidden-builtins.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH020",
+      "sequentialWriters": ["OVE_ARCH020"]
+    },
+    {
+      "path": "eslint-rules/boundaries/no-forbidden-builtins.ts",
+      "primaryCandidateOwner": "OVE_ARCH020",
+      "sequentialWriters": ["OVE_ARCH020"]
+    },
+    {
+      "path": "eslint-rules/boundaries/no-forbidden-globals.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH020",
+      "sequentialWriters": ["OVE_ARCH020"]
+    },
+    {
+      "path": "eslint-rules/boundaries/no-forbidden-globals.ts",
+      "primaryCandidateOwner": "OVE_ARCH020",
+      "sequentialWriters": ["OVE_ARCH020"]
+    },
+    {
+      "path": "eslint-rules/boundaries/resolve-package.ts",
+      "primaryCandidateOwner": "OVE_ARCH018",
+      "sequentialWriters": ["OVE_ARCH018"]
+    },
+    {
+      "path": "eslint-rules/boundaries/test-only.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH019",
+      "sequentialWriters": ["OVE_ARCH019"]
+    },
+    {
+      "path": "eslint-rules/boundaries/test-only.ts",
+      "primaryCandidateOwner": "OVE_ARCH019",
+      "sequentialWriters": ["OVE_ARCH019"]
+    },
+    {
+      "path": "eslint-rules/boundaries/tsconfig.json",
+      "primaryCandidateOwner": "OVE_ARCH018",
+      "sequentialWriters": ["OVE_ARCH018"]
+    },
+    {
+      "path": "eslint-rules/boundaries/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH018",
+      "sequentialWriters": ["OVE_ARCH018"]
+    },
+    {
+      "path": "eslint.config.d/boundaries.mjs",
+      "primaryCandidateOwner": "OVE_ARCH053",
+      "sequentialWriters": ["OVE_ARCH053"]
+    },
+    {
+      "path": "eslint.config.mjs",
+      "primaryCandidateOwner": "OVE_ARCH053",
+      "sequentialWriters": ["OVE_ARCH053"]
+    },
+    {
+      "path": "lefthook.yml",
+      "primaryCandidateOwner": "OVE_ARCH053",
+      "sequentialWriters": ["OVE_ARCH053"]
+    },
+    {
+      "path": "package.json",
+      "primaryCandidateOwner": "OVE_ARCH029",
+      "sequentialWriters": ["OVE_ARCH029", "OVE_ARCH050", "OVE_ARCH053"]
+    },
+    {
+      "path": "packages/adapters/herdr/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH041",
+      "sequentialWriters": ["OVE_ARCH041"]
+    },
+    {
+      "path": "packages/adapters/keychain-macos/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH041",
+      "sequentialWriters": ["OVE_ARCH041"]
+    },
+    {
+      "path": "packages/adapters/notifications-macos/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH041",
+      "sequentialWriters": ["OVE_ARCH041"]
+    },
+    {
+      "path": "packages/adapters/providers/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH043",
+      "sequentialWriters": ["OVE_ARCH043"]
+    },
+    {
+      "path": "packages/adapters/sandbox-macos/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH043",
+      "sequentialWriters": ["OVE_ARCH043"]
+    },
+    {
+      "path": "packages/adapters/sqlite/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH043",
+      "sequentialWriters": ["OVE_ARCH043"]
+    },
+    {
+      "path": "packages/adapters/telegram/package.json",
+      "primaryCandidateOwner": "OVE_ARCH035",
+      "sequentialWriters": ["OVE_ARCH035"]
+    },
+    {
+      "path": "packages/adapters/telegram/tsconfig.json",
+      "primaryCandidateOwner": "OVE_ARCH035",
+      "sequentialWriters": ["OVE_ARCH035"]
+    },
+    {
+      "path": "packages/adapters/telegram/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH043",
+      "sequentialWriters": ["OVE_ARCH043"]
+    },
+    {
+      "path": "packages/api-client/src/dom-environment.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH048",
+      "sequentialWriters": ["OVE_ARCH048"]
+    },
+    {
+      "path": "packages/api-client/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH037",
+      "sequentialWriters": ["OVE_ARCH037"]
+    },
+    {
+      "path": "packages/application/src/index.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH046",
+      "sequentialWriters": ["OVE_ARCH046"]
+    },
+    {
+      "path": "packages/contracts/src/index.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH046",
+      "sequentialWriters": ["OVE_ARCH046"]
+    },
+    {
+      "path": "packages/contracts/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH039",
+      "sequentialWriters": ["OVE_ARCH039"]
+    },
+    {
+      "path": "packages/domain/src/index.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH046",
+      "sequentialWriters": ["OVE_ARCH046"]
+    },
+    {
+      "path": "packages/domain/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH039",
+      "sequentialWriters": ["OVE_ARCH039"]
+    },
+    {
+      "path": "packages/gateway/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH039",
+      "sequentialWriters": ["OVE_ARCH039"]
+    },
+    {
+      "path": "packages/ui-kit/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH037",
+      "sequentialWriters": ["OVE_ARCH037"]
+    },
+    {
+      "path": "packages/workflow-runtime/src/index.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH046",
+      "sequentialWriters": ["OVE_ARCH046"]
+    },
+    {
+      "path": "packages/workflow-runtime/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH041",
+      "sequentialWriters": ["OVE_ARCH041"]
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "primaryCandidateOwner": "OVE_ARCH027",
+      "sequentialWriters": [
+        "OVE_ARCH027",
+        "OVE_ARCH030",
+        "OVE_ARCH032",
+        "OVE_ARCH034",
+        "OVE_ARCH035"
+      ]
+    },
+    {
+      "path": "tasks/OVE_ARCH002/TASK.md",
+      "primaryCandidateOwner": "OVE_ARCH002",
+      "sequentialWriters": []
+    },
+    {
+      "path": "tasks/_proposals/OVE_ARCH002-integration.md",
+      "primaryCandidateOwner": "OVE_ARCH002",
+      "sequentialWriters": []
+    },
+    {
+      "path": "tools/boundaries-fixtures/boundaries.fixtures.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/apps/desktop/src/bad-adapter.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/apps/desktop/src/bad-domain.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/apps/desktop/src/bad-fs.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/apps/desktop/src/bad-tauri.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/apps/desktop/src/features/one/bad-peer.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/packages/adapters/herdr/src/bad-runtime.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/packages/adapters/sqlite/src/bad-peer.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/packages/api-client/src/bad-application.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/packages/application/src/bad-adapter.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/packages/application/src/bad-deep.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/packages/application/src/bad-gateway.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/packages/application/src/bad-relative.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/packages/contracts/src/bad-domain.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/packages/domain/src/bad-clock.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/packages/domain/src/bad-disable.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/packages/domain/src/bad-dynamic.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/packages/domain/src/bad-env.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/packages/domain/src/bad-fs.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/packages/domain/src/bad-layer.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/packages/domain/src/bad-testing.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/packages/domain/src/bad.generated.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/packages/gateway/src/bad-adapter.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/packages/gateway/src/bad-domain.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/cases/packages/ui-kit/src/bad-contracts.ts.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/handwritten/boundaries.json.txt",
+      "primaryCandidateOwner": "OVE_ARCH024",
+      "sequentialWriters": ["OVE_ARCH024"]
+    },
+    {
+      "path": "tools/boundaries-fixtures/workspace.ts",
+      "primaryCandidateOwner": "OVE_ARCH016",
+      "sequentialWriters": ["OVE_ARCH016"]
+    },
+    {
+      "path": "tools/boundaries/check.ts",
+      "primaryCandidateOwner": "OVE_ARCH023",
+      "sequentialWriters": ["OVE_ARCH023"]
+    },
+    {
+      "path": "tools/boundaries/ci-job.yml",
+      "primaryCandidateOwner": "OVE_ARCH053",
+      "sequentialWriters": ["OVE_ARCH053"]
+    },
+    {
+      "path": "tools/boundaries/cli.int.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH023",
+      "sequentialWriters": ["OVE_ARCH023"]
+    },
+    {
+      "path": "tools/boundaries/compiler-options.parse-boundary.ts",
+      "primaryCandidateOwner": "OVE_ARCH017",
+      "sequentialWriters": ["OVE_ARCH017"]
+    },
+    {
+      "path": "tools/boundaries/consistency.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH016",
+      "sequentialWriters": ["OVE_ARCH016"]
+    },
+    {
+      "path": "tools/boundaries/imports.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH022",
+      "sequentialWriters": ["OVE_ARCH022"]
+    },
+    {
+      "path": "tools/boundaries/policy.parse-boundary.ts",
+      "primaryCandidateOwner": "OVE_ARCH016",
+      "sequentialWriters": ["OVE_ARCH016"]
+    },
+    {
+      "path": "tools/boundaries/safety.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH022",
+      "sequentialWriters": ["OVE_ARCH022"]
+    },
+    {
+      "path": "tools/boundaries/scan.ts",
+      "primaryCandidateOwner": "OVE_ARCH022",
+      "sequentialWriters": ["OVE_ARCH022"]
+    },
+    {
+      "path": "tools/boundaries/ts-comments.ts",
+      "primaryCandidateOwner": "OVE_ARCH021",
+      "sequentialWriters": ["OVE_ARCH021"]
+    },
+    {
+      "path": "tools/boundaries/ts-globals.ts",
+      "primaryCandidateOwner": "OVE_ARCH021",
+      "sequentialWriters": ["OVE_ARCH021"]
+    },
+    {
+      "path": "tools/boundaries/ts-imports.ts",
+      "primaryCandidateOwner": "OVE_ARCH021",
+      "sequentialWriters": ["OVE_ARCH021"]
+    },
+    {
+      "path": "tools/boundaries/ts-resolve.ts",
+      "primaryCandidateOwner": "OVE_ARCH017",
+      "sequentialWriters": ["OVE_ARCH017"]
+    },
+    {
+      "path": "tools/boundaries/vitest-projects.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH045",
+      "sequentialWriters": ["OVE_ARCH045"]
+    },
+    {
+      "path": "tools/boundaries/workspace.parse-boundary.ts",
+      "primaryCandidateOwner": "OVE_ARCH017",
+      "sequentialWriters": ["OVE_ARCH017"]
+    },
+    {
+      "path": "tools/build/desktop/build.int.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH031",
+      "sequentialWriters": ["OVE_ARCH031"]
+    },
+    {
+      "path": "tools/build/desktop/check-dist.mjs",
+      "primaryCandidateOwner": "OVE_ARCH028",
+      "sequentialWriters": ["OVE_ARCH028"]
+    },
+    {
+      "path": "tools/build/desktop/check-dist.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH028",
+      "sequentialWriters": ["OVE_ARCH028"]
+    },
+    {
+      "path": "tools/build/desktop/check-tauri-config.mjs",
+      "primaryCandidateOwner": "OVE_ARCH029",
+      "sequentialWriters": ["OVE_ARCH029"]
+    },
+    {
+      "path": "tools/build/desktop/check-tauri-config.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH029",
+      "sequentialWriters": ["OVE_ARCH029"]
+    },
+    {
+      "path": "tools/build/desktop/dev-server.int.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH031",
+      "sequentialWriters": ["OVE_ARCH031"]
+    },
+    {
+      "path": "tools/build/engine/bundle.d.mts",
+      "primaryCandidateOwner": "OVE_ARCH032",
+      "sequentialWriters": ["OVE_ARCH032"]
+    },
+    {
+      "path": "tools/build/engine/bundle.mjs",
+      "primaryCandidateOwner": "OVE_ARCH032",
+      "sequentialWriters": ["OVE_ARCH032"]
+    },
+    {
+      "path": "tools/build/engine/process.int.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH033",
+      "sequentialWriters": ["OVE_ARCH033"]
+    },
+    {
+      "path": "tools/build/engine/protocol.parse-boundary.ts",
+      "primaryCandidateOwner": "OVE_ARCH026",
+      "sequentialWriters": ["OVE_ARCH026"]
+    },
+    {
+      "path": "tools/ci/architecture.ts",
+      "primaryCandidateOwner": "OVE_ARCH053",
+      "sequentialWriters": ["OVE_ARCH053"]
+    },
+    {
+      "path": "tools/ci/config-integrity.ts",
+      "primaryCandidateOwner": "OVE_ARCH027",
+      "sequentialWriters": ["OVE_ARCH027", "OVE_ARCH053"]
+    },
+    {
+      "path": "tools/ci/coverage-merge.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH036",
+      "sequentialWriters": ["OVE_ARCH036"]
+    },
+    {
+      "path": "tools/ci/gates.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH027",
+      "sequentialWriters": [
+        "OVE_ARCH027",
+        "OVE_ARCH028",
+        "OVE_ARCH029",
+        "OVE_ARCH030",
+        "OVE_ARCH031",
+        "OVE_ARCH053"
+      ]
+    },
+    {
+      "path": "tools/eslint/config-inventory.d.mts",
+      "primaryCandidateOwner": "OVE_ARCH051",
+      "sequentialWriters": ["OVE_ARCH051"]
+    },
+    {
+      "path": "tools/eslint/config-inventory.mjs",
+      "primaryCandidateOwner": "OVE_ARCH051",
+      "sequentialWriters": ["OVE_ARCH051", "OVE_ARCH053"]
+    },
+    {
+      "path": "tools/eslint/config.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH051",
+      "sequentialWriters": ["OVE_ARCH051", "OVE_ARCH053"]
+    },
+    {
+      "path": "tools/hooks/hooks.int.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH052",
+      "sequentialWriters": ["OVE_ARCH052", "OVE_ARCH053"]
+    },
+    {
+      "path": "tools/package.json",
+      "primaryCandidateOwner": "OVE_ARCH027",
+      "sequentialWriters": ["OVE_ARCH027", "OVE_ARCH030", "OVE_ARCH032"]
+    },
+    {
+      "path": "tools/skeleton.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH034",
+      "sequentialWriters": ["OVE_ARCH030", "OVE_ARCH034", "OVE_ARCH035"]
+    },
+    {
+      "path": "tools/ts-config.test.ts",
+      "primaryCandidateOwner": "OVE_ARCH030",
+      "sequentialWriters": ["OVE_ARCH030"]
+    },
+    {
+      "path": "tools/tsconfig.json",
+      "primaryCandidateOwner": "OVE_ARCH045",
+      "sequentialWriters": ["OVE_ARCH033", "OVE_ARCH036", "OVE_ARCH045"]
+    },
+    {
+      "path": "tools/vite/desktop.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH030",
+      "sequentialWriters": ["OVE_ARCH030"]
+    },
+    {
+      "path": "tools/vitest-projects/apps/desktop/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH037",
+      "sequentialWriters": ["OVE_ARCH037"]
+    },
+    {
+      "path": "tools/vitest-projects/apps/engine/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH037",
+      "sequentialWriters": ["OVE_ARCH037"]
+    },
+    {
+      "path": "tools/vitest-projects/packages/adapters/herdr/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH041",
+      "sequentialWriters": ["OVE_ARCH041"]
+    },
+    {
+      "path": "tools/vitest-projects/packages/adapters/keychain-macos/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH041",
+      "sequentialWriters": ["OVE_ARCH041"]
+    },
+    {
+      "path": "tools/vitest-projects/packages/adapters/notifications-macos/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH041",
+      "sequentialWriters": ["OVE_ARCH041"]
+    },
+    {
+      "path": "tools/vitest-projects/packages/adapters/providers/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH043",
+      "sequentialWriters": ["OVE_ARCH043"]
+    },
+    {
+      "path": "tools/vitest-projects/packages/adapters/sandbox-macos/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH043",
+      "sequentialWriters": ["OVE_ARCH043"]
+    },
+    {
+      "path": "tools/vitest-projects/packages/adapters/sqlite/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH043",
+      "sequentialWriters": ["OVE_ARCH043"]
+    },
+    {
+      "path": "tools/vitest-projects/packages/adapters/telegram/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH043",
+      "sequentialWriters": ["OVE_ARCH043"]
+    },
+    {
+      "path": "tools/vitest-projects/packages/api-client/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH037",
+      "sequentialWriters": ["OVE_ARCH037"]
+    },
+    {
+      "path": "tools/vitest-projects/packages/application/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH039",
+      "sequentialWriters": ["OVE_ARCH039"]
+    },
+    {
+      "path": "tools/vitest-projects/packages/contracts/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH039",
+      "sequentialWriters": ["OVE_ARCH039"]
+    },
+    {
+      "path": "tools/vitest-projects/packages/domain/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH039",
+      "sequentialWriters": ["OVE_ARCH039"]
+    },
+    {
+      "path": "tools/vitest-projects/packages/gateway/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH039",
+      "sequentialWriters": ["OVE_ARCH039"]
+    },
+    {
+      "path": "tools/vitest-projects/packages/ui-kit/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH037",
+      "sequentialWriters": ["OVE_ARCH037"]
+    },
+    {
+      "path": "tools/vitest-projects/packages/workflow-runtime/vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH041",
+      "sequentialWriters": ["OVE_ARCH041"]
+    },
+    {
+      "path": "tools/vitest-setup/README.md",
+      "primaryCandidateOwner": "OVE_ARCH036",
+      "sequentialWriters": ["OVE_ARCH036"]
+    },
+    {
+      "path": "tsconfig.json",
+      "primaryCandidateOwner": "OVE_ARCH030",
+      "sequentialWriters": ["OVE_ARCH030"]
+    },
+    {
+      "path": "tsconfig.tests.json",
+      "primaryCandidateOwner": "OVE_ARCH036",
+      "sequentialWriters": ["OVE_ARCH018", "OVE_ARCH036"]
+    },
+    {
+      "path": "vitest.config.ts",
+      "primaryCandidateOwner": "OVE_ARCH036",
+      "sequentialWriters": ["OVE_ARCH018", "OVE_ARCH036", "OVE_ARCH045"]
+    },
+    {
+      "path": "vitest.shared.ts",
+      "primaryCandidateOwner": "OVE_ARCH036",
+      "sequentialWriters": ["OVE_ARCH036", "OVE_ARCH045"]
+    }
+  ],
+  "explicitSequentialCallerWrites": [
+    {
+      "path": "apps/desktop/scripts/build.int.test.ts",
+      "finite_sequential_writers": ["OVE_ARCH028", "OVE_ARCH030", "OVE_ARCH031"],
+      "hard_dependency_order_verified": true
+    },
+    {
+      "path": "apps/desktop/scripts/dev-server.int.test.ts",
+      "finite_sequential_writers": ["OVE_ARCH030", "OVE_ARCH031"],
+      "hard_dependency_order_verified": true
+    },
+    {
+      "path": "apps/engine/test/process.int.test.ts",
+      "finite_sequential_writers": ["OVE_ARCH032", "OVE_ARCH033"],
+      "hard_dependency_order_verified": true
+    },
+    {
+      "path": "apps/desktop/package.json",
+      "finite_sequential_writers": ["OVE_ARCH028", "OVE_ARCH029", "OVE_ARCH030"],
+      "hard_dependency_order_verified": true
+    }
+  ],
+  "removedCandidateIdsNeverCreatedOrReserved": [
+    "OVE_ARCH025",
+    "OVE_ARCH038",
+    "OVE_ARCH040",
+    "OVE_ARCH042",
+    "OVE_ARCH044",
+    "OVE_ARCH047"
+  ],
+  "futureExecution": {
+    "claims": "Only after this registration merges and every hard dependency is merged/done. Use the normal atomic claim, one agent/task/worktree.",
+    "ownership": "Listed historical primary allocations are not exclusive ownership. Earlier finite caller updates and later moves are explicit hard-dependency sequences. Shared changes still require finite affected-owner/integrator review.",
+    "activation": "Only OVE_ARCH053 activates actual root lint/hooks/CI after its full prerequisites. OVE_ARCH002 remains final independent acceptance.",
+    "finalAcceptance": "All original detailed requirements and all nine criteria remain binding, including the separate real violating scratch PR, hosted architecture and ci-success failure, and real-repository runtime below 20 seconds."
+  },
+  "limitations": [
+    "Source-only integrity and preservation checks are not implementation tests or production security evidence.",
+    "Final repository validation, generated-view idempotence, independent exact-head Standards/Spec reviews and hosted CI are required before metadata merge.",
+    "Historical hook tests remain 2/3 FAIL because the selected offline store lacked yargs 18.2.0; moved engine process integration remains unrun. No prewarm, network fallback, skip or budget change is approved."
+  ]
+}
