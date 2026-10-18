@@ -7,12 +7,12 @@ size: M
 priority: P0
 mvp: true
 status: todo
-depends_on: [OVE_ARCH001, OVE_SETUP003]
+depends_on: [OVE_ARCH001, OVE_SETUP003, OVE_ARCH053]
 soft_depends_on: [OVE_SETUP006]
 provides: ["lib:boundary-lint", "ci:boundaries"]
-needs: []
-owns: ["tools/boundaries/**", "eslint-rules/boundaries/**", "tools/boundaries-fixtures/**"]
-reads: ["docs/architecture/boundaries.json", "docs/architecture/ARCHITECTURE.md"]
+needs: ["ci:boundary-tools-activated"]
+owns: ["tools/boundaries/ACCEPTANCE.md"]
+reads: ["docs/architecture/boundaries.json", "docs/architecture/ARCHITECTURE.md", "tools/boundaries/**", "eslint-rules/boundaries/**", "tools/boundaries-fixtures/**", "tasks/OVE_ARCH053/TASK.md"]
 design: none
 design_source: ""
 spec_refs: ["SPECIFICATION 13", "SPECIFICATION 19"]
@@ -23,7 +23,7 @@ adr_refs: [9]
 
 ## 1. Summary
 
-Implement the architecture-boundary check from `boundaries.json` as ESLint rules plus a standalone `pnpm boundaries` script, and prove it works with a throwaway fixture workspace whose deliberately bad imports must fail. A rule nobody has proven to fail is not a rule.
+Validate the completed integrated architecture-boundary tools after all registered prerequisites, ending at OVE_ARCH053, are merged and done. Record exact-head evidence for every original detailed requirement and all nine original acceptance criteria in tools/boundaries/ACCEPTANCE.md. No helper-task PASS substitutes for this final independent proof. A rule nobody has proven to fail is not a rule.
 
 ## 2. Context
 
@@ -31,11 +31,11 @@ Implement the architecture-boundary check from `boundaries.json` as ESLint rules
 
 ## 3. Scope (in)
 
-- ESLint plugin `@overmind/eslint-plugin-boundaries` (local, in `eslint-rules/boundaries/`) with rules: `boundaries/allowed-imports`, `boundaries/no-forbidden-builtins`, `boundaries/no-forbidden-globals`, `boundaries/no-deep-imports`, `boundaries/test-only`, `boundaries/no-cross-adapter`.
-- `tools/boundaries/check.ts` (`pnpm boundaries`): independent second implementation that parses `import`/`export ... from`/`import()`/`require` with the TypeScript compiler API and validates against `boundaries.json` plus each `package.json` `dependencies` (a package may not declare a dependency it is not allowed to import).
-- Consistency test: Markdown matrix in `ARCHITECTURE.md` equals `boundaries.json`.
-- Fixture workspace `tools/boundaries-fixtures/` (see requirement 6) and a Vitest suite proving each violation is reported with the right rule id and each good file passes.
-- Flat-config export `boundariesConfig()` for SETUP003's root config to spread.
+- Run the actual completed ESLint plugin, standalone public commands and independent full proving oracle against one exact integrated head.
+- Verify all required bad/good/manifest/suppression/meta-rule/matrix cases below, without changing their original contracts.
+- Measure actual real-repository runtime and record command/head/result and limitations.
+- Create a separate real forbidden-import scratch PR, verify hosted architecture AND ci-success rejection, record specific diagnostic/run, then close unmerged.
+- Own only tools/boundaries/ACCEPTANCE.md and this task's normal status/evidence. Implementation and relocations belong to the registered prerequisite owners; any repair requires their exact reviewed integration, not broad directory ownership.
 
 ## 4. Out of scope
 
@@ -75,7 +75,7 @@ Uses `boundaries.json` from `OVE_ARCH001` as the single source of truth (DRY: no
 
 ## 8. Architecture and code placement
 
-`eslint-rules/boundaries/` (plugin: `index.ts`, one file per rule, `resolve-package.ts`, `load-manifest.ts`); `tools/boundaries/` (`check.ts`, `ts-imports.ts`, `report.ts`); `tools/boundaries-fixtures/` (fixtures + `boundaries.fixtures.test.ts`). Each rule is a single-responsibility module (SRP); new rule = new file (OCP). Only dev-time code; nothing is imported by packages.
+Final evidence lives in tools/boundaries/ACCEPTANCE.md. Existing plugin/scanner/fixture paths described by the detailed requirements are read-only inputs owned by their registered prerequisite tasks. This task adds no product/runtime code and grants no Tools import or policy escape. Keep separate independent Standards and Spec review for the exact final head.
 
 ## 9. Security and safety
 
@@ -112,7 +112,7 @@ Architecture boundaries are a security control: they keep I/O and platform code 
 
 ## 13. Parallelization notes
 
-Can start as soon as ARCH001's `boundaries.json` is merged (a draft JSON is enough to build against). Independent of ARCH003..ARCH015. Conflict hotspot: the root ESLint config is owned by SETUP003; this task exports `boundariesConfig()` and SETUP003 (or a one-line proposal) spreads it. CI job fragment goes to `tools/boundaries/ci-job.yml` for SETUP006 to include.
+Start final acceptance only after OVE_ARCH001, OVE_SETUP003 and OVE_ARCH053 are merged and done, including the latter's complete prerequisite DAG. Do not start from a draft matrix or declare independence from the new implementation prerequisites. Rebase the preserved claim through the normal approved lifecycle onto latest DEVELOP; reconcile history/status without reset, release, discard or replay of the entire bulk patch. The integration TASK stays todo until a normal claim/finish transition changes it; this registration does not rewrite the old implementation branch's in_progress history. Shared repairs are exact affected-owner proposals. A scratch violation is closed unmerged after actual hosted evidence; final integration requires fresh normal checks/reviews for its own exact head.
 
 ## 14. Open questions and assumptions
 
@@ -125,3 +125,8 @@ Can start as soon as ARCH001's `boundaries.json` is merged (a draft JSON is enou
 The Owner-approved SETUP006 sequence transfers actual boundary-violation scratch evidence here. The existing foundation guard only proves missing-tool orchestration. Integrate the root check:boundaries entry (tools/check-boundaries/run.ts) with tools/boundaries/check.ts, or explicitly coordinate the caller path, so the real checker runs in hosted CI. Record actual failing diagnostics and aggregate rejection.
 
 Source: tasks/_proposals/OVE_SETUP006-acceptance-sequence.md.
+
+
+### Registration and chronological evidence (2026-10-18)
+
+This proposed integration metadata is derived from DEVELOP 6bbfcb06c41520e8a0ba5eabeb4c9548cade827b with status todo. Earlier in_progress checkpoints and their failed or limited scoped runs remain chronological evidence in the preserved implementation worktree/proposal; they are not copied here as current status or acceptance. The Owner approved smaller tasks, not a size, security, history, test or review exception.
