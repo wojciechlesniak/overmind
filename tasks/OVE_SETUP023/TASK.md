@@ -115,6 +115,33 @@ The revised author checkpoint passed typecheck, lint, formatting and the actual
 architecture integration with one worker. A fresh exact-head review and full-gate
 run remain required.
 
+Completion evidence (2026-10-18, source/lifecycle head `7f043f5261bfa9d0ac01588d950304b667167fd1`):
+all 21 selected repository gates have actual passing results on the unchanged
+source: formatting, lint, native typecheck, 537 covered unit tests in 95 files,
+66 integration tests in 17 files, build, architecture and four dependency CLI
+cases, workflow validation, dependency/license checks, Rust formatting/clippy and
+33 Rust tests, secret scans and SBOM generation. The initial full-gate wrapper
+failed while downloading the pinned cargo-audit archive; that failed attempt is
+retained. Its remaining original audit/security commands passed after restoring
+only the checksum-verified pinned archive from the existing tool cache. This is
+combined gate evidence, not a claim that the original wrapper exited zero.
+Production npm audit reported zero vulnerabilities; the existing development
+policy permits one low advisory. Cargo audit retained five policy-allowed
+warnings. Secret scans reported zero findings and the existing Keychain warning.
+No security, dependency, test or timing policy was changed. The optional
+Storybook branch was a no-op, not evidence of a working Storybook build; no real
+Mac isolation escape execution is claimed.
+
+Independent Standards and Spec reviews passed for source head `1c77a06` and
+lifecycle head `7f043f52`. Hosted CI run 39154513247, Security run 39154513124 and
+Isolation gate run 39154513148 passed at `7f043f52`; the conditional escape job
+was skipped. Earlier title-policy failure and cancelled duplicate runs remain
+recorded. This completion-evidence commit, and the subsequent normal done
+transition, still require their own fresh hosted checks and exact-head reviews
+before integration. The current PR title satisfies the existing commit policy;
+the default title-construction defect is recorded as a separate owning-task
+proposal rather than changing the lifecycle tool in this task.
+
 ## 13. Parallelization notes
 
 Parallel with OVE_SETUP020 and 022. Hotspot: `tasks/INDEX.md` and `DEPENDENCIES.md` change whenever a task is added; regenerate on rebase conflicts (`pnpm gen:task-index`), never merge by hand.
