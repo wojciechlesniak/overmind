@@ -4,7 +4,7 @@ import { Files } from "./files.ts";
 import { parseAdr, parseSlugMap, type Adr } from "./input.parse-boundary.ts";
 import { checkRecords, renderIndex, updateIndex } from "./model.ts";
 import { checkHistory } from "./history.ts";
-import type { Git } from "./ports.ts";
+import type { HistoryGit } from "./ports.ts";
 
 export function loadRecords(files: Files): Adr[] {
   return files
@@ -27,7 +27,7 @@ function referenceNumbers(text: string): number[] {
     .replace(/<!--[\s\S]*?-->/gu, "");
   return [...prose.matchAll(/\bADR[- ]+(\d{1,4})\b/gu)].map((match) => Number(match[1]));
 }
-export function checkRepository(root: string, git: Git, labels: readonly string[]): void {
+export function checkRepository(root: string, git: HistoryGit, labels: readonly string[]): void {
   const files = new Files(root);
   const records = loadRecords(files);
   const map = parseSlugMap(files.read("docs/adr/slug-map.json"));

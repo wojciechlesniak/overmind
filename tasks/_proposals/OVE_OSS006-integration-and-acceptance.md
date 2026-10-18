@@ -530,3 +530,41 @@ or retries. Capture: `ove026-public-cli-independent-sources-baseline-088f2bd.log
 Configured formatting, full workspace typecheck and scoped lint then passed;
 no tests were repeated after layout-only formatting. Current criteria/status,
 unapproved staged scope and all exact-new-head gate/review obligations remain.
+
+
+### Additional bounded public history validation (2026-10-18)
+
+This follows the approved tooling-stage decision above; earlier pending-decision
+paragraphs and failed receipts remain historical. G1's actual public allocation
+collision case passed with exact input preservation. G2 adds only a fixture raw
+archive (UTF-8 BOM, CRLF, Polish text, comments and whitespace) to the complete
+31-record public flow and compares original Buffer bytes throughout dry-run,
+apply, subsequent checks and index generation. Its initial three-second child
+timeout remains a failure. One separate content-free diagnostic confirmed real
+Git spawn overhead, not an archive parser failure; that diagnostic also failed
+its original deadline and is not a performance pass.
+
+Five actual Git blob-reader cases first failed for the missing read capability,
+then passed. The implementation uses strict immutable commit/canonical path
+requests, byte-framed bounded cat-file responses and bounded per-invocation
+windows. Oversized absent-map entries retain the original individual-show
+fallback. Existing per-path log/rev-list ancestry, 1024-version limit, tree cache,
+rename/provenance/transition validation and all original execution limits remain.
+The observer-free unchanged G2 flow then passed in 7.51 seconds. G3's complete,
+missing and tampered two-commit canonical rename/archive cases all passed in
+7.97 seconds with actual public CLI subprocesses and byte/state preservation.
+No fixture dates or provenance represent migrated production history.
+
+The completion batch passed full workspace typecheck, full lint and scoped
+formatting, 18 real ADR integrations across seven files (33.73 seconds), then
+41 ADR/Markdown units across nine files (3.45 seconds), with one worker and
+unchanged budgets. Two optional-chain expressions, local interface syntax and
+configured formatting were the only native/style corrections; failed initial
+lint/format receipts are preserved. All primary and task-state guards passed.
+Captures: `ove026-history-blobs-{red,green}-20261018`,
+`ove026-g2-batched-history-20261018`, `ove026-g3-public-history-20261018` and
+`ove026-history-completion-checks-20261018.complete.json` in the retained session
+evidence directory. This is scoped proof only: fresh rebased exact-head complete
+gates, independent reviews, generated task views and hosted checks remain due.
+The approved production-migration allocation, unchecked criteria and task status
+are unchanged.

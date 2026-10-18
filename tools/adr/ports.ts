@@ -1,9 +1,13 @@
 import { execFileSync } from "node:child_process";
+import { readHistoryBlobs } from "./history-blobs.ts";
 export interface Clock {
   today(): string;
 }
 export interface Git {
   run(args: readonly string[]): string;
+}
+export interface HistoryGit extends Git {
+  readBlobs(requests: readonly string[]): ReadonlyMap<string, string>;
 }
 const transportVariables = new Set([
   "GIT_SSH",
@@ -27,22 +31,24 @@ export function productionGitEnvironment(
     GIT_TERMINAL_PROMPT: "0",
   };
 }
-export function nodeGit(root: string, environment: NodeJS.ProcessEnv = process.env): Git {
+export function nodeGit(root: string, environment: NodeJS.ProcessEnv = process.env): HistoryGit {
+  const execute = (args: readonly string[], input?: string): Buffer => {
+    try {
+      return execFileSync("git", [...args], {
+        cwd: root,
+        env: productionGitEnvironment(environment),
+        timeout: 15000,
+        maxBuffer: 2 * 1024 * 1024,
+        stdio: [input === undefined ? "ignore" : "pipe", "pipe", "ignore"],
+        ...(input === undefined ? {} : { input }),
+      });
+    } catch {
+      throw new Error("ADR Git operation is unavailable or exceeds its limits");
+    }
+  };
   return {
-    run(args) {
-      try {
-        return execFileSync("git", [...args], {
-          cwd: root,
-          env: productionGitEnvironment(environment),
-          encoding: "utf8",
-          timeout: 15000,
-          maxBuffer: 2 * 1024 * 1024,
-          stdio: ["ignore", "pipe", "ignore"],
-        });
-      } catch {
-        throw new Error("ADR Git operation is unavailable or exceeds its limits");
-      }
-    },
+    run: (args) => execute(args).toString("utf8"),
+    readBlobs: (requests) => readHistoryBlobs(requests, execute),
   };
 }
 export const systemClock: Clock = { today: () => new Date().toISOString().slice(0, 10) };

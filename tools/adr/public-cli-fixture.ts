@@ -16,7 +16,7 @@ import { isolatedGitEnvironment } from "../hooks/git-test-environment.ts";
 import { parseSlugMap, renderAdr } from "./input.parse-boundary.ts";
 
 const sourceRoot = resolve(import.meta.dirname, "../..");
-export function fixture(includePublished31 = false) {
+export function fixture(includePublished31 = false, publishedPolishOriginal2 = false) {
   const parent = realpathSync(mkdtempSync(resolve(tmpdir(), "ove-adr-public-")));
   const root = resolve(parent, "work");
   const remote = resolve(parent, "origin.git");
@@ -52,8 +52,15 @@ export function fixture(includePublished31 = false) {
       });
     }
     for (const entry of [...map.originals, ...map.additional]) {
+      const name =
+        publishedPolishOriginal2 && entry.adr === 2
+          ? entry.polishOriginal
+          : `${String(entry.adr).padStart(4, "0")}-${entry.slug}.md`;
+      if (!name) {
+        throw new Error("Missing published original fixture filename");
+      }
       writeFileSync(
-        resolve(root, `docs/adr/${String(entry.adr).padStart(4, "0")}-${entry.slug}.md`),
+        resolve(root, "docs/adr", name),
         renderAdr(
           {
             adr: entry.adr,

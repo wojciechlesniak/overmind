@@ -128,6 +128,36 @@ Docs under `docs/adr/` and tooling in `tools/adr/` (pure parsing/rendering funct
 
 Unit tests for slug creation, next-number computation (fake git: local, DEVELOP and branch numbers), status transition rules, mutual-link check, index rendering (golden), renumber rewrites (fixture tree). Integration test on a temp git repo for immutability and deletion detection. Commands: `pnpm test -- tools/adr`, `pnpm check:adr`, `pnpm gen:adr-index --check`.
 
+
+### Additional real public history proof (2026-10-18)
+
+G1 characterized the existing mapped-number collision guard through the public
+allocation CLI: the denied operation preserved all inputs (one case PASS).
+G2 added a fixture-only raw Polish archive with BOM, CRLF and whitespace to the
+complete 31-published-record public renumber/index/check flow. Buffer comparisons
+preserve its exact bytes before and after dry-run, apply and every later check.
+The original 3000 ms child deadline first failed; a separate bounded diagnostic
+measured real Git spawn costs. Both failures remain recorded, not retried away.
+
+A bounded immutable-blob reader first failed all five new real-Git contract
+cases for its missing capability, then passed all five after implementation.
+Invocation-local batched reads retain original per-path history traversal,
+individual-show fallback, validation and limits. The unchanged G2 case then
+passed in 7.51 seconds. G3 separately passed three actual public checker cases
+for complete, missing and tampered historical rename archives in 7.97 seconds;
+these are fixture-only provenance characterizations, not production migration.
+
+Full typecheck, full lint and scoped formatting passed after two optional-chain
+corrections, local interface syntax and configured formatting. The initial lint
+and formatting failures are retained. Seven ADR integration files passed all
+18 tests in 33.73 seconds; nine ADR/Markdown unit files passed all 41 in
+3.45 seconds with one worker and unchanged limits. Every primary Owner-file,
+index/configuration, task-index, frozen-metadata and source guard passed.
+Evidence: `ove026-history-completion-checks-20261018.complete.json` and the
+separate G1/G2/G3/reader captures in the retained session evidence directory.
+These scoped results are not a new complete-gate, production legacy ADR/index,
+hosted CI or acceptance pass; all seven criteria remain unchecked.
+
 ## 13. Parallelization notes
 
 Approved sequence: OSS006 tooling -> OSS005 + OSS014 historical preparation -> complete reviewed OSS010/011 candidate -> OSS015 production closure -> OSS013 final review -> separate Owner publication approval. OSS014 depends on OSS005/006; OSS010/011 additionally depend on OSS014; OSS015 depends on OSS014/010/011; OSS013 additionally depends on OSS015. No readiness or partial-set bypass is permitted. See the full coordinated transfer contract in [OSS015](../OVE_OSS015/TASK.md).

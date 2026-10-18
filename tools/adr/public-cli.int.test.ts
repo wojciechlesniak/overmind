@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { expect, test } from "vitest";
 import { parseAdr, parseSlugMap, renderAdr } from "./input.parse-boundary.ts";
@@ -30,6 +30,32 @@ test("public allocation honors real local and remote reservations and denies an 
     git(["remote", "set-url", "origin", resolve(parent, "missing.git")]);
     expect(cli("new.ts", ["Refuse unavailable state"]).status).toBe(1);
     expect(snapshot(root)).toEqual(before);
+  } finally {
+    rmSync(parent, { recursive: true, force: true });
+  }
+}, 15000);
+
+test("public allocation refuses a mapped next-number collision without changing inputs", () => {
+  const { parent, root, git, cli } = fixture();
+  try {
+    const head = git(["rev-parse", "HEAD"]).trim();
+    const mapPath = resolve(root, "docs/adr/slug-map.json");
+    const map = parseSlugMap(readFileSync(mapPath, "utf8"));
+    map.additional.push({
+      adr: 31,
+      slug: "mapped-reservation",
+      polishOriginal: null,
+      title: "Keep the mapped reservation",
+    });
+    writeFileSync(mapPath, JSON.stringify(map, null, 2) + "\n");
+    expect(parseSlugMap(readFileSync(mapPath, "utf8")).additional.at(-1)?.adr).toBe(31);
+    expect(existsSync(resolve(root, "docs/adr/0031-mapped-reservation.md"))).toBe(false);
+    const before = snapshot(root);
+    const denied = cli("new.ts", ["Refuse mapped collision"]);
+    expect(denied.status).toBe(1);
+    expect(denied.stderr).toContain("ADR number is already mapped");
+    expect(snapshot(root)).toEqual(before);
+    expect(git(["rev-parse", "HEAD"]).trim()).toBe(head);
   } finally {
     rmSync(parent, { recursive: true, force: true });
   }
@@ -96,7 +122,29 @@ test("public allocation fetches a newer remote DEVELOP without changing the chec
 test("public renumber and index commands leave a complete conforming repository checkable", () => {
   const { parent, root, cli } = fixture(true);
   try {
+    const archivedEntry = parseSlugMap(
+      readFileSync(resolve(root, "docs/adr/slug-map.json"), "utf8"),
+    ).originals[0];
+    if (!archivedEntry) {
+      throw new Error("Missing original ADR fixture");
+    }
+    const archive = resolve(root, "docs/pl/adr/0001-raw-original.md");
+    const archivedBytes = Buffer.from(
+      [
+        "\ufeff<!-- Oryginał: zachowaj bajty, odstępy i komentarze. -->",
+        "# Decyzja źródłowa",
+        "",
+        `[ADR 0001](../../adr/0001-${archivedEntry.slug}.md)`,
+        "",
+        "Zachowaj  dwa odstępy, tabulator:\t oraz koniec wiersza.  ",
+        "",
+      ].join("\r\n"),
+      "utf8",
+    );
+    mkdirSync(resolve(root, "docs/pl/adr"), { recursive: true });
+    writeFileSync(archive, archivedBytes);
     expect(cli("check.ts").status).toBe(0);
+    expect(readFileSync(archive)).toEqual(archivedBytes);
     const created = cli("new.ts", ["Keep a proposal"]);
     expect(created.status).toBe(0);
     expect(created.stdout.trim()).toBe("docs/adr/0032-keep-a-proposal.md");
@@ -129,7 +177,9 @@ test("public renumber and index commands leave a complete conforming repository 
     const before = snapshot(root);
     expect(cli("renumber.ts", ["31", "32"]).status).toBe(0);
     expect(snapshot(root)).toEqual(before);
+    expect(readFileSync(archive)).toEqual(archivedBytes);
     expect(cli("renumber.ts", ["31", "32", "--apply"]).status).toBe(0);
+    expect(readFileSync(archive)).toEqual(archivedBytes);
     expect(existsSync(resolve(root, collided))).toBe(false);
     expect(readFileSync(resolve(root, "docs/notes.md"), "utf8")).toBe(
       '[ADR 0032](adr/0032-keep-a-proposal.md#confirmation "Proposal")\n',
@@ -138,8 +188,11 @@ test("public renumber and index commands leave a complete conforming repository 
     expect(body).toContain('[ADR 0032](0032-keep-a-proposal.md#confirmation "Self")');
     expect(body).toContain(example);
     expect(cli("check.ts").status).toBe(0);
+    expect(readFileSync(archive)).toEqual(archivedBytes);
     expect(cli("gen-index.ts").status).toBe(0);
+    expect(readFileSync(archive)).toEqual(archivedBytes);
     expect(cli("gen-index.ts", ["--check"]).status).toBe(0);
+    expect(readFileSync(archive)).toEqual(archivedBytes);
     const indexPath = resolve(root, "docs/adr/README.md");
     const index = readFileSync(indexPath, "utf8");
     expect(index).toContain("superseded by 0023");
@@ -150,6 +203,7 @@ test("public renumber and index commands leave a complete conforming repository 
     expect(stale.stderr).toContain("ADR index is stale");
     writeFileSync(indexPath, index);
     expect(cli("check.ts").status).toBe(0);
+    expect(readFileSync(archive)).toEqual(archivedBytes);
   } finally {
     rmSync(parent, { recursive: true, force: true });
   }
