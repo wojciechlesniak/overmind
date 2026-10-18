@@ -7,7 +7,7 @@ size: M
 priority: P0
 mvp: true
 status: todo
-depends_on: [OVE_OSS005, OVE_OSS006]
+depends_on: [OVE_OSS005, OVE_OSS006, OVE_OSS014]
 soft_depends_on: []
 provides: ["lib:adr-en-0015-0028"]
 needs: []
@@ -46,7 +46,7 @@ The ADRs are the Owner's recorded decisions and the highest-authority text after
 ## 3. Scope (in)
 
 - The 14 ADRs listed in requirement 1, one English file each, with merged front matter (ADR keys of OVE_OSS006 plus the translation keys of OVE_OSS005).
-- Internal links between ADRs and to the specification updated to English file names via the slug map.
+- Internal links and every actual incoming link to this half updated through the reviewed finite path/span plan; verify exact archived source bytes before removing old active Polish paths, and bind the reviewed English hashes in OVE_OSS014 proof data before validation. Archives remain unchanged.
 - Term proposals through `terms.yaml`.
 
 ## 4. Out of scope
@@ -94,7 +94,7 @@ N/A, documentation only. English ADR titles are noun phrases or imperative decis
 
 ## 8. Architecture and code placement
 
-Files: only the 14 English ADR files listed in `owns`. Slug-map English titles are filled by OVE_OSS006's tooling (`pnpm adr:index --sync-titles`) in the PR, not by editing `slug-map.json` here; if the tool cannot do it yet, mention the titles in the PR for OVE_OSS013.
+The 14 canonical English ADR files retain their existing `owns`. Exact old-path removals, incoming-link spans, proof entries and title-map updates require the approved affected-owner/integrator integration; do not expand ownership globs. No `adr:index --sync-titles` implementation exists: do not treat that historical command as working tooling. Record title changes for the map owner and validate the actual complete candidate as specified in section 13.
 
 ## 9. Security and safety
 
@@ -103,7 +103,7 @@ Files: only the 14 English ADR files listed in `owns`. Slug-map English titles a
 - No private data is introduced: no local absolute paths, usernames, tokens or e-mail addresses beyond what the original contains (the docs checker of OVE_OSS004 rejects them); findings of private data in the Polish original are reported to the Owner, not silently removed.
 - The Polish originals under `docs/pl/` are never edited by this task (CODEOWNERS-protected, hash-checked by OVE_OSS005).
 - AI assistance is allowed but recorded in the `translator` field; machine output is never merged without the structural checks and a read-through.
-- Immutability: once merged, an ADR translation is corrected only by a PR that references the Polish source and states the reason; its meaning never changes. `pnpm check:adr` (OVE_OSS006) enforces append-only behaviour for files already on `main`, so the first merge must be right: review before merging.
+- Immutability: once merged, an ADR translation is corrected only by a PR that references the Polish source and states the reason; its meaning never changes. `pnpm check:adr` (OVE_OSS006) enforces append-only behaviour for files already on the Owner-authorized integration branch DEVELOP, so the first merge must be right: review before merging.
 
 ## 10. Errors and edge cases
 
@@ -129,7 +129,13 @@ Structural checks plus `pnpm check:adr`; second-reader comparison per ADR (short
 
 ## 13. Parallelization notes
 
-Parallel with the other translation tasks; the files of this task do not overlap with any other task. The two ADR halves (OVE_OSS010, OVE_OSS011) can be done by two agents at once. Soft hotspot: `terms.yaml`, and the ADR index which is generated (regenerate, do not merge by hand).
+The approved 2026-10-18 sequence is normative: OVE_OSS014 must be integrated first. Both translation halves retain their own real claims, criteria and draft translation status; independent meaning/Spec and Standards reviews must cover both before the first merge.
+
+Before either merge, the integrator assembles the complete candidate in OVE_OSS010 using the reviewed OVE_OSS011 transfer. It includes all fourteen reviewed English files 0015-0028, removal of their distinct old active Polish paths only after exact OSS005 archive/hash verification, ALL actual incoming links/definitions across root documentation/instructions, docs and tasks, and only the corresponding fourteen reviewed proof-data entries binding exact source lineage to pinned English commit/blob hashes. OVE_OSS010 does the same for 0001-0014. Review the finite affected file/span set and affected-owner approval before changes; preserve fragments, titles, reference keys, code/examples and archives. No broad ownership grant or reader/schema relaxation is transferred.
+
+Run the actual complete current/historical ADR checks, both halves' provenance/parity/security-language/link criteria, independent reviews and exact-head gates before the first merge. Resolve shared links without discarding either half. No pending-record allowance, partial-set PASS or premature OVE_OSS011 done is permitted. OVE_OSS010 rebases/finishes normally and merges only the complete passing head. OVE_OSS011 then rebases onto that DEVELOP, proves the exact reviewed bytes are already integrated unchanged, retains its claim/TASK history and finishes normally with fresh complete-set evidence; its remaining diff may be metadata only. Only both real done statuses unlock OVE_OSS015.
+
+These are coordinated integrations through approved proposals and normal ownership checks; instruction changes retain config-change/Owner review. No file status, claim or unreviewed work is transferred. The exact shared proof algorithm remains separately reviewed; OVE_OSS015 owns final production index and unconditional gate closure, not prerequisites needed for this candidate's first full check.
 
 ## 14. Open questions and assumptions
 

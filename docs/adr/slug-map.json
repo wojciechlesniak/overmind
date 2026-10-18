@@ -1,0 +1,187 @@
+{
+  "schema": 1,
+  "originals": [
+    {
+      "adr": 1,
+      "slug": "single-chief-as-sole-interlocutor",
+      "polishOriginal": "0001-jeden-chief-jako-jedyny-rozmowca.md",
+      "title": "Single Chief as sole interlocutor"
+    },
+    {
+      "adr": 2,
+      "slug": "workflow-as-executable-program",
+      "polishOriginal": "0002-workflow-jako-wykonywalny-program.md",
+      "title": "Workflow as executable program"
+    },
+    {
+      "adr": 3,
+      "slug": "permissions-deny-by-default-and-intersection",
+      "polishOriginal": "0003-uprawnienia-deny-by-default-i-przeciecie.md",
+      "title": "Permissions deny by default and intersection"
+    },
+    {
+      "adr": 4,
+      "slug": "real-os-level-isolation",
+      "polishOriginal": "0004-realna-izolacja-os.md",
+      "title": "Real OS-level isolation"
+    },
+    {
+      "adr": 5,
+      "slug": "engine-independent-of-window",
+      "polishOriginal": "0005-engine-niezalezny-od-okna.md",
+      "title": "Engine independent of window"
+    },
+    {
+      "adr": 6,
+      "slug": "telegram-as-second-channel",
+      "polishOriginal": "0006-telegram-jako-drugi-kanal.md",
+      "title": "Telegram as second Channel"
+    },
+    {
+      "adr": 7,
+      "slug": "model-per-agent-and-node",
+      "polishOriginal": "0007-model-per-agent-i-wezel.md",
+      "title": "Model per Agent and Node"
+    },
+    {
+      "adr": 8,
+      "slug": "decision-register-append-only",
+      "polishOriginal": "0008-rejestr-decyzji-bez-usuwania.md",
+      "title": "Decision Register is append-only"
+    },
+    {
+      "adr": 9,
+      "slug": "macos-only-first",
+      "polishOriginal": "0009-najpierw-tylko-macos.md",
+      "title": "Target macOS first"
+    },
+    {
+      "adr": 10,
+      "slug": "one-installation-one-owner",
+      "polishOriginal": "0010-jedna-instalacja-jeden-wlasciciel.md",
+      "title": "One installation, one Owner"
+    },
+    {
+      "adr": 11,
+      "slug": "own-task-board",
+      "polishOriginal": "0011-wlasna-tablica-zadan.md",
+      "title": "Own Task Board"
+    },
+    {
+      "adr": 12,
+      "slug": "internet-skills-only-from-owner",
+      "polishOriginal": "0012-skille-z-internetu-tylko-od-wlasciciela.md",
+      "title": "Internet Skills only from the Owner"
+    },
+    {
+      "adr": 13,
+      "slug": "apache-2-license",
+      "polishOriginal": "0013-licencja-apache-2.md",
+      "title": "Apache-2.0 license"
+    },
+    {
+      "adr": 14,
+      "slug": "two-memory-layers",
+      "polishOriginal": "0014-dwie-warstwy-pamieci.md",
+      "title": "Two memory layers"
+    },
+    {
+      "adr": 15,
+      "slug": "chief-autonomy",
+      "polishOriginal": "0015-autonomia-chiefa.md",
+      "title": "Chief autonomy"
+    },
+    {
+      "adr": 16,
+      "slug": "project-documentation-as-source-of-truth",
+      "polishOriginal": "0016-dokumentacja-projektu-zrodlem-prawdy.md",
+      "title": "Project Documentation as source of truth"
+    },
+    {
+      "adr": 17,
+      "slug": "english-as-project-language",
+      "polishOriginal": "0017-jezyk-angielski-w-projekcie.md",
+      "title": "English as project language"
+    },
+    {
+      "adr": 18,
+      "slug": "stack-tauri-react-typescript-sqlite",
+      "polishOriginal": "0018-stos-tauri-react-typescript-sqlite.md",
+      "title": "Tauri, React, TypeScript and SQLite"
+    },
+    {
+      "adr": 19,
+      "slug": "own-workflow-engine",
+      "polishOriginal": "0019-wlasny-silnik-workflow.md",
+      "title": "Own Workflow engine"
+    },
+    {
+      "adr": 20,
+      "slug": "macos-isolation-virtual-machine",
+      "polishOriginal": "0020-izolacja-macos-maszyna-wirtualna.md",
+      "title": "macOS isolation in a virtual machine"
+    },
+    {
+      "adr": 21,
+      "slug": "default-approval-list",
+      "polishOriginal": "0021-domyslna-lista-zgod.md",
+      "title": "Default Approval list"
+    },
+    {
+      "adr": 22,
+      "slug": "official-clis-like-herdr",
+      "polishOriginal": "0022-oficjalne-cli-jak-herdr.md",
+      "title": "Official CLIs like herdr"
+    },
+    {
+      "adr": 23,
+      "slug": "direct-chats-with-agents",
+      "polishOriginal": "0023-bezposrednie-czaty-z-agentami.md",
+      "title": "Direct chats with Agents"
+    },
+    {
+      "adr": 24,
+      "slug": "mvp-scope",
+      "polishOriginal": "0024-zakres-mvp.md",
+      "title": "MVP scope"
+    },
+    {
+      "adr": 25,
+      "slug": "contribution-model",
+      "polishOriginal": "0025-model-kontrybucji.md",
+      "title": "Contribution model"
+    },
+    {
+      "adr": 26,
+      "slug": "herdr-as-terminal-layer",
+      "polishOriginal": "0026-herdr-jako-warstwa-terminali.md",
+      "title": "herdr as terminal layer"
+    },
+    {
+      "adr": 27,
+      "slug": "overmind-skill-for-agents",
+      "polishOriginal": "0027-skill-overmind-dla-agentow.md",
+      "title": "Overmind Skill for Agents"
+    },
+    {
+      "adr": 28,
+      "slug": "visibility-public-private",
+      "polishOriginal": "0028-widocznosc-publiczny-prywatny.md",
+      "title": "Public and Private Visibility"
+    }
+  ],
+  "additional": [
+    {
+      "adr": 29,
+      "slug": "github-issues-backlog-and-master-protection",
+      "polishOriginal": "0029-backlog-w-github-issues-i-ochrona-master.md",
+      "title": "Track the backlog in GitHub Issues and protect master"
+    },
+    {
+      "adr": 30,
+      "slug": "engine-packaging-and-sqlite-driver",
+      "polishOriginal": null,
+      "title": "Use Node SEA and node:sqlite for the engine"
+    }
+  ]
+}

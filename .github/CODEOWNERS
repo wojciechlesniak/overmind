@@ -49,3 +49,7 @@
 
 # Engine runtime pins, binary license ledger and packaging policy (OVE_SETUP017).
 /tools/package-engine/ @wojciechlesniak
+
+# Append-only architecture decisions and their strict tooling (OVE_OSS006).
+/docs/adr/ @wojciechlesniak
+/tools/adr/ @wojciechlesniak

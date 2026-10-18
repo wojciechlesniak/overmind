@@ -6,7 +6,7 @@ kind: docs
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: [OVE_SETUP001]
 soft_depends_on: [OVE_OSS004, OVE_OSS005]
 provides: ["lib:adr-template", "lib:adr-index", "lib:adr-tooling", "lib:adr-slug-map"]
@@ -27,7 +27,7 @@ adr_refs: [8, 16, 17]
 
 ## 1. Summary
 
-Give architectural decision records a template, a generated index and a lifecycle check, and fix the English file names of the 28 existing ADRs so the translation tasks and all links agree. ADRs are append-only (decisions are superseded, never deleted), in the same spirit as the product's own Decision Register (ADR 0008).
+Give architectural decision records a template, a generated index and a lifecycle check, and fix the English file names of the 28 existing ADRs so the translation tasks and all links agree. ADRs are append-only (decisions are superseded, never deleted), in the same spirit as the product's own Decision Register (ADR 0008). The approved 2026-10-18 split accepts only a strictly tested tooling stage here: OVE_OSS014 prepares the historical-proof/ADR 0029 boundary, and OVE_OSS015 closes the real production collection/index/CI after OVE_OSS010/011. No production migration result or historical exception is approved by this split.
 
 ## 2. Context
 
@@ -43,6 +43,7 @@ SPEC 19.8 and CONVENTIONS section 8 require new architectural decisions to be re
 - Translating ADR content: OVE_OSS010 (0001-0014) and OVE_OSS011 (0015-0028).
 - Writing new ADRs for other areas (their tasks do).
 - A docs website index.
+- Source import and actual correspondence: OVE_OSS005; separately reviewed finite historical proof and ADR 0029 provenance/translation: OVE_OSS014. Complete production current/history/correspondence/index/renumber validation and unconditional required ADR/index CI: OVE_OSS015 after OVE_OSS010/011. Conforming real public CLI proof remains immediate here.
 
 ## 5. Detailed requirements
 
@@ -78,7 +79,7 @@ SPEC 19.8 and CONVENTIONS section 8 require new architectural decisions to be re
    Resulting names: `docs/adr/NNNN-<slug>.md`. The JSON also stores, per ADR, the Polish original file name and the English title (the H1 of the translation, filled by the translation tasks, initially the descriptive working title). A title change never renames the file.
 2. **Template (`_template.md`).** Front matter keys: `adr` (integer), `title`, `status` (`proposed` | `accepted` | `superseded` | `deprecated`), `date` (ISO), `deciders` (list, default `[Owner]`), `supersedes` (list of integers), `superseded_by` (list), `tags` (list from: architecture, security, product, process, tooling, legal). Body: `# <Title as the decision, one sentence>`; one paragraph "what we decided, in which context, and the main reason, including rejected alternatives with a reason each" (the existing ADR style: short); `## Consequences` bullets (positive and negative, follow-up obligations); optional `## Alternatives considered` when more than one sentence of detail is needed; optional `## Confirmation` (how the decision is verified, for example a prototype or test, with date and link). Length guideline: under 60 lines. Translated ADRs additionally carry the translation keys of OVE_OSS005.
 3. **Existing status data.** Statuses of the Owner's ADRs: all `accepted` except 0001 `superseded` (`superseded_by: [23]`), dates from the project's document creation dates (2026-10-12 or 2026-10-13 as given in the manifest `projectCreatedAt`); ADR 0023's `supersedes: [1]`. `deciders: [Owner]`.
-4. **`pnpm adr:new "<title>"`:** computes the next number as max(numbers in `docs/adr/` on the current branch, numbers in `origin/main`, and numbers in files added by open `task/*` branches found with `git ls-remote` + `git diff --name-only`) + 1, zero-pads to 4 digits, derives a kebab-case ASCII slug (max 6 words, 60 characters), writes the template with filled front matter (status `proposed`, today's date from an injected Clock), prints the path. It refuses when the number already exists. Concurrent allocation can still collide; `check:adr` catches it in CI and `adr:renumber <old> <new>` renames the file, updates the front matter and rewrites links to it across `docs/` and `tasks/` (dry run by default).
+4. **`pnpm adr:new "<title>"`:** computes the next number as max(numbers in `docs/adr/` on the current branch, numbers in `origin/DEVELOP`, and numbers in files added by open `task/*` branches found with `git ls-remote` + `git diff --name-only`) + 1, zero-pads to 4 digits, derives a kebab-case ASCII slug (max 6 words, 60 characters), writes the template with filled front matter (status `proposed`, today's date from an injected Clock), prints the path. It refuses when the number already exists. Concurrent allocation can still collide; `check:adr` catches it in CI and `adr:renumber <old> <new>` renames the file, updates the front matter and rewrites links to it across `docs/` and `tasks/` (dry run by default).
 5. **`pnpm check:adr` rules:** every ADR has valid front matter; `adr` equals the file number; numbers are unique and contiguous (no gaps); file name equals `<NNNN>-<slug>.md` with a lower-case kebab slug; exactly one H1; `Consequences` section exists unless status is `proposed`; `supersedes`/`superseded_by` are mutual and refer to existing ADRs; a `superseded` ADR has `superseded_by` non-empty and its file content is unchanged except for front matter once superseded (compared with the git history: `git log -p` shows only front matter changes after the status flips); an `accepted` ADR's decision paragraph may not be edited except for typo fixes (heuristic: PRs touching accepted ADR bodies need label `adr-edit`); status transitions allowed: `proposed -> accepted -> (superseded | deprecated)`; the slug map contains the ADR; ADR numbers mentioned in other docs exist. Deleting an ADR file is an error (checked against the base branch).
 6. **Index (`gen:adr-index`).** `docs/adr/README.md` = hand-written intro (what ADRs are, how to propose a new one, the append-only rule, the status meanings, link to the template and to ADR 0008 as the philosophy) + a generated table between markers `<!-- adr-index:start -->` and `<!-- adr-index:end -->` with columns `# | Decision | Status | Date | Tags | Notes` (notes show "superseded by 0023" or "supersedes 0001"); rows sorted by number; titles link to files; `--check` fails when the committed table differs.
 7. **Process rules (in the README):** who may propose (anyone via an accepted issue or a task of kind `decision`/`spike`), who accepts (the Owner; an ADR PR merged by the Owner = accepted), that an ADR must exist before code that depends on a hard-to-reverse decision lands, that a decision change needs a new ADR that supersedes the old one, and that task files reference ADRs by number (`adr_refs`).
@@ -115,18 +116,114 @@ Docs under `docs/adr/` and tooling in `tools/adr/` (pure parsing/rendering funct
 
 ## 11. Acceptance criteria
 
-- [ ] `slug-map.json` has 28 entries and every Polish original file in `docs/pl/adr/` (after OVE_OSS005) maps to exactly one English name.
-- [ ] `pnpm adr:new "Use X for Y"` creates `docs/adr/0029-use-x-for-y.md` (next free number) with valid front matter; on a repository where `origin/main` already has 0029 it picks 0030.
-- [ ] `pnpm check:adr` passes on the 28 translated ADRs and fails for: gap in numbers, duplicate number, non-mutual supersede link, deleted ADR (fixture), body edit without label (fixture), wrong file name.
-- [ ] `pnpm gen:adr-index` produces the table with ADR 0001 shown as superseded by 0023; `--check` fails after a manual edit between markers.
-- [ ] `adr:renumber` dry run lists all link rewrites; apply updates them and `check:adr` passes afterwards.
-- [ ] `docs/adr/README.md` explains the process and the status meanings.
+- [x] `slug-map.json` contains the exact 28 original identities, canonical English slugs and preserved Polish names, separately from later ADRs; schema and duplicate/identity-denial fixtures pass.
+- [x] The template is shorter than 60 lines, contains documented ADR/translation metadata, and the process README explains lifecycle, publication limits and the actual incomplete migration.
+- [x] The real public allocation CLI creates a valid next-free proposal in an isolated conforming Git repository, independently accounts for local, freshly fetched DEVELOP and remote task reservations, and refuses collisions/unavailable remote state without modifying existing ADRs.
+- [x] The strict checker passes a conforming collection and rejects malformed metadata/JSON, gaps, duplicates, invalid names/references, deletion, unpreserved rename, invalid lifecycle transitions and unauthorized accepted/superseded body changes, including real Git history and filesystem boundaries.
+- [x] Real public index generation then --check succeeds on a conforming repository and rejects a changed table; real renumber dry-run preserves every input byte, apply preserves protected examples/archives and rewrites all affected links, and the strict checker passes afterwards.
+- [x] Actual unmigrated production ADR/index failures are recorded with all original production obligations allocated to OVE_OSS005/014/010/011/015 below; no legacy-pass mode, invented dates, fixture index or false migration/publication success exists.
+- [x] All applicable exact-head tests, type/lint/build/security and independent Standards/Spec reviews pass, required hosted checks pass, and normal task/commit/merge protections remain in force.
 
 ## 12. Test plan
 
-Unit tests for slug creation, next-number computation (fake git: local, main and branch numbers), status transition rules, mutual-link check, index rendering (golden), renumber rewrites (fixture tree). Integration test on a temp git repo for immutability and deletion detection. Commands: `pnpm test -- tools/adr`, `pnpm check:adr`, `pnpm gen:adr-index --check`.
+Unit tests for slug creation, next-number computation (fake git: local, DEVELOP and branch numbers), status transition rules, mutual-link check, index rendering (golden), renumber rewrites (fixture tree). Integration test on a temp git repo for immutability and deletion detection. Commands: `pnpm test -- tools/adr`, `pnpm check:adr`, `pnpm gen:adr-index --check`.
+
+
+### Additional real public history proof (2026-10-18)
+
+G1 characterized the existing mapped-number collision guard through the public
+allocation CLI: the denied operation preserved all inputs (one case PASS).
+G2 added a fixture-only raw Polish archive with BOM, CRLF and whitespace to the
+complete 31-published-record public renumber/index/check flow. Buffer comparisons
+preserve its exact bytes before and after dry-run, apply and every later check.
+The original 3000 ms child deadline first failed; a separate bounded diagnostic
+measured real Git spawn costs. Both failures remain recorded, not retried away.
+
+A bounded immutable-blob reader first failed all five new real-Git contract
+cases for its missing capability, then passed all five after implementation.
+Invocation-local batched reads retain original per-path history traversal,
+individual-show fallback, validation and limits. The unchanged G2 case then
+passed in 7.51 seconds. G3 separately passed three actual public checker cases
+for complete, missing and tampered historical rename archives in 7.97 seconds;
+these are fixture-only provenance characterizations, not production migration.
+
+Full typecheck, full lint and scoped formatting passed after two optional-chain
+corrections, local interface syntax and configured formatting. The initial lint
+and formatting failures are retained. Seven ADR integration files passed all
+18 tests in 33.73 seconds; nine ADR/Markdown unit files passed all 41 in
+3.45 seconds with one worker and unchanged limits. Every primary Owner-file,
+index/configuration, task-index, frozen-metadata and source guard passed.
+Evidence: `ove026-history-completion-checks-20261018.complete.json` and the
+separate G1/G2/G3/reader captures in the retained session evidence directory.
+These scoped results are not a new complete-gate, production legacy ADR/index,
+hosted CI or acceptance pass; all seven criteria remain unchecked.
+
+
+### Independent-review repairs (2026-10-18)
+
+Independent review rejected revision `628c49d` despite its actual 21-gate PASS
+(570 covered tests, 84 integrations, four architecture CLI cases and 33 Rust
+tests). That result remains historical, not a pass for the corrected source.
+
+Each confirmed defect first failed a meaningful real regression: literal-title
+allocation and protected-heading preservation; duplicate unpublished identities
+in strict check/index; invalid UTF-8 through batched and individual historical
+reads; and an observed real editor update during renumber planning. The adjacent
+mapped-but-absent target also failed both real dry-run/apply CLI denials. Minimal
+corrections then passed the unchanged assertions and budgets, retaining temporary
+old-ID collision repair, BOM bytes and fixed safe decoding diagnostics.
+
+Full typecheck, full lint and scoped formatting passed. One actual unbound-method
+lint failure was preserved and corrected by binding the original real reader;
+no rule was disabled. Final current-source regressions passed 25 ADR integrations
+across 9 files and 42 ADR/Markdown units across 9 files with one worker.
+Captures: `ove026-review-repairs-20261018-*` in the retained evidence directory.
+Primary/source guards passed. Fresh exact-head complete gates and independent
+reviews remain required; production legacy failures, all unchecked criteria and
+the in_review status are unchanged.
+
+
+### Literal whitespace title data (2026-10-18)
+
+A further actual public allocation case with both leading and trailing spaces
+first failed ADR parsing even though allocation returned success. The existing
+literal encoder now also entity-encodes admitted whitespace; it never trims the
+Owner's title or changes metadata validation. The unchanged new case and both
+previous literal-title cases passed with exact metadata-title equality and actual
+public checker success. Full typecheck, full lint and scoped formatting passed.
+Final current-source regressions passed 26 ADR integrations across 9 files and
+42 ADR/Markdown units across 9 files, with one worker and unchanged limits.
+Captures: `ove026-title-whitespace-20261018-*` in the retained evidence directory.
+All guards passed; fresh exact-head full gates/reviews remain due. The criteria,
+status and production-migration allocation remain unchanged.
+
+### Final tooling-stage source validation (2026-10-18)
+
+Source revision `9e6ac12b6f20a368d74f8897718e47de6db84574` passed all 21
+applicable local gate commands: 571 covered unit tests, 92 integrations, four
+architecture CLI cases, 33 Rust tests, types, lint, formatting, build, workflow,
+npm/Cargo license and audit checks, sources/bans, secret scans and SBOM.
+The exact source also passed independent Standards and Specification reviews
+with zero findings, normal commit/push hooks and public `task:finish`.
+
+PR #990's exact-source hosted CI (39164479736), Security (39164479834) and
+Isolation policy (39164479725) all completed successfully. The initial runs
+cancelled by the configuration-label event remain recorded; they are not
+reported as successes. Real isolation escape, desktop E2E and visual checks
+were not performed. The actual legacy production ADR/index failures remain
+allocated to OSS005/014/010/011/015 under the approved staging decision.
+
+The current seven tooling-stage criteria are checked against this actual source
+evidence. Earlier pending statements are retained revision-specific history.
+This acceptance metadata and the final status-only commit still require fresh
+hosted checks and independent review before integration into DEVELOP. Evidence:
+`ove026-source-ready-9e6ac12-20261018.json`,
+`ove026-source-ci-9e6ac12-20261018.json` and the two
+`ove026-final-{standards,spec}-9e6ac12-20261018.json` review receipts.
 
 ## 13. Parallelization notes
+
+Approved sequence: OSS006 tooling -> OSS005 + OSS014 historical preparation -> complete reviewed OSS010/011 candidate -> OSS015 production closure -> OSS013 final review -> separate Owner publication approval. OSS014 depends on OSS005/006; OSS010/011 additionally depend on OSS014; OSS015 depends on OSS014/010/011; OSS013 additionally depends on OSS015. No readiness or partial-set bypass is permitted. See the full coordinated transfer contract in [OSS015](../OVE_OSS015/TASK.md).
 
 Parallel with OVE_OSS001..005. Translation tasks OVE_OSS010/011 depend on the slug map. Hotspot: `docs/adr/README.md` table (regenerate on conflicts, never merge by hand); new ADRs add their own file only.
 
@@ -135,3 +232,109 @@ Parallel with OVE_OSS001..005. Translation tasks OVE_OSS010/011 depend on the sl
 - ASSUMPTION: ADR dates for the existing 28 come from the project's document creation timestamps (all 2026-10-12 or 2026-10-13); the Owner may correct them.
 - ASSUMPTION: the Owner is the sole acceptor of ADRs for now.
 - Open question: the extra fields `tags` and `deciders` are additions to the Owner's minimal format; they are optional for the translated originals.
+
+The following checkpoint paragraphs are retained historical evidence at their stated revisions. Their then-pending scope approvals were superseded by the integrator's Owner-delegated 2026-10-18 decision; failed commands remain failures. No criterion is checked or status advanced by that decision.
+
+Implementation checkpoint: strict tools, real conforming/denied fixtures and the
+25-line template are ready for independent review. The actual repository
+`check:adr` and index check still fail on unmigrated legacy ADR 0001 metadata;
+source dates are unavailable. No blanket legacy exemption or fabricated
+production pass is used. See [the integration and staged-acceptance proposal](../_proposals/OVE_OSS006-integration-and-acceptance.md).
+Owner staged acceptance, full repository/CI gates and final independent reviews
+remain pending; this task is not done.
+
+
+Independent review of checkpoint 416e8ca found an archival-rename lifecycle bypass
+and Markdown parsing/rewriting gaps. The rename/history and production Git
+configuration repairs now pass 4 real-Git integration regressions (3 files,
+9.99 seconds) and the pure Git-environment regression. Each fixture Git
+subprocess remains isolated; the production port retains normal Owner config.
+Markdown indented-heading/comment/fence and titled/angle-link regressions remain
+RED pending the approved shared parser integration after OSS004 merges. No new
+runtime dependency or unmerged import was added. These repairs are not a final
+acceptance/review result; full checks and normal publication remain pending.
+
+The rebased shared-parser correction has now demonstrated actual focused
+RED-to-GREEN: the original five Markdown failures and a separately reproduced
+raw-HTML heading failure are corrected. The named batch passed 20 tests across
+five files in 1.33 seconds, including exact original-source spans, reference-key
+preservation, denied ambiguous destinations, dry-run identity and refusal to
+modify archived Polish source. Unrelated tests were explicitly skipped; full
+shared regressions, type/lint/security checks and fresh independent reviews
+remain pending. The strict production legacy-metadata failure and unapproved
+Owner staged acceptance remain blockers. Detailed captures and fixture
+corrections are recorded in the integration proposal.
+
+Subsequent actual validation passed full typecheck, full lint and changed-source
+formatting. The complete shared docs/ADR unit batch passed 75 and failed two
+5000 ms deadlines (inherited documentation Git isolation and this task's real
+CLI safety integration); no retry or budget relaxation was applied. Five actual
+ADR integrations passed across four files in 25.22 seconds. Both strict public
+ADR/index commands still exit 1 on legacy ADR 0001 metadata. A proposed
+byte-preserving classification with mandatory hosted execution is recorded for
+the real CLI safety test; it is not applied or approved yet. These failures,
+remaining exact-head gates/reviews and Owner staged acceptance still block
+completion.
+
+Independent specification review found an omitted proposal-body self-link during
+renumbering. A meaningful real dry-run/apply regression reproduced the broken
+old filename before implementation; the existing span rewriter now updates the
+proposal body before rendering. Both affected test files passed nine tests in
+1.07 seconds while preserving the fragment, title, inline-code example and exact
+dry-run bytes. This focused repair does not resolve the previously recorded
+timeouts, legacy migration failure or pending Owner acceptance. Fresh review of
+the corrected exact head remains required.
+
+Independent standards review also reproduced disclosure of malformed slug-map
+and event-label JSON through the public CLI error diagnostic. Two actual CLI
+regressions first failed their privacy assertions, then passed after each JSON
+parse boundary replaced parser/schema details with its own fixed safe message.
+The same one-worker run passed both cases in 987 ms with unchanged child and
+per-test limits. Generated input is never printed by the assertions. Scoped
+strict TypeScript, lint and formatting passed; full gates and independent review
+of this correction remain pending with the existing acceptance blockers.
+
+The complete gate attempt at `6960b09`, using one coverage/integration worker
+with unchanged assertions, limits and thresholds, passed 539 covered tests,
+70 integrations and the build. Architecture validation then correctly rejected
+the pending-link entry for the ADR README now created by this task; later
+security/Rust/SBOM gates were not reached. The integrator approved removing only
+that stale entry, retaining the other three and strict stale-entry enforcement.
+This is a narrow integration repair, not a complete-gate or acceptance pass.
+After the correction, actual `pnpm check:docs` passed with zero errors and
+38 warnings, and scoped JSON formatting passed.
+
+The actual complete-gate attempt at `00ff7c4` passed 539 covered tests, 70
+integrations, build, architecture/workflow, npm license/audits and Rust
+license/source/bans/fmt/Clippy/33 tests, then failed while downloading the pinned
+cargo-audit archive (`UND_ERR_SOCKET`). The failed run is preserved. After an
+exclusive byte-identical copy of an existing archive verified against the same
+locked checksum, the original installer and only the failed/unreached gates
+passed: cargo-audit, actual manifest-schema selection, both secret scans and
+SBOM. This is a complementary continuation PASS, not an original `pnpm check`
+PASS. Actual production ADR/index commands separately still exit 1 on legacy0001.
+
+New actual public CLI coverage first exposed a 3000 ms deadline on the complete
+31-published-record fixture. A one-time content-free Git diagnostic proved
+repeated immutable tree reads. An invocation-local successful-read cache retains
+at most 32 trees and 4 MiB of UTF-16 text accounting; it changes no history,
+transition, label or error checks. With the same fixture/assertions/3 s child and
+15 s test limits, both actual allocation and renumber/index/check CLI cases
+passed in 11.22 seconds. Full typecheck/lint and source formatting then passed;
+seven ADR integrations passed in 22.45 seconds and 76 shared ADR/docs unit tests
+in 6.68 seconds. Fresh independent review and all exact-new-head gates remain
+required. Current criteria, status and pending Owner acceptance are unchanged.
+
+Fresh Spec review identified that one remote task reservation dominated the
+earlier allocation case, so it could not independently prove the lower local
+and DEVELOP sources. Two additional actual CLI cases now prove local-highest
+37 selects 38, and a separately pushed remote DEVELOP 44 is fetched to select
+45 while the local checkout stays unchanged. All four public CLI cases passed
+in 17.51 seconds with the original limits and one worker. Only test coverage and
+factual evidence changed; formatting, full typecheck and scoped lint passed.
+Fresh exact-head reviews/gates and Owner scope acceptance remain pending.
+
+
+Approved tooling-stage allocation (2026-10-18): original criterion 1's fixed map is immediate, while actual imported-source correspondence is OSS005/010/011 and final OSS015 validation. Original criterion 2 is immediate public allocation (historical 0029/0030 examples mean next-free, not overwriting existing records). Original criterion 3's denied-case tooling proof is immediate; actual complete production current/history PASS belongs to OSS014 preparation plus OSS010/011 inputs and OSS015 closure. Original criterion 4's conforming public generation/staleness proof is immediate, while the actual production table/0001-0023 notes are OSS015. Original criterion 5's conforming public dry-run/apply/check is immediate; final migrated production correspondence/renumber/link validation is OSS015. Original criterion 6's README is immediate. No obligation is erased or represented as completed by allocation.
+
+Exact source a3f6a3ec9ef05583bd4f0d5b41efccd7c8ad8b73 passed the original applicable gate list once using the approved one-worker coverage/integration scheduling: 539 covered tests, 74 integrations, four architecture CLI cases, 33 Rust tests, types/lint/format/build, npm/Cargo license/audit/source/bans, workflow, secrets and SBOM (886 components). Original installer and actual Zod readManifest conditional selection ran. Production npm audit had no findings; development audit retained one LOW finding and Cargo retained five allowed warnings. Both secret scans found zero with one Keychain warning each. The earlier failed00ff attempt remains separate; this fresh run exited0. Independently, actual check:adr and gen:adr-index both exited1 at legacy ADR0001; no production migration PASS is claimed. Captures: ove026-full-gates-a3f6a3e.log/receipts/controller-result and ove026-gates-and-legacy-a3f6a3e.final-result under the retained session evidence directory. This new normative metadata delta needs its own reviews and exact-head gates before normal finish/merge; status stays in_review and all current criteria remain unchecked pending integrator verification.

@@ -1,6 +1,5 @@
-import { lint } from "markdownlint/sync";
-import type { MicromarkToken, Rule } from "markdownlint";
 import { decodeHTMLStrict } from "entities";
+import { flatten, parseMarkdown, stringValue } from "./markdown-parser.ts";
 
 export function slug(heading: string): string {
   return heading
@@ -44,70 +43,8 @@ export function markdownLines(md: string): MarkdownLine[] {
   return rows;
 }
 
-// Use the approved core's public parser seam instead of interpreting Markdown
-// with overlapping regular expressions. This remains deterministic and I/O-free.
-function parseMarkdown(md: string): {
-  tokens: MicromarkToken[];
-  offset: number;
-  frontMatter: readonly string[];
-} {
-  let tokens: MicromarkToken[] = [];
-  let frontMatter: readonly string[] = [];
-  const collect: Rule = {
-    names: ["overmind-doc-data"],
-    description: "Collect documentation syntax",
-    tags: ["data"],
-    parser: "micromark",
-    function: (params) => {
-      tokens = params.parsers.micromark.tokens;
-      frontMatter = params.frontMatterLines;
-    },
-  };
-  lint({
-    strings: { source: md },
-    config: { default: false, "overmind-doc-data": true },
-    customRules: [collect],
-    noInlineConfig: true,
-  });
-  return { tokens, offset: frontMatter.length, frontMatter };
-}
-
 export function markdownFrontMatter(md: string): readonly string[] {
   return parseMarkdown(md).frontMatter;
-}
-
-function flatten(tokens: readonly MicromarkToken[]): MicromarkToken[] {
-  const all: MicromarkToken[] = [];
-  const queue = [...tokens].reverse();
-  while (queue.length) {
-    const token = queue.pop();
-    if (token) {
-      all.push(token);
-      queue.push(...[...token.children].reverse());
-    }
-  }
-  return all;
-}
-
-function stringValue(token: MicromarkToken): string {
-  const queue = [...token.children].reverse();
-  let text = "";
-  while (queue.length) {
-    const child = queue.pop();
-    if (!child || ["image", "reference", "resource"].includes(child.type)) {
-      continue;
-    }
-    if (child.type === "characterReference") {
-      text += decodeHTMLStrict(child.text);
-    } else if (
-      ["data", "characterEscapeValue", "codeTextData", "mathTextData"].includes(child.type)
-    ) {
-      text += child.text;
-    } else {
-      queue.push(...[...child.children].reverse());
-    }
-  }
-  return text;
 }
 
 export function extractLinks(md: string): DocLink[] {
@@ -179,6 +116,15 @@ export function headings(
   for (const token of flatten(tokens).filter(
     (t) => t.type === "atxHeading" || t.type === "setextHeading",
   )) {
+    // markdownlint reparses HTML-flow children for lint rules. Those synthetic
+    // descendants are not Markdown headings rendered by the document.
+    let parent = token.parent;
+    while (parent && parent.type !== "htmlFlow" && parent.type !== "htmlText") {
+      parent = parent.parent;
+    }
+    if (parent) {
+      continue;
+    }
     const textToken = token.children.find(
       (child) => child.type === "atxHeadingText" || child.type === "setextHeadingText",
     );

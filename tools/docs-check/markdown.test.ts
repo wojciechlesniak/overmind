@@ -65,3 +65,11 @@ it("retains connector punctuation and inline math in GitHub anchors", () => {
     "equation-x",
   ]);
 });
+
+it("does not expose Markdown-looking headings inside a raw HTML block", () => {
+  expect(
+    headings("# Visible\n\n<div>\n# Hidden\n## Consequences\n</div>\n").map(
+      (heading) => heading.text,
+    ),
+  ).toEqual(["Visible"]);
+});
