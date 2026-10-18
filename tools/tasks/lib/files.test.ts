@@ -46,3 +46,14 @@ it("refuses a FIFO without waiting for a writer", () => {
     rmSync(directory, { recursive: true, force: true });
   }
 });
+
+it("refuses malformed UTF-8 instead of silently replacing source bytes", () => {
+  const directory = realpathSync(mkdtempSync(join(tmpdir(), "ove-task-utf8-")));
+  try {
+    const path = join(directory, "TASK.md");
+    writeFileSync(path, Buffer.from([0xc3, 0x28]));
+    expect(() => nodeFiles.readText(path)).toThrow("valid UTF-8");
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});

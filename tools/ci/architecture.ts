@@ -30,6 +30,9 @@ for (const [script, file, owner, integration] of tools) {
     missing.push(`${script} (${owner})`);
   }
 }
+if (existsSync("tools/tasks/gen-index.ts")) {
+  execFileSync("pnpm", ["gen:task-index", "--check"], { stdio: "inherit", shell: false });
+}
 if ((process.env["CI_BRANCH"] ?? "").startsWith("task/")) {
   if (existsSync("tools/tasks/check-owns.ts")) {
     execFileSync("pnpm", ["check:owns", "--base", process.env["CI_BASE"] ?? "origin/main"], {

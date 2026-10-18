@@ -34,6 +34,7 @@ export const taskFrontMatterSchema = z
     design_source: z.string().max(2048),
     spec_refs: texts,
     adr_refs: z.array(z.number().int().positive()),
+    blocks: z.array(metadataId).optional(),
   })
   .strict()
   .refine((task) => task.id.slice(4, -3) === task.area, "Task ID and area disagree");
