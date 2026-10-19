@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import { afterEach, describe, expect, it } from "vitest";
 import { resolve } from "node:path";
-import { linkSync, mkdirSync, realpathSync, renameSync, symlinkSync } from "node:fs";
+import { linkSync, lstatSync, mkdirSync, realpathSync, renameSync, symlinkSync } from "node:fs";
 import ts from "typescript";
 import { compilerOptions } from "./compiler-options.parse-boundary.ts";
 import { resolveImport } from "./ts-resolve.ts";
@@ -389,6 +389,26 @@ it("resolves only a real canonical dependency-manager store without executing so
 });
 it("admits the actual installed TypeScript store as a resolution positive", () => {
   const root = realpathSync(resolve(import.meta.dirname, "../.."));
+  const store = resolve(root, "node_modules/.pnpm");
+  const metadata = (path: string) => {
+    const file = lstatSync(path);
+    return {
+      links: file.nlink,
+      regular: file.isFile(),
+      sameDevice: file.dev === lstatSync(root).dev,
+    };
+  };
+  expect({
+    canonicalStore: realpathSync(store) === store,
+    manifest: metadata(realpathSync(resolve(root, "node_modules/typescript/package.json"))),
+    declaration: metadata(
+      realpathSync(resolve(root, "node_modules/typescript/lib/typescript.d.ts")),
+    ),
+  }).toEqual({
+    canonicalStore: true,
+    manifest: { links: 1, regular: true, sameDevice: true },
+    declaration: { links: 1, regular: true, sameDevice: true },
+  });
   const ws = readWorkspace(root);
   const result = resolveImport(
     ws,
@@ -497,3 +517,33 @@ it("preserves a literal native backslash in actual package ownership", () => {
   expect(actualOwner?.policy).toBeUndefined();
   expect(ownerOf(ws, filename)).toBe(actualOwner);
 });
+
+it.each(["manifest", "declaration"])(
+  "denies a hardlinked %s inside the canonical dependency store",
+  (kind) => {
+    const fixture = populated();
+    const outside = populated();
+    const store = "node_modules/.pnpm/external@1/node_modules/external";
+    fixture.write(
+      `${store}/package.json`,
+      JSON.stringify({ name: "external", types: "./index.d.ts", exports: { ".": "./index.d.ts" } }),
+    );
+    fixture.write(`${store}/index.d.ts`, "export declare const value: unknown;\n");
+    symlinkSync(resolve(fixture.root, store), resolve(fixture.root, "node_modules/external"));
+    const target = resolve(
+      fixture.root,
+      store,
+      kind === "manifest" ? "package.json" : "index.d.ts",
+    );
+    linkSync(target, resolve(outside.root, "aliased-store-input"));
+    expect(lstatSync(target).nlink).toBe(2);
+    expect(() =>
+      resolveImport(
+        readWorkspace(fixture.root),
+        resolve(fixture.root, "tools/src/index.ts"),
+        "external",
+      ),
+    ).toThrow(/^Invalid repository import\.$/u);
+    expect(lstatSync(target).nlink).toBe(2);
+  },
+);
