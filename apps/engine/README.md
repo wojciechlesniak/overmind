@@ -9,7 +9,7 @@ pnpm --filter @overmind/engine start version --json
 pnpm --filter @overmind/engine build
 node apps/engine/dist/engine.cjs version --json
 pnpm --filter @overmind/engine test
-pnpm exec vitest run --config vitest.int.config.ts apps/engine/test/process.int.test.ts
+pnpm exec vitest run --config vitest.int.config.ts tools/build/engine/process.int.test.ts
 ```
 
 Commands:
