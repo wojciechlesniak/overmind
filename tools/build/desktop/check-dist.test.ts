@@ -5,9 +5,9 @@ import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { expect, it } from "vitest";
 
-const desktop = resolve(import.meta.dirname, "..");
+const desktop = resolve(import.meta.dirname, "../../../apps/desktop");
 function run(directory: string) {
-  return spawnSync(process.execPath, [resolve(desktop, "scripts/check-dist.mjs"), directory], {
+  return spawnSync(process.execPath, [resolve(import.meta.dirname, "check-dist.mjs"), directory], {
     encoding: "utf8",
     timeout: 10000,
   });

@@ -41,7 +41,7 @@ it("real production bundle passes CSP checks, excludes private env and passes th
     expect(build.status).toBe(0);
     const guard = spawnSync(
       process.execPath,
-      [resolve(desktop, "scripts/check-dist.mjs"), output],
+      [resolve(root, "tools/build/desktop/check-dist.mjs"), output],
       { encoding: "utf8", timeout: 10000 },
     );
     expect(guard.status).toBe(0);
