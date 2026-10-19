@@ -75,9 +75,9 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 11. Acceptance criteria
 
-- [ ] All five actual server/build integrations run at new paths and preserve original hostile/private-environment/secret-scanner denials.
-- [ ] The protected CI step invokes both relocated suites and cannot disappear through the old config/path condition.
-- [ ] No original test, assertion, timeout or process cleanup was dropped or replaced by a stub.
+- [x] All five actual server/build integrations run at new paths and preserve original hostile/private-environment/secret-scanner denials.
+- [x] The protected CI step invokes both relocated suites and cannot disappear through the old config/path condition.
+- [x] No original test, assertion, timeout or process cleanup was dropped or replaced by a stub.
 
 ## 12. Test plan
 
@@ -96,3 +96,9 @@ Exact overlapping shared paths have sequential writers; wait for the owner, neve
 Registration alone supplies no implementation or acceptance proof; claim only after the definition lands on DEVELOP.
 Measured scope and line/move/generated-doc metrics belong in the external manifest/PR, not recursive TASK text.
 OVE_ARCH002 retains all nine original criteria, including actual hosted forbidden-import and aggregate rejection.
+
+### Verified acceptance (2026-10-19)
+
+All fifteen relocated integration cases and the existing CI gate tests passed locally.
+The exact published source passed hosted CI/Security/Isolation; its build job ran
+both new suite paths with fifteen passed cases. Evidence and limitations: PR #1007.
