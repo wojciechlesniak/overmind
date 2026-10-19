@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: ["OVE_ARCH027", "OVE_ARCH028"]
 soft_depends_on: []
 provides: ["lib:desktop-tauri-guard-tooling"]
@@ -76,10 +76,10 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 11. Acceptance criteria
 
-- [ ] Actual canonical Tauri config passes at the relocated path; every alternate/case-alias/capability/CSP/resource/icon mutation fails.
-- [ ] All three generated resources, sidecar, macOS policy and original Rust privacy/unsafe checks remain exact.
-- [ ] apps/desktop/package.json lint and root check:tauri both call the relocated guard in this PR; this exact manifest edit follows OVE_ARCH028 and precedes OVE_ARCH030.
-- [ ] Root and desktop commands use the new guard; permission policy remains at its original protected desktop path.
+- [x] Actual canonical Tauri config passes at the relocated path; every alternate/case-alias/capability/CSP/resource/icon mutation fails.
+- [x] All three generated resources, sidecar, macOS policy and original Rust privacy/unsafe checks remain exact.
+- [x] apps/desktop/package.json lint and root check:tauri both call the relocated guard in this PR; this exact manifest edit follows OVE_ARCH028 and precedes OVE_ARCH030.
+- [x] Root and desktop commands use the new guard; permission policy remains at its original protected desktop path.
 
 ## 12. Test plan
 
@@ -98,3 +98,28 @@ Exact overlapping shared paths have sequential writers; wait for the owner, neve
 Registration alone supplies no implementation or acceptance proof; claim only after the definition lands on DEVELOP.
 Measured scope and line/move/generated-doc metrics belong in the external manifest/PR, not recursive TASK text.
 OVE_ARCH002 retains all nine original criteria, including actual hosted forbidden-import and aggregate rejection.
+
+### Verified source checkpoint (2026-10-19)
+
+- Source `7ff55eac3e15d866210e321df933927bab33f8f2` obtained passing outcomes for
+  all 21 original local CI commands across the preserved prefix and recovery,
+  including coverage, integration, build, dependency-policy fixtures,
+  license/audit, Rust, secrets and SBOM controls. No single full-wrapper pass is
+  claimed: the first run passed five commands and 91 of 92 integration cases,
+  then failed the unchanged 5000 ms Git-environment fixture deadline.
+- The exact three affected integration cases passed separately without edits.
+  One justified complete integration rerun and the remaining 15 original commands
+  then passed; the original failed receipt/log remains part of the evidence.
+- The native checkpoint passed full typecheck/lint, all 27 original relocated
+  cases, all four configuration-protection tests, and actual root/desktop/default
+  and explicit-root CLI commands. The guard and original test bodies retain their
+  predecessor bytes after only location edits and the single formatter line wrap.
+- Independent whole-source Standards and Spec reviews both passed with zero
+  findings. The canonical permission allowlist, current CSP/capabilities, three
+  resources, Rust controls, dependency pins and all original CI rows are unchanged.
+- Evidence is sealed in `ove029-source-ready-7ff55ea-20261019.json`, with exact
+  source and raw-result hashes. Warnings remain visible; no gate or policy changed.
+- This records verified behavior. Normal public lifecycle, fresh exact-head hosted
+  CI/Security/Isolation and final independent reviews remain required before merge.
+  No real Mac isolation escape, application penetration or ARCH002 final acceptance
+  is claimed by this tooling relocation.

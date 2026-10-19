@@ -3,7 +3,7 @@ import { readFileSync, readdirSync, lstatSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { isDeepStrictEqual } from "node:util";
-const desktop = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const desktop = resolve(dirname(fileURLToPath(import.meta.url)), "../../../apps/desktop");
 const root = resolve(process.argv[2] ?? resolve(desktop, "src-tauri"));
 const fail = (message) => {
   throw new Error(`Tauri policy: ${message}`);
