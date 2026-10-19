@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: ["OVE_ARCH032"]
 soft_depends_on: []
 provides: ["lib:engine-lifecycle-tooling"]
@@ -76,9 +76,9 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 11. Acceptance criteria
 
-- [ ] The complete moved public-process suite passes with every original budget/assertion, including five-second/second-signal and nested-dependency denials.
-- [ ] Real source and bundle CLI outputs agree on protocol/exit/channel contracts; privacy and Unix lifecycle remain tested.
-- [ ] All bundler/protocol security regressions remain live; the previously unrun moved suite is not called passed before execution.
+- [x] The complete moved public-process suite passes with every original budget/assertion, including five-second/second-signal and nested-dependency denials.
+- [x] Real source and bundle CLI outputs agree on protocol/exit/channel contracts; privacy and Unix lifecycle remain tested.
+- [x] All bundler/protocol security regressions remain live; the previously unrun moved suite is not called passed before execution.
 
 ## 12. Test plan
 
@@ -97,3 +97,7 @@ Exact overlapping shared paths have sequential writers; wait for the owner, neve
 Registration alone supplies no implementation or acceptance proof; claim only after the definition lands on DEVELOP.
 Measured scope and line/move/generated-doc metrics belong in the external manifest/PR, not recursive TASK text.
 OVE_ARCH002 retains all nine original criteria, including actual hosted forbidden-import and aggregate rejection.
+
+Verified source `8daec33ba98e6604072be77146a7d07365d86580`: actual15 process/68 protocol tests, security,
+whole reviews and source CI are recorded in PR #1008 and
+`ove033-readme-repair-checkpoint-20261019.json`; fresh lifecycle/postmerge gates remain required.
