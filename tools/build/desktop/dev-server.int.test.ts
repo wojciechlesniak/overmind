@@ -7,7 +7,7 @@ import { resolve } from "node:path";
 import { createServer, preview, resolveConfig, type PreviewServer } from "vite";
 import { expect, it, vi } from "vitest";
 
-const root = resolve(import.meta.dirname, "..");
+const root = resolve(import.meta.dirname, "../../../apps/desktop");
 const configuration = resolve(root, "../../tools/vite/desktop.config.ts");
 async function unusedPort(): Promise<number> {
   const probe = createTcpServer();

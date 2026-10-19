@@ -5,10 +5,10 @@ import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { randomBytes } from "node:crypto";
 import { expect, it } from "vitest";
-import { isolatedGitEnvironment } from "../../../tools/hooks/git-test-environment.ts";
-import { installSecurityTool } from "../../../tools/secret-scan/install.ts";
-import { createGitleaksConfig } from "../../../tools/secret-scan/config.ts";
-import { scanSecrets } from "../../../tools/secret-scan/scan.ts";
+import { isolatedGitEnvironment } from "../../hooks/git-test-environment.ts";
+import { installSecurityTool } from "../../secret-scan/install.ts";
+import { createGitleaksConfig } from "../../secret-scan/config.ts";
+import { scanSecrets } from "../../secret-scan/scan.ts";
 
 const root = resolve(import.meta.dirname, "../../..");
 const desktop = resolve(root, "apps/desktop");
