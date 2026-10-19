@@ -15,15 +15,14 @@
     "react-dom": "catalog:"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "vite build && node ../../tools/build/desktop/check-dist.mjs",
-    "preview": "vite preview",
+    "dev": "vite --config ../../tools/vite/desktop.config.ts",
+    "build": "vite build --config ../../tools/vite/desktop.config.ts && node ../../tools/build/desktop/check-dist.mjs",
+    "preview": "vite preview --config ../../tools/vite/desktop.config.ts",
     "tauri": "tauri",
     "lint": "node ../../tools/build/desktop/check-tauri-config.mjs"
   },
   "devDependencies": {
     "vite": "catalog:",
-    "@vitejs/plugin-react-swc": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@types/node": "catalog:",

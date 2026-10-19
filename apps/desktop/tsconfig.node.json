@@ -1,9 +1,0 @@
-{
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "types": ["node"],
-    "tsBuildInfoFile": "${configDir}/.tsbuild/tsconfig.node.tsbuildinfo",
-    "outDir": "${configDir}/.tsbuild/node"
-  },
-  "include": ["vite.config.ts"]
-}

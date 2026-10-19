@@ -1094,9 +1094,9 @@ solution or obtain an explicit policy decision; no exception is created here.
 
 - Version: 4.3.3
 - License: MIT
-- Used by: apps/desktop (dev); tools (dev, OVE_ARCH027 relocation prerequisites)
+- Used by: tools (dev, desktop Vite configuration)
 - Added by: OVE_SETUP009
-- Value: Official React Fast Refresh integration compatible with the adopted Vite7 without the denied Babel/browser-data graph. OVE_ARCH027 declares the same pin directly in Tools for the later Vite configuration relocation; desktop keeps its declaration until that relocation works.
+- Value: Official React Fast Refresh integration compatible with the adopted Vite7 without the denied Babel/browser-data graph. OVE_ARCH030 moves the desktop Vite configuration into Tools, its sole direct importer; the validated desktop scripts select that configuration explicitly.
 - Maintenance cost: Vite-maintained plugin, upstream-driven cadence; two npm publisher maintainers, 41170 bytes unpacked. Review SWC native platform dependencies on upgrades.
 - Alternatives considered: plugin-react6 requires the denied Vite8 graph; plugin-react5 introduces Babel/caniuse-lite; handwritten refresh integration duplicates official tooling. Relying on the desktop importer from Tools would leave the relocated helper without its own declared dependency.
 - Risk: Transitive @swc/core native packages; postinstall remains explicitly denied. Development transforms use installed platform binaries without granting install scripts or network access.
