@@ -76,18 +76,53 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 11. Acceptance criteria
 
-- [ ] Canonical valid policy loads and unchanged identity reuses it; preserved-mtime edit revalidates and reports the changed/invalid input.
-- [ ] Missing/malformed JSON, unknown field/reference, duplicate ID/path, non-UTF8, oversize, source symlink/escape/FIFO and changed descriptor are denied safely.
-- [ ] All 140 real matrix cells agree; independent JSON and Markdown mutations each fail, including wildcard partial access.
-- [ ] Reader tests and consistency tests run without the scanner/plugin or root activation.
-- [ ] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
+- [x] Canonical valid policy loads and unchanged identity reuses it; preserved-mtime edit revalidates and reports the changed/invalid input.
+- [x] Missing/malformed JSON, unknown field/reference, duplicate ID/path, non-UTF8, oversize, source symlink/escape/FIFO and changed descriptor are denied safely.
+- [x] All 140 real matrix cells agree; independent JSON and Markdown mutations each fail, including wildcard partial access.
+- [x] Reader tests and consistency tests run without the scanner/plugin or root activation.
+- [x] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
 
 ## 12. Test plan
 
 - pnpm exec vitest run tools/boundaries/policy.test.ts tools/boundaries/consistency.test.ts
 - pnpm typecheck; applicable CONVENTIONS Definition of Done and exact-head review/CI.
 
-These are required future executions, not performed evidence. Preserve original budgets/assertions/retry0.
+The original budgets, assertions and retry0 remain unchanged.
+
+Acceptance checkpoint: source `cf40f11a271bc02a6fc06bbd9b96c4924b5e8fac`
+passed the complete original local CI/security sequence in one wrapper: all 21
+selected commands passed, with 627 covered unit tests, 92 integration tests,
+four dependency-policy CLI tests and 33 Rust tests. The separate native reader
+and matrix suites passed all 56 tests. The reader tracer and three catalogue
+identity regressions first failed on actual behavior; those RED receipts and
+prior native type/style failures remain retained.
+
+The source-ready receipt is `ove016-source-ready-cf40f11-20261019.json`.
+The source was normally rebased to DEVELOP `ddfa3b57c1d91927bafcc76c3514c3780916232a`;
+all four source objects and dependency, Cargo and policy bytes were verified
+unchanged. The normal publication hooks passed full typecheck, lint and all 667 tests
+in 107 files at rebased in-review checkpoint `6daf8069a2e9828ef1159b9d7dd2b8df169b1ea2`.
+Its independent Standards and Spec continuity reviews passed with zero findings,
+and its actual hosted workflows passed:
+
+- [CI](https://github.com/wojciechlesniak/overmind/actions/runs/39215575275)
+- [Security](https://github.com/wojciechlesniak/overmind/actions/runs/39215575170)
+- [Isolation gate](https://github.com/wojciechlesniak/overmind/actions/runs/39215575153)
+
+The initial public finish push and the first recovery push failed; the latter
+exposed an existing configuration-policy test exceeding its unchanged 30-second
+limit. The same case passed in isolation. The normal rebased publication used
+one Vitest worker while retaining every original assertion, budget and hook.
+The external first full-run preparation failure occurred before any gate ran.
+These failures remain recorded, without being relabelled as successes.
+
+Cargo-audit retains five policy-allowed warnings. Both local secret scans found
+zero secrets and retained one Keychain warning each. Every later metadata head
+still requires fresh hosted checks and independent continuity reviews before
+normal DEVELOP integration. Reserved boundary, contract, header, task-lint and
+ownership tools are not claimed as implemented controls. No actual macOS escape,
+product penetration, absent desktop acceptance scripts, Storybook implementation,
+later scanner/plugin or parent ARCH002 acceptance is inferred.
 
 ## 13. Parallelization notes
 
