@@ -4,6 +4,7 @@ import { dirname, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const scriptDirectory = dirname(fileURLToPath(import.meta.url));
+const desktopDirectory = resolve(scriptDirectory, "../../../apps/desktop");
 const rules = [
   ["dynamic-eval", /\beval\s*\(/u],
   ["dynamic-function", /\bnew\s+Function\s*\(/u],
@@ -83,7 +84,7 @@ function unsafeScript(content) {
 }
 export function checkDist(
   directory,
-  allowancePath = resolve(scriptDirectory, "check-dist.allow.json"),
+  allowancePath = resolve(desktopDirectory, "scripts/check-dist.allow.json"),
 ) {
   if (lstatSync(directory).isSymbolicLink()) {
     throw new Error("Bundle directory cannot be a symlink");
@@ -135,7 +136,7 @@ export function checkDist(
 }
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const { failures, largest } = checkDist(
-    resolve(process.argv[2] ?? resolve(scriptDirectory, "../dist")),
+    resolve(process.argv[2] ?? resolve(desktopDirectory, "dist")),
   );
   process.stdout.write(
     "File\tBytes\n" + largest.map((item) => `${item.file}\t${item.bytes}`).join("\n") + "\n",

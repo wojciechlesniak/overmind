@@ -16,7 +16,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/check-dist.mjs",
+    "build": "vite build && node ../../tools/build/desktop/check-dist.mjs",
     "preview": "vite preview",
     "tauri": "tauri",
     "lint": "node scripts/check-tauri-config.mjs"
