@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: ["OVE_ARCH017"]
 soft_depends_on: []
 provides: ["lib:boundary-eslint-resolution"]
@@ -76,10 +76,10 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 11. Acceptance criteria
 
-- [ ] Native ESLint parser/RuleTester resolution distinguishes allowed public imports from alias/relative/deep/unknown targets with exact package/subpath metadata.
-- [ ] Unsafe/unresolved governed inputs fail closed; lexical test detection does not erase builtin/global restrictions.
-- [ ] Root discovery retains all 17 workspace projects and adds exactlyone boundary-rules project; no global boundary rules are enabled yet.
-- [ ] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
+- [x] Native ESLint parser/RuleTester resolution distinguishes allowed public imports from alias/relative/deep/unknown targets with exact package/subpath metadata.
+- [x] Unsafe/unresolved governed inputs fail closed; lexical test detection does not erase builtin/global restrictions.
+- [x] Root discovery retains all 17 workspace projects and adds exactlyone boundary-rules project; no global boundary rules are enabled yet.
+- [x] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
 
 ## 12. Test plan
 
@@ -98,3 +98,6 @@ Exact overlapping shared paths have sequential writers; wait for the owner, neve
 Registration alone supplies no implementation or acceptance proof; claim only after the definition lands on DEVELOP.
 Measured scope and line/move/generated-doc metrics belong in the external manifest/PR, not recursive TASK text.
 OVE_ARCH002 retains all nine original criteria, including actual hosted forbidden-import and aggregate rejection.
+
+Verified native resolution, security7, whole source reviews and source CI: PR #1013.
+Evidence retains every failed attempt; fresh lifecycle and postmerge checks remain required.
