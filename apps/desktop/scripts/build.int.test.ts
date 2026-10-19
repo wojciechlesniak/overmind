@@ -30,7 +30,14 @@ it("real production bundle passes CSP checks, excludes private env and passes th
   try {
     const build = spawnSync(
       process.execPath,
-      [resolve(root, "node_modules/vite/bin/vite.js"), "build", "--outDir", output],
+      [
+        resolve(root, "node_modules/vite/bin/vite.js"),
+        "build",
+        "--config",
+        resolve(root, "tools/vite/desktop.config.ts"),
+        "--outDir",
+        output,
+      ],
       {
         cwd: desktop,
         env,

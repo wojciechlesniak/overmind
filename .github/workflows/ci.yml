@@ -171,7 +171,7 @@ jobs:
       - run: |-
           set -euo pipefail
           pnpm build
-          if [ -f apps/desktop/vite.config.ts ]; then
+          if [ -f tools/vite/desktop.config.ts ]; then
             pnpm exec tsx tools/secret-scan/install.ts all
             pnpm exec vitest run --config vitest.int.config.ts apps/desktop/scripts/dev-server.int.test.ts apps/desktop/scripts/build.int.test.ts
           fi

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
@@ -191,4 +191,23 @@ test("Git excludes credentials, generated files and local environment while reta
   assert.match(visible, /!\.env\.example/);
   assert.match(visible, /::\s+pnpm-lock\.yaml/);
   assert.ok(!readFileSync(resolve(root, ".gitattributes"), "utf8").includes("-diff"));
+});
+
+test("desktop Vite scripts use the shared config and Tools owns its existing SWC dependency", () => {
+  const desktop = readJson("apps/desktop/package.json");
+  const tools = readJson("tools/package.json");
+  assert.equal(desktop.scripts?.["dev"], "vite --config ../../tools/vite/desktop.config.ts");
+  assert.equal(
+    desktop.scripts["build"],
+    "vite build --config ../../tools/vite/desktop.config.ts && node ../../tools/build/desktop/check-dist.mjs",
+  );
+  assert.equal(
+    desktop.scripts["preview"],
+    "vite preview --config ../../tools/vite/desktop.config.ts",
+  );
+  assert.equal(desktop.devDependencies?.["@vitejs/plugin-react-swc"], undefined);
+  assert.equal(tools.devDependencies?.["@vitejs/plugin-react-swc"], "catalog:");
+  assert.equal(existsSync(resolve(root, "tools/vite/desktop.config.ts")), true);
+  assert.equal(existsSync(resolve(root, "apps/desktop/vite.config.ts")), false);
+  assert.equal(existsSync(resolve(root, "apps/desktop/tsconfig.node.json")), false);
 });

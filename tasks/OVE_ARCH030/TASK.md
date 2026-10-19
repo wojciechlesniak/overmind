@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: ["OVE_ARCH027", "OVE_ARCH028", "OVE_ARCH029"]
 soft_depends_on: []
 provides: ["lib:desktop-vite-tooling"]
@@ -77,10 +77,10 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 11. Acceptance criteria
 
-- [ ] Actual dev/preview bind only loopback with strict occupied-port failure and hostile Host/CORS/outside-file denial.
-- [ ] Valid loopback development proxy preserves Host; invalid targets reject and production ignores proxy/private env.
-- [ ] Both still-unmoved desktop integration files pass with the new explicit Vite configuration immediately; neither depends on deleted desktop/vite.config.ts or loses OVE_ARCH028's guard update.
-- [ ] Desktop build/preview/dev use the new config; removed Node-only reference is absent while UI and root test typechecks remain.
+- [x] Actual dev/preview bind only loopback with strict occupied-port failure and hostile Host/CORS/outside-file denial.
+- [x] Valid loopback development proxy preserves Host; invalid targets reject and production ignores proxy/private env.
+- [x] Both still-unmoved desktop integration files pass with the new explicit Vite configuration immediately; neither depends on deleted desktop/vite.config.ts or loses OVE_ARCH028's guard update.
+- [x] Desktop build/preview/dev use the new config; removed Node-only reference is absent while UI and root test typechecks remain.
 
 ## 12. Test plan
 
@@ -99,3 +99,28 @@ Exact overlapping shared paths have sequential writers; wait for the owner, neve
 Registration alone supplies no implementation or acceptance proof; claim only after the definition lands on DEVELOP.
 Measured scope and line/move/generated-doc metrics belong in the external manifest/PR, not recursive TASK text.
 OVE_ARCH002 retains all nine original criteria, including actual hosted forbidden-import and aggregate rejection.
+
+### Verified source checkpoint (2026-10-19)
+
+- Source `ca68415dce0530f76dcd30d678fe60100eb1ac7b` passed full typecheck/lint,
+  sixteen scoped unit tests and fifteen cases in both current desktop integration
+  files, preserving all original assertions/deadlines and the ARCH028 guard caller.
+- Both explicit-config build entry points passed. Actual dev/preview scripts bound
+  only 127.0.0.1:5173/4173, rejected evil.example without CORS permission and failed
+  on occupied default ports. Preview ignored an invalid development proxy target.
+  Existing Vite semantics for IP Hosts, localhost subdomains and missing Host stay
+  unchanged; the actual denial probes do not prove rejection of every Host value.
+- Normal generated lock changed only the obsolete desktop SWC importer; all other
+  bytes remained identical. Frozen install passed. Tools keeps the approved pin;
+  only two factual dependency-register context sentences changed through integrator.
+- Applicable dependency/license, high-production/critical-all audit, existing
+  architecture, history/tree secret and correct committed-source SBOM checks passed.
+  Normal commit/rebase/push hooks passed full types/lint and the complete unit suite.
+- Independent whole-source Standards and Spec reviews passed with zero findings.
+  Evidence is sealed in `ove030-source-ready-ca68415-20261019.json`.
+- Original real RED, first native lint errors and the bare pnpm builtin SBOM exit
+  remain preserved. Correct repository pnpm run sbom passed after commit; no failed
+  command becomes a pass, and no original21 local-wrapper execution is claimed.
+- This records verified behavior. Fresh exact lifecycle hosted checks/reviews,
+  normal done/final gates and actual DEVELOP postmerge CI/Security remain required.
+  No real Mac escape, product penetration or ARCH002 final acceptance is claimed.

@@ -5,9 +5,6 @@
       "path": "./apps/desktop"
     },
     {
-      "path": "./apps/desktop/tsconfig.node.json"
-    },
-    {
       "path": "./apps/engine"
     },
     {

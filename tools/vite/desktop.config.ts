@@ -1,12 +1,21 @@
 import process from "node:process";
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 
-export default defineConfig(({ command }) => {
-  const target = command === "serve" ? process.env["OVERMIND_DEV_PROXY"] : undefined;
+const proxyFailure = "Development proxy requires a loopback HTTP origin";
+
+export default defineConfig(({ command, isPreview }) => {
+  const target = command === "serve" && !isPreview ? process.env["OVERMIND_DEV_PROXY"] : undefined;
   if (target) {
-    const url = new URL(target);
+    let url: URL;
+    try {
+      url = new URL(target);
+    } catch {
+      throw new Error(proxyFailure);
+    }
     if (
+      !/^http:\/\/127\.0\.0\.1(?::[0-9]+)?\/?$/iu.test(target) ||
       url.protocol !== "http:" ||
       url.hostname !== "127.0.0.1" ||
       url.username ||
@@ -15,10 +24,11 @@ export default defineConfig(({ command }) => {
       url.search ||
       url.hash
     ) {
-      throw new Error("Development proxy requires a loopback HTTP origin");
+      throw new Error(proxyFailure);
     }
   }
   return {
+    root: fileURLToPath(new URL("../../apps/desktop", import.meta.url)),
     plugins: [react()],
     clearScreen: false,
     envPrefix: ["VITE_OVERMIND_"],
