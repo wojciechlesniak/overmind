@@ -17,7 +17,7 @@ import { homedir, tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { createRequire } from "node:module";
 import { afterAll, beforeAll, expect, it } from "vitest";
-import { bundleEngine } from "../build/bundle.mjs";
+import { bundleEngine } from "../../../tools/build/engine/bundle.mjs";
 import { readJsonRecord } from "../../../tools/test-support/json.parse-boundary.ts";
 
 const root = resolve(import.meta.dirname, "../../..");
@@ -349,4 +349,34 @@ it("stamps the single contracts protocol constant and rejects invalid values", a
       );
     }
   }
+});
+
+it("static protocol integration stamps a literal without executing contracts", async () => {
+  const directory = fixture(
+    "protocol-static-throw",
+    "export async function startEngine(){} export async function shutdown(){}",
+  );
+  const contracts = resolve(directory, "packages/contracts/src");
+  mkdirSync(contracts, { recursive: true });
+  writeFileSync(
+    resolve(contracts, "index.ts"),
+    'throw new Error("Contract code must not execute"); export const PROTOCOL_VERSION = 7;',
+  );
+  const outfile = resolve(directory, "dist/engine.cjs");
+  await bundleEngine({ root: directory, outfile });
+  const result = execute(outfile, ["version", "--json"]);
+  expect(result.status).toBe(0);
+  expect(readOutput(result.stdout)).toMatchObject({ protocol: 7, buildSha: "dev" });
+});
+it("static protocol integration rejects a computed protocol instead of executing it", async () => {
+  const directory = fixture(
+    "protocol-static-computed",
+    "export async function startEngine(){} export async function shutdown(){}",
+  );
+  const contracts = resolve(directory, "packages/contracts/src");
+  mkdirSync(contracts, { recursive: true });
+  writeFileSync(resolve(contracts, "index.ts"), 'export const PROTOCOL_VERSION = Number("7");');
+  await expect(
+    bundleEngine({ root: directory, outfile: resolve(directory, "dist/engine.cjs") }),
+  ).rejects.toThrow("Invalid contracts protocol version");
 });

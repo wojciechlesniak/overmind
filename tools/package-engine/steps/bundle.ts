@@ -7,7 +7,7 @@ export const bundle = step("bundle", async (ctx) => {
   await execute(
     ctx.runner,
     process.execPath,
-    [resolve(ctx.root, "apps/engine/build/bundle.mjs"), "--out-dir", ctx.dist],
+    [resolve(ctx.root, "tools/build/engine/bundle.mjs"), "--out-dir", ctx.dist],
     { cwd: ctx.root },
   );
 });

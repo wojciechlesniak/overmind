@@ -144,7 +144,7 @@ test.skipIf(process.platform !== "darwin" || process.arch !== "arm64")(
               stderr: Buffer.alloc(0),
             });
           }
-          if (args.some((arg) => arg.endsWith("apps/engine/build/bundle.mjs"))) {
+          if (args.some((arg) => arg.endsWith("tools/build/engine/bundle.mjs"))) {
             return Promise.resolve({
               status: 1,
               stdout: Buffer.alloc(0),

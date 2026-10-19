@@ -60,7 +60,7 @@ test.skipIf(process.platform !== "darwin" || process.arch !== "arm64")(
       expect(await fetchRuntime.run(ctx)).toEqual({ ok: true });
       await execute(
         runner,
-        resolve(root, "apps/engine/node_modules/.bin/esbuild"),
+        resolve(root, "tools/node_modules/.bin/esbuild"),
         [
           "tools/package-engine/fixtures/mappedThrow.ts.fixture",
           "--bundle",
