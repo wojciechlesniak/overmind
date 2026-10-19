@@ -26,6 +26,19 @@ const require = createRequire(import.meta.url);
 const cli = resolve(require.resolve("eslint/package.json"), "../bin/eslint.js");
 let probeSequence = 0;
 
+function completionDiagnostic(
+  result: Pick<ReturnType<typeof spawnSync>, "error" | "signal" | "status">,
+): string {
+  const error = result.error;
+  return JSON.stringify({
+    name: error?.name.slice(0, 64) ?? null,
+    code:
+      error && "code" in error && typeof error.code === "string" ? error.code.slice(0, 64) : null,
+    signal: result.signal,
+    status: result.status,
+  });
+}
+
 function lintProbe(path: string, source: string): string[] {
   // Project-service snapshots may retain a previous version of a reused path.
   // Give each negative case its own file so its type information is independent.
@@ -193,7 +206,11 @@ test("only real ESLint suppression comments require a reason", () => {
         maxBuffer: 16_384,
       });
     const allowed = run();
-    assert.equal(allowed.error === undefined, true, "The valid fixture CLI must complete.");
+    assert.equal(
+      allowed.error === undefined,
+      true,
+      `The valid fixture CLI must complete: ${completionDiagnostic(allowed)}`,
+    );
     assert.equal(allowed.status, 0);
     assert.equal(allowed.stdout.length, 0);
     assert.equal(allowed.stderr.length, 0);
@@ -202,7 +219,11 @@ test("only real ESLint suppression comments require a reason", () => {
       'export const message = "// eslint-disable no-console";\n// eslint-disable-next-line no-console\nconsole.log(1);\n',
     );
     const denied = run();
-    assert.equal(denied.error === undefined, true, "The invalid fixture CLI must complete.");
+    assert.equal(
+      denied.error === undefined,
+      true,
+      `The invalid fixture CLI must complete: ${completionDiagnostic(denied)}`,
+    );
     assert.equal(denied.status, 1);
     assert.equal(denied.stdout.length, 0);
     assert.equal(
