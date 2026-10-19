@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 import { realpath, rename, unlink, writeFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import { dirname, matchesGlob, resolve } from "node:path";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { checkDocuments, type Flags } from "./checker.ts";
 import { diagnostic, type Diagnostic } from "./policy.ts";
 import { checkExternalLinks, type ExternalPort } from "./external.ts";
@@ -14,7 +14,7 @@ import {
   workspacePatterns,
   workspaceManifest,
 } from "./input.parse-boundary.ts";
-import { runPlugins } from "./plugins.ts";
+import { generatePluginRegistry } from "./plugin-registry.ts";
 import { updateGenerated } from "./generated.ts";
 import { isolatedGitEnvironment } from "../hooks/git-test-environment.ts";
 
@@ -118,6 +118,19 @@ export async function run(root: string, args: string[], network?: ExternalPort):
   const errors: Diagnostic[] = [];
   try {
     const base = await realpath(root);
+    const pluginPaths = await generatePluginRegistry(base, "write");
+    const sourceRoot = await realpath(resolve(dirname(fileURLToPath(import.meta.url)), "../.."));
+    if (base !== sourceRoot && pluginPaths.length > 0) {
+      throw new Error("Plugin registry belongs to another runtime checkout.");
+    }
+    const registry: Readonly<Record<string, unknown>> =
+      base === sourceRoot
+        ? (await import("./plugin-registry.generated.ts")).pluginRegistry
+        : Object.freeze({});
+    if (JSON.stringify(Object.keys(registry).sort()) !== JSON.stringify(pluginPaths)) {
+      throw new Error("Plugin registry inventory changed.");
+    }
+    const { runPlugins } = await import("./plugins.ts");
     const tracked = execFileSync("git", ["ls-files", "-z", "--cached"], {
       cwd: base,
       env: isolatedGitEnvironment(),
@@ -195,7 +208,7 @@ export async function run(root: string, args: string[], network?: ExternalPort):
     errors.push(
       ...(await checkDocuments({ files, paths, scripts, config, pending, flags, workspaces })),
     );
-    errors.push(...(await runPlugins({ root: base, files, paths: inventory, flags })));
+    errors.push(...(await runPlugins({ root: base, files, paths: inventory, flags }, registry)));
     if (flags.external) {
       errors.push(
         ...(await checkExternalLinks(

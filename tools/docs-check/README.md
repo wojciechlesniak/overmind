@@ -73,6 +73,20 @@ Run returns diagnostics with `file`, positive `line`, `rule`, `severity` and
 `message`; asynchronous results are supported. Report only tracked paths and
 never include document contents, credentials or local paths in messages.
 
-Modules are discovered from Git, not Markdown input. Source aliases, escaped
-paths, invalid exports and malformed diagnostics fail closed. Plugins are reviewed
-repository code, not a sandbox for untrusted executable extensions.
+Every public `pnpm check:docs` invocation regenerates the tracked static namespace
+registry before loading its consumer. Git inventory and bounded source admission
+happen before candidate code executes. Imports use literal module paths; namespace
+values remain unknown until the existing strict plugin schema admits them. The
+consumer executes entries in sorted path order and freezes context and flags.
+
+The CLI runtime and a nonempty registry must belong to the same canonical checkout.
+Checking another repository with no plugins remains supported; a different root
+with plugins is denied instead of consuming another checkout's registry. Each CLI
+invocation starts a fresh process, so adding or removing a tracked plugin updates
+its generated imports before execution. A same-process stale registry is denied
+when its keys differ from current admitted inventory.
+
+Source aliases, escaped paths, malformed source, invalid exports and malformed
+diagnostics fail closed with fixed diagnostics. Failed candidate admission leaves
+the existing registry unchanged. Plugins are reviewed repository code, not a
+sandbox for untrusted executable extensions.

@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { expect, it, vi } from "vitest";
 import { isolatedGitEnvironment } from "../hooks/git-test-environment.ts";
+import { renderPluginRegistry } from "./plugin-registry.ts";
 import { run } from "./run.ts";
 
 it("runs on a real tracked repository, remains offline by default and produces GitHub annotations", async () => {
@@ -11,6 +12,10 @@ it("runs on a real tracked repository, remains offline by default and produces G
   try {
     execFileSync("git", ["init", "--quiet", root], { env: isolatedGitEnvironment() });
     await mkdir(join(root, "tools/docs-check"), { recursive: true });
+    await writeFile(
+      join(root, "tools/docs-check/plugin-registry.generated.ts"),
+      renderPluginRegistry([]),
+    );
     await writeFile(join(root, "package.json"), JSON.stringify({ scripts: { check: "test" } }));
     await mkdir(join(root, "apps/engine"), { recursive: true });
     await writeFile(join(root, "pnpm-workspace.yaml"), "packages: [apps/*]\n");
