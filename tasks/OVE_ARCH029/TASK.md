@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: in_progress
+status: in_review
 depends_on: ["OVE_ARCH027", "OVE_ARCH028"]
 soft_depends_on: []
 provides: ["lib:desktop-tauri-guard-tooling"]
