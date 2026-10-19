@@ -76,17 +76,45 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 11. Acceptance criteria
 
-- [ ] Actual added/removed docs-* check.ts changes sorted literal imports deterministically; all discovered candidates are present exactlyonce.
-- [ ] Symlink/escape/nonregular/oversize/invalid UTF8 candidates fail before any harmless execution marker can run.
-- [ ] Generated values stay unknown until existing schemas validate; no variable import or manual omitted-plugin list remains in the registry mechanism.
-- [ ] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
+- [x] Actual added/removed docs-* check.ts changes sorted literal imports deterministically; all discovered candidates are present exactlyonce.
+- [x] Symlink/escape/nonregular/oversize/invalid UTF8 candidates fail before any harmless execution marker can run.
+- [x] Generated values stay unknown until existing schemas validate; no variable import or manual omitted-plugin list remains in the registry mechanism.
+- [x] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
 
 ## 12. Test plan
 
 - pnpm exec vitest run tools/docs-check/plugin-registry.test.ts
 - Use disposable real Git inventory fixtures for candidate add/remove/determinism and admission denials; no candidate source execution.
 
-These are required future executions, not performed evidence. Preserve original budgets/assertions/retry0.
+The required commands retain their original budgets, assertions and retry0.
+
+Acceptance checkpoint: source `5821807655e9f8309bcc199dbb3f2376c2b4f597`
+was rebased on DEVELOP `4293eddf0f941d8213482ceaa6c56881ed43c1e1`.
+Actual local evidence contains 611 covered unit tests, 92 integration tests,
+four dependency-policy CLI tests and 33 Rust tests. All 21 selected original
+commands passed across the retained failed 17-command prefix and successful
+four-command security continuation. The original wrapper failed on a pinned
+cargo-audit archive download; it remains failed. Only the exact verified archive
+was reused before the normal installer verified and extracted it.
+
+Both whole-source reviews and independent in-review continuity reviews passed
+with zero findings. The in-review checkpoint is `329625aa7ff817c76467230daf2249f3f7e2ae84`;
+its actual hosted workflows passed:
+
+- [CI](https://github.com/wojciechlesniak/overmind/actions/runs/39211756900)
+- [Security](https://github.com/wojciechlesniak/overmind/actions/runs/39211756918)
+- [Isolation gate](https://github.com/wojciechlesniak/overmind/actions/runs/39211757051)
+
+The source-ready receipt is `ove049-source-ready-5821807-20261019.json`;
+local gate receipts are consolidated in
+`ove049-full-gates-consolidated-58218076-20261019.json`. Prior actual RED,
+lint and review failures remain recorded in the integration proposal and receipts.
+Cargo-audit policy-allowed warnings and local Keychain scan warnings remain visible;
+both local secret scans reported zero findings. Every later metadata head still
+requires fresh exact-head hosted checks and independent continuity reviews before
+normal DEVELOP integration. Reserved task-lint/ownership scripts are not claimed
+as implemented controls. No actual macOS escape, absent desktop e2e/visual script,
+Storybook implementation, Task050 consumer or parent ARCH002 acceptance is claimed.
 
 ## 13. Parallelization notes
 
