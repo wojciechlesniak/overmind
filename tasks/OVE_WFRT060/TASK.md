@@ -6,7 +6,7 @@ kind: security
 size: S
 priority: P0
 mvp: true
-status: in_progress
+status: in_review
 depends_on: ["OVE_WFRT058", "OVE_WFRT059"]
 soft_depends_on: []
 provides: ["lib:expression-parser-prerequisite", "doc:expression-grammar-prerequisite"]
