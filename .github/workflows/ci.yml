@@ -173,7 +173,7 @@ jobs:
           pnpm build
           if [ -f tools/vite/desktop.config.ts ]; then
             pnpm exec tsx tools/secret-scan/install.ts all
-            pnpm exec vitest run --config vitest.int.config.ts apps/desktop/scripts/dev-server.int.test.ts apps/desktop/scripts/build.int.test.ts
+            pnpm exec vitest run --config vitest.int.config.ts tools/build/desktop/dev-server.int.test.ts tools/build/desktop/build.int.test.ts
           fi
           pnpm --filter @overmind/ui-kit --if-present run build:storybook
   architecture:
