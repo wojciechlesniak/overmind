@@ -6,7 +6,7 @@ kind: security
 size: S
 priority: P0
 mvp: true
-status: in_review
+status: done
 depends_on: ["OVE_ARCH003"]
 soft_depends_on: []
 provides: ["lib:expression-lexer-prerequisite", "contract:expression-syntax-prerequisite"]
