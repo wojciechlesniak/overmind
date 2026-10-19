@@ -9,8 +9,8 @@
   },
   "sideEffects": false,
   "dependencies": {
+    "@overmind/api-client": "workspace:*",
     "@overmind/application": "workspace:*",
-    "@overmind/contracts": "workspace:*",
-    "@overmind/domain": "workspace:*"
+    "@overmind/contracts": "workspace:*"
   }
 }

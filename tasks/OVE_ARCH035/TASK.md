@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: ["OVE_ARCH001", "OVE_ARCH034"]
 soft_depends_on: []
 provides: ["lib:telegram-boundary-alignment"]
@@ -75,10 +75,10 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 11. Acceptance criteria
 
-- [ ] Manifest and tsconfig contain exactly api-client/application/contracts and no domain edge; lockfile is normally generated/frozen-valid.
-- [ ] Exact scaffold graph assertion rejects an added/removed wrong edge; actual adapter and engine typechecks/build still pass.
-- [ ] No unrelated source behavior, package version or policy changed.
-- [ ] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
+- [x] Manifest and tsconfig contain exactly api-client/application/contracts and no domain edge; lockfile is normally generated/frozen-valid.
+- [x] Exact scaffold graph assertion rejects an added/removed wrong edge; actual adapter and engine typechecks/build still pass.
+- [x] No unrelated source behavior, package version or policy changed.
+- [x] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
 
 ## 12. Test plan
 
@@ -97,3 +97,7 @@ Exact overlapping shared paths have sequential writers; wait for the owner, neve
 Registration alone supplies no implementation or acceptance proof; claim only after the definition lands on DEVELOP.
 Measured scope and line/move/generated-doc metrics belong in the external manifest/PR, not recursive TASK text.
 OVE_ARCH002 retains all nine original criteria, including actual hosted forbidden-import and aggregate rejection.
+
+Verified source `413d8c97e7fe0e454f62d21d0a1e902c18b4b780`: 9 scaffold and 931 unit tests,
+adapter/engine builds, security, whole reviews and source CI: PR #1014 and
+`ove035-source-checkpoint-20261019.json`. Fresh lifecycle/postmerge gates remain required.
