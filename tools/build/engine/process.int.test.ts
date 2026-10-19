@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 import {
   execFileSync,
   spawn,
@@ -6,19 +7,22 @@ import {
 } from "node:child_process";
 import {
   cpSync,
+  existsSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
+  realpathSync,
   rmSync,
   symlinkSync,
   writeFileSync,
 } from "node:fs";
+import { createConnection, type Socket } from "node:net";
 import { homedir, tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { createRequire } from "node:module";
 import { afterAll, beforeAll, expect, it } from "vitest";
-import { bundleEngine } from "../../../tools/build/engine/bundle.mjs";
-import { readJsonRecord } from "../../../tools/test-support/json.parse-boundary.ts";
+import { bundleEngine } from "./bundle.mjs";
+import { readJsonRecord } from "../../test-support/json.parse-boundary.ts";
 
 const root = resolve(import.meta.dirname, "../../..");
 const require = createRequire(import.meta.url);
@@ -379,4 +383,64 @@ it("static protocol integration rejects a computed protocol instead of executing
   await expect(
     bundleEngine({ root: directory, outfile: resolve(directory, "dist/engine.cjs") }),
   ).rejects.toThrow("Invalid contracts protocol version");
+});
+
+it("the actual compiled CLI closes a real Unix socket on SIGTERM", async () => {
+  const socketDirectory = realpathSync(mkdtempSync("/tmp/ove033-uds-"));
+  const socketPath = resolve(socketDirectory, "engine.sock");
+  let child: ChildProcessWithoutNullStreams | undefined;
+  let connection: Socket | undefined;
+  let stopped: Promise<number | null> | undefined;
+  try {
+    const entry = await fixtureBundle(
+      "unix-socket",
+      `import { createServer } from "node:net";
+let server;
+export async function startEngine() {
+  server = createServer(socket => socket.once("data", data => socket.end(data.toString() === "ping" ? "pong" : "invalid")));
+  await new Promise((_, reject) => {
+    server.once("error", reject);
+    server.listen(${JSON.stringify(socketPath)}, () => process.stderr.write("ready\\n"));
+  });
+}
+export async function shutdown() {
+  await new Promise((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
+}`,
+    );
+    child = launch(entry);
+    stopped = exit(child);
+    await output(child, "ready");
+    const client = createConnection(socketPath);
+    connection = client;
+    const response = await new Promise<string>((resolveResponse, reject) => {
+      let text = "";
+      client.setEncoding("utf8");
+      client.setTimeout(3000, () => client.destroy(new Error("Unix socket response timed out")));
+      client.on("data", (data: string) => {
+        text += data;
+        if (text.length > 4) {
+          client.destroy(new Error("Unexpected Unix socket response"));
+        }
+      });
+      client.once("error", reject);
+      client.once("end", () => {
+        resolveResponse(text);
+      });
+      client.once("connect", () => client.end("ping"));
+    });
+    expect(response).toBe("pong");
+    client.destroy();
+    child.kill("SIGTERM");
+    expect(await stopped).toBe(0);
+    expect(existsSync(socketPath)).toBe(false);
+  } finally {
+    connection?.destroy();
+    if (child?.exitCode === null && child.signalCode === null) {
+      child.kill("SIGKILL");
+    }
+    if (stopped) {
+      await stopped;
+    }
+    rmSync(socketDirectory, { recursive: true, force: true });
+  }
 });
