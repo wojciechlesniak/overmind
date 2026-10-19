@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: in_review
+status: done
 depends_on: ["OVE_ARCH001", "OVE_ARCH034"]
 soft_depends_on: []
 provides: ["lib:telegram-boundary-alignment"]
