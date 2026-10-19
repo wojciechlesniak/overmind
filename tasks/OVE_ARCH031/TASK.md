@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: in_review
+status: done
 depends_on: ["OVE_ARCH028", "OVE_ARCH029", "OVE_ARCH030"]
 soft_depends_on: []
 provides: ["lib:desktop-acceptance-tooling"]
