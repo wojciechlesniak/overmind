@@ -76,10 +76,10 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 11. Acceptance criteria
 
-- [ ] Longest-prefix ownership, scoped names, exported root/subpath and conditional exports return exact expected package identities.
-- [ ] Duplicate manifest names, unsafe/missing manifests, unknown config/extends or symlinked configuration reject; no premature realpath erases the denial.
-- [ ] TypeScript alias and confined-store positives resolve, while source escape/symlink and unresolvable targets cannot silently pass.
-- [ ] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
+- [x] Longest-prefix ownership, scoped names, exported root/subpath and conditional exports return exact expected package identities.
+- [x] Duplicate manifest names, unsafe/missing manifests, unknown config/extends or symlinked configuration reject; no premature realpath erases the denial.
+- [x] TypeScript alias and confined-store positives resolve, while source escape/symlink and unresolvable targets cannot silently pass.
+- [x] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
 
 ## 12. Test plan
 
@@ -87,6 +87,45 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 - After both engines exist: retain real symlink RED/GREEN and positive alias/store cases in imports/proving suites.
 
 These are required future executions, not performed evidence. Preserve original budgets/assertions/retry0.
+
+### Actual verification checkpoint
+
+- Direct resolver verification passed all 60 real-filesystem cases, covering exact
+  ownership/exports/aliases, malformed and missing inputs, confined installed-store
+  positives and both real hardlink denials. The original strict reader is unchanged.
+- The integrator's finite four-path materialization repair first produced a real
+  public-policy RED. Frozen installation and effective `clone-or-copy`, full
+  typecheck/lint, the same public regression and all five policy integration cases
+  passed. The external wrapper's wrong four-case count remains a failed receipt;
+  its successful commands and additive continuation are recorded separately.
+- The continuation passed the 60 resolver cases, dependency/license checks,
+  high-production and critical-all audits, history/tree secret scans and scoped
+  formatting. Normal publication at `718e0a83` passed full typecheck, lint and all
+  800 unit tests in 109 files. No test assertion, deadline or retry was relaxed.
+- Fresh exact `718e0a83` hosted [CI](https://github.com/wojciechlesniak/overmind/actions/runs/39240088385),
+  [Security](https://github.com/wojciechlesniak/overmind/actions/runs/39240088291)
+  and [Isolation](https://github.com/wojciechlesniak/overmind/actions/runs/39240088312)
+  passed all required checks. Linux passed the original real installed-TypeScript
+  positive. Implemented architecture checks, catalogue integration and documentation
+  Git-environment integration passed; absent future boundary tools are not claimed.
+- Independent whole Standards and Spec reviews passed without findings for all ten
+  changed paths at `718e0a83`, including the four integrator-authored policy files.
+  Both independently assessed Task section 12 and CONVENTIONS section 8: the
+  directly applicable proof above is complete; the whole local integration glob
+  was an additional diagnostic profile, rather than a named acceptance gate.
+- Historical broad integration remains failed: 97 cases, 92 passed and 5 failed.
+  The scoped diagnostic remains failed: 16 cases, 12 passed and 4 failed. Only two
+  registry timeouts reproduced on the unaffected baseline; catalogue/Git/ADR failures
+  are not claimed baseline-reproduced. Current required catalogue/Git hosted steps
+  passed. No whole-glob success or universal environment cause is inferred.
+- Original source REDs, the corrected ownership review finding, Linux nlink=2
+  failure, failed launcher-equivalence diagnostic and failed count wrapper remain
+  retained. The optional H2 timing probe was prepared but never executed.
+- Evidence and exact hashes are in the PR's external applicability manifest and
+  whole-review receipts. Fresh acceptance/done-head checks and reviews, normal
+  latest-DEVELOP integration and actual post-merge CI/Security remain mandatory.
+  Both public-engine proving suites remain future executions under section 12;
+  parent ARCH002, real product/macOS penetration and isolation are not accepted.
 
 ## 13. Parallelization notes
 
