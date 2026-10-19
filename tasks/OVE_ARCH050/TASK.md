@@ -76,17 +76,57 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 11. Acceptance criteria
 
-- [ ] Actual public CLI auto-discovers and executes a newly added valid plugin with existing validated context/diagnostics; removal cannot leave a stale imported entry.
-- [ ] Malformed/unsafe candidate is denied before execution, with fixed safe diagnostic; untracked or malformed plugin result fails as before.
-- [ ] Normal/publish/i18n behavior and original required checks/under 10 s contract remain, with no variable plugin import.
-- [ ] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
+- [x] Actual public CLI auto-discovers and executes a newly added valid plugin with existing validated context/diagnostics; removal cannot leave a stale imported entry.
+- [x] Malformed/unsafe candidate is denied before execution, with fixed safe diagnostic; untracked or malformed plugin result fails as before.
+- [x] Normal/publish/i18n behavior and original required checks/under 10 s contract remain, with no variable plugin import.
+- [x] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
 
 ## 12. Test plan
 
 - pnpm exec vitest run tools/docs-check/plugins.test.ts
 - pnpm exec vitest run --config vitest.int.config.ts tools/docs-check/registry.int.test.ts; pnpm check:docs; actual publish still denies unresolved original obligations.
 
-These are required future executions, not performed evidence. Preserve original budgets/assertions/retry0.
+The required checks retain their original budgets, assertions and retry0.
+
+Acceptance checkpoint: all nine source artifacts are unchanged from complete
+source review `a02f9464559c8a485fd35b829a7859b8139642f1`, rebased onto
+DEVELOP `4038c3acc28bbed33028590bf6740b0fab472480`. Normal source and metadata
+hooks passed typecheck, lint and 671 tests in 107 files. The separate focused
+sequence passed eight unit tests and eight real CLI/Git integration tests,
+including automatic add/remove, flags, strict results, unsafe input denial before
+execution markers, foreign-root denial and inherited Git environment isolation.
+The unchanged 150-document performance case passed in 458 ms within its original
+ten-second budget; each new public CLI fixture retains its 10000 ms assertion.
+
+Actual repository-wide default docs checks passed in 4.174 s with 38 warnings.
+The publication run correctly denied six existing unresolved obligations, with
+38 warnings, in 17.424 s. This is not a claim that full-repository publication
+completed under ten seconds. Full-history and working-tree secret scans each
+reported zero findings and retained the existing Keychain warning.
+
+Both complete source reviews and independent in-review continuity reviews
+passed with zero findings. In-review checkpoint
+`eb2fde4e213e2851b257c4b41100ab6913cf0750` passed its strict complete hosted rollup:
+
+- [CI](https://github.com/wojciechlesniak/overmind/actions/runs/39222673895)
+- [Security](https://github.com/wojciechlesniak/overmind/actions/runs/39222673877)
+- [Isolation gate](https://github.com/wojciechlesniak/overmind/actions/runs/39222673886)
+
+Evidence: `ove050-native2-20261019.json`,
+`ove050-applicable-docs-security-20261019.json`,
+`ove050-rebase-4038-20261019.json`, both exact in-review review receipts and
+`ove050-inreview-ci-eb2fde4-20261019.json`. Retained actual failures include
+two behavioral RED assertions, two initial test lint errors, an unsupported
+commit scope (message corrected only), and the initial opened/label duplicate
+cancellations with a failed aggregate. The initial aggregate remains failed;
+its replacement source workflows are not substituted for that failed rollup.
+
+Every subsequent acceptance/done/rebased head requires fresh independent
+continuity reviews and a complete exact-head hosted rollup before normal
+DEVELOP integration. Applicable local docs tests/security and normal full hooks
+were run; unchanged product Cargo/build/SBOM local commands were not repeated.
+No reserved task/ownership/boundary script, actual Mac escape, product penetration,
+absent desktop acceptance implementation or parent ARCH002 acceptance is claimed.
 
 ## 13. Parallelization notes
 
