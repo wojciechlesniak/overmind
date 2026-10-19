@@ -76,9 +76,9 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 11. Acceptance criteria
 
-- [ ] Exact marker returns20; false/extra/invalid marker and nested dependency cases follow actual internal-failure behavior instead of silently claiming unimplemented.
-- [ ] Engine manifest and project references match exact permitted runtime edges; no UI/API-client edge remains.
-- [ ] Present hooks still execute and preserve shutdown/signal/privacy contracts; foundation docs claim no implemented engine/service.
+- [x] Exact marker returns20; false/extra/invalid marker and nested dependency cases follow actual internal-failure behavior instead of silently claiming unimplemented.
+- [x] Engine manifest and project references match exact permitted runtime edges; no UI/API-client edge remains.
+- [x] Present hooks still execute and preserve shutdown/signal/privacy contracts; foundation docs claim no implemented engine/service.
 
 ## 12. Test plan
 
@@ -97,3 +97,7 @@ Exact overlapping shared paths have sequential writers; wait for the owner, neve
 Registration alone supplies no implementation or acceptance proof; claim only after the definition lands on DEVELOP.
 Measured scope and line/move/generated-doc metrics belong in the external manifest/PR, not recursive TASK text.
 OVE_ARCH002 retains all nine original criteria, including actual hosted forbidden-import and aggregate rejection.
+
+Verified source `a00ac466090cb6174739cfa246cbda2f8794145c`:15 process/68 protocol/929 unit cases, security,
+whole reviews and source CI are recorded in PR #1012 and
+`ove034-source-checkpoint-20261019.json`; fresh lifecycle/postmerge gates remain required.
