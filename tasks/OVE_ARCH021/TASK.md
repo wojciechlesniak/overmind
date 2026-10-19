@@ -7,12 +7,12 @@ size: S
 priority: P0
 mvp: true
 status: todo
-depends_on: ["OVE_ARCH017"]
+depends_on: ["OVE_ARCH017", "OVE_ARCH054"]
 soft_depends_on: []
 provides: ["lib:boundary-ts-analysis"]
-needs: ["lib:boundary-workspace-resolution"]
-owns: ["tools/boundaries/ts-imports.ts", "tools/boundaries/ts-globals.ts", "tools/boundaries/ts-comments.ts", "tools/boundaries/syntax.test.ts"]
-reads: ["tasks/OVE_ARCH002/TASK.md", "docs/architecture/boundaries.json", "docs/architecture/ARCHITECTURE.md", "tasks/CONVENTIONS.md", "tasks/OVE_SETUP004/TASK.md"]
+needs: ["lib:boundary-workspace-resolution", "lib:boundary-ts-imports-comments"]
+owns: ["tools/boundaries/ts-globals.ts", "tools/boundaries/syntax.test.ts"]
+reads: ["tasks/OVE_ARCH054/TASK.md", "tasks/OVE_ARCH002/TASK.md", "docs/architecture/boundaries.json", "docs/architecture/ARCHITECTURE.md", "tasks/CONVENTIONS.md", "tasks/OVE_SETUP004/TASK.md"]
 design: none
 design_source: ""
 spec_refs: ["SPECIFICATION 13", "SPECIFICATION 19"]
@@ -49,6 +49,15 @@ No acceptance of OVE_ARCH002 or replay of its preserved bulk implementation; kee
 5. Comment scanning returns actual directive offsets for boundary/blanket suppressions and inline rule reconfiguration; string/template/fence-like source content is never executed or treated as an arbitrary allowlist.
 6. Use TS AST/token locations so the later scanner can emit exact line/column parity; test each syntax family independently before scanner integration.
 
+### Delivery allocation
+
+OVE_ARCH054 delivers importsOf and suppressionPositions for requirements 1, 2, 5 and 6.
+OVE_ARCH021 delivers forbiddenGlobalsOf for requirements 1, 3, 4 and 6 and accepts all three helpers together.
+The original six requirements and four final criteria above/below remain unchanged; child acceptance supplies no parent or OVE_ARCH002 acceptance.
+Preserve all 86 existing cases exactly once: 31 imports/comments cases in OVE_ARCH054 and 55 global capability cases here.
+Partition original test AST bodies without changing assertions, fixture text, offsets, budgets or controls; retain the real TypeChecker fixture here.
+Use only the approved OVE_ARCH021 escrow after normative registration and coordinated claim metadata refresh; never replay OVE_ARCH002 bulk work.
+
 ## 6. Design notes
 
 N/A, functionality only. Public signatures/data and explicit denied cases above define the contract.
@@ -83,7 +92,7 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 12. Test plan
 
-- pnpm exec vitest run tools/boundaries/syntax.test.ts
+- pnpm exec vitest run tools/boundaries/syntax.test.ts tools/boundaries/imports-comments.test.ts
 - Retain later independent imports/proving tests; do not replace parity with the shared ESLint engine.
 
 These are required future executions, not performed evidence. Preserve original budgets/assertions/retry0.
