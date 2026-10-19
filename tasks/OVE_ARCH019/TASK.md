@@ -98,3 +98,7 @@ Exact overlapping shared paths have sequential writers; wait for the owner, neve
 Registration alone supplies no implementation or acceptance proof; claim only after the definition lands on DEVELOP.
 Measured scope and line/move/generated-doc metrics belong in the external manifest/PR, not recursive TASK text.
 OVE_ARCH002 retains all nine original criteria, including actual hosted forbidden-import and aggregate rejection.
+
+The integrator resolved the older parent Tools wording against CONVENTIONS §6 and
+ARCHITECTURE §4: Tools may import catalogue libraries, never apps as packages.
+See ../_proposals/OVE_ARCH019-tools-import-clarification.md; no policy/helper change.
