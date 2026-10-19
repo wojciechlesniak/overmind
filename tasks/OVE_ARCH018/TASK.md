@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: in_review
+status: done
 depends_on: ["OVE_ARCH017"]
 soft_depends_on: []
 provides: ["lib:boundary-eslint-resolution"]
