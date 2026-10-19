@@ -21,6 +21,8 @@ new RuleTester({ languageOptions: { parser }, plugins: { boundaries: { rules: { 
       "// explanation about eslint-disable boundaries/other\nexport {};",
       "// eslint-disable-next-line no-alert\nexport {};",
       "/* eslint no-alert: off */ export {};",
+      '/* eslint-disable "no-alert" */ export {};',
+
       '/* eslint no-restricted-syntax: ["error", {selector: "Identifier", message: "boundaries/other"}] */ export {};',
       String.raw`/* eslint "n\u006f-alert": off */ export {};`,
       "/* eslint no-alert: off -- reason mentions boundaries/other */ export {};",
@@ -46,6 +48,10 @@ new RuleTester({ languageOptions: { parser }, plugins: { boundaries: { rules: { 
   },
 );
 for (const comment of [
+  '/* eslint-disable "boundaries/no-disable" */',
+  "/* eslint-disable 'boundaries/no-disable' */",
+  '/* eslint-disable "" */',
+  "/* eslint-disable , , */",
   String.raw`/* eslint 'bound\u0061ries/no-disable': off */`,
   String.raw`/* eslint no-alert: 0 "bound\u0061ries/no-disable": 0 */`,
   String.raw`/* eslint "bound\u0061ries/no-disable": off */`,
@@ -97,6 +103,22 @@ it("an escaped literal backslash is not a recursively decoded rule key", () => {
   const comment = String.raw`/* eslint "bound\\u0061ries/other": off */ export {};`;
   const messages = new Linter().verify(
     comment,
+    [
+      {
+        files: ["**/*.ts"],
+        languageOptions: { parser },
+        plugins: { boundaries: { rules: { "no-disable": noDisable(import.meta.dirname) } } },
+        rules: { "boundaries/no-disable": "error" },
+      },
+    ],
+    { filename: "fixture.ts", allowInlineConfig: false },
+  );
+  expect(messages).toEqual([]);
+});
+
+it("a quoted non-boundary list name is not searched as free text", () => {
+  const messages = new Linter().verify(
+    '/* eslint-disable "plain boundaries/no-disable" */ export {};',
     [
       {
         files: ["**/*.ts"],

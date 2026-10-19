@@ -17,9 +17,13 @@ export const noDisable: (root: string) => Rule.RuleModule = () => {
             const value = (comment.value.split(/\s-{2,}\s/u, 1)[0] ?? "").trim();
             const disable = /^eslint-disable(?:-next-line|-line)?(?:\s|$)([\s\S]*)$/u.exec(value);
             const configuration = /^eslint\s+([\s\S]*)$/u.exec(value);
-            const rules = disable?.[1]?.trim();
+            const rules = (disable?.[1] ?? "")
+              .split(",")
+              .map((name) => name.trim().replace(/^(['"])(.*)\1$/su, "$2"))
+              .filter(Boolean);
             if (
-              (disable && (!rules || /(?:^|[\s,])boundaries\//u.test(rules))) ||
+              (disable &&
+                (!rules.length || rules.some((name) => name.startsWith("boundaries/")))) ||
               (configuration && boundaryConfig(configuration[1] ?? ""))
             ) {
               if (!comment.loc) {
