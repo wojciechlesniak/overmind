@@ -69,10 +69,10 @@ small decimal values and position-independent canonical idempotence on golden AS
 
 ## 11. Acceptance criteria
 
-- [ ] Actual public printer tests cover every AST variant, spelling/precedence and semantic grouping.
-- [ ] Decimal/percent and all admitted string/control/Unicode cases print without unsupported syntax or data loss.
-- [ ] Text is deterministic and independent of positions, with no truncation or added evaluator behavior.
-- [ ] Normal native/security/review/hosted/integration gates pass; parser roundtrip and parent acceptance remain explicitly pending.
+- [x] Actual public printer tests cover every AST variant, spelling/precedence and semantic grouping.
+- [x] Decimal/percent and all admitted string/control/Unicode cases print without unsupported syntax or data loss.
+- [x] Text is deterministic and independent of positions, with no truncation or added evaluator behavior.
+- [x] Normal native/security/review/hosted/integration gates pass; parser roundtrip and parent acceptance remain explicitly pending.
 
 ## 12. Test plan
 
@@ -87,3 +87,10 @@ Claim from latest DEVELOP only after WFRT058 merges. WFRT060 waits for this prin
 ## 14. Open questions and assumptions
 
 The API consumes the existing bounded JSON-serialisable AST contract; it is not an untrusted-object validator.
+
+### Verified implementation (2026-10-19)
+
+The public printer passed 75 cases; types/lint and 984 covered tests passed.
+Latest-DEVELOP publication hooks passed 1004 tests; security7 and source CI passed.
+Both independent whole-source and completed-publication reviews passed.
+Evidence, retained failures and remaining final gates: PR #1011.
