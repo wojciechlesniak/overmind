@@ -3,7 +3,7 @@ import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:f
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-const desktop = resolve(import.meta.dirname, "..");
+const desktop = resolve(import.meta.dirname, "../../../apps/desktop");
 function probe(change?: (root: string) => void) {
   const root = mkdtempSync(resolve(tmpdir(), "ove-tauri-"));
   try {
@@ -11,9 +11,13 @@ function probe(change?: (root: string) => void) {
       cpSync(resolve(desktop, "src-tauri", file), resolve(root, file), { recursive: true });
     }
     change?.(root);
-    return spawnSync(process.execPath, [resolve(desktop, "scripts/check-tauri-config.mjs"), root], {
-      encoding: "utf8",
-    });
+    return spawnSync(
+      process.execPath,
+      [resolve(import.meta.dirname, "check-tauri-config.mjs"), root],
+      {
+        encoding: "utf8",
+      },
+    );
   } finally {
     rmSync(root, { recursive: true, force: true });
   }

@@ -171,6 +171,7 @@ it("desktop and Markdown policies require the configuration approval label", () 
       "docs/adr/slug-map.json",
       "docs/adr/_template.md",
       "tools/build/desktop/check-dist.mjs",
+      "tools/build/desktop/check-tauri-config.mjs",
       "tools/vite/desktop.config.ts",
       "tools/vitest-projects/apps/desktop/vitest.config.ts",
     ]) {

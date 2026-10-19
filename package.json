@@ -49,7 +49,7 @@
     "task:release": "tsx tools/tasks/release.ts",
     "task:cleanup": "tsx tools/tasks/cleanup.ts",
     "test:int": "vitest run --config vitest.int.config.ts --project \"*-int\" --passWithNoTests",
-    "check:tauri": "node apps/desktop/scripts/check-tauri-config.mjs",
+    "check:tauri": "node tools/build/desktop/check-tauri-config.mjs",
     "check:agents-md": "tsx tools/agents-md/check.ts",
     "adr:new": "tsx tools/adr/new.ts",
     "gen:adr-index": "tsx tools/adr/gen-index.ts",
