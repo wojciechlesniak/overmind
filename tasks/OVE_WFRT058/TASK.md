@@ -6,7 +6,7 @@ kind: security
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: ["OVE_ARCH003"]
 soft_depends_on: []
 provides: ["lib:expression-lexer-prerequisite", "contract:expression-syntax-prerequisite"]
@@ -70,10 +70,10 @@ percent adjacency, significant leading zeros, exact keyword case and original so
 
 ## 11. Acceptance criteria
 
-- [ ] All specified token classes and exact aliases/cases have actual positive/negative public lexer tests.
-- [ ] Raw 1000/1001 and lexical boundaries deny correctly before unsafe or excessive work; all constants match the parent contract.
-- [ ] AST/token metadata is readonly and reusable; Result errors are fixed, positioned and bounded to one entry.
-- [ ] Normal native/security checks, independent whole reviews and exact hosted/integration gates pass; no parser/parent acceptance is claimed.
+- [x] All specified token classes and exact aliases/cases have actual positive/negative public lexer tests.
+- [x] Raw 1000/1001 and lexical boundaries deny correctly before unsafe or excessive work; all constants match the parent contract.
+- [x] AST/token metadata is readonly and reusable; Result errors are fixed, positioned and bounded to one entry.
+- [x] Normal native/security checks, independent whole reviews and exact hosted/integration gates pass; no parser/parent acceptance is claimed.
 
 ## 12. Test plan
 
@@ -87,3 +87,10 @@ Claim only after this ownership transfer is integrated. WFRT059 waits for this c
 ## 14. Open questions and assumptions
 
 The approved canonical-length rule remains admission in WFRT060. This lexer does not claim full expression validity.
+
+### Verified implementation (2026-10-19)
+
+The public lexer passed109 cases; full types/lint and909 covered tests in110 files passed.
+Seven applicable security commands and exact-source CI/Security/Isolation passed.
+Independent whole Standards/Spec and source-publication reviews passed.
+Evidence, retained failures/warnings and remaining final gates: PR #1010.
