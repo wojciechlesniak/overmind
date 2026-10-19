@@ -88,24 +88,31 @@ it("an unimported domain function fails its own coverage threshold", { timeout: 
       "packages/domain/src/__ove004_uncovered__.ts",
       "export function uncovered(value: boolean): number { if (value) return 1; return 0; }\n",
       () => {
-        const result = spawnSync(
-          process.execPath,
-          [
-            cli,
-            "run",
-            "--project",
-            "domain",
-            "--coverage",
-            "--coverage.reportsDirectory",
-            report,
-            "--reporter=dot",
-          ],
-          { cwd: root, encoding: "utf8", timeout: 25_000 },
+        withProbe(
+          "packages/domain/src/__ove004_coverage_canary__.test.ts",
+          'import { it } from "vitest"; it("OVE004_COVERAGE_CANARY", () => {});\n',
+          () => {
+            const result = spawnSync(
+              process.execPath,
+              [
+                cli,
+                "run",
+                "--project",
+                "domain",
+                "packages/domain/src/__ove004_coverage_canary__.test.ts",
+                "--coverage",
+                "--coverage.reportsDirectory",
+                report,
+                "--reporter=dot",
+              ],
+              { cwd: root, encoding: "utf8", timeout: 25_000 },
+            );
+            assert.equal(result.error, undefined);
+            assert.notEqual(result.status, 0);
+            assert.match(result.stdout + result.stderr, /coverage.*threshold|threshold.*coverage/i);
+            assert.match(result.stdout + result.stderr, /packages\/domain\/src/);
+          },
         );
-        assert.equal(result.error, undefined);
-        assert.notEqual(result.status, 0);
-        assert.match(result.stdout + result.stderr, /coverage.*threshold|threshold.*coverage/i);
-        assert.match(result.stdout + result.stderr, /packages\/domain\/src/);
       },
     );
   } finally {
