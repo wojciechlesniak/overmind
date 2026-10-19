@@ -119,6 +119,26 @@ not claimed as implemented controls. No actual macOS escape, product penetration
 or parent ARCH002 acceptance is inferred. Every final lifecycle head still needs
 fresh exact-head hosted checks and independent continuity reviews before merge.
 
+The normal rebase onto DEVELOP `ddfa3b57c1d91927bafcc76c3514c3780916232a`
+preserved all implementation and protected-policy bytes. The first rebased push
+retained 610 passing tests and one existing configuration-approval test timeout
+under 105 workers. Both normal publication hooks subsequently passed all 611
+tests, types and lint with one supported Vitest worker and unchanged deadlines.
+
+At in-review checkpoint `a8c87c90ef04350c1107fe03a343fc30293059e8`, the actual
+latest workflows passed:
+
+- [CI](https://github.com/wojciechlesniak/overmind/actions/runs/39216911933)
+- [Security](https://github.com/wojciechlesniak/overmind/actions/runs/39216911897)
+- [Isolation gate](https://github.com/wojciechlesniak/overmind/actions/runs/39216911876)
+
+Initial unlabelled runs were cancelled when the required `config-change` label
+was applied. Their non-success results remain recorded in
+`ove028-initial-rollup-blocked-a8c87c9-20261019.json`; that checkpoint did not
+pass the strict aggregate required for the public done transition. This factual
+evidence update still requires fresh exact-head hosted checks and independent
+reviews under the existing label. No historical result or gate is overridden.
+
 ## 13. Parallelization notes
 
 Claim normally only after registration lands and hard dependencies actually pass. Rebase on latest DEVELOP.
