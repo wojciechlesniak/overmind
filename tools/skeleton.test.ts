@@ -35,9 +35,21 @@ const expectedEdges: Record<string, string[]> = {
 for (const name of adapterNames) {
   expectedEdges[`adapter-${name}`] = ["application", "contracts", "domain"];
 }
+expectedEdges["adapter-telegram"] = ["api-client", "application", "contracts"];
 expectedEdges["engine"] = Object.keys(expectedEdges).filter(
   (name) => !["desktop", "tools", "api-client", "ui-kit"].includes(name),
 );
+
+function assertInternalEdges(name: string, dependencies: Record<string, string> = {}) {
+  assert.deepEqual(
+    Object.keys(dependencies)
+      .filter((key) => key.startsWith("@overmind/"))
+      .map((key) => key.replace("@overmind/", ""))
+      .sort(),
+    expectedEdges[name]?.toSorted(),
+    name,
+  );
+}
 
 function collectManifests(directory = root): string[] {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -60,14 +72,7 @@ test("all 17 packages encode exactly the required Clean Architecture graph", asy
   for (const path of manifestPaths) {
     const manifest = readJson(path);
     const name = manifest.name.replace("@overmind/", "");
-    assert.deepEqual(
-      Object.keys(manifest.dependencies ?? {})
-        .filter((key) => key.startsWith("@overmind/"))
-        .map((key) => key.replace("@overmind/", ""))
-        .sort(),
-      expectedEdges[name]?.toSorted(),
-      name,
-    );
+    assertInternalEdges(name, manifest.dependencies);
     assert.ok(
       Object.entries(manifest.dependencies ?? {}).every(
         ([key, value]) => value === (key.startsWith("@overmind/") ? "workspace:*" : "catalog:"),
@@ -92,6 +97,18 @@ test("all 17 packages encode exactly the required Clean Architecture graph", asy
       );
     }
   }
+});
+
+test.each(["additional domain", "missing contracts"])("telegram graph rejects %s", (change) => {
+  const dependencies = { ...readJson("packages/adapters/telegram/package.json").dependencies };
+  if (change === "additional domain") {
+    dependencies["@overmind/domain"] = "workspace:*";
+  } else {
+    delete dependencies["@overmind/contracts"];
+  }
+  assert.throws(() => {
+    assertInternalEdges("adapter-telegram", dependencies);
+  }, assert.AssertionError);
 });
 
 test("every manifest is private ESM under Apache-2.0 and every external dependency uses the catalog", () => {

@@ -6,13 +6,13 @@
   },
   "references": [
     {
+      "path": "../../api-client"
+    },
+    {
       "path": "../../application"
     },
     {
       "path": "../../contracts"
-    },
-    {
-      "path": "../../domain"
     }
   ],
   "exclude": ["**/*.test.ts", "**/*.test.tsx", "test/**"]

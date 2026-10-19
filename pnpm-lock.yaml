@@ -530,15 +530,15 @@ importers:
 
   packages/adapters/telegram:
     dependencies:
+      '@overmind/api-client':
+        specifier: workspace:*
+        version: link:../../api-client
       '@overmind/application':
         specifier: workspace:*
         version: link:../../application
       '@overmind/contracts':
         specifier: workspace:*
         version: link:../../contracts
-      '@overmind/domain':
-        specifier: workspace:*
-        version: link:../../domain
 
   packages/api-client:
     dependencies:
