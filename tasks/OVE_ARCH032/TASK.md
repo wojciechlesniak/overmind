@@ -77,10 +77,10 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 11. Acceptance criteria
 
-- [ ] Public engine build produces valid CJS/map/metafile with exact protocol/version and repeatable bytes; unsafe inputs/externals and throwing/computed protocol source deny or remain static as specified.
-- [ ] All four actual packaging/symbolication callers reach the relocated bundler and same pinned esbuild, with no stale engine node_modules dependency.
-- [ ] The still-unmoved engine process integration suite imports the new real bundler and passes in this PR; no current caller imports removed apps/engine/build/bundle.mjs.
-- [ ] Actual packaging/reproducibility tests and unchanged manifest/license/checksum controls pass; no DeveloperID/notary/release proof is invented.
+- [x] Public engine build produces valid CJS/map/metafile with exact protocol/version and repeatable bytes; unsafe inputs/externals and throwing/computed protocol source deny or remain static as specified.
+- [x] All four actual packaging/symbolication callers reach the relocated bundler and same pinned esbuild, with no stale engine node_modules dependency.
+- [x] The still-unmoved engine process integration suite imports the new real bundler and passes in this PR; no current caller imports removed apps/engine/build/bundle.mjs.
+- [x] Actual packaging/reproducibility tests and unchanged manifest/license/checksum controls pass; no DeveloperID/notary/release proof is invented.
 
 ## 12. Test plan
 
@@ -100,3 +100,8 @@ Exact overlapping shared paths have sequential writers; wait for the owner, neve
 Registration alone supplies no implementation or acceptance proof; claim only after the definition lands on DEVELOP.
 Measured scope and line/move/generated-doc metrics belong in the external manifest/PR, not recursive TASK text.
 OVE_ARCH002 retains all nine original criteria, including actual hosted forbidden-import and aggregate rejection.
+
+Verified source `5165083c4dd2a4671190317e3dbefcb0edc68b67`: actual tests, security and independent
+reviews are recorded in PR #1002 and `ove032-source-ready-080e406-20261019.json`.
+The rebased publication receipt is `ove032-rebase-latest-570a2e3-20261019.json`.
+Fresh lifecycle reviews/CI and actual DEVELOP postmerge checks remain required.
