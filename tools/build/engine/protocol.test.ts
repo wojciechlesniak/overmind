@@ -264,3 +264,36 @@ it("rejects colliding local and imported protocol bindings", () => {
     expect(() => readProtocol(root)).toThrow(/^Invalid contracts protocol version$/u);
   }
 });
+
+it.each([
+  ["named function", "export default function PROTOCOL_VERSION() {}"],
+  ["named class", "export default class PROTOCOL_VERSION {}"],
+  ["anonymous function", "export default function() {}"],
+  ["anonymous class", "export default class {}"],
+  ["literal", "export default 17;"],
+])("uses fallback for a default-only %s", (_label, source) => {
+  expect(readProtocol(fixture({ "index.ts": source }))).toBe(1);
+});
+
+it.each([
+  "function local() {} const local = 2;",
+  "const local = 2; function local() {}",
+  "class local {} const local = 2;",
+  "const local = 2; class local {}",
+  'import * as local from "./other.ts"; const local = 2;',
+  'const local = 2; import * as local from "./other.ts";',
+])("rejects declaration collisions before reading an alias: %s", (source) => {
+  const root = fixture({
+    "index.ts": source + " export { local as PROTOCOL_VERSION };",
+    "other.ts": "export const other = 5;",
+  });
+  expect(() => readProtocol(root)).toThrow(/^Invalid contracts protocol version$/u);
+});
+
+it("preserves genuine export absence with valid unrelated function overloads", () => {
+  const root = fixture({
+    "index.ts":
+      "export function other(value: number): number; export function other(value: string): number; export function other(value: number | string) { return Number(value); }",
+  });
+  expect(readProtocol(root)).toBe(1);
+});

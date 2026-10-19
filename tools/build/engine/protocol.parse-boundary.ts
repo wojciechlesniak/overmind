@@ -103,6 +103,18 @@ function bindingNames(name: ts.BindingName): string[] {
     : name.elements.flatMap((item) => (ts.isBindingElement(item) ? bindingNames(item.name) : []));
 }
 
+function valueDeclaration(
+  statement: ts.Statement,
+): statement is
+  ts.FunctionDeclaration | ts.ClassDeclaration | ts.EnumDeclaration | ts.ModuleDeclaration {
+  return (
+    ts.isFunctionDeclaration(statement) ||
+    ts.isClassDeclaration(statement) ||
+    ts.isEnumDeclaration(statement) ||
+    ts.isModuleDeclaration(statement)
+  );
+}
+
 /** Read the protocol as bounded TypeScript data; never load contracts into the process. */
 export function readProtocol(root: string): number {
   try {
@@ -187,6 +199,21 @@ export function readProtocol(root: string): number {
       modules.set(path, module);
       loading.add(path);
       const dependencies = new Set<string>();
+      const reserved = new Set<string>();
+      for (const statement of file.statements) {
+        if (valueDeclaration(statement) && statement.name) {
+          reserved.add(statement.name.text);
+        } else if (ts.isImportDeclaration(statement)) {
+          const binding = statement.importClause?.namedBindings;
+          if (
+            statement.importClause?.phaseModifier !== ts.SyntaxKind.TypeKeyword &&
+            binding &&
+            ts.isNamespaceImport(binding)
+          ) {
+            reserved.add(binding.name.text);
+          }
+        }
+      }
       function exported(name: string, binding: { local: string } | Reference) {
         if (module.exports.has(name)) {
           return invalid();
@@ -205,7 +232,7 @@ export function readProtocol(root: string): number {
           );
           for (const declaration of statement.declarationList.declarations) {
             for (const name of bindingNames(declaration.name)) {
-              if (module.locals.has(name)) {
+              if (module.locals.has(name) || reserved.has(name)) {
                 return invalid();
               }
               module.locals.set(name, {
@@ -254,7 +281,7 @@ export function readProtocol(root: string): number {
           const clause = statement.importClause;
           const specifier = statement.moduleSpecifier.text;
           const imported = (local: string, name: string) => {
-            if (module.locals.has(local)) {
+            if (module.locals.has(local) || reserved.has(local)) {
               return invalid();
             }
             module.locals.set(local, {
@@ -273,14 +300,18 @@ export function readProtocol(root: string): number {
             }
           }
         } else if (
-          (ts.isFunctionDeclaration(statement) ||
-            ts.isClassDeclaration(statement) ||
-            ts.isEnumDeclaration(statement) ||
-            ts.isModuleDeclaration(statement)) &&
+          valueDeclaration(statement) &&
           statement.name &&
-          statement.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword)
+          statement.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword) &&
+          !statement.modifiers.some((modifier) => modifier.kind === ts.SyntaxKind.DefaultKeyword)
         ) {
-          exported(statement.name.text, { local: "" });
+          const previous = module.exports.get(statement.name.text);
+          if (previous && !("local" in previous && previous.local === "")) {
+            return invalid();
+          }
+          if (!previous) {
+            exported(statement.name.text, { local: "" });
+          }
         }
       }
       for (const dependency of dependencies) {
