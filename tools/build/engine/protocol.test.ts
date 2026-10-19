@@ -297,3 +297,32 @@ it("preserves genuine export absence with valid unrelated function overloads", (
   });
   expect(readProtocol(root)).toBe(1);
 });
+
+it("does not reserve the pseudo-name of a global type augmentation", () => {
+  const root = fixture({
+    "index.ts":
+      "declare global { interface ProtocolMarker {} } const global = 17; export { global as PROTOCOL_VERSION };",
+  });
+  expect(readProtocol(root)).toBe(17);
+});
+it("does not turn an external module declaration into a local value", () => {
+  const root = fixture({
+    "index.ts":
+      'declare module "global" { export interface Shape {} } const global = 19; export { global as PROTOCOL_VERSION };',
+  });
+  expect(readProtocol(root)).toBe(19);
+});
+it("still reserves a real namespace named global", () => {
+  const root = fixture({
+    "index.ts":
+      "namespace global { export const other = 1; } const global = 17; export { global as PROTOCOL_VERSION };",
+  });
+  expect(() => readProtocol(root)).toThrow(/^Invalid contracts protocol version$/u);
+});
+it("rejects a colliding TypeScript import alias", () => {
+  const root = fixture({
+    "index.ts":
+      "namespace Source { export namespace Nested {} } import local = Source.Nested; const local = 17; export { local as PROTOCOL_VERSION };",
+  });
+  expect(() => readProtocol(root)).toThrow(/^Invalid contracts protocol version$/u);
+});

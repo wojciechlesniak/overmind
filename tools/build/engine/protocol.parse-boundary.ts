@@ -106,12 +106,19 @@ function bindingNames(name: ts.BindingName): string[] {
 function valueDeclaration(
   statement: ts.Statement,
 ): statement is
-  ts.FunctionDeclaration | ts.ClassDeclaration | ts.EnumDeclaration | ts.ModuleDeclaration {
+  | ts.FunctionDeclaration
+  | ts.ClassDeclaration
+  | ts.EnumDeclaration
+  | ts.ModuleDeclaration
+  | ts.ImportEqualsDeclaration {
   return (
     ts.isFunctionDeclaration(statement) ||
     ts.isClassDeclaration(statement) ||
     ts.isEnumDeclaration(statement) ||
-    ts.isModuleDeclaration(statement)
+    (ts.isModuleDeclaration(statement) &&
+      ts.isIdentifier(statement.name) &&
+      !(statement.flags & ts.NodeFlags.GlobalAugmentation)) ||
+    (ts.isImportEqualsDeclaration(statement) && !statement.isTypeOnly)
   );
 }
 
