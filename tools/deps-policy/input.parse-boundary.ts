@@ -45,6 +45,7 @@ const workspace = adjustments
     savePrefix: z.literal(""),
     linkWorkspacePackages: z.literal(false),
     shamefullyHoist: z.literal(false),
+    packageImportMethod: z.literal("clone-or-copy"),
     verifyDepsBeforeRun: z.literal("error"),
   })
   .strict();

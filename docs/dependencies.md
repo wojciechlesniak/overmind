@@ -16,6 +16,14 @@ OVE_ARCH027 reviewed only the Tools importer declarations, generated lockfile an
 existing protections on 2026-10-18. The package review dates and registry snapshot
 above remain unchanged; this importer review adds no package version or exception.
 
+OVE_ARCH017 requires unaliased installed dependency files for bounded tooling
+reads. Project `packageImportMethod: clone-or-copy` clones when supported and
+copies otherwise, with no hardlink fallback. The strict reader still rejects
+hardlinks and source symlinks; admitted dependency symlinks stay inside the
+canonical local store. Frozen locks, exact versions, release-age, license and
+checksum checks, audit thresholds and disabled build scripts remain unchanged.
+See [pnpm packageImportMethod](https://pnpm.io/settings/node-modules#packageimportmethod).
+
 ## Compatibility matrix
 
 | Package | Pinned | Registry latest on review date | Constraint source | Note |

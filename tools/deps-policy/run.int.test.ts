@@ -77,6 +77,28 @@ it("actual CLI accepts the register/catalog tree, rejects non-catalog dependenci
     rmSync(directory, { recursive: true, force: true });
   }
 }, 60000);
+it("actual CLI requires unaliased dependency materialization before accepting the workspace", () => {
+  const directory = fixture();
+  try {
+    const path = resolve(directory, "pnpm-workspace.yaml");
+    const original = readFileSync(path, "utf8");
+    const approved =
+      original.replace(/^packageImportMethod:.*\n?/gmu, "") +
+      "\npackageImportMethod: clone-or-copy\n";
+    writeFileSync(path, approved);
+    expect(run(directory).status).toBe(0);
+    for (const method of [undefined, "auto", "hardlink"]) {
+      const rejected = approved.replace(
+        /^packageImportMethod:.*$/mu,
+        method === undefined ? "" : `packageImportMethod: ${method}`,
+      );
+      writeFileSync(path, rejected);
+      expect(run(directory).status, method ?? "missing method").toBe(1);
+    }
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+}, 60000);
 it("rejects unsafe inputs and policy changes before any dependency/network execution", () => {
   const directory = fixture();
   const outside = mkdtempSync(resolve(tmpdir(), "overmind-deps-outside-"));

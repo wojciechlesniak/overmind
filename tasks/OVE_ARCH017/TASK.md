@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: ["OVE_ARCH016"]
 soft_depends_on: []
 provides: ["lib:boundary-workspace-resolution"]
@@ -76,10 +76,10 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 11. Acceptance criteria
 
-- [ ] Longest-prefix ownership, scoped names, exported root/subpath and conditional exports return exact expected package identities.
-- [ ] Duplicate manifest names, unsafe/missing manifests, unknown config/extends or symlinked configuration reject; no premature realpath erases the denial.
-- [ ] TypeScript alias and confined-store positives resolve, while source escape/symlink and unresolvable targets cannot silently pass.
-- [ ] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
+- [x] Longest-prefix ownership, scoped names, exported root/subpath and conditional exports return exact expected package identities.
+- [x] Duplicate manifest names, unsafe/missing manifests, unknown config/extends or symlinked configuration reject; no premature realpath erases the denial.
+- [x] TypeScript alias and confined-store positives resolve, while source escape/symlink and unresolvable targets cannot silently pass.
+- [x] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
 
 ## 12. Test plan
 
@@ -87,6 +87,10 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 - After both engines exist: retain real symlink RED/GREEN and positive alias/store cases in imports/proving suites.
 
 These are required future executions, not performed evidence. Preserve original budgets/assertions/retry0.
+
+Actual verification and retained diagnostic failures are recorded in
+[PR1000](https://github.com/wojciechlesniak/overmind/pull/1000), including the direct
+60-case suite, five policy cases, full unit800 and both independent whole reviews.
 
 ## 13. Parallelization notes
 

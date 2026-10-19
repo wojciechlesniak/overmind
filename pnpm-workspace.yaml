@@ -67,4 +67,6 @@ autoInstallPeers: false
 savePrefix: ""
 linkWorkspacePackages: false
 shamefullyHoist: false
+# Keep installed files unaliased for the strict bounded source reader.
+packageImportMethod: clone-or-copy
 verifyDepsBeforeRun: error
