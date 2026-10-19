@@ -1,4 +1,4 @@
-import { diagnostic, missingHook, stderr } from "../cli.ts";
+import { diagnostic, isUnimplementedHook, missingHook, stderr } from "../cli.ts";
 import { EXIT_CODES } from "../exit-codes.ts";
 
 export interface RunOptions {
@@ -51,7 +51,6 @@ export function installShutdown(shutdown: () => Promise<void>): () => void {
 
 async function loadEngine(): Promise<unknown> {
   try {
-    // @ts-expect-error -- ENGINE/ARCH006 owns this future module; replace with static import when it lands.
     return await import("../compose/index.js");
   } catch (error) {
     if (missingHook(error, new URL("../compose/index.js", import.meta.url).href)) {
@@ -62,7 +61,7 @@ async function loadEngine(): Promise<unknown> {
 }
 export async function run(options: RunOptions, load = loadEngine): Promise<number> {
   const hooks = await load();
-  if (hooks === undefined) {
+  if (hooks === undefined || isUnimplementedHook(hooks)) {
     stderr("engine bootstrap not implemented\n");
     return EXIT_CODES.cannotStart;
   }

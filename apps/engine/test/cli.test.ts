@@ -2,7 +2,9 @@ import { homedir } from "node:os";
 import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { diagnostic, missingHook, parseCommand } from "../src/cli.ts";
+import { diagnostic, isUnimplementedHook, missingHook, parseCommand } from "../src/cli.ts";
+import * as composeFoundation from "../src/compose/index.ts";
+import * as serviceFoundation from "../src/service/index.ts";
 import { EXIT_CODES } from "../src/exit-codes.ts";
 import { versionInfo } from "../src/version.ts";
 import { version } from "../src/commands/version.ts";
@@ -213,4 +215,103 @@ it("own production source uses no alternate runtime API or private Node binding"
   expect(sources(resolve(import.meta.dirname, "../src"))).not.toMatch(
     /\b(?:Bun|Deno)\.|process\.binding|console\.log/,
   );
+});
+
+it("recognizes the exact foundation marker", () => {
+  expect(isUnimplementedHook({ UNIMPLEMENTED: true })).toBe(true);
+});
+it("maps the exact foundation marker through both public command paths", async () => {
+  const out = vi.spyOn(process.stdout, "write").mockReturnValue(true);
+  const err = vi.spyOn(process.stderr, "write").mockReturnValue(true);
+  const load = () => Promise.resolve({ UNIMPLEMENTED: true });
+  expect(await run({ foreground: true }, load)).toBe(20);
+  expect(await ensureRunning(true, load)).toBe(20);
+  expect(out).toHaveBeenCalledExactlyOnceWith(
+    `${JSON.stringify({ status: "failed", pid: null, socket: null, version: "0.0.0-dev", protocol: 1, detail: "engine bootstrap not implemented" })}\n`,
+  );
+  expect(err).toHaveBeenCalledTimes(2);
+});
+
+it("accepts foundation namespaces and compiled getter-style exports", () => {
+  expect(isUnimplementedHook(composeFoundation)).toBe(true);
+  expect(isUnimplementedHook(serviceFoundation)).toBe(true);
+  expect(
+    isUnimplementedHook(
+      Object.defineProperty({}, "UNIMPLEMENTED", {
+        enumerable: true,
+        get: () => true,
+      }),
+    ),
+  ).toBe(true);
+});
+it.each([
+  ["undefined", undefined],
+  ["null", null],
+  ["primitive", true],
+  ["function", () => true],
+  ["array", Object.assign([], { UNIMPLEMENTED: true })],
+  ["missing", {}],
+  ["false", { UNIMPLEMENTED: false }],
+  ["nonboolean", { UNIMPLEMENTED: "true" }],
+  ["inherited", Object.create({ UNIMPLEMENTED: true })],
+  ["nonenumerable", Object.defineProperty({}, "UNIMPLEMENTED", { value: true })],
+  ["extra string", { UNIMPLEMENTED: true, other: undefined }],
+  ["extra symbol", { UNIMPLEMENTED: true, [Symbol("other")]: true }],
+] satisfies [string, unknown][])("rejects %s as an exact foundation marker", (_name, hook) => {
+  expect(isUnimplementedHook(hook)).toBe(false);
+});
+it("preserves marker property access failures", () => {
+  const module = Object.defineProperty({}, "UNIMPLEMENTED", {
+    enumerable: true,
+    get: () => {
+      throw new Error("fixture marker getter failed");
+    },
+  });
+  expect(() => isUnimplementedHook(module)).toThrow("fixture marker getter failed");
+});
+it("loads the actual source foundation modules lazily", async () => {
+  vi.spyOn(process.stdout, "write").mockReturnValue(true);
+  vi.spyOn(process.stderr, "write").mockReturnValue(true);
+  expect(await run({ foreground: true })).toBe(20);
+  expect(await ensureRunning(true)).toBe(20);
+});
+it.each([{ UNIMPLEMENTED: false }, { UNIMPLEMENTED: true, extra: true }])(
+  "malformed markers preserve both real hook errors %j",
+  async (hook) => {
+    await expect(run({ foreground: false }, () => Promise.resolve(hook))).rejects.toThrow(
+      "invalid engine composition hook",
+    );
+    await expect(ensureRunning(true, () => Promise.resolve(hook))).rejects.toThrow(
+      "invalid engine service hook",
+    );
+  },
+);
+it("calls real hooks when their modules contain extra marker fields", async () => {
+  vi.spyOn(process.stdout, "write").mockReturnValue(true);
+  const ensure = vi.fn().mockResolvedValue({
+    status: "running",
+    pid: 1,
+    socket: "/tmp/fixture",
+    detail: null,
+  });
+  expect(
+    await ensureRunning(false, () =>
+      Promise.resolve({
+        UNIMPLEMENTED: true,
+        ensureRunning: ensure,
+      }),
+    ),
+  ).toBe(0);
+  expect(ensure).toHaveBeenCalledExactlyOnceWith({ json: false });
+  const startEngine = vi.fn().mockRejectedValue(new Error("real startup failure"));
+  await expect(
+    run({ foreground: true }, () =>
+      Promise.resolve({
+        UNIMPLEMENTED: true,
+        startEngine,
+        shutdown: () => Promise.resolve(),
+      }),
+    ),
+  ).rejects.toThrow("real startup failure");
+  expect(startEngine).toHaveBeenCalledExactlyOnceWith({ foreground: true });
 });

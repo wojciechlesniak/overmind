@@ -1,8 +1,10 @@
 # Engine command scaffold
 
 This is the Node-only command front for the future ENGINE composition root.
-It currently starts no gateway, database or LaunchAgent. Missing ENGINE modules
-fail closed with exit20 and `engine bootstrap not implemented` on stderr.
+It currently starts no gateway, database or LaunchAgent. The compose and service
+foundation modules export only `UNIMPLEMENTED = true`; this marker reports no
+working engine or service feature. Exact markers and absent hooks fail closed
+with exit20 and `engine bootstrap not implemented` on stderr.
 
 ```sh
 pnpm --filter @overmind/engine start version --json
@@ -78,21 +80,24 @@ to `0.0.0-dev`, protocol1 and SHA `dev`.
 
 ## ENGINE integration points
 
-ENGINE/ARCH006 creates `src/compose/index.ts` with
+Future ENGINE/ARCH006 work replaces the marker in `src/compose/index.ts` with
 `startEngine(options: {dataDir?: string; foreground: boolean}): Promise<never>`
-and `shutdown(): Promise<void>`. ENGINE service lifecycle creates
-`src/service/index.ts` with `ensureRunning({json: boolean}): Promise<EnsureResult>`;
+and `shutdown(): Promise<void>`. Future service lifecycle work replaces the marker
+in `src/service/index.ts` with `ensureRunning({json: boolean}): Promise<EnsureResult>`;
 the result type is exported by `src/commands/ensure-running.ts`.
 
-Literal guarded dynamic imports allow this scaffold to work before those modules
-exist. The missing-module URL must exactly match the expected hook, including
-its directory; an identically named nested dependency is not a missing hook.
-Only a missing hook itself is considered unimplemented; an exception or
-missing dependency inside a present hook is an internal error. Esbuild includes
-the real modules automatically when present. At that point the ENGINE task
-takes explicit ownership and replaces each optional import and its temporary
-`@ts-expect-error` with a static import in the same commit. No placeholder ENGINE
-module is created here. Hook code must keep stdout reserved for the CLI receipt.
+The guarded literal dynamic imports load these modules lazily. Only a nonnull
+module object whose sole own enumerable export is `UNIMPLEMENTED` with value
+`true` is a foundation marker. False, malformed or extra exports follow normal
+hook validation; real hooks still execute. The missing-module URL must exactly
+match the expected hook, including its directory; an identically named nested
+dependency is an internal error. Exceptions inside a present hook also remain
+internal errors. Esbuild includes the foundation or real modules when present.
+Hook code must keep stdout reserved for the CLI receipt.
+
+The engine runtime graph contains adapters, application, contracts, domain,
+gateway and workflow-runtime. UI-kit and API-client are desktop dependencies and
+are absent from the engine manifest and TypeScript project references.
 
 ## Bundle contract
 
@@ -105,8 +110,9 @@ the packaging entry; the CLI accepts `--out-dir <path>`. Maps use stable
 virtual file URLs under the `overmind/source/` namespace and contain no host build paths. The
 metafile is checked before files are written: desktop code, React, Tauri,
 undeclared npm packages, escaping source paths and unexpected external imports
-are rejected. Only Node builtins and the two absent optional hooks may remain
-external. Installation scripts stay disabled.
+are rejected. Only Node builtins and exact absent optional-hook paths in source fixtures may
+remain external; present foundation modules are bundled. Installation scripts
+stay disabled.
 
 SETUP017 owns SEA injection, external-map deployment/symbolication and two-build
 executable reproducibility. SETUP014 owns Developer ID signing and notarization;
