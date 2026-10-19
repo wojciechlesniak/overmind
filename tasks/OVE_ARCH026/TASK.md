@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: ["OVE_ARCH016"]
 soft_depends_on: []
 provides: ["lib:engine-static-protocol"]
@@ -76,10 +76,10 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 11. Acceptance criteria
 
-- [ ] Direct/local/named/star literal cases return exact version; runtime-throwing valid source is not executed.
-- [ ] All invalid/cyclic/ambiguous/mutable/computed/nonpositive/oversized/escape/symlink cases deny with fixed Invalid contracts protocol version.
-- [ ] Established genuine-absence fallback1 is preserved without swallowing other read/parse failures.
-- [ ] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
+- [x] Direct/local/named/star literal cases return exact version; runtime-throwing valid source is not executed.
+- [x] All invalid/cyclic/ambiguous/mutable/computed/nonpositive/oversized/escape/symlink cases deny with fixed Invalid contracts protocol version.
+- [x] Established genuine-absence fallback1 is preserved without swallowing other read/parse failures.
+- [x] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
 
 ## 12. Test plan
 
