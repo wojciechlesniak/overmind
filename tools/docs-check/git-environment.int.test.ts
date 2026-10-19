@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { expect, it } from "vitest";
 import { isolatedGitEnvironment } from "../hooks/git-test-environment.ts";
+import { renderPluginRegistry } from "./plugin-registry.ts";
 
 const repository = resolve(import.meta.dirname, "../..");
 const safe = () => isolatedGitEnvironment();
@@ -77,6 +78,10 @@ it("the real documentation CLI reads its requested repository despite inherited 
     const { parent, index, original } = sentinel(root);
     const fixture = join(root, "fixture");
     mkdirSync(join(fixture, "tools/docs-check"), { recursive: true });
+    writeFileSync(
+      join(fixture, "tools/docs-check/plugin-registry.generated.ts"),
+      renderPluginRegistry([]),
+    );
     git(fixture, ["init", "--quiet"]);
     writeFileSync(join(fixture, "README.md"), "# Fixture\n\n[Missing](missing.md)\n");
     writeFileSync(join(fixture, "package.json"), '{"scripts":{}}');
@@ -100,7 +105,7 @@ it("the real documentation CLI reads its requested repository despite inherited 
     expect(checked.status, checked.stderr).toBe(baseline.status);
     expect(checked.stdout).toBe(baseline.stdout);
     expect(git(fixture, ["ls-files"])).toBe(
-      ".markdownlint-cli2.jsonc\nREADME.md\npackage.json\ntools/docs-check/pending-links.json\n",
+      ".markdownlint-cli2.jsonc\nREADME.md\npackage.json\ntools/docs-check/pending-links.json\ntools/docs-check/plugin-registry.generated.ts\n",
     );
   } finally {
     rmSync(root, { recursive: true, force: true });

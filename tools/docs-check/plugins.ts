@@ -1,24 +1,30 @@
 import type { Flags } from "./checker.ts";
 import { diagnostic, type Diagnostic } from "./policy.ts";
-import { pathToFileURL } from "node:url";
 import { canonicalFile } from "./files.ts";
-import { pluginDiagnostics, pluginModule } from "./input.parse-boundary.ts";
+import {
+  documentationPluginPaths,
+  pluginDiagnostics,
+  pluginModule,
+} from "./input.parse-boundary.ts";
 export interface PluginContext {
   root: string;
   files: ReadonlyMap<string, string>;
   paths: ReadonlySet<string>;
   flags: Flags;
 }
-export async function runPlugins(ctx: PluginContext): Promise<Diagnostic[]> {
+export async function runPlugins(
+  ctx: PluginContext,
+  registry: Readonly<Record<string, unknown>>,
+): Promise<Diagnostic[]> {
   const errors: Diagnostic[] = [];
   let i18n = false;
-  for (const file of [...ctx.paths]
-    .filter((path) => /^tools\/docs-[a-z0-9-]+\/check\.ts$/u.test(path))
-    .sort()) {
+  for (const file of documentationPluginPaths(Object.keys(registry))) {
     try {
-      const source = await canonicalFile(ctx.root, file, true);
-      const imported: unknown = await import(pathToFileURL(source).href);
-      const plugin = pluginModule(imported);
+      if (!ctx.paths.has(file)) {
+        throw new Error("Plugin is not tracked.");
+      }
+      await canonicalFile(ctx.root, file, true);
+      const plugin = pluginModule(registry[file]);
       const results = pluginDiagnostics(
         await plugin.run(Object.freeze({ ...ctx, flags: Object.freeze({ ...ctx.flags }) })),
       );

@@ -4,12 +4,17 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { expect, it } from "vitest";
 import { isolatedGitEnvironment } from "../hooks/git-test-environment.ts";
+import { renderPluginRegistry } from "./plugin-registry.ts";
 import { run } from "./run.ts";
 
 async function fixture(): Promise<string> {
   const root = await mkdtemp(join(tmpdir(), "ove-doc-targets-"));
   execFileSync("git", ["init", "--quiet", root], { env: isolatedGitEnvironment() });
   await mkdir(join(root, "tools/docs-check"), { recursive: true });
+  await writeFile(
+    join(root, "tools/docs-check/plugin-registry.generated.ts"),
+    renderPluginRegistry([]),
+  );
   await writeFile(join(root, "package.json"), '{"scripts":{}}');
   await writeFile(join(root, ".markdownlint-cli2.jsonc"), '{"config":{},"ignores":[]}');
   await writeFile(join(root, "tools/docs-check/pending-links.json"), "{}");
