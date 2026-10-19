@@ -96,7 +96,7 @@ module is created here. Hook code must keep stdout reserved for the CLI receipt.
 
 ## Bundle contract
 
-`build/bundle.mjs` produces `dist/engine.cjs`, `engine.cjs.map` and
+`../../tools/build/engine/bundle.mjs` produces `dist/engine.cjs`, `engine.cjs.map` and
 `engine.meta.json`, using exact esbuild0.28.2, CJS, Node22, external source maps,
 linked legal comments and no minification. CJS module URLs are computed from the
 runtime `__filename`, preserving optional-import identity without host build paths.

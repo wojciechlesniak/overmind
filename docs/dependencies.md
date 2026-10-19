@@ -1114,9 +1114,9 @@ solution or obtain an explicit policy decision; no exception is created here.
 
 - Version: 0.28.2
 - License: MIT
-- Used by: apps/engine and tools (build-only development dependency; Tools importer added by OVE_ARCH027)
+- Used by: tools (build-only development dependency; the relocated engine bundler and packaging callers use this importer after OVE_ARCH032).
 - Added by: OVE_SETUP016
-- Value: Single-file Node22 CommonJS bundle, external source maps and inspectable metafile for the standalone engine. The Tools declaration prepares build-helper relocation with the existing 0.28.2 pin; the engine keeps its declaration until its actual relocation.
+- Value: Single-file Node22 CommonJS bundle, external source maps and inspectable metafile for the standalone engine. The Tools bundler uses the existing 0.28.2 pin; the engine invokes its Tools command without its own esbuild declaration.
 - Maintenance cost: Review upstream version and native platform package integrity with the packaging pipeline.
 - Alternatives considered: TypeScript alone does not bundle workspace modules; Bun changes the approved runtime; a handwritten bundler duplicates established tooling. An app-only declaration would make relocated Tools helpers rely on another importer instead of declaring their build dependency.
 - Risk: Native build tool; installation scripts remain denied, exact catalog pin and lockfile integrity retained, bundle inputs are checked before publication.

@@ -1,6 +1,7 @@
+import { readProtocol } from "./protocol.parse-boundary.ts";
 import { build } from "esbuild";
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
 import { builtinModules } from "node:module";
 import { dirname, isAbsolute, relative, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -47,13 +48,7 @@ export async function bundleEngine({
   const app = resolve(root, "apps/engine");
   const manifest = JSON.parse(readFileSync(resolve(app, "package.json"), "utf8"));
   const version = JSON.parse(readFileSync(resolve(root, "package.json"), "utf8")).version;
-  const contractPath = resolve(root, "packages/contracts/src/index.ts");
-  // Pinned Node22 supports stripping erasable TypeScript from our own contract module.
-  const contracts = existsSync(contractPath) ? await import(pathToFileURL(contractPath).href) : {};
-  const protocol = Object.hasOwn(contracts, "PROTOCOL_VERSION") ? contracts.PROTOCOL_VERSION : 1;
-  if (!Number.isSafeInteger(protocol) || protocol < 1) {
-    throw new Error("Invalid contracts protocol version");
-  }
+  const protocol = readProtocol(root);
   if (typeof version !== "string" || !/^\d+\.\d+\.\d+(?:-[\w.-]+)?$/.test(version)) {
     throw new Error("Invalid root package version");
   }

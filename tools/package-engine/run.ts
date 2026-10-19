@@ -111,7 +111,7 @@ async function preflight(root: string, runner: Runner): Promise<void> {
   await rejectQuarantine(runner, resolve(root, "node_modules/.bin/postject"), root);
   for (const [path, expected] of [
     ["node_modules/postject/package.json", "1.0.0-alpha.6"],
-    ["apps/engine/node_modules/esbuild/package.json", "0.28.2"],
+    ["tools/node_modules/esbuild/package.json", "0.28.2"],
   ] as const) {
     const file = safeFile(root, realpathSync(resolve(root, path)));
     if (packageVersion(readFileSync(file, "utf8")) !== expected) {

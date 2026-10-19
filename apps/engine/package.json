@@ -24,11 +24,8 @@
     "@overmind/workflow-runtime": "workspace:*"
   },
   "scripts": {
-    "build": "node build/bundle.mjs",
+    "build": "node ../../tools/build/engine/bundle.mjs",
     "start": "tsx src/main.ts",
     "test": "vitest run --project engine"
-  },
-  "devDependencies": {
-    "esbuild": "catalog:"
   }
 }
