@@ -77,10 +77,10 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 11. Acceptance criteria
 
-- [ ] All original guard cases pass at the new path, including wrong attributes, remote imports, uppercase URL, maps and symlinks.
-- [ ] Actual Vite bundle passes; injected unsafe script/remote request fails; only exact reviewed React prose survives.
-- [ ] The still-unmoved apps/desktop/scripts/build.int.test.ts passes using the new guard immediately in this PR; no child invokes the removed scripts/check-dist.mjs.
-- [ ] Desktop build points to the relocated guard while the original allowlist remains canonical and protected.
+- [x] All original guard cases pass at the new path, including wrong attributes, remote imports, uppercase URL, maps and symlinks.
+- [x] Actual Vite bundle passes; injected unsafe script/remote request fails; only exact reviewed React prose survives.
+- [x] The still-unmoved apps/desktop/scripts/build.int.test.ts passes using the new guard immediately in this PR; no child invokes the removed scripts/check-dist.mjs.
+- [x] Desktop build points to the relocated guard while the original allowlist remains canonical and protected.
 
 ## 12. Test plan
 
@@ -88,7 +88,36 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 - pnpm --filter @overmind/desktop build; node tools/build/desktop/check-dist.mjs apps/desktop/dist
 - pnpm exec vitest run --config vitest.int.config.ts apps/desktop/scripts/build.int.test.ts (current caller, before OVE_ARCH031).
 
-These are required future executions, not performed evidence. Preserve original budgets/assertions/retry0.
+The original budgets, assertions and retry0 remain unchanged. Actual evidence:
+
+- All 14 original guard tests passed at the moved path. The native sequence
+  also ran the real desktop build, the new default/explicit CLI and the current
+  `apps/desktop/scripts/build.int.test.ts` with its original deadlines.
+- Fourteen checks on a copy of the actual production bundle passed: the valid
+  bundle was admitted and 13 unsafe request/import/script/map/symlink/size cases
+  were denied. The exported API retained its sorted largest10 report. The real
+  bundle and the canonical allowance bytes were unchanged.
+- At source `f8258417a5b1dc809197664a0b319d1731430f24`, all 21 selected original
+  repository commands individually passed: 571 covered unit tests, 92 integration
+  tests, four dependency-policy CLI tests, 33 Rust tests, builds, licenses,
+  dependency audits, both secret scans and SBOM generation. The failed wrapper
+  stopped after 17 passing commands when the cargo-audit download disconnected.
+  It remains failed. The four remaining commands passed after the unchanged
+  installer verified and extracted the exact checksum-pinned cached archive.
+- Both independent whole-source Standards and Spec reviews passed with zero
+  findings. Source-ready evidence is recorded in
+  `ove028-source-ready-f825841-20261019.json`; native evidence is in
+  `ove028-native-after-frozen-20261019.json`. The first native pnpm metadata
+  failure and its normal pinned frozen-install recovery remain recorded.
+
+Cargo-audit retained five policy-allowed warnings. Both local secret scans had
+zero findings and one Keychain warning each; documentation checks had 38 warnings.
+No dependency, allowance, assertion, deadline, security policy or CI protection
+was relaxed. The optional Storybook command has no configured implementation;
+desktop e2e/visual scripts and reserved task-lint/ownership/boundary commands are
+not claimed as implemented controls. No actual macOS escape, product penetration
+or parent ARCH002 acceptance is inferred. Every final lifecycle head still needs
+fresh exact-head hosted checks and independent continuity reviews before merge.
 
 ## 13. Parallelization notes
 
