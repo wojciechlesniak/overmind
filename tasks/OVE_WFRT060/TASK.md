@@ -6,7 +6,7 @@ kind: security
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: ["OVE_WFRT058", "OVE_WFRT059"]
 soft_depends_on: []
 provides: ["lib:expression-parser-prerequisite", "doc:expression-grammar-prerequisite"]
@@ -71,10 +71,10 @@ chained comparisons/method calls, all reserved positions and exact nodes/depth/a
 
 ## 11. Acceptance criteria
 
-- [ ] The exact original grammar and examples parse with frozen positioned ASTs; all unsupported syntax and reserved positions deny.
-- [ ] All original resource boundaries and approved canonical 1000/1001 plus actual 988/1030 counterexample have real public parser proof; million-parenthesis/10MB sources deny quickly without overflow.
-- [ ] Actual 60+ valid/invalid rows, seeded accepted-AST semantic roundtrip/idempotence and separate exact-position tests pass without silent discards.
-- [ ] Grammar documentation and all normal native/security/independent whole review/exact hosted/integration gates pass; parent five final criteria remain for WFRT015 acceptance.
+- [x] The exact original grammar and examples parse with frozen positioned ASTs; all unsupported syntax and reserved positions deny.
+- [x] All original resource boundaries and approved canonical 1000/1001 plus actual 988/1030 counterexample have real public parser proof; million-parenthesis/10MB sources deny quickly without overflow.
+- [x] Actual 60+ valid/invalid rows, seeded accepted-AST semantic roundtrip/idempotence and separate exact-position tests pass without silent discards.
+- [x] Grammar documentation and all normal native/security/independent whole review/exact hosted/integration gates pass; parent five final criteria remain for WFRT015 acceptance.
 
 ## 12. Test plan
 
@@ -88,3 +88,10 @@ Claim only after both prerequisites merge; never edit their owns. WFRT015 then a
 ## 14. Open questions and assumptions
 
 There is no acceptance waiver: all original WFRT015 requirements and exact approved canonical contract remain.
+
+### Verified implementation (2026-10-19)
+
+The parser passed 166 cases; types/lint and 1170 covered tests passed.
+Latest-DEVELOP source hooks passed 1170 tests; security7 and strict source CI passed.
+Both independent whole-source and completed-publication reviews passed.
+Evidence, original depth Spec finding/regression and remaining final gates: PR #1016.
