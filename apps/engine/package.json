@@ -15,12 +15,10 @@
     "@overmind/adapter-sandbox-macos": "workspace:*",
     "@overmind/adapter-sqlite": "workspace:*",
     "@overmind/adapter-telegram": "workspace:*",
-    "@overmind/api-client": "workspace:*",
     "@overmind/application": "workspace:*",
     "@overmind/contracts": "workspace:*",
     "@overmind/domain": "workspace:*",
     "@overmind/gateway": "workspace:*",
-    "@overmind/ui-kit": "workspace:*",
     "@overmind/workflow-runtime": "workspace:*"
   },
   "scripts": {

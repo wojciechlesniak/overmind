@@ -1,4 +1,4 @@
-import { diagnosticText, missingHook, stderr, stdout } from "../cli.ts";
+import { diagnosticText, isUnimplementedHook, missingHook, stderr, stdout } from "../cli.ts";
 import { EXIT_CODES } from "../exit-codes.ts";
 import { versionInfo } from "../version.ts";
 
@@ -31,7 +31,6 @@ function validResult(value: unknown): value is EnsureResult {
 
 async function loadService(): Promise<unknown> {
   try {
-    // @ts-expect-error -- ENGINE service lifecycle owns this future module; replace with static import when it lands.
     return await import("../service/index.js");
   } catch (error) {
     if (missingHook(error, new URL("../service/index.js", import.meta.url).href)) {
@@ -60,7 +59,7 @@ export function reportEnsureResult(result: EnsureResult, json: boolean): number 
 }
 export async function ensureRunning(json: boolean, load = loadService): Promise<number> {
   const hook: unknown = await load();
-  if (hook === undefined) {
+  if (hook === undefined || isUnimplementedHook(hook)) {
     return reportEnsureResult(
       { status: "failed", pid: null, socket: null, detail: "engine bootstrap not implemented" },
       json,

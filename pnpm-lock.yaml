@@ -440,9 +440,6 @@ importers:
       '@overmind/adapter-telegram':
         specifier: workspace:*
         version: link:../../packages/adapters/telegram
-      '@overmind/api-client':
-        specifier: workspace:*
-        version: link:../../packages/api-client
       '@overmind/application':
         specifier: workspace:*
         version: link:../../packages/application
@@ -455,9 +452,6 @@ importers:
       '@overmind/gateway':
         specifier: workspace:*
         version: link:../../packages/gateway
-      '@overmind/ui-kit':
-        specifier: workspace:*
-        version: link:../../packages/ui-kit
       '@overmind/workflow-runtime':
         specifier: workspace:*
         version: link:../../packages/workflow-runtime

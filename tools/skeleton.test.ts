@@ -36,7 +36,7 @@ for (const name of adapterNames) {
   expectedEdges[`adapter-${name}`] = ["application", "contracts", "domain"];
 }
 expectedEdges["engine"] = Object.keys(expectedEdges).filter(
-  (name) => !["desktop", "tools"].includes(name),
+  (name) => !["desktop", "tools", "api-client", "ui-kit"].includes(name),
 );
 
 function collectManifests(directory = root): string[] {

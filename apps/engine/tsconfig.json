@@ -27,9 +27,6 @@
       "path": "../../packages/adapters/telegram"
     },
     {
-      "path": "../../packages/api-client"
-    },
-    {
       "path": "../../packages/application"
     },
     {
@@ -40,9 +37,6 @@
     },
     {
       "path": "../../packages/gateway"
-    },
-    {
-      "path": "../../packages/ui-kit"
     },
     {
       "path": "../../packages/workflow-runtime"

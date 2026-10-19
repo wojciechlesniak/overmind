@@ -103,7 +103,7 @@ function fixture(name: string, code: string, service = false): string {
   cpSync(resolve(root, "apps/engine/package.json"), resolve(app, "package.json"));
   cpSync(resolve(root, "package.json"), resolve(directory, "package.json"));
   symlinkSync(resolve(root, "node_modules"), resolve(directory, "node_modules"));
-  mkdirSync(resolve(app, "src", service ? "service" : "compose"));
+  mkdirSync(resolve(app, "src", service ? "service" : "compose"), { recursive: true });
   writeFileSync(resolve(app, "src", service ? "service/index.ts" : "compose/index.ts"), code);
   return directory;
 }

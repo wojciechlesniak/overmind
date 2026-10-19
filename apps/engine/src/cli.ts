@@ -88,3 +88,18 @@ export function missingHook(error: unknown, expectedUrl: string): boolean {
     error.url === expectedUrl
   );
 }
+
+export function isUnimplementedHook(hook: unknown): boolean {
+  if (typeof hook !== "object" || hook === null || Array.isArray(hook)) {
+    return false;
+  }
+  const exports = Reflect.ownKeys(hook).filter((name) =>
+    Object.prototype.propertyIsEnumerable.call(hook, name),
+  );
+  return (
+    exports.length === 1 &&
+    exports[0] === "UNIMPLEMENTED" &&
+    "UNIMPLEMENTED" in hook &&
+    hook.UNIMPLEMENTED === true
+  );
+}
