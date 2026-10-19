@@ -152,3 +152,29 @@ it("opens a raced FIFO without blocking and rejects it before data access", asyn
     await rm(root, { recursive: true, force: true });
   }
 });
+
+it.each([
+  { name: "invalid UTF-8 sequence", bytes: [0xff] },
+  { name: "truncated UTF-8 sequence", bytes: [0xe2, 0x82] },
+])("rejects $name through the real bounded repository reader", async ({ bytes }) => {
+  const root = await mkdtemp(join(tmpdir(), "ove-doc-utf8-denial-"));
+  try {
+    await writeFile(join(root, "guide.md"), Buffer.from(bytes));
+    await expect(readRepositoryFile(root, "guide.md")).rejects.toThrow(
+      /^Repository file is not valid UTF-8\.$/u,
+    );
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+it("preserves valid Unicode, a leading BOM and literal replacement characters", async () => {
+  const root = await mkdtemp(join(tmpdir(), "ove-doc-utf8-preservation-"));
+  const contents = "\ufeff# Unicode \u03a9 and \ufffd\n";
+  try {
+    await writeFile(join(root, "guide.md"), contents);
+    expect(await readRepositoryFile(root, "guide.md")).toBe(contents);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
