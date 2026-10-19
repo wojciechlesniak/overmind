@@ -22,6 +22,7 @@ it("partial shards pass collection but merged coverage fails on untested domain 
       "apps",
       "packages/adapters",
       "packages/domain/src",
+      "eslint-rules/boundaries",
       "tools/vitest-setup",
       "reports/blobs",
     ]) {
@@ -34,6 +35,7 @@ it("partial shards pass collection but merged coverage fails on untested domain 
       "vitest.ci.config.ts",
       "vitest.shared.ts",
       "tools/vitest.config.ts",
+      "eslint-rules/boundaries/vitest.config.ts",
       "packages/domain/vitest.config.ts",
       "packages/domain/src/index.ts",
       "packages/domain/src/index.test.ts",
