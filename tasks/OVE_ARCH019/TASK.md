@@ -76,10 +76,10 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 11. Acceptance criteria
 
-- [ ] All five rule suites pass exact expected diagnostics, including forbidden domain->application and desktop cross-feature access.
-- [ ] Public application/ports/type/test imports pass only where permitted; deep and production-testing imports fail under their own rule IDs.
-- [ ] Boundary and blanket disable directives fail; source-string lookalikes do not; no matrix copy or escape hatch is added.
-- [ ] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
+- [x] All five rule suites pass exact expected diagnostics, including forbidden domain->application and desktop cross-feature access.
+- [x] Public application/ports/type/test imports pass only where permitted; deep and production-testing imports fail under their own rule IDs.
+- [x] Boundary and blanket disable directives fail; source-string lookalikes do not; no matrix copy or escape hatch is added.
+- [x] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
 
 ## 12. Test plan
 
@@ -102,3 +102,10 @@ OVE_ARCH002 retains all nine original criteria, including actual hosted forbidde
 The integrator resolved the older parent Tools wording against CONVENTIONS §6 and
 ARCHITECTURE §4: Tools may import catalogue libraries, never apps as packages.
 See ../_proposals/OVE_ARCH019-tools-import-clarification.md; no policy/helper change.
+
+### Verified implementation (2026-10-19)
+
+All five rule suites passed 88 cases; full types/lint and 1323 covered tests passed.
+Latest source hooks passed 1323 tests; security7 and strict source CI passed.
+Both independent whole-source and completed-publication reviews passed.
+Evidence, retained failures and remaining final gates: PR #1018.
