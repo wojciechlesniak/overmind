@@ -54,8 +54,18 @@ function reconfiguresBoundary(text: string): boolean {
   );
   let depth = 0;
   let propertyStart = 0;
+  let previousTokenEnd = 0;
   let previousString: string | undefined;
   for (let token = scanner.scan(); token !== ts.SyntaxKind.EndOfFileToken; token = scanner.scan()) {
+    const tokenStart = scanner.getTokenStart();
+    if (
+      depth === 0 &&
+      (token === ts.SyntaxKind.Identifier || token === ts.SyntaxKind.StringLiteral) &&
+      tokenStart > previousTokenEnd &&
+      configuration.slice(previousTokenEnd, tokenStart).trim().length === 0
+    ) {
+      propertyStart = tokenStart;
+    }
     if (depth === 0 && token === ts.SyntaxKind.ColonToken) {
       const name =
         previousString ?? configuration.slice(propertyStart, scanner.getTokenStart()).trim();
@@ -82,6 +92,7 @@ function reconfiguresBoundary(text: string): boolean {
     ) {
       depth--;
     }
+    previousTokenEnd = scanner.getTokenEnd();
   }
   return false;
 }

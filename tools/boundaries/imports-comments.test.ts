@@ -148,3 +148,11 @@ it("detects a boundary setting after a comma-less inline rule", () => {
   const text = '/* eslint no-alert: 0 "boundaries/no-disable": 0 */';
   expect(suppressionPositions(source(text))).toEqual([0]);
 });
+
+it.each([
+  "/* eslint no-alert: 0 boundaries/no-disable: 0 */",
+  "/* eslint no-alert: [0] boundaries/no-disable: 0 */",
+  "/* eslint no-alert:\n0\nboundaries/no-disable: 0 */",
+])("detects unquoted comma-less rule identities: %s", (text) => {
+  expect(suppressionPositions(source(text))).toEqual([0]);
+});
