@@ -75,17 +75,16 @@ Keep every historical failed check and review. A prerequisite failure stops depe
 
 ## 11. Acceptance criteria
 
-- [ ] Every required import syntax retains its exact AST reference; nonliteral targets remain explicitly unverifiable and scanned modules are never executed.
-- [ ] Genuine directive comments yield exact offsets, including expression/EOF cases; displayed strings/templates/JSX text remain valid negatives.
-- [ ] All 31 allocated cases are preserved exactly once, with unchanged AST bodies/assertions/fixtures/budgets, and the two helpers import no ESLint rule implementation.
+- [x] Every required import syntax retains its exact AST reference; nonliteral targets remain explicitly unverifiable and scanned modules are never executed.
+- [x] Genuine directive comments yield exact offsets, including expression/EOF cases; displayed strings/templates/JSX text remain valid negatives.
+- [x] All 31 allocated cases are preserved exactly once, with unchanged AST bodies/assertions/fixtures/budgets, and the two helpers import no ESLint rule implementation.
 - [ ] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
-
 ## 12. Test plan
 
 - pnpm exec vitest run tools/boundaries/imports-comments.test.ts
 - Independently prove all 86 original test bodies are allocated once across this child and OVE_ARCH021. OVE_ARCH021 executes both final suites after this child completes.
 
-These are required future checks, not performed evidence. Preserve original assertions, budgets and retry0.
+Preserve original assertions, budgets and retry0. Performed source checks are recorded below; final hosted gates remain required.
 
 ## 13. Parallelization notes
 
@@ -98,3 +97,20 @@ Historical OVE_ARCH002 overlap requires finite coordination; any other active pa
 Registration leaves this child and all parent criteria unchecked; no current WIP becomes accepted or a prerequisite provider before completion.
 The integrator verifies ID/provider uniqueness, exact finite ownership and normal parent claim provenance before the child claim.
 Measured scope, frozen escrow hashes and execution receipts belong in the proposal/PR, not recursive TASK evidence.
+
+## Verification status (2026-10-21)
+
+Implementation source 42f9886 passed 50 focused cases, including all 31 unchanged
+allocated cases. Independent AST checks retained the other 55 original cases in
+the preserved parent source. Full configured coverage passed 1376 tests in 119
+files after rebasing on DEVELOP 5737019. Format, types and lint passed first.
+
+Dependency/license policies, both audits, history/tree secret checks, committed
+SBOM and the native workspace build passed. Secret scans reported zero findings
+and one Keychain warning each. The architecture orchestrator retained its warnings
+about reserved, unimplemented foundation checks; those are not real boundary PASS.
+Both independent whole-source Standards and Spec reviews passed with zero findings.
+
+The hosted gates and normal final lifecycle remain pending. The fourth acceptance
+criterion stays unchecked until actual hosted evidence exists. This child supplies
+no parent acceptance, live-engine permission or full application penetration claim.
