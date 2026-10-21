@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: ["OVE_ARCH018"]
 soft_depends_on: []
 provides: ["lib:boundary-structural-rules"]
@@ -76,10 +76,10 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 11. Acceptance criteria
 
-- [ ] All five rule suites pass exact expected diagnostics, including forbidden domain->application and desktop cross-feature access.
-- [ ] Public application/ports/type/test imports pass only where permitted; deep and production-testing imports fail under their own rule IDs.
-- [ ] Boundary and blanket disable directives fail; source-string lookalikes do not; no matrix copy or escape hatch is added.
-- [ ] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
+- [x] All five rule suites pass exact expected diagnostics, including forbidden domain->application and desktop cross-feature access.
+- [x] Public application/ports/type/test imports pass only where permitted; deep and production-testing imports fail under their own rule IDs.
+- [x] Boundary and blanket disable directives fail; source-string lookalikes do not; no matrix copy or escape hatch is added.
+- [x] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
 
 ## 12. Test plan
 
@@ -98,3 +98,31 @@ Exact overlapping shared paths have sequential writers; wait for the owner, neve
 Registration alone supplies no implementation or acceptance proof; claim only after the definition lands on DEVELOP.
 Measured scope and line/move/generated-doc metrics belong in the external manifest/PR, not recursive TASK text.
 OVE_ARCH002 retains all nine original criteria, including actual hosted forbidden-import and aggregate rejection.
+
+The integrator resolved the older parent Tools wording against CONVENTIONS §6 and
+ARCHITECTURE §4: Tools may import catalogue libraries, never apps as packages.
+See ../_proposals/OVE_ARCH019-tools-import-clarification.md; no policy/helper change.
+
+### Verified implementation (2026-10-19)
+
+All five rule suites passed 88 cases; full types/lint and 1323 covered tests passed.
+Latest source hooks passed 1323 tests; security7 and strict source CI passed.
+Both independent whole-source and completed-publication reviews passed.
+Evidence, retained failures and remaining final gates: PR #1018.
+
+### Recovery verification (2026-10-21)
+
+The historical raw artifacts from 2026-10-19 are unavailable; their claims above
+remain chronological notes, not fresh execution evidence. Root configuration
+regressions first failed twice, then passed after validating metadata before
+ignoring sources without a package owner. An uncatalogued importing workspace
+still fails closed. The shared structuralWorkspace.ts helper serves only four
+own test suites; no public API, policy, configuration or dependency changed.
+
+Fresh formatting, full typecheck and lint passed; all five suites passed 91 cases
+and full coverage passed 1326 tests. Seven security commands and the committed
+source SBOM passed at f1db009. Secret scans reported zero findings and one Keychain
+warning each. The architecture orchestrator retains its explicit unavailable
+foundation-tool warnings; it does not prove parent OVE_ARCH002 acceptance.
+Fresh independent reviews, exact publication/lifecycle-head hosted checks and
+the normal final transition remain required before integration. Evidence: PR #1018.
