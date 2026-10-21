@@ -7,7 +7,7 @@ size: S
 priority: P0
 mvp: true
 status: todo
-depends_on: ["OVE_SETUP004", "OVE_SETUP017", "OVE_ARCH018", "OVE_ARCH033"]
+depends_on: ["OVE_SETUP004", "OVE_SETUP017", "OVE_ARCH018", "OVE_ARCH033", "OVE_SETUP024"]
 soft_depends_on: []
 provides: ["lib:vitest-dual-discovery"]
 needs: ["lib:boundary-eslint-resolution", "lib:engine-lifecycle-tooling"]
