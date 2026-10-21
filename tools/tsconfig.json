@@ -8,7 +8,8 @@
     "**/*.test.ts",
     "**/*.test.tsx",
     "test/**",
-    "vitest.config.ts"
+    "vitest.config.ts",
+    "vitest-projects/**"
   ],
   "compilerOptions": {
     "types": ["node"],

@@ -40,3 +40,16 @@ and React DOM are development dependencies for Testing Library here. Their
 production adoption belongs to OVE-009. Testing Library's required DOM peer is
 pinned to 10.4.2 rather than disabling peer checks. All additions consume the
 catalog; OVE-008 maintains the complete dependency register.
+
+## Configuration transition
+
+The root test configuration admits all 17 workspace projects and the separate
+boundary-rules project explicitly. Each workspace project must have exactly one
+canonical regular configuration at its legacy path or under
+`tools/vitest-projects/<package>/vitest.config.ts`. Missing, duplicate and unsafe
+paths stop configuration before tests run.
+
+Coverage imports use literal selected paths in `tools/vitest-projects/coverage.ts`.
+A later migration batch updates its four imports and keeps every threshold keyed
+to the original product `src/**` root. Configurations belong to the root test
+program; Tools production excludes only the new configuration subtree.
