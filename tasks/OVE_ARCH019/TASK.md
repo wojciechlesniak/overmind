@@ -109,3 +109,20 @@ All five rule suites passed 88 cases; full types/lint and 1323 covered tests pas
 Latest source hooks passed 1323 tests; security7 and strict source CI passed.
 Both independent whole-source and completed-publication reviews passed.
 Evidence, retained failures and remaining final gates: PR #1018.
+
+### Recovery verification (2026-10-21)
+
+The historical raw artifacts from 2026-10-19 are unavailable; their claims above
+remain chronological notes, not fresh execution evidence. Root configuration
+regressions first failed twice, then passed after validating metadata before
+ignoring sources without a package owner. An uncatalogued importing workspace
+still fails closed. The shared structuralWorkspace.ts helper serves only four
+own test suites; no public API, policy, configuration or dependency changed.
+
+Fresh formatting, full typecheck and lint passed; all five suites passed 91 cases
+and full coverage passed 1326 tests. Seven security commands and the committed
+source SBOM passed at f1db009. Secret scans reported zero findings and one Keychain
+warning each. The architecture orchestrator retains its explicit unavailable
+foundation-tool warnings; it does not prove parent OVE_ARCH002 acceptance.
+Fresh independent reviews, exact publication/lifecycle-head hosted checks and
+the normal final transition remain required before integration. Evidence: PR #1018.
