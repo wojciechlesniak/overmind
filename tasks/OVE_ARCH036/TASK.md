@@ -100,3 +100,9 @@ Exact overlapping shared paths have sequential writers; wait for the owner, neve
 Registration alone supplies no implementation or acceptance proof; claim only after the definition lands on DEVELOP.
 Measured scope and line/move/generated-doc metrics belong in the external manifest/PR, not recursive TASK text.
 OVE_ARCH002 retains all nine original criteria, including actual hosted forbidden-import and aggregate rejection.
+
+Native packaging prerequisite (2026-10-21): the existing verifier rejects the exact
+UNIMPLEMENTED=true foundation inputs added by OVE_ARCH034. Packaging repair is
+outside this task's owns. Integration acceptance remains blocked pending a finite
+owning repair and successful rerun of the unchanged checks. See the
+[coordination proposal](../_proposals/OVE_ARCH036-engine-packaging-prerequisite.md).

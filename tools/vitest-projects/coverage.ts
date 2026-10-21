@@ -3,43 +3,43 @@ import { realpathSync } from "node:fs";
 import { resolve } from "node:path";
 import { z } from "zod";
 import { workspaceProjects, pluginProject } from "./discovery.ts";
-import * as project0 from "../../tools/vitest.config.ts";
-import * as project1 from "../../eslint-rules/boundaries/vitest.config.ts";
-import * as project2 from "../../apps/engine/vitest.config.ts";
-import * as project3 from "../../packages/application/vitest.config.ts";
-import * as project4 from "../../packages/api-client/vitest.config.ts";
-import * as project5 from "../../packages/workflow-runtime/vitest.config.ts";
-import * as project6 from "../../packages/adapters/keychain-macos/vitest.config.ts";
-import * as project7 from "../../apps/desktop/vitest.config.ts";
-import * as project8 from "../../packages/adapters/sqlite/vitest.config.ts";
-import * as project9 from "../../packages/adapters/notifications-macos/vitest.config.ts";
-import * as project10 from "../../packages/domain/vitest.config.ts";
-import * as project11 from "../../packages/gateway/vitest.config.ts";
-import * as project12 from "../../packages/ui-kit/vitest.config.ts";
-import * as project13 from "../../packages/adapters/sandbox-macos/vitest.config.ts";
-import * as project14 from "../../packages/adapters/telegram/vitest.config.ts";
-import * as project15 from "../../packages/adapters/providers/vitest.config.ts";
-import * as project16 from "../../packages/adapters/herdr/vitest.config.ts";
-import * as project17 from "../../packages/contracts/vitest.config.ts";
+import * as toolsConfig from "../../tools/vitest.config.ts";
+import * as boundaryRulesConfig from "../../eslint-rules/boundaries/vitest.config.ts";
+import * as engineConfig from "../../apps/engine/vitest.config.ts";
+import * as applicationConfig from "../../packages/application/vitest.config.ts";
+import * as apiClientConfig from "../../packages/api-client/vitest.config.ts";
+import * as workflowRuntimeConfig from "../../packages/workflow-runtime/vitest.config.ts";
+import * as keychainMacosConfig from "../../packages/adapters/keychain-macos/vitest.config.ts";
+import * as desktopConfig from "../../apps/desktop/vitest.config.ts";
+import * as sqliteConfig from "../../packages/adapters/sqlite/vitest.config.ts";
+import * as notificationsMacosConfig from "../../packages/adapters/notifications-macos/vitest.config.ts";
+import * as domainConfig from "../../packages/domain/vitest.config.ts";
+import * as gatewayConfig from "../../packages/gateway/vitest.config.ts";
+import * as uiKitConfig from "../../packages/ui-kit/vitest.config.ts";
+import * as sandboxMacosConfig from "../../packages/adapters/sandbox-macos/vitest.config.ts";
+import * as telegramConfig from "../../packages/adapters/telegram/vitest.config.ts";
+import * as providersConfig from "../../packages/adapters/providers/vitest.config.ts";
+import * as herdrConfig from "../../packages/adapters/herdr/vitest.config.ts";
+import * as contractsConfig from "../../packages/contracts/vitest.config.ts";
 const namespaces: Readonly<Record<string, unknown>> = {
-  tools: project0,
-  "eslint-rules/boundaries": project1,
-  "apps/engine": project2,
-  "packages/application": project3,
-  "packages/api-client": project4,
-  "packages/workflow-runtime": project5,
-  "packages/adapters/keychain-macos": project6,
-  "apps/desktop": project7,
-  "packages/adapters/sqlite": project8,
-  "packages/adapters/notifications-macos": project9,
-  "packages/domain": project10,
-  "packages/gateway": project11,
-  "packages/ui-kit": project12,
-  "packages/adapters/sandbox-macos": project13,
-  "packages/adapters/telegram": project14,
-  "packages/adapters/providers": project15,
-  "packages/adapters/herdr": project16,
-  "packages/contracts": project17,
+  tools: toolsConfig,
+  "eslint-rules/boundaries": boundaryRulesConfig,
+  "apps/engine": engineConfig,
+  "packages/application": applicationConfig,
+  "packages/api-client": apiClientConfig,
+  "packages/workflow-runtime": workflowRuntimeConfig,
+  "packages/adapters/keychain-macos": keychainMacosConfig,
+  "apps/desktop": desktopConfig,
+  "packages/adapters/sqlite": sqliteConfig,
+  "packages/adapters/notifications-macos": notificationsMacosConfig,
+  "packages/domain": domainConfig,
+  "packages/gateway": gatewayConfig,
+  "packages/ui-kit": uiKitConfig,
+  "packages/adapters/sandbox-macos": sandboxMacosConfig,
+  "packages/adapters/telegram": telegramConfig,
+  "packages/adapters/providers": providersConfig,
+  "packages/adapters/herdr": herdrConfig,
+  "packages/contracts": contractsConfig,
 };
 const threshold = z.object({
   lines: z.number(),
