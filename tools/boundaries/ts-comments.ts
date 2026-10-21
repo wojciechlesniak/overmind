@@ -3,15 +3,13 @@ import ts from "typescript";
 export function suppressionPositions(source: ts.SourceFile): number[] {
   const positions = new Set<number>();
   const textRanges: ts.JsxText[] = [];
-  const boundaryRule = /(?:^|[\s,"'])boundaries(?:\/[^\s,:"']+)?(?=$|[\s,:"'])/;
   const inspect = (start: number, end: number, kind: ts.CommentKind) => {
     const body = source.text
       .slice(start + 2, end - (kind === ts.SyntaxKind.MultiLineCommentTrivia ? 2 : 0))
       .trim();
     const disable = /^eslint-disable(?:-next-line|-line)?(?:\s|$)([\s\S]*)/.exec(body);
-    const rules = disable?.[1]?.split(/\s--(?:\s|$)/, 1)[0]?.trim();
     if (
-      (disable && (!rules || rules.startsWith("--") || boundaryRule.test(rules))) ||
+      (disable && suppressesBoundary(disable[1] ?? "")) ||
       (/^eslint\s/.test(body) && reconfiguresBoundary(body.slice(6)))
     ) {
       positions.add(start);
@@ -56,23 +54,20 @@ function reconfiguresBoundary(text: string): boolean {
   );
   let depth = 0;
   let propertyStart = 0;
+  let previousString: string | undefined;
   for (let token = scanner.scan(); token !== ts.SyntaxKind.EndOfFileToken; token = scanner.scan()) {
     if (depth === 0 && token === ts.SyntaxKind.ColonToken) {
-      const key = configuration.slice(propertyStart, scanner.getTokenStart()).trim();
-      const keyScanner = ts.createScanner(
-        ts.ScriptTarget.Latest,
-        true,
-        ts.LanguageVariant.Standard,
-        key,
-      );
       const name =
-        keyScanner.scan() === ts.SyntaxKind.StringLiteral ? keyScanner.getTokenValue() : key;
-      if (/^boundaries(?:\/[^\s,:"']+)?$/u.test(name)) {
+        previousString ?? configuration.slice(propertyStart, scanner.getTokenStart()).trim();
+      if (isBoundaryRule(name)) {
         return true;
       }
     }
     if (depth === 0 && token === ts.SyntaxKind.CommaToken) {
       propertyStart = scanner.getTokenEnd();
+    }
+    if (depth === 0) {
+      previousString = token === ts.SyntaxKind.StringLiteral ? scanner.getTokenValue() : undefined;
     }
     if (
       token === ts.SyntaxKind.OpenBraceToken ||
@@ -104,4 +99,25 @@ function withoutDescription(text: string): string {
     }
   }
   return text;
+}
+
+function isBoundaryRule(name: string): boolean {
+  return name === "boundaries" || name.startsWith("boundaries/");
+}
+
+function suppressesBoundary(text: string): boolean {
+  if (text.trimStart().startsWith("--")) {
+    return true;
+  }
+  const names = withoutDescription(text)
+    .split(",")
+    .map((part) => {
+      const name = part.trim();
+      const quote = name[0];
+      return name.length >= 2 && (quote === '"' || quote === "'") && name.at(-1) === quote
+        ? name.slice(1, -1)
+        : name;
+    })
+    .filter((name) => name.length > 0);
+  return names.length === 0 || names.some(isBoundaryRule);
 }

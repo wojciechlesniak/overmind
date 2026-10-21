@@ -130,3 +130,21 @@ it("retains the original SourceFile node identities for static imports and reexp
   expect(references[0]?.node).toBe(file.statements[0]);
   expect(references[1]?.node).toBe(file.statements[1]);
 });
+
+it.each([
+  ['/* eslint-disable "" */', [0]],
+  ["/* eslint-disable , , */", [0]],
+  ["// eslint-disable-next-line \"\" , ''", [0]],
+  ['/* eslint-disable "plain boundaries/no-disable" */', []],
+  ["/* eslint-disable other/rule --- boundaries/no-disable is prose */", []],
+] as const)(
+  "normalizes actual disable-list rule identities before classifying directives: %s",
+  (text, expected) => {
+    expect(suppressionPositions(source(text))).toEqual(expected);
+  },
+);
+
+it("detects a boundary setting after a comma-less inline rule", () => {
+  const text = '/* eslint no-alert: 0 "boundaries/no-disable": 0 */';
+  expect(suppressionPositions(source(text))).toEqual([0]);
+});
