@@ -2,34 +2,14 @@
 import { afterAll, describe, it, expect } from "vitest";
 import { RuleTester, Linter } from "eslint";
 import { parser } from "typescript-eslint";
-import { resolve } from "node:path";
-import { loadCatalog } from "../../tools/boundaries/policy.parse-boundary.ts";
-import { createWorkspace } from "../../tools/boundaries-fixtures/workspace.ts";
+import { structuralWorkspace } from "./structuralWorkspace.ts";
 import { allowedImports } from "./allowed-imports.ts";
 RuleTester.describe = describe;
 RuleTester.it = it;
-const fixture = createWorkspace();
+const fixture = structuralWorkspace();
 afterAll(() => {
   fixture.cleanup();
 });
-const catalog = loadCatalog(resolve(import.meta.dirname, "../.."));
-fixture.write("docs/architecture/boundaries.json", JSON.stringify(catalog));
-for (const pkg of catalog.packages.filter(
-  (entry) =>
-    entry.path.startsWith("packages/") ||
-    ["tools", "apps/engine", "apps/desktop"].includes(entry.id),
-)) {
-  fixture.write(
-    pkg.path + "/package.json",
-    JSON.stringify({
-      name: "@overmind/" + pkg.id.replace("adapters/", "adapter-").replace("apps/", ""),
-      exports: { ".": "./src/index.ts", "./ports": "./src/ports/index.ts" },
-    }),
-  );
-  fixture.write(pkg.path + "/src/index.ts", "export {};\n");
-  fixture.write(pkg.path + "/src/ports/index.ts", "export {};\n");
-  fixture.write(pkg.path + "/src/private.ts", "export {};\n");
-}
 fixture.write(
   "tsconfig.json",
   JSON.stringify({
@@ -78,6 +58,8 @@ new RuleTester({ languageOptions: { parser } }).run(
   allowedImports(fixture.root),
   {
     valid: [
+      at("import(name);", "root.config.ts"),
+      at('import "@overmind/domain";', "library.config.ts"),
       at('import "@overmind/domain";', "tools/check.ts"),
       at('import "@overmind/application/ports";', "packages/adapters/sqlite/src/valid.ts"),
       at('export type { X } from "@overmind/domain";', "packages/contracts/src/valid.test.ts"),
@@ -133,6 +115,25 @@ new RuleTester({ languageOptions: { parser } }).run(
     ],
   },
 );
+
+it("an uncatalogued importing workspace still fails closed", () => {
+  const code = 'import "@overmind/contracts";';
+  const { filename } = at(code, "packages/unknown/src/importer.ts");
+  expect(() =>
+    new Linter({ cwd: fixture.root }).verify(
+      code,
+      [
+        {
+          files: ["**/*.ts"],
+          languageOptions: { parser },
+          plugins: { boundaries: { rules: { "allowed-imports": allowedImports(fixture.root) } } },
+          rules: { "boundaries/allowed-imports": "error" },
+        },
+      ],
+      { filename, allowInlineConfig: false },
+    ),
+  ).toThrow("Invalid boundary environment.");
+});
 
 import { noDeepImports } from "./no-deep-imports.ts";
 import { testOnly } from "./test-only.ts";

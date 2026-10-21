@@ -2,51 +2,19 @@
 import { afterAll, describe, it } from "vitest";
 import { RuleTester } from "eslint";
 import { parser } from "typescript-eslint";
-import { resolve } from "node:path";
-import { loadCatalog } from "../../tools/boundaries/policy.parse-boundary.ts";
-import { createWorkspace } from "../../tools/boundaries-fixtures/workspace.ts";
+import { structuralWorkspace } from "./structuralWorkspace.ts";
 RuleTester.describe = describe;
 RuleTester.it = it;
-const fixture = createWorkspace();
+const fixture = structuralWorkspace();
 afterAll(() => {
   fixture.cleanup();
 });
-const catalog = loadCatalog(resolve(import.meta.dirname, "../.."));
-fixture.write("docs/architecture/boundaries.json", JSON.stringify(catalog));
-for (const pkg of catalog.packages.filter(
-  (entry) =>
-    entry.path.startsWith("packages/") ||
-    ["tools", "apps/engine", "apps/desktop"].includes(entry.id),
-)) {
-  fixture.write(
-    pkg.path + "/package.json",
-    JSON.stringify({
-      name: "@overmind/" + pkg.id.replace("adapters/", "adapter-").replace("apps/", ""),
-      exports: { ".": "./src/index.ts", "./ports": "./src/ports/index.ts" },
-    }),
-  );
-  fixture.write(pkg.path + "/src/index.ts", "export {};\n");
-  fixture.write(pkg.path + "/src/ports/index.ts", "export {};\n");
-  fixture.write(pkg.path + "/src/private.ts", "export {};\n");
-  fixture.write(pkg.path + "/test-support/helper.ts", "export {};\n");
-}
-fixture.write(
-  "packages/unknown/package.json",
-  JSON.stringify({ name: "@overmind/unknown", exports: "./src/index.ts" }),
-);
-fixture.write("packages/unknown/src/index.ts", "export {};\n");
-fixture.write("apps/desktop/src/features/alpha/peer.ts", "export {};\n");
-fixture.write("apps/desktop/src/features/alphabet/peer.ts", "export {};\n");
-fixture.write("apps/desktop/src/shared/helper.ts", "export {};\n");
 fixture.write(
   "tsconfig.json",
   JSON.stringify({
     compilerOptions: {
       paths: {
-        "@application": ["./packages/application/src/index.ts"],
-        "@private": ["./packages/domain/src/private.ts"],
         "@support": ["./packages/domain/test-support/helper.ts"],
-        "@peer": ["./apps/desktop/src/features/alpha/peer.ts"],
       },
     },
   }),

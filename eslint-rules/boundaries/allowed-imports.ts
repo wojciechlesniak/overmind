@@ -26,6 +26,9 @@ export function importRule(
       return {
         Program() {
           const env = environment(root, context);
+          if (!env.owner) {
+            return;
+          }
           for (const reference of importNodes(context.sourceCode)) {
             const target =
               reference.specifier === undefined
