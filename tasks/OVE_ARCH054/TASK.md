@@ -78,7 +78,7 @@ Keep every historical failed check and review. A prerequisite failure stops depe
 - [x] Every required import syntax retains its exact AST reference; nonliteral targets remain explicitly unverifiable and scanned modules are never executed.
 - [x] Genuine directive comments yield exact offsets, including expression/EOF cases; displayed strings/templates/JSX text remain valid negatives.
 - [x] All 31 allocated cases are preserved exactly once, with unchanged AST bodies/assertions/fixtures/budgets, and the two helpers import no ESLint rule implementation.
-- [ ] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
+- [x] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
 ## 12. Test plan
 
 - pnpm exec vitest run tools/boundaries/imports-comments.test.ts
@@ -111,6 +111,11 @@ and one Keychain warning each. The architecture orchestrator retained its warnin
 about reserved, unimplemented foundation checks; those are not real boundary PASS.
 Both independent whole-source Standards and Spec reviews passed with zero findings.
 
-The hosted gates and normal final lifecycle remain pending. The fourth acceptance
-criterion stays unchecked until actual hosted evidence exists. This child supplies
-no parent acceptance, live-engine permission or full application penetration claim.
+Initial in-review head 9d218a5 passed every observed hosted CI, Security and
+Isolation workflow on 2026-10-22. Both independent reviews passed for that exact
+head. The unchanged finish CLI completed through pinned Node with normal hooks;
+prior failed launcher invocations remain recorded without a claimed root cause.
+
+Final lifecycle metadata needs fresh exact-head hosted checks and independent
+review before merge. This child supplies no parent acceptance, live-engine
+permission or full application penetration claim.
