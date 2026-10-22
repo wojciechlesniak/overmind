@@ -7,12 +7,12 @@ size: S
 priority: P0
 mvp: true
 status: todo
-depends_on: ["OVE_ARCH017", "OVE_ARCH054"]
+depends_on: ["OVE_ARCH017", "OVE_ARCH054", "OVE_ARCH055"]
 soft_depends_on: []
 provides: ["lib:boundary-ts-analysis"]
-needs: ["lib:boundary-workspace-resolution", "lib:boundary-ts-imports-comments"]
+needs: ["lib:boundary-workspace-resolution", "lib:boundary-ts-imports-comments", "lib:boundary-ts-alias-writes"]
 owns: ["tools/boundaries/ts-globals.ts", "tools/boundaries/syntax.test.ts"]
-reads: ["tasks/OVE_ARCH054/TASK.md", "tasks/OVE_ARCH002/TASK.md", "docs/architecture/boundaries.json", "docs/architecture/ARCHITECTURE.md", "tasks/CONVENTIONS.md", "tasks/OVE_SETUP004/TASK.md"]
+reads: ["tasks/OVE_ARCH054/TASK.md", "tasks/OVE_ARCH002/TASK.md", "docs/architecture/boundaries.json", "docs/architecture/ARCHITECTURE.md", "tasks/CONVENTIONS.md", "tasks/OVE_SETUP004/TASK.md", "tasks/OVE_ARCH055/TASK.md"]
 design: none
 design_source: ""
 spec_refs: ["SPECIFICATION 13", "SPECIFICATION 19"]
