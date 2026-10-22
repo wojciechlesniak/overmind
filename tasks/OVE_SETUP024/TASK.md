@@ -7,7 +7,7 @@ size: S
 priority: P0
 mvp: true
 status: todo
-depends_on: ["OVE_SETUP017", "OVE_ARCH016", "OVE_ARCH032", "OVE_ARCH034"]
+depends_on: ["OVE_SETUP017", "OVE_ARCH016", "OVE_ARCH032", "OVE_ARCH034", "OVE_OSS016"]
 soft_depends_on: []
 provides: ["lib:engine-foundation-verification"]
 needs: ["lib:engine-executable", "lib:boundary-policy-inputs", "lib:engine-bundler-tooling", "lib:engine-foundation-markers"]

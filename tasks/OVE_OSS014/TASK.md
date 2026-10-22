@@ -7,7 +7,7 @@ size: M
 priority: P0
 mvp: true
 status: todo
-depends_on: [OVE_OSS005, OVE_OSS006]
+depends_on: [OVE_OSS005, OVE_OSS006, "OVE_OSS016"]
 soft_depends_on: []
 provides: ["lib:adr-history-proof", "lib:adr-0029-translation"]
 needs: []
