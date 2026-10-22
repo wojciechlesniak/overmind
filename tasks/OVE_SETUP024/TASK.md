@@ -177,3 +177,20 @@ The integrator selected hosted native verification under the Owner's 2026-10-23
 routine MVP delegation. The finite allocation and limits are recorded in
 `tasks/_proposals/OVE_SETUP024-hosted-native-verification.md`. No acceptance,
 residual-risk decision or physical-isolation evidence is implied.
+
+## Implementation checkpoint (2026-10-22)
+
+The two original macOS packaging/symbolication failures were reproduced in the
+claimed worktree before source changes. Those files remain byte-identical; all
+three tests in their unchanged files now pass. The public assertion passed 51
+cases for exact markers, aliases and false absence, map/source disagreement,
+strict syntax, snapshot swaps, links, non-regular files, UTF8 and source bounds.
+Two disposable public-packager fixtures passed with compose/service source and
+packaged-executable execution sentinels absent. Classification never imports or
+executes hook source. The existing live-PID refusal and packaging checks remain.
+
+The normal atomic claim, frozen install and hooks passed with protected primary
+bytes unchanged. Original RED, lint and fixture failures remain preserved in
+operational evidence. Full exact-source gates, independent whole Standards/Spec
+reviews and normal final task lifecycle are still pending. All five acceptance
+criteria remain unchecked at this implementation checkpoint.
