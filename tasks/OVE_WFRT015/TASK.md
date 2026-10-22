@@ -129,8 +129,10 @@ foundation checks; no real boundary/task-ownership PASS is inferred. No standalo
 expression integration suite exists; the real parser suites exercise the merged
 lexer/printer, while unrelated packaging failures remain recorded separately.
 
-The original head and all nine WIP files remain byte/mode-identical in verified
-ZIP and Git stash escrow; no obsolete child implementation was reapplied. Missing
+The original head remains retained by the Git stash ancestry. All nine original
+WIP contents remain byte-identical in the ZIP and Git stash. Original file modes
+are recorded in the baseline and preserved by Git stash; ZIP entries use private
+0600 modes. No obsolete child implementation was reapplied. Missing
 19-October temporary receipts remain unavailable historical references. Independent
 whole reviews, fresh exact-head hosted checks and normal final task lifecycle
 remain required before completion or DEVELOP integration. Downstream tasks remain
