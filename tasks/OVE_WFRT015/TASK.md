@@ -6,7 +6,7 @@ kind: security
 size: M
 priority: P0
 mvp: true
-status: in_review
+status: done
 depends_on: [OVE_ARCH003, OVE_WFRT060]
 soft_depends_on: [OVE_WFRT001]
 provides: ["lib:expression-parser", "contract:ExpressionAst", "doc:expression-grammar"]
