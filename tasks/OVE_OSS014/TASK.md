@@ -104,7 +104,7 @@ First review the exact proof schema/algorithm. Use actual pinned production hist
 
 ## 13. Parallelization notes
 
-Hard dependencies are OSS005/006 only; never add completed OSS010/011 or OSS013 as prerequisites. Both translation halves depend on this task. The coordinated complete-candidate transfer and normal merge/finish order are normative in [OSS015 section 5](../OVE_OSS015/TASK.md#5-detailed-requirements). Source/archive and proof changes require assigned owner review; no active task claim or status is transferred.
+Hard dependencies are OSS005/006/016; never add completed OSS010/011 or OSS013 as prerequisites. Both translation halves depend on this task. The coordinated complete-candidate transfer and normal merge/finish order are normative in [OSS015 section 5](../OVE_OSS015/TASK.md#5-detailed-requirements). Source/archive and proof changes require assigned owner review; no active task claim or status is transferred.
 
 ## 14. Open questions and assumptions
 

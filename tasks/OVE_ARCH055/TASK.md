@@ -44,23 +44,23 @@ No product API, root exports, matrix, dependency, policy, configuration or permi
 
 ## 5. Detailed requirements
 
-1. Export aliasWritesOf(source: ts.SourceFile, checker: ts.TypeChecker): AliasWrites.
+1. MUST export aliasWritesOf(source: ts.SourceFile, checker: ts.TypeChecker): AliasWrites.
    AliasSelection has readonly object: ts.Node and segments: readonly string[].
-2. AliasWrites exposes readonly writes: ReadonlyMap<ts.Symbol, readonly ts.Expression[]>;
+2. MUST expose AliasWrites with readonly writes: ReadonlyMap<ts.Symbol, readonly ts.Expression[]>;
    selections: ReadonlyMap<ts.Symbol, readonly AliasSelection[]>; propertyWrites:
    ReadonlyMap<ts.Symbol, ReadonlyMap<string, readonly AliasSelection[]>>; bindings:
    ReadonlySet<ts.Symbol>; assignmentTargets: ReadonlySet<ts.Identifier>.
-3. Return shared symbolOf(Identifier): ts.Symbol|undefined, key(Node): string and
+3. MUST return shared symbolOf(Identifier): ts.Symbol|undefined, key(Node): string and
    elementKey(Expression): string functions as readonly fields on AliasWrites.
    Preserve their existing distinct named/computed and shorthand/default semantics once.
-4. Collect variable/parameter initializers, binding symbols, identifier/member writes,
+4. MUST collect variable/parameter initializers, binding symbols, identifier/member writes,
    nested object/array assignment selections, defaults, rest and omitted elements.
    Preserve actual AST/Symbol identities and segment order; fresh facts per invocation.
-5. Move collect/collectSelection/addWrite/addMemberWrite and their maps/helpers only.
+5. MUST move collect/collectSelection/addWrite/addMemberWrite and their maps/helpers only.
    No forbiddenNames, capability patterns, resolution, lexical-shadow decisions or visitor framework.
-6. Use the existing pinned TypeScript and real virtual TypeChecker in own tests.
+6. MUST use the existing pinned TypeScript and real virtual TypeChecker in own tests.
    Never execute scanned source, emit fixtures, perform I/O or import ESLint rules.
-7. Keep every original parent/054 test body, fixture, offset, checker and budget intact.
+7. MUST keep every original parent/054 test body, fixture, offset, checker and budget intact.
    Child tests prove collection directly; do not duplicate the 86 preserved test bodies.
 
 ## 6. Design notes

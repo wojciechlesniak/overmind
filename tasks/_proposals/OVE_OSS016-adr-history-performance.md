@@ -5,9 +5,10 @@ Status: proposed; no task claim or production implementation.
 ## Requested registration
 
 1. Add the accompanying OVE_OSS016 Task as TODO with all five criteria unchecked.
-2. In canonical OVE_OSS014, change only `depends_on` from
+2. In canonical OVE_OSS014, change `depends_on` from
    `[OVE_OSS005, OVE_OSS006]` to `[OVE_OSS005, OVE_OSS006, OVE_OSS016]`.
-   Its TODO status, exact owns, eight requirements/criteria and migration contract remain unchanged.
+   Update only the matching section 13 dependency sentence as well. Its TODO status,
+   exact owns, eight requirements/criteria and migration contract remain unchanged.
 3. Append OVE_OSS016 only to canonical SETUP024 depends_on; preserve its TODO status,
    five unchecked criteria, owns and every other byte. Its original claim was valid
    when made; keep it parked and preserve its nonce rather than reset or reclaim it.
