@@ -3,8 +3,9 @@ import { resolve } from "node:path";
 import { z } from "zod";
 import { step } from "../context.ts";
 import { safeFile } from "../files.ts";
+import { assertFoundationHooks, foundationInputPaths } from "../foundationHooks.parse-boundary.ts";
 import { execute } from "../runner.ts";
-import { json, metafileInputs, sourceMapSchema, versionSchema } from "../input.parse-boundary.ts";
+import { json, sourceMapSchema, versionSchema } from "../input.parse-boundary.ts";
 import { sentinel } from "./inject.ts";
 
 const receiptSchema = z
@@ -49,7 +50,7 @@ export const verify = step("verify", async (ctx) => {
     throw new Error("Engine links a non-system library");
   }
   const metadata = readFileSync(resolve(ctx.dist, "engine.meta.json"), "utf8");
-  sourceMapSchema.parse(
+  const sourceMap = sourceMapSchema.parse(
     json(
       readFileSync(
         safeFile(ctx.root, resolve(ctx.dist, "engine.cjs.map"), false, 16000000),
@@ -60,11 +61,7 @@ export const verify = step("verify", async (ctx) => {
   if (/\.node(?:["'\s]|$)/u.test(metadata)) {
     throw new Error("Unlisted native addon is forbidden");
   }
-  if (
-    metafileInputs(metadata).some((path) => /apps\/engine\/src\/(?:service|compose)\//u.test(path))
-  ) {
-    throw new Error("Live engine verification requires the ENGINE stop contract");
-  }
+  assertFoundationHooks(ctx.root, foundationInputPaths(metadata), sourceMap);
   if (ctx.options.skipSign) {
     return;
   }

@@ -77,9 +77,25 @@ The CLI composes small `Step.run(ctx)` implementations; `planSteps` and
    failed step removes the named outputs; build directories are cleaned up.
 
 Before ENGINE lands, the actual `ensure-running` stub returns 20 and creates no
-service. A live service/compose input is refused before the verifier starts it:
+service. The verifier accepts an included foundation hook only at the exact
+canonical `apps/engine/src/compose/index.ts` or
+`apps/engine/src/service/index.ts` path, containing
+only `export const UNIMPLEMENTED = true;` with optional comments and whitespace.
+It parses that text as data and never imports it. Every included hook must have
+one canonical bundled source-map identity and a non-null snapshot equal to the
+confined current source bytes. Missing, duplicate, aliased, changed or unsafe
+inputs deny, including a live bundle followed by a source replacement. Genuine
+absence remains supported; malformed analysis does not establish absence.
+The captured import graph must retain each hook request and its exact canonical
+resolved input. Canonical paths are checked through the existing confined path
+helpers: a symlink target cannot become an absent hook, even if the symlink is
+removed after bundling. Missing or empty import provenance fails closed.
+
+This check runs before any packaged-engine command, including `version`, in
+signed and diagnostic modes. A live service/compose input remains refused:
 ENGINE must supply safe isolated startup and bounded stop verification before
-that future lifecycle is accepted. Packaging does not implement a fake service.
+that future lifecycle is accepted. Packaging does not implement a fake service
+or grant permission to start a live one.
 
 The manifest records signed/unsigned/bundle hashes, runtime and build tool
 versions, exact deployed resource hashes and input hashes for the archive, Node
