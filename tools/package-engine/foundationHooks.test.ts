@@ -85,6 +85,8 @@ it.each([
   "export const UNIMPLEMENTED: boolean = true;",
   "export const UNIMPLEMENTED! = true;",
   "export let UNIMPLEMENTED = true;",
+  "export using UNIMPLEMENTED = true;",
+  "export await using UNIMPLEMENTED = true;",
   "export declare const UNIMPLEMENTED = true;",
   "const UNIMPLEMENTED = true; export { UNIMPLEMENTED };",
   'export { UNIMPLEMENTED } from "./other.ts";',

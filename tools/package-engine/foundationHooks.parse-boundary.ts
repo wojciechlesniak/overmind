@@ -32,9 +32,12 @@ function inertMarker(source: string): boolean {
     !ts.isVariableStatement(statement) ||
     statement.modifiers?.length !== 1 ||
     statement.modifiers[0]?.kind !== ts.SyntaxKind.ExportKeyword ||
-    !(statement.declarationList.flags & ts.NodeFlags.Const) ||
     statement.declarationList.declarations.length !== 1
   ) {
+    return false;
+  }
+  const declarationKind: ts.NodeFlags = statement.declarationList.flags & ts.NodeFlags.BlockScoped;
+  if (declarationKind !== ts.NodeFlags.Const) {
     return false;
   }
   const declaration = statement.declarationList.declarations[0];
