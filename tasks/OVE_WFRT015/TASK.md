@@ -6,7 +6,7 @@ kind: security
 size: M
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: [OVE_ARCH003, OVE_WFRT060]
 soft_depends_on: [OVE_WFRT001]
 provides: ["lib:expression-parser", "contract:ExpressionAst", "doc:expression-grammar"]
@@ -85,11 +85,11 @@ The grammar's smallness is the security property. Hostile source (injection atte
 
 ## 11. Acceptance criteria
 
-- [ ] The three spec example conditions and 20 further examples parse and print canonically.
-- [ ] Every illegal character class in requirement 1 yields `expr.illegal_character`.
-- [ ] Limits enforced with the specified error codes; 1e6 parentheses terminates quickly with an error (no stack overflow).
-- [ ] Round-trip semantic equality and canonical-print idempotence hold for accepted ASTs, with positions tested separately. The actual 988-character/29-node/depth-15 counterexample is rejected with `expr.too_complex`, `limit: "canonicalSourceLength"` and span 0..988 because canonical length is 1 030. Cover canonical length 1 000 acceptance and 1 001 rejection without changing any original bound.
-- [ ] Forbidden identifiers rejected in all positions.
+- [x] The three spec example conditions and 20 further examples parse and print canonically.
+- [x] Every illegal character class in requirement 1 yields `expr.illegal_character`.
+- [x] Limits enforced with the specified error codes; 1e6 parentheses terminates quickly with an error (no stack overflow).
+- [x] Round-trip semantic equality and canonical-print idempotence hold for accepted ASTs, with positions tested separately. The actual 988-character/29-node/depth-15 counterexample is rejected with `expr.too_complex`, `limit: "canonicalSourceLength"` and span 0..988 because canonical length is 1 030. Cover canonical length 1 000 acceptance and 1 001 rejection without changing any original bound.
+- [x] Forbidden identifiers rejected in all positions.
 
 ## 12. Test plan
 
@@ -104,3 +104,36 @@ The exact sequence is ARCH003 -> WFRT058 -> WFRT059 -> WFRT060 -> this final acc
 - ASSUMPTION: `100%` means the number 100 (scale 0-100) because evidence such as `testsPassed` is stored as a percentage; documented in WFRT026.
 - ASSUMPTION: no modulo operator (the `%` sign is only a percent literal); `mod(a,b)` is a function (WFRT016).
 
+
+## Verification status (2026-10-21)
+
+The final parent acceptance checked the merged WFRT058/059/060 implementation on
+DEVELOP 5737019 without changing child source or tests. All 350 expression cases
+and full configured coverage of 1326 tests in 118 files passed after full format,
+types and lint. The unchanged 400-case seeded property test and exact raw/AST/
+canonical bounds passed, including canonical 1000/1001 and the 988-to-1030 case.
+
+A separate public-API probe passed the three actual Gate clauses, combined Gate,
+IF example and 24 further canonical examples, with semantic roundtrip/frozen-AST
+checks, 56 illegal classes and 18 reserved-name positions. A bounded resource
+probe made 1000 API calls in 74 ms with a 64 MiB heap cap and measured peak RSS
+100576 KiB, below its fixed 192 MiB ceiling; an external 15-second limit and
+2-second API-batch ceiling remained enforced. Million-parenthesis and 10 MiB
+inputs denied before scanning. These are parser acceptance proofs, not product
+penetration or evaluator permission.
+
+Dependency/license policies, both audits, history/tree secret scans, SBOM and
+workspace build passed. Secret scans retained zero findings and one Keychain
+warning each. The architecture orchestrator retained warnings for unimplemented
+foundation checks; no real boundary/task-ownership PASS is inferred. No standalone
+expression integration suite exists; the real parser suites exercise the merged
+lexer/printer, while unrelated packaging failures remain recorded separately.
+
+The original head remains retained by the Git stash ancestry. All nine original
+WIP contents remain byte-identical in the ZIP and Git stash. Original file modes
+are recorded in the baseline and preserved by Git stash; ZIP entries use private
+0600 modes. No obsolete child implementation was reapplied. Missing
+19-October temporary receipts remain unavailable historical references. Independent
+whole reviews, fresh exact-head hosted checks and normal final task lifecycle
+remain required before completion or DEVELOP integration. Downstream tasks remain
+blocked until that completion.
