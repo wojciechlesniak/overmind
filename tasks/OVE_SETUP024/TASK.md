@@ -180,17 +180,24 @@ residual-risk decision or physical-isolation evidence is implied.
 
 ## Implementation checkpoint (2026-10-22)
 
-The two original macOS packaging/symbolication failures were reproduced in the
-claimed worktree before source changes. Those files remain byte-identical; all
-three tests in their unchanged files now pass. The public assertion passed 51
-cases for exact markers, aliases and false absence, map/source disagreement,
-strict syntax, snapshot swaps, links, non-regular files, UTF8 and source bounds.
-Two disposable public-packager fixtures passed with compose/service source and
-packaged-executable execution sentinels absent. Classification never imports or
-executes hook source. The existing live-PID refusal and packaging checks remain.
+The two original macOS packaging/symbolication failures were reproduced before
+source changes. Those files remain byte-identical. An initial full run passed
+1377 unit and 113 integration tests, but independent reviews blocked that source
+checkpoint: esbuild's resolved names could hide a canonical symlink to live code.
+Three real public-packager regressions reproduced hook and packaged-command
+execution, including removal of the symlink after bundling. That checkpoint is
+not accepted evidence for the repaired source.
 
-The normal atomic claim, frozen install and hooks passed with protected primary
-bytes unchanged. Original RED, lint and fixture failures remain preserved in
-operational evidence. Full exact-source gates, independent whole Standards/Spec
-reviews and normal final task lifecycle are still pending. All five acceptance
-criteria remain unchecked at this implementation checkpoint.
+Verification now checks captured original/resolved hook imports and canonical
+physical paths through existing confined helpers. It preserves the fixed
+three-argument assertion and rejects unknown candidates before cross-list work.
+All nine focused macOS tests passed, including the unchanged original three,
+direct live hooks, file/directory aliases, removal after bundling and genuine
+absence. A further empty-provenance regression failed before its repair; all 62
+focused static cases then passed with native types and lint. Classification never
+imports or executes hook source; existing lifecycle and packaging guards remain.
+
+Normal claim/install/hooks and all operational checks preserved protected primary
+bytes. Original RED, lint, fixture and review findings remain recorded. Fresh
+full exact-head gates, independent whole Standards/Spec reviews and normal final
+task lifecycle are still pending. All five acceptance criteria remain unchecked.
