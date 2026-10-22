@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: in_progress
 depends_on: ["OVE_SETUP002", "OVE_SETUP004"]
 soft_depends_on: []
 provides: ["lib:boundary-ts-alias-writes"]
