@@ -197,6 +197,12 @@ absence. A further empty-provenance regression failed before its repair; all 62
 focused static cases then passed with native types and lint. Classification never
 imports or executes hook source; existing lifecycle and packaging guards remain.
 
+A second full run passed 1388 unit and 117 integration tests, but independent
+review still blocked its source for a missing internal-target record. That
+regression and an adjacent external-request mismatch both failed before minimal
+repairs; all 64 focused cases then passed with native types and lint. Those older
+full passes do not establish acceptance of the final repaired source.
+
 Normal claim/install/hooks and all operational checks preserved protected primary
 bytes. Original RED, lint, fixture and review findings remain recorded. Fresh
 full exact-head gates, independent whole Standards/Spec reviews and normal final
