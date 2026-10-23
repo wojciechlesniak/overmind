@@ -1,0 +1,70 @@
+name: Native integration
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, labeled]
+  push:
+    branches: [main, master, DEVELOP]
+  merge_group: {}
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != format('refs/heads/{0}', github.event.repository.default_branch) }}
+defaults:
+  run:
+    shell: bash
+jobs:
+  native-integration:
+    if: github.event.repository.visibility == 'public'
+    runs-on: macos-26
+    timeout-minutes: 20
+    env:
+      CI: "true"
+      VITEST_MAX_WORKERS: "1"
+      EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: $/.github/actions/setup
+      - id: native
+        env:
+          NATIVE_REPORT: ${{ runner.temp }}/native-integration/results.json
+        run: |
+          set -euo pipefail
+          [[ "$EXPECTED_SHA" =~ ^[a-f0-9]{40}$ ]]
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          test "$(uname -m)" = arm64
+          test "$(sw_vers -productVersion | cut -d. -f1)" -ge 26
+          mkdir -p "$RUNNER_TEMP/native-integration"
+          git rev-parse HEAD > "$RUNNER_TEMP/native-integration/head.txt"
+          node --version > "$RUNNER_TEMP/native-integration/node.txt"
+          pnpm --version > "$RUNNER_TEMP/native-integration/pnpm.txt"
+          pnpm test:int --reporter=json --outputFile="$NATIVE_REPORT"
+          node --input-type=module <<'NODE'
+          import { readFileSync, statSync } from 'node:fs';
+          const path = process.env.NATIVE_REPORT;
+          if (!path || statSync(path).size > 20 * 1024 * 1024) throw new Error('Invalid native report');
+          const report = JSON.parse(readFileSync(path, 'utf8'));
+          const files = report.testResults;
+          const complete = report.success === true &&
+            Number.isSafeInteger(report.numTotalTests) && report.numTotalTests > 0 &&
+            report.numPassedTests === report.numTotalTests && report.numFailedTests === 0 &&
+            report.numPendingTests === 0 && report.numTodoTests === 0 &&
+            Array.isArray(files) && files.length > 0 &&
+            files.every(f => f?.status === 'passed' && Array.isArray(f.assertionResults) &&
+              f.assertionResults.length > 0 && f.assertionResults.every(a => a?.status === 'passed')) &&
+            files.reduce((sum, f) => sum + f.assertionResults.length, 0) === report.numTotalTests;
+          if (!complete) throw new Error('Incomplete native integration evidence');
+          NODE
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: native-integration-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/native-integration/
+          retention-days: 7
+          if-no-files-found: error

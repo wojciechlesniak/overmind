@@ -18,6 +18,9 @@ owns:
   - tools/package-engine/foundationHooks.int.test.ts
   - docs/engineering/engine-packaging.md
   - tasks/OVE_SETUP024/TASK.md
+  - .github/workflows/native-integration.yml
+  - tools/ci/native-integration.test.ts
+  - docs/engineering/ci.md
 reads: ["tasks/OVE_SETUP017/TASK.md", "tasks/OVE_ARCH016/TASK.md", "tasks/OVE_ARCH032/TASK.md", "tasks/OVE_ARCH034/TASK.md", "tasks/OVE_ARCH036/TASK.md", "tasks/_proposals/OVE_SETUP017-packaging-contract.md", "tools/package-engine/input.parse-boundary.ts", "tools/package-engine/files.ts", "tools/package-engine/context.ts", "tools/package-engine/packaging.int.test.ts", "tools/package-engine/symbolicate.int.test.ts", "tools/build/engine/bundle.mjs", "tools/build/engine/protocol.parse-boundary.ts", "apps/engine/src/cli.ts", "apps/engine/src/compose/index.ts", "apps/engine/src/service/index.ts"]
 design: none
 design_source: ""
@@ -50,7 +53,9 @@ evidence, not an exception or a packaging PASS. OVE_ARCH036 remains blocked.
 - Add the confined static marker check and call it from the existing verify step.
 - Bind accepted marker text to the actual bundled source snapshot and current bytes.
 - Add focused negative/public-packager tests and clarify the packaging guide.
-- Use only the six exact owns paths and normal task lifecycle metadata.
+- Use only the exact owns paths and normal task lifecycle metadata.
+- Add hosted macOS integration verification with unchanged tests and deadlines;
+  retain local failures and existing CI/security policy.
 
 ## 4. Out of scope
 
@@ -167,3 +172,8 @@ lifecycle expansion is assumed. Registration alone supplies no implementation or
 PASS. The actual bundled/current snapshot binding and all denied cases require
 real proof; any need for additional paths or policy decisions stops that portion
 and goes through a finite proposal.
+
+The integrator selected hosted native verification under the Owner's 2026-10-23
+routine MVP delegation. The finite allocation and limits are recorded in
+`tasks/_proposals/OVE_SETUP024-hosted-native-verification.md`. No acceptance,
+residual-risk decision or physical-isolation evidence is implied.
