@@ -73,10 +73,10 @@ Use synthetic examples only; no live tokens, credentials, personal paths or runn
 
 ## 11. Acceptance criteria
 
-- [ ] At least 36 stable cases cover every family listed in OVE_SEC001 section 5.5 and reference valid SR ids.
-- [ ] Every case has all seven required fields, an explicit expected denial/approval/detection outcome and a verifying task/activity.
-- [ ] Injection examples reference OVE_SEC004 fixture ownership; no executable attack, live secret or Owner-specific path is included.
-- [ ] The final three-document line total is 600..900 and the catalogue consistency pass retains any OPEN gap for parent review.
+- [x] At least 36 stable cases cover every family listed in OVE_SEC001 section 5.5 and reference valid SR ids.
+- [x] Every case has all seven required fields, an explicit expected denial/approval/detection outcome and a verifying task/activity.
+- [x] Injection examples reference OVE_SEC004 fixture ownership; no executable attack, live secret or Owner-specific path is included.
+- [x] The final three-document line total is 600..900 and the catalogue consistency pass retains any OPEN gap for parent review.
 
 ## 12. Test plan
 
