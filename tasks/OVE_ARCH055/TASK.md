@@ -12,7 +12,14 @@ soft_depends_on: []
 provides: ["lib:boundary-ts-alias-writes"]
 needs: ["lib:tsconfig-base", "lib:vitest-workspace"]
 owns: ["tools/boundaries/ts-alias-writes.ts", "tools/boundaries/ts-alias-writes.test.ts"]
-reads: ["tasks/OVE_ARCH021/TASK.md", "tasks/OVE_ARCH002/TASK.md", "tasks/_proposals/OVE_ARCH055-alias-write-collection.md", "tasks/OVE_SETUP002/TASK.md", "tasks/OVE_SETUP004/TASK.md"]
+reads:
+  [
+    "tasks/OVE_ARCH021/TASK.md",
+    "tasks/OVE_ARCH002/TASK.md",
+    "tasks/_proposals/OVE_ARCH055-alias-write-collection.md",
+    "tasks/OVE_SETUP002/TASK.md",
+    "tasks/OVE_SETUP004/TASK.md",
+  ]
 design: none
 design_source: ""
 spec_refs: ["SPECIFICATION 13", "SPECIFICATION 19"]
@@ -89,9 +96,9 @@ assignment targets, arrays/rest/omissions and per-call isolation using actual ch
 
 ## 11. Acceptance criteria
 
-- [ ] Actual checker/node facts cover every required collection family and edge case.
-- [ ] Shared key/symbol semantics occur once; source is not executed, emitted or read through I/O.
-- [ ] Only owned paths change; all original parent/054 cases, assertions and budgets remain intact.
+- [x] Actual checker/node facts cover every required collection family and edge case.
+- [x] Shared key/symbol semantics occur once; source is not executed, emitted or read through I/O.
+- [x] Only owned paths change; all original parent/054 cases, assertions and budgets remain intact.
 - [ ] Required checks, independent Standards/Spec reviews and exact-head hosted gates pass before merge.
 
 ## 12. Test plan
@@ -109,3 +116,9 @@ Parent021 waits for this child DONE/merge; no child author edits its source, tes
 
 The approved collector escrow is the only transfer source; no oversized parent patch is replayed.
 All criteria start unchecked; child completion supplies no parent or ARCH002 acceptance.
+
+### Verification evidence (2026-10-23)
+
+At source `133fdff`, the unchanged 145-line collector and all eight real-checker cases passed fresh typecheck, owned lint/format and independent whole Standards/Spec review. Fourteen applicable generator/format/lint/architecture/dependency/license/audit/secret/SBOM/build/docs checks passed on repaired DEVELOP `9d8e5f0`. The ordinary staging-claim push also passed full type/lint hooks and 1475 unit tests in 123 files, without publishing the source.
+
+The permitted low development advisory and existing Keychain scanner warnings remain visible. All historical failed/incomplete native receipts remain retained; the repaired base passed its own actual 123-case/30-file post-DEVELOP verification, which does not establish this task head's hosted result. The final gate criterion stays unchecked pending fresh IR reviews and exact-head hosted checks. No parent021/ARCH002, runtime escape or consumer acceptance is claimed.
