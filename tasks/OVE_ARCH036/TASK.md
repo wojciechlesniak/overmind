@@ -81,7 +81,7 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 - [x] Actual root discovers18 unique test projects; all 17 workspace source-root thresholds are unchanged and static imports have no initialization cycle.
 - [x] Two actual shards cover every test ID exactlyonce; original CI shard/merge negative coverage probe still fails uncovered domain independently.
 - [x] Root test TS includes configs while Tools production TS excludes only the new config subtree; pure source gains no test/DOM ambient types.
-- [ ] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
+- [x] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
 
 ## 12. Test plan
 
@@ -127,12 +127,14 @@ of that source found no issues. Both reviewers approved the finite v6 native inv
 extension: only the two changed Vitest control pins, with all 123 identities in 30 files
 and the other 35 pins preserved. This inventory is not an executed native result.
 
-The first four content criteria are supported by those actual checks. The final gate criterion
-remains unchecked: native lifecycle, fresh exact-head hosted/security and independent whole
-reviews, followed by actual post-DEVELOP verification, are still required. No parent ARCH002,
-future relocation-batch, runtime isolation or release acceptance is claimed.
+At that source checkpoint, the first four content criteria were supported and the final gate
+criterion remained pending. The corrected source later passed the native in-review and DONE
+transitions, independent whole reviews and exact-head hosted gates. The final candidate still
+requires fresh whole reviews, hosted gates and actual post-DEVELOP verification. No parent
+ARCH002, future relocation-batch, runtime isolation or release acceptance is claimed.
 
 The later 42dde85 staging-claim push failed its 30000ms policy-matrix unit test;
 that RED remains separate from the earlier full/shard PASS. Root's finite shared
 [fixture-startup repair](../_proposals/OVE_ARCH036-policy-fixture-startup.md) preserves
-all 44 real checks and policies. At this pre-execution checkpoint, corrected focus and publication gates remain pending.
+all 44 real checks and policies. Corrected focus and publication gates subsequently passed;
+the original failed checkpoints remain recorded in their external evidence.
