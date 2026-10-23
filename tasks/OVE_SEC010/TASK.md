@@ -6,7 +6,7 @@ kind: docs
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: [OVE_ARCH001]
 soft_depends_on: []
 provides: ["doc:threat-model-analysis"]
@@ -74,11 +74,11 @@ Use synthetic examples only; no live tokens, credentials, personal paths or runn
 
 ## 11. Acceptance criteria
 
-- [ ] All ten model sections, ten assets, nine actor families and twelve boundaries are present, with a real Mermaid preview.
-- [ ] All 72 STRIDE rows have unique stable ids, 1..3 scores, SR references, owners and residuals; all required threat families are covered.
-- [ ] SR-01..SR-38 have threat references and the complete area mitigation map, with future references clearly reserved.
-- [ ] Every SPECIFICATION 17 risk has detection, date and Owner acceptance authority; no pending risk is represented as accepted.
-- [ ] The file contains no live secret, Owner-specific path, executable attack payload, invented test evidence or unauthorized fallback.
+- [x] All ten model sections, ten assets, nine actor families and twelve boundaries are present, with a real Mermaid preview.
+- [x] All 72 STRIDE rows have unique stable ids, 1..3 scores, SR references, owners and residuals; all required threat families are covered.
+- [x] SR-01..SR-38 have threat references and the complete area mitigation map, with future references clearly reserved.
+- [x] Every SPECIFICATION 17 risk has detection, date and Owner acceptance authority; no pending risk is represented as accepted.
+- [x] The file contains no live secret, Owner-specific path, executable attack payload, invented test evidence or unauthorized fallback.
 
 ## 12. Test plan
 
@@ -91,3 +91,12 @@ One child, one author, one task worktree. Other tasks may proceed on disjoint pa
 ## 14. Open questions and assumptions
 
 No new product assumptions. Twelve boundaries are already enumerated by ARCH001 and parent requirement 2; the parent's eleven count is corrected without dropping a boundary. SR-11 remains SHOULD. The Owner has not accepted residual provider-terms or weaker-isolation risks by delegating routine implementation choices.
+
+
+### Document acceptance evidence (2026-10-23)
+
+- Document bytes match published/reviewed `8694630e6905cdb62ebd4d050724a75fcdc37c13`: 342 lines, ten sections/assets, nine actor families, twelve boundaries, 72 STRIDE rows and SR-01..SR-38 coverage.
+- Real Mermaid PNG inspection and manual/positive consistency checks passed; ten malformed-document mutations were denied. Strict owned-file formatting, documentation and secret scans passed; inherited scanner warnings remain recorded.
+- Both whole independent review axes passed at that head. Normal type/lint/push hooks passed 1467 units in 122 files. Exact-head hosted checks passed; the verified [Native integration artifact](https://github.com/wojciechlesniak/overmind/actions/runs/39948329527) contains 120 passing cases in 29 files, with no failed/skipped/todo cases.
+- These are historical document criteria and exact-head results. At that checkpoint, status was in_review and the rebased acceptance head still required fresh reviews, normal hooks and hosted checks against the 123-case/30-file native inventory. Parent OVE_SEC001, Owner risk decisions and runtime penetration/escape proof remain separate and unaccepted.
+- Acceptance head `31b6c9e7c30242dc2545e79d41c263d07fcec9d3` subsequently passed fresh whole Standards/Spec reviews, actual document checks, normal type/lint hooks and 1467 unit tests in 122 files. Its four hosted workflows passed on first attempts; the verified [Native artifact](https://github.com/wojciechlesniak/overmind/actions/runs/39957072425) contains 123 exact passing cases in 30 files, with no failures/skips/todos. Native DONE staging does not accept the final candidate: fresh whole reviews, exact-head hosted checks and integrator post-DEVELOP verification remain required.
