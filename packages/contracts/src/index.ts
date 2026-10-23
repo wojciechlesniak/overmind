@@ -12,3 +12,4 @@ export {
   sanitisedText,
   sanitisedRelativePath,
 } from "./errors/safe-details.ts";
+export * from "./kernel/ids.ts";
