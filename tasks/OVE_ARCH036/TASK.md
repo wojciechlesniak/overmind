@@ -128,8 +128,9 @@ extension: only the two changed Vitest control pins, with all 123 identities in 
 and the other 35 pins preserved. This inventory is not an executed native result.
 
 At that source checkpoint, the first four content criteria were supported and the final gate
-criterion remained pending. The corrected source later passed the native in-review and DONE
-transitions, independent whole reviews and exact-head hosted gates. The final candidate still
+criterion remained pending. The pending in-review publication later passed a captured ordinary
+push, independent whole reviews and exact-head hosted gates; the original native in-review
+exit 4 remains failed. The subsequent native DONE command passed. The final candidate still
 requires fresh whole reviews, hosted gates and actual post-DEVELOP verification. No parent
 ARCH002, future relocation-batch, runtime isolation or release acceptance is claimed.
 
