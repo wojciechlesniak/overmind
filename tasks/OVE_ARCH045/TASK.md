@@ -7,12 +7,12 @@ size: S
 priority: P0
 mvp: true
 status: todo
-depends_on: ["OVE_ARCH043"]
+depends_on: ["OVE_ARCH043", "OVE_ARCH057"]
 soft_depends_on: []
 provides: ["lib:vitest-static-discovery"]
-needs: ["lib:vitest-relocation-batch-four"]
-owns: ["tools/vitest-projects/discovery.ts", "tools/vitest-projects/discovery.test.ts", "tools/vitest-projects/coverage.ts", "vitest.config.ts", "vitest.shared.ts", "tools/tsconfig.json", "tools/boundaries/vitest-projects.test.ts"]
-reads: ["tasks/OVE_ARCH002/TASK.md", "docs/architecture/boundaries.json", "docs/architecture/ARCHITECTURE.md", "tasks/CONVENTIONS.md", "tasks/OVE_SETUP004/TASK.md"]
+needs: ["lib:vitest-relocation-batch-four", "lib:ids"]
+owns: ["tools/vitest-projects/discovery.ts", "tools/vitest-projects/discovery.test.ts", "tools/vitest-projects/coverage.ts", "vitest.config.ts", "vitest.shared.ts", "tools/tsconfig.json", "tools/boundaries/vitest-projects.test.ts", "packages/adapters/system/vitest.config.ts", "tools/vitest-projects/packages/adapters/system/vitest.config.ts"]
+reads: ["tasks/OVE_ARCH002/TASK.md", "docs/architecture/boundaries.json", "docs/architecture/ARCHITECTURE.md", "tasks/CONVENTIONS.md", "tasks/OVE_SETUP004/TASK.md", "tasks/OVE_ARCH057/TASK.md", "tasks/_proposals/OVE_ARCH057-system-workspace-wiring.md"]
 design: none
 design_source: ""
 spec_refs: ["SPECIFICATION 13", "SPECIFICATION 19"]
@@ -23,7 +23,9 @@ adr_refs: [9]
 
 ## 1. Summary
 
-No legacy config remains, exactly17 actual workspace projects, plus the separate boundary-rules project; coverage-root parity and two shard union retained; final static config inventory complete.
+Remove legacy locations after all 17 products, including system, are registered.
+Retain 18 actual workspaces plus the separate boundary-rules project, coverage-root
+parity and the real two-shard union in the final static config inventory.
 
 ## 2. Context
 
@@ -42,11 +44,11 @@ No acceptance of OVE_ARCH002 or replay of its preserved bulk implementation; kee
 
 ## 5. Detailed requirements
 
-1. After 043 merges, require tools/vitest-projects/<package>/vitest.config.ts for every 16 product package; remove only legacy-location selection support from discovery/coverage. Tools and boundary-rules keep their existing configs.
+1. After 043 and 057 merge, require tools/vitest-projects/<package>/vitest.config.ts for all 17 products. Move only the added system config from packages/adapters/system/vitest.config.ts to tools/vitest-projects/packages/adapters/system/vitest.config.ts, deleting its old copy in the same commit; preserve adapter-system/node, its original package root, shared setup, includes/excludes and infrastructure 80/80/75/80 thresholds. Each relocation batch keeps its original four-move allocation; only the registered system inventory counts change. Remove only legacy-location selection support from discovery/coverage; Tools and boundary-rules keep their configs.
 2. Deny a surviving old config, a missing new one, duplicate path, symlink/escape or unknown workspace instead of falling back or skipping. Static coverage imports must list each canonical selected module once.
-3. Keep exactly17 workspace projects (16 product+Tools) plus boundary-rules=18 test projects. Compare real workspace discovery against the independently declared expected path/name/environment/threshold inventory.
-4. Adapt tools/boundaries/vitest-projects.test.ts to use the new static coverage module and separate plugin project count. Preserve all 17 workspace threshold keys at original package/src/** roots.
-5. Prove all 16 relocated configs occur in the actual root TypeScript test program and none in Tools production program; retain exact config-subtree exclusion installed by036.
+3. Keep exactly 18 workspace projects (17 products + Tools) plus boundary-rules = 19 test projects. Compare real workspace discovery against the independently declared expected path/name/environment/threshold inventory.
+4. Adapt tools/boundaries/vitest-projects.test.ts to use the new static coverage module and separate plugin project count. Preserve all 18 workspace threshold keys at original package/src/** roots, including system; none of the original 17 keys may disappear or weaken.
+5. Prove all 17 relocated configs occur in the actual root TypeScript test program and none in Tools production program; retain exact config-subtree exclusion installed by 036.
 6. Run real full discovery/two-shard union and existing merged-coverage denial after fallback removal; no config import waiver or missing-project success remains.
 
 ## 6. Design notes
@@ -76,9 +78,9 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 11. Acceptance criteria
 
-- [ ] All 16 products use only new configs; old/missing/duplicate/unknown/symlink inputs fail closed.
-- [ ] Actual inventory is17 workspaces plus plugin=18 projects, with unchanged names/environments/source thresholds and two-shard test union.
-- [ ] Actual test compiler includes every 16 moved config and production compiler excludes them; coverage negative test retains its original failure.
+- [ ] All 17 products use only new configs; old/missing/duplicate/unknown/symlink inputs fail closed.
+- [ ] Actual inventory is 18 workspaces plus plugin = 19 projects, with unchanged names/environments/source thresholds and two-shard test union.
+- [ ] Actual test compiler includes all 17 moved configs and production compiler excludes them; coverage negative test retains its original failure.
 - [ ] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
 
 ## 12. Test plan
