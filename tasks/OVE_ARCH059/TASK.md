@@ -6,7 +6,7 @@ kind: infra
 size: XS
 priority: P0
 mvp: true
-status: in_review
+status: done
 depends_on: ["OVE_ARCH018", "OVE_ARCH019"]
 soft_depends_on: []
 provides: ["lib:boundary-builtin-rule"]
