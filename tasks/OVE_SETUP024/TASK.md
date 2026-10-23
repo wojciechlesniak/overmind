@@ -135,13 +135,13 @@ and stop dependent work; no retries, assertion weakening or budget increases.
 
 ## 11. Acceptance criteria
 
-- [ ] Exact inert markers in the actual bundle/current source pass the preflight;
+- [x] Exact inert markers in the actual bundle/current source pass the preflight;
       all live/malformed/unknown or mismatched inputs deny before engine execution.
-- [ ] Confined reader and source-snapshot negatives, including swaps and links,
+- [x] Confined reader and source-snapshot negatives, including swaps and links,
       pass with safe diagnostics and no source execution or private-data access.
-- [ ] Both unchanged macOS packaging/symbolication tests pass; the new public
+- [x] Both unchanged macOS packaging/symbolication tests pass; the new public
       live-hook sentinel stays absent and original lifecycle/security guards pass.
-- [ ] Packaging outputs, signing, reproducibility, receipt/size/checksum rules and
+- [x] Packaging outputs, signing, reproducibility, receipt/size/checksum rules and
       dependency policies remain unchanged; the guide states the limited behavior.
 - [ ] Required full types/lint/unit/integration/security checks and independent
       Standards/Spec reviews pass for exact final heads before normal DEVELOP merge.
@@ -207,3 +207,11 @@ Normal claim/install/hooks and all operational checks preserved protected primar
 bytes. Original RED, lint, fixture and review findings remain recorded. Fresh
 full exact-head gates, independent whole Standards/Spec reviews and normal final
 task lifecycle are still pending. All five acceptance criteria remain unchecked.
+
+### Continuation verification checkpoint (2026-10-23)
+
+The original author worktree and claim remain preserved. Ordinary rebase retained all four original author/date/messages and the claim nonce, current hard dependency on OSS016 and hosted verification allocation. All eight source/configuration blobs match the reviewed DEVELOP source, including the exact Const declaration-kind repair and both denial regressions. The remaining branch diff is this task record only.
+
+On this continuation, real typecheck and lint passed before focused tests. All 66 marker assertion cases and all 9 unchanged macOS integration cases in the foundation-hooks, packaging and symbolication files passed, with exact native case identities checked. Source/executable sentinels, inherited environment, signature, size, reproducibility, cleanup and live-PID safeguards retain their original assertions and deadlines. Dependency, license, production-high/all-critical audits, implemented architecture, history/tree secret scans, SBOM, build and docs checks passed. No dependency or security policy changed.
+
+These local results do not establish current-head hosted or independent whole-review acceptance. The final criterion remains pending until that exact evidence exists. The actual DEVELOP commit-message failure and separate documentation fixture timeout remain recorded and require resolved integration evidence. No physical isolation, product penetration harness, ARCH036 or parent boundary-tool acceptance is claimed.
