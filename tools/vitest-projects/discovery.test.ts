@@ -16,6 +16,7 @@ import { dirname, join, resolve } from "node:path";
 import { afterEach, expect, it } from "vitest";
 import { discoverProjects } from "./discovery.ts";
 import { packageCoverage } from "./coverage.ts";
+import * as systemConfig from "../../packages/adapters/system/vitest.config.ts";
 import { spawnSync } from "node:child_process";
 import { isolatedGitEnvironment } from "../hooks/git-test-environment.ts";
 const configurations = [
@@ -37,6 +38,7 @@ const configurations = [
   "packages/adapters/providers/vitest.config.ts",
   "packages/adapters/herdr/vitest.config.ts",
   "packages/contracts/vitest.config.ts",
+  "packages/adapters/system/vitest.config.ts",
 ];
 it("admits every configured project exactly once", () => {
   const root = realpathSync(mkdtempSync(join(tmpdir(), "ove036-discovery-")));
@@ -77,8 +79,8 @@ it.each(workspaceConfigs)(
     mkdirSync(dirname(moved), { recursive: true });
     renameSync(resolve(root, file), moved);
     const actual = discoverProjects(root);
-    expect(actual).toHaveLength(18);
-    expect(new Set(actual).size).toBe(18);
+    expect(actual).toHaveLength(19);
+    expect(new Set(actual).size).toBe(19);
     expect(actual).toContain(moved);
     expect(actual).not.toContain(resolve(root, file));
   },
@@ -133,10 +135,17 @@ it("requires the separate plugin and canonical root", () => {
   expect(() => discoverProjects(root)).toThrow();
 });
 const repository = resolve(import.meta.dirname, "../..");
-it("preserves all17 original coverage budgets and the real18-project inventory", () => {
+it("preserves all17 original coverage budgets and the real19-project inventory", () => {
+  expect(systemConfig).toMatchObject({
+    default: {
+      root: resolve(repository, "packages/adapters/system"),
+      test: { name: "adapter-system", environment: "node" },
+    },
+    coverageThreshold: { lines: 80, functions: 80, branches: 75, statements: 80 },
+  });
   const projects = discoverProjects(repository);
-  expect(projects).toHaveLength(18);
-  expect(new Set(projects).size).toBe(18);
+  expect(projects).toHaveLength(19);
+  expect(new Set(projects).size).toBe(19);
   expect(packageCoverage(repository).thresholds).toEqual({
     "tools/src/**": {
       lines: 70,
@@ -235,6 +244,12 @@ it("preserves all17 original coverage budgets and the real18-project inventory",
       statements: 80,
     },
     "packages/contracts/src/**": {
+      lines: 80,
+      functions: 80,
+      branches: 75,
+      statements: 80,
+    },
+    "packages/adapters/system/src/**": {
       lines: 80,
       functions: 80,
       branches: 75,

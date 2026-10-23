@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: in_review
 depends_on: [OVE_ARCH056]
 soft_depends_on: []
 provides: ["lib:ids"]
@@ -87,10 +87,10 @@ Preserve ARCH007 denials; unavailable dependencies/loggers/checks are not succes
 
 ## 11. Acceptance criteria
 
-- [ ] Actual public UlidIdGenerator yields 100k unique strictly increasing valid IDs.
-- [ ] Same-time/regressed clocks remain monotonic; malformed prefix/time and overflow deny.
-- [ ] Informational benchmark and real entropy-backed operation are recorded.
-- [ ] New system workspace participates in actual typechecking, tests, coverage and build.
+- [x] Actual public UlidIdGenerator yields 100k unique strictly increasing valid IDs.
+- [x] Same-time/regressed clocks remain monotonic; malformed prefix/time and overflow deny.
+- [x] Informational benchmark and real entropy-backed operation are recorded.
+- [x] New system workspace participates in actual typechecking, tests, coverage and build.
 
 ## 12. Test plan
 
