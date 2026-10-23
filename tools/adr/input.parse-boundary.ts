@@ -1,13 +1,9 @@
 import { z } from "zod";
+import { text } from "./text-schema.ts";
 import { parseDocument, stringify } from "yaml";
 import { headings } from "../docs-check/markdown.ts";
 
 const number = z.number().int().min(1).max(9999);
-const text = z
-  .string()
-  .min(1)
-  .max(200)
-  .regex(/^[^\p{Cc}]+$/u);
 const date = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/u)
@@ -158,15 +154,5 @@ export function renderAdr(meta: Metadata, body: string): string {
   }
   return `---\n${stringify(metadata, { lineWidth: 0 })}---\n${body}`;
 }
-export function parseLabels(source: string): string[] {
-  try {
-    const event = z
-      .object({
-        pull_request: z.object({ labels: z.array(z.object({ name: text })).max(100) }).optional(),
-      })
-      .parse(JSON.parse(source));
-    return event.pull_request?.labels.map((label) => label.name) ?? [];
-  } catch {
-    throw new Error("Invalid GitHub event JSON");
-  }
-}
+
+export { parseLabels } from "./labels.parse-boundary.ts";

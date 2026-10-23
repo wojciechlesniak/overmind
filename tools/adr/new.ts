@@ -1,2 +1,2 @@
 import { runCli } from "./cli.ts";
-runCli("new");
+await runCli("new");
