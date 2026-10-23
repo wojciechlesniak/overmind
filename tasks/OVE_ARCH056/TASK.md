@@ -11,7 +11,7 @@ depends_on: [OVE_ARCH001, OVE_ARCH003]
 soft_depends_on: []
 provides: ["contract:EntityId", "port:Clock", "port:IdGenerator"]
 needs: []
-owns: ["packages/contracts/src/kernel/ids.ts", "packages/contracts/src/index.ts", "packages/application/src/ports/Clock.ts", "packages/application/src/ports/IdGenerator.ts", "packages/application/src/ports/index.ts", "packages/application/package.json"]
+owns: ["packages/contracts/src/kernel/ids.ts", "packages/contracts/src/index.ts", "packages/application/src/ports/Clock.ts", "packages/application/src/ports/IdGenerator.ts", "packages/application/src/ports/index.ts", "packages/application/package.json", "tools/skeleton.test.ts"]
 reads: ["tasks/OVE_ARCH007/TASK.md", "docs/architecture/ARCHITECTURE.md"]
 design: none
 design_source: ""
