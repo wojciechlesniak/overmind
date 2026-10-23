@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: ["OVE_SETUP017", "OVE_ARCH016", "OVE_ARCH032", "OVE_ARCH034", "OVE_OSS016"]
 soft_depends_on: []
 provides: ["lib:engine-foundation-verification"]
@@ -135,15 +135,15 @@ and stop dependent work; no retries, assertion weakening or budget increases.
 
 ## 11. Acceptance criteria
 
-- [ ] Exact inert markers in the actual bundle/current source pass the preflight;
+- [x] Exact inert markers in the actual bundle/current source pass the preflight;
       all live/malformed/unknown or mismatched inputs deny before engine execution.
-- [ ] Confined reader and source-snapshot negatives, including swaps and links,
+- [x] Confined reader and source-snapshot negatives, including swaps and links,
       pass with safe diagnostics and no source execution or private-data access.
-- [ ] Both unchanged macOS packaging/symbolication tests pass; the new public
+- [x] Both unchanged macOS packaging/symbolication tests pass; the new public
       live-hook sentinel stays absent and original lifecycle/security guards pass.
-- [ ] Packaging outputs, signing, reproducibility, receipt/size/checksum rules and
+- [x] Packaging outputs, signing, reproducibility, receipt/size/checksum rules and
       dependency policies remain unchanged; the guide states the limited behavior.
-- [ ] Required full types/lint/unit/integration/security checks and independent
+- [x] Required full types/lint/unit/integration/security checks and independent
       Standards/Spec reviews pass for exact final heads before normal DEVELOP merge.
 
 ## 12. Test plan
@@ -177,3 +177,47 @@ The integrator selected hosted native verification under the Owner's 2026-10-23
 routine MVP delegation. The finite allocation and limits are recorded in
 `tasks/_proposals/OVE_SETUP024-hosted-native-verification.md`. No acceptance,
 residual-risk decision or physical-isolation evidence is implied.
+
+## Implementation checkpoint (2026-10-22)
+
+The two original macOS packaging/symbolication failures were reproduced before
+source changes. Those files remain byte-identical. An initial full run passed
+1377 unit and 113 integration tests, but independent reviews blocked that source
+checkpoint: esbuild's resolved names could hide a canonical symlink to live code.
+Three real public-packager regressions reproduced hook and packaged-command
+execution, including removal of the symlink after bundling. That checkpoint is
+not accepted evidence for the repaired source.
+
+Verification now checks captured original/resolved hook imports and canonical
+physical paths through existing confined helpers. It preserves the fixed
+three-argument assertion and rejects unknown candidates before cross-list work.
+All nine focused macOS tests passed, including the unchanged original three,
+direct live hooks, file/directory aliases, removal after bundling and genuine
+absence. A further empty-provenance regression failed before its repair; all 62
+focused static cases then passed with native types and lint. Classification never
+imports or executes hook source; existing lifecycle and packaging guards remain.
+
+A second full run passed 1388 unit and 117 integration tests, but independent
+review still blocked its source for a missing internal-target record. That
+regression and an adjacent external-request mismatch both failed before minimal
+repairs; all 64 focused cases then passed with native types and lint. Those older
+full passes do not establish acceptance of the final repaired source.
+
+Normal claim/install/hooks and all operational checks preserved protected primary
+bytes. Original RED, lint, fixture and review findings remain recorded. Fresh
+full exact-head gates, independent whole Standards/Spec reviews and normal final
+task lifecycle are still pending. All five acceptance criteria remain unchecked.
+
+### Continuation verification checkpoint (2026-10-23)
+
+The original author worktree and claim remain preserved. Ordinary rebase retained all four original author/date/messages and the claim nonce, current hard dependency on OSS016 and hosted verification allocation. All eight source/configuration blobs match the reviewed DEVELOP source, including the exact Const declaration-kind repair and both denial regressions. The remaining branch diff is this task record only.
+
+On this continuation, real typecheck and lint passed before focused tests. All 66 marker assertion cases and all 9 unchanged macOS integration cases in the foundation-hooks, packaging and symbolication files passed, with exact native case identities checked. Source/executable sentinels, inherited environment, signature, size, reproducibility, cleanup and live-PID safeguards retain their original assertions and deadlines. Dependency, license, production-high/all-critical audits, implemented architecture, history/tree secret scans, SBOM, build and docs checks passed. No dependency or security policy changed.
+
+At that in-review checkpoint, local results alone did not establish hosted or independent whole-review acceptance. The final criterion remained pending until exact in-review evidence existed. The actual DEVELOP commit-message failure and separate documentation fixture timeout remain recorded and require resolved integration evidence. No physical isolation, product penetration harness, ARCH036 or parent boundary-tool acceptance is claimed.
+
+### Native completion and final integration checkpoint (2026-10-23)
+
+Exact in-review head `797ff6f` passed both independent whole reviews and all four first-attempt hosted workflows, including all 123 native integration cases in 30 files with exact identities, pinned runtime and artifact digest verified. The unchanged native finish command completed DONE at staging head `b08c37c`; it is not repeated. All seven existing author/date/messages and the original claim nonce were preserved by ordinary rebase onto the documentation startup repair merged at `95e529a`. All eight owned source/configuration blobs remain unchanged.
+
+Historical DEVELOP `996a8d1` and ARCH055 native failures remain failed records. The finite documentation correction changes no marker verifier, packaging assertion, deadline or dependency policy. This final Task evidence head still requires its own complete hosted checks and independent whole reviews. The actual repaired DEVELOP post checks must pass before any normal integration; no earlier failed result is reclassified as green, and no release-isolation or consumer/parent acceptance is claimed here.
