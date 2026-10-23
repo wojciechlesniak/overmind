@@ -6,7 +6,7 @@ kind: docs
 size: S
 priority: P0
 mvp: true
-status: todo
+status: in_progress
 depends_on: [OVE_SEC011]
 soft_depends_on: []
 provides: ["doc:security-abuse-catalogue"]
