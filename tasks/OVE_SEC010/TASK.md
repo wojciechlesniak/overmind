@@ -6,7 +6,7 @@ kind: docs
 size: S
 priority: P0
 mvp: true
-status: in_progress
+status: in_review
 depends_on: [OVE_ARCH001]
 soft_depends_on: []
 provides: ["doc:threat-model-analysis"]
