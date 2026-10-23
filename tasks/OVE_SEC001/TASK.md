@@ -7,12 +7,12 @@ size: M
 priority: P0
 mvp: true
 status: todo
-depends_on: [OVE_ARCH001]
+depends_on: [OVE_ARCH001, OVE_SEC010, OVE_SEC011, OVE_SEC012]
 soft_depends_on: []
 provides: ["doc:threat-model", "doc:security-requirements"]
 needs: []
-owns: ["docs/security/THREAT-MODEL.md", "docs/security/requirements.md", "docs/security/abuse-cases.md"]
-reads: ["docs/SPECIFICATION.md", "docs/architecture/ARCHITECTURE.md", "docs/research/prototyp-wnioski.md", "docs/research/herdr-analiza.md"]
+owns: []
+reads: ["docs/SPECIFICATION.md", "docs/architecture/ARCHITECTURE.md", "docs/research/prototyp-wnioski.md", "docs/research/herdr-analiza.md", "docs/security/THREAT-MODEL.md", "docs/security/requirements.md", "docs/security/abuse-cases.md"]
 design: none
 design_source: ""
 spec_refs: ["SPECIFICATION 5", "SPECIFICATION 8", "SPECIFICATION 9", "SPECIFICATION 11", "SPECIFICATION 16", "SPECIFICATION 17"]
@@ -30,6 +30,8 @@ Produce the real threat model of Overmind: assets, actors, trust boundaries, STR
 Overmind runs AI agents with shell access on the Owner's Mac. The Owner is the only principal (ADR 0010); everything else (agents, repositories, web pages, Skills from the internet, CLI output, Telegram messages, third-party binaries) is untrusted or partially trusted. Safety rests on OS-level isolation (ADR 0004/0020), deny-by-default permissions as an intersection of policies (ADR 0003), approvals (ADR 0021) and a single authenticated gateway. The prototype (`docs/research/prototyp-wnioski.md`) showed real failure modes: herdr reported `done` on a failed login, an agent wrote work to the wrong directory, Codex login redirects to `localhost` across the container boundary. The architecture boundaries are `OVE_ARCH001` (`TB-*` identifiers).
 
 ## 3. Scope (in)
+
+Delivery is split to preserve CONVENTIONS section 4: OVE_SEC010 owns THREAT-MODEL.md, OVE_SEC011 owns requirements.md and OVE_SEC012 owns abuse-cases.md. This parent retains both public capabilities, all seven acceptance criteria, the aggregate 600..900-line scope and final cross-document review. Children must be merged done before parent acceptance; their completion does not imply implemented runtime mitigations or Owner residual-risk acceptance.
 
 - `docs/security/THREAT-MODEL.md` (outline in requirement 1).
 - `docs/security/requirements.md`: `SR-nn` register (initial content in requirement 4).
@@ -126,7 +128,7 @@ This is the security spine of the backlog. The document itself must not contain 
 
 ## 11. Acceptance criteria
 
-- [ ] `THREAT-MODEL.md` contains the 10 specified sections, all assets, actors and the 11 trust boundaries with STRIDE tables covering every row listed in requirement 3.
+- [ ] `THREAT-MODEL.md` contains the 10 specified sections, all assets, actors and the 12 trust boundaries with STRIDE tables covering every row listed in requirement 3.
 - [ ] `requirements.md` contains SR-01..SR-38 with threat ids, implementing areas and verifying activity for each.
 - [ ] `abuse-cases.md` contains at least 30 cases covering every case family listed in requirement 5.
 - [ ] Every SPEC 16 acceptance criterion related to security (1, 7, 8, 9, 10, 14) maps to at least one SR.
@@ -140,7 +142,7 @@ Documentation task. Review checks: (1) a script-free consistency pass: each `SR-
 
 ## 13. Parallelization notes
 
-Can start immediately after ARCH001's boundary names are fixed (soft); other SEC tasks and all security-relevant tasks cite it, so merge a first version (assets, boundaries, SR list) early and iterate. The three files are owned here; additions from others via proposals.
+The bounded document sequence is OVE_SEC010 -> OVE_SEC011 -> OVE_SEC012; each owns one literal path and starts only after its hard dependencies are merged done. Other security tasks keep their existing dependency on this parent. The parent performs full aggregate acceptance after all children; additions from other areas use proposals to the current document owner.
 
 ## 14. Open questions and assumptions
 
