@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: in_review
+status: done
 depends_on: ["OVE_SETUP004", "OVE_SETUP017", "OVE_ARCH018", "OVE_ARCH033", "OVE_SETUP024"]
 soft_depends_on: []
 provides: ["lib:vitest-dual-discovery"]
