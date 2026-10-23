@@ -6,12 +6,12 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: [OVE_ARCH001, OVE_ARCH003]
 soft_depends_on: []
 provides: ["contract:EntityId", "port:Clock", "port:IdGenerator"]
 needs: []
-owns: ["packages/contracts/src/kernel/ids.ts", "packages/contracts/src/index.ts", "packages/application/src/ports/Clock.ts", "packages/application/src/ports/IdGenerator.ts", "packages/application/src/ports/index.ts", "packages/application/package.json"]
+owns: ["packages/contracts/src/kernel/ids.ts", "packages/contracts/src/index.ts", "packages/application/src/ports/Clock.ts", "packages/application/src/ports/IdGenerator.ts", "packages/application/src/ports/index.ts", "packages/application/package.json", "tools/skeleton.test.ts"]
 reads: ["tasks/OVE_ARCH007/TASK.md", "docs/architecture/ARCHITECTURE.md"]
 design: none
 design_source: ""
@@ -82,10 +82,10 @@ Preserve ARCH007 denials; unavailable dependencies/loggers/checks are not succes
 
 ## 11. Acceptance criteria
 
-- [ ] Valid initial IDs parse and retain prefix-specific types through the public API.
-- [ ] Wrong prefix/length/alphabet/overflow and duplicate/malformed prefixes are denied.
-- [ ] Clock/IdGenerator signatures, timer ref defaults and cancellation contract compile.
-- [ ] Contracts remain browser-bundle safe; pure layers have no ambient clock/randomness.
+- [x] Valid initial IDs parse and retain prefix-specific types through the public API.
+- [x] Wrong prefix/length/alphabet/overflow and duplicate/malformed prefixes are denied.
+- [x] Clock/IdGenerator signatures, timer ref defaults and cancellation contract compile.
+- [x] Contracts remain browser-bundle safe; pure layers have no ambient clock/randomness.
 
 ## 12. Test plan
 
@@ -101,3 +101,13 @@ Use one claimed isolated worktree; integrator wiring follows the finite proposal
 The Owner delegated routine MVP decisions on 2026-10-23. Workspace uses `wsp` to
 satisfy the original uniform three-letter invariant; timer ref defaults are false.
 Parent ARCH007 keeps its original seven acceptance criteria and is not done early.
+
+### Contract verification evidence (2026-10-23)
+
+The implementation bytes at 9c79e6f passed 65 actual focused cases through public entries and the exact bootstrap export assertion, including native cancellation compatibility, malformed/overflow denial, JSON Schema metadata and browser bundling. Types/lint and normal staging hooks passed 1522 unit tests in 124 files with all eight source/test blobs unchanged.
+
+Thirteen applicable local checks passed: native task-index check, format, implemented architecture, dependency/license policy, production-high/all-critical audits, verified-tool prewarm, history/tree secrets, SBOM, build and documentation. The existing low development audit finding and Keychain warnings remain recorded; unavailable reserved gates are not counted as passes. No dependency, compiler or policy changed.
+
+The initial ordinary pre-push with 1521 passing tests and one failure exposed the obsolete root-only bootstrap export assertion and remains recorded. The integrator assigned and corrected only that exact assertion; all other package exports remain strict. Both fresh independent whole combined-source axes reported zero findings. At that source checkpoint, the next in-review head still required fresh whole reviews and its own hosted checks, including all 123 native cases in 30 files. System adapters, shared fake parity, runtime isolation and parent ARCH007 acceptance remain assigned elsewhere and are not claimed here.
+
+Exact in-review head `b254ec1` passed both fresh whole review axes and all four first-attempt hosted workflows. Its verified Native artifact contains 123 passing exact cases in 30 files, zero failed/skipped/todo cases and the pinned runtime. The unchanged native finish command then completed DONE at `26faf11`; that original DONE head and its runs remain separate staging evidence. That completed DONE/evidence checkpoint was rebased on verified DEVELOP `8499d94`; subsequent rebases preserve the same source. Fresh final whole reviews and exact-head hosted gates remain required before ordinary integrator merge; no parent ARCH007, system adapter, shared fake or runtime isolation acceptance is claimed.

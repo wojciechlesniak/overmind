@@ -80,7 +80,12 @@ test("all 17 packages encode exactly the required Clean Architecture graph", asy
       name,
     );
     assert.equal(manifest.main, undefined);
-    assert.deepEqual(manifest.exports, { ".": "./src/index.ts" });
+    assert.deepEqual(
+      manifest.exports,
+      name === "application"
+        ? { ".": "./src/index.ts", "./ports": "./src/ports/index.ts" }
+        : { ".": "./src/index.ts" },
+    );
     if (path.startsWith("packages/")) {
       assert.equal(manifest.sideEffects, false);
     }
