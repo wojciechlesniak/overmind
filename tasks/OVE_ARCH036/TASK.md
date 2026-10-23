@@ -77,10 +77,10 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 11. Acceptance criteria
 
-- [ ] Every product has exactlyone admitted config; missing, both-present, wrong-root and symlink/escape cases deny before execution.
-- [ ] Actual root discovers18 unique test projects; all 17 workspace source-root thresholds are unchanged and static imports have no initialization cycle.
-- [ ] Two actual shards cover every test ID exactlyonce; original CI shard/merge negative coverage probe still fails uncovered domain independently.
-- [ ] Root test TS includes configs while Tools production TS excludes only the new config subtree; pure source gains no test/DOM ambient types.
+- [x] Every product has exactlyone admitted config; missing, both-present, wrong-root and symlink/escape cases deny before execution.
+- [x] Actual root discovers18 unique test projects; all 17 workspace source-root thresholds are unchanged and static imports have no initialization cycle.
+- [x] Two actual shards cover every test ID exactlyonce; original CI shard/merge negative coverage probe still fails uncovered domain independently.
+- [x] Root test TS includes configs while Tools production TS excludes only the new config subtree; pure source gains no test/DOM ambient types.
 - [ ] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
 
 ## 12. Test plan
@@ -103,6 +103,31 @@ OVE_ARCH002 retains all nine original criteria, including actual hosted forbidde
 
 Native packaging prerequisite (2026-10-21): the existing verifier rejects the exact
 UNIMPLEMENTED=true foundation inputs added by OVE_ARCH034. Packaging repair is
-outside this task's owns. Integration acceptance remains blocked pending a finite
+outside this task's owns. At that original checkpoint, integration acceptance remained blocked pending a finite
 owning repair and successful rerun of the unchanged checks. See the
 [coordination proposal](../_proposals/OVE_ARCH036-engine-packaging-prerequisite.md).
+
+### Continuation verification evidence (2026-10-23)
+
+The original native failure remains recorded. SETUP024 repaired the packaging prerequisite
+and merged as 95cecab; its actual post-DEVELOP checks passed. The later ADR CLI startup
+repair merged as 9573361 and passed its own actual 123-case/30-file post verification.
+Neither baseline result is acceptance of this task.
+
+Unchanged source ab00eb9 passed fresh typecheck, lint, all 1593 unit cases across the
+actual 18-project inventory, and both real shards once: 707 plus 886 cases. Their exact
+project/test-id sets are disjoint and their union equals the full run with zero missing,
+extra or duplicate identities. All 62 focused discovery/coverage cases passed; the original
+three-shard merged-coverage uncovered-domain failure assertion and budgets remain intact.
+
+Dependency, license, production-high/all-critical audit, implemented architecture registry,
+secret history/tree, SBOM, build, docs and agent-rule checks passed. The standalone boundary
+caller is unavailable and is not called passed. Independent whole Standards and Spec reviews
+of that source found no issues. Both reviewers approved the finite v6 native inventory
+extension: only the two changed Vitest control pins, with all 123 identities in 30 files
+and the other 35 pins preserved. This inventory is not an executed native result.
+
+The first four content criteria are supported by those actual checks. The final gate criterion
+remains unchecked: native lifecycle, fresh exact-head hosted/security and independent whole
+reviews, followed by actual post-DEVELOP verification, are still required. No parent ARCH002,
+future relocation-batch, runtime isolation or release acceptance is claimed.
