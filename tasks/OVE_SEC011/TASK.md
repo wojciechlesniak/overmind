@@ -73,10 +73,10 @@ Use synthetic examples only; no live tokens, credentials, personal paths or runn
 
 ## 11. Acceptance criteria
 
-- [ ] All SR-01..SR-38 rows preserve required semantics and include valid threat, implementing and verifying references.
-- [ ] Every listed security-related SPECIFICATION criterion and ADR consequence is explicitly mapped.
-- [ ] The coverage checklist distinguishes planned verification, actual evidence and OPEN gaps; no missing future tool is called passed.
-- [ ] All references resolve to the model or an allocated backlog task/capability, and all sensitive examples are synthetic.
+- [x] All SR-01..SR-38 rows preserve required semantics and include valid threat, implementing and verifying references.
+- [x] Every listed security-related SPECIFICATION criterion and ADR consequence is explicitly mapped.
+- [x] The coverage checklist distinguishes planned verification, actual evidence and OPEN gaps; no missing future tool is called passed.
+- [x] All references resolve to the model or an allocated backlog task/capability, and all sensitive examples are synthetic.
 
 ## 12. Test plan
 
@@ -89,3 +89,14 @@ One child, one author, one task worktree. Other tasks may proceed on disjoint pa
 ## 14. Open questions and assumptions
 
 No new product assumptions. Twelve boundaries are already enumerated by ARCH001 and parent requirement 2; the parent's eleven count is corrected without dropping a boundary. SR-11 remains SHOULD. The Owner has not accepted residual provider-terms or weaker-isolation risks by delegating routine implementation choices.
+
+
+### Document verification evidence (2026-10-23)
+
+Source 8468a2c supplies the 159-line register with exactly SR-01..SR-38, SR-11 alone SHOULD, six explicit security acceptance mappings and eleven ADR consequences. The author completed the required script-free/manual reference and semantic consistency pass. Runtime verification assignments, the parent coverage checklist and all Owner residual-risk decisions remain OPEN.
+
+The initial independent Spec review at 8f6b005 found one missing explicit CLI Approval delivery prohibition; that P2 remains recorded. The finite SR-19 and ADR0026 correction preserves the required denial and Approval/Escalation with existing PROV008 zero-send verification. Both fresh independent whole Standards and Spec reviews passed the corrected 8468a2c source with zero findings.
+
+Actual owned-document format/docs, tree/staged secret checks and normal commit hooks passed. The documentation checker retains 38 inherited warnings and the tree scanner one existing Keychain warning. Ordinary source-publication hooks then passed typecheck, lint, unit tests and implemented boundaries without bypasses. The corrected source preserves the original native claim identity and all 37 native source/control pins.
+
+At this source-acceptance checkpoint, native in-review and final DONE heads still require their own fresh whole reviews and exact-head hosted/security verification, including all 123 native cases in 30 files, before ordinary integration and actual DEVELOP post verification. This child document does not implement or accept runtime, penetration/escape, parent SEC001, provider terms, residual risks or release.
