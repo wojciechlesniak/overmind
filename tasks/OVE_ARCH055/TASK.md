@@ -99,7 +99,7 @@ assignment targets, arrays/rest/omissions and per-call isolation using actual ch
 - [x] Actual checker/node facts cover every required collection family and edge case.
 - [x] Shared key/symbol semantics occur once; source is not executed, emitted or read through I/O.
 - [x] Only owned paths change; all original parent/054 cases, assertions and budgets remain intact.
-- [ ] Required checks, independent Standards/Spec reviews and exact-head hosted gates pass before merge.
+- [x] Required checks, independent Standards/Spec reviews and exact-head hosted gates pass before merge.
 
 ## 12. Test plan
 
@@ -122,3 +122,5 @@ All criteria start unchecked; child completion supplies no parent or ARCH002 acc
 At source `133fdff`, the unchanged 145-line collector and all eight real-checker cases passed fresh typecheck, owned lint/format and independent whole Standards/Spec review. Fourteen applicable generator/format/lint/architecture/dependency/license/audit/secret/SBOM/build/docs checks passed on repaired DEVELOP `9d8e5f0`. The ordinary staging-claim push also passed full type/lint hooks and 1475 unit tests in 123 files, without publishing the source.
 
 The permitted low development advisory and existing Keychain scanner warnings remain visible. All historical failed/incomplete native receipts remain retained; the repaired base passed its own actual 123-case/30-file post-DEVELOP verification, which does not establish this task head's hosted result. The final gate criterion stays unchecked pending fresh IR reviews and exact-head hosted checks. No parent021/ARCH002, runtime escape or consumer acceptance is claimed.
+
+Exact in-review head `f701cdf` passed fresh independent whole Standards/Spec reviews and every required hosted check, including strict verification of all 123 native cases in 30 files, exact case identities, pinned runtime and artifact digest. The unchanged native finish command then performed the DONE transition. Its initial DONE commit and runs remain separate staging evidence. This final Task-only evidence head still requires fresh whole reviews, exact-head hosted gates and actual post-DEVELOP verification before integration acceptance. Original failures remain retained; no parent or consumer acceptance is claimed.
