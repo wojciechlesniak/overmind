@@ -7,7 +7,7 @@ size: M
 priority: P0
 mvp: true
 status: todo
-depends_on: [OVE_ARCH004, OVE_ARCH005, OVE_ARCH007, OVE_ARCH010, OVE_ARCH012, OVE_ARCH013, OVE_ARCH014, OVE_ARCH015, OVE_TEST002]
+depends_on: [OVE_ARCH004, OVE_ARCH005, OVE_ARCH056, OVE_ARCH010, OVE_ARCH012, OVE_ARCH013, OVE_ARCH014, OVE_ARCH015, OVE_TEST002, OVE_ARCH057, OVE_ARCH058]
 soft_depends_on: [OVE_ARCH010]
 provides: ["lib:contract-test-harness", "lib:contract-suites"]
 needs: ["port:EventBus", "port:Keychain", "port:Sandbox", "port:ServiceManager", "port:Notifier", "port:Logger", "port:Clock", "port:IdGenerator", "port:AtomicFileWriter", "port:ProcessRunner", "port:Translator", "port:ConfigStore"]

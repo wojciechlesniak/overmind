@@ -7,7 +7,7 @@ size: M
 priority: P0
 mvp: true
 status: todo
-depends_on: [OVE_ARCH003, OVE_ARCH005, OVE_ARCH007]
+depends_on: [OVE_ARCH003, OVE_ARCH005, OVE_ARCH056]
 soft_depends_on: []
 provides: ["port:Logger", "lib:redaction", "lib:log-context", "lib:logging-adapter", "lib:redactor"]
 needs: []

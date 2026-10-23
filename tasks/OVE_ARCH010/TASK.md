@@ -7,7 +7,7 @@ size: M
 priority: P0
 mvp: true
 status: todo
-depends_on: [OVE_ARCH003, OVE_ARCH007, OVE_ARCH008]
+depends_on: [OVE_ARCH003, OVE_ARCH056, OVE_ARCH008]
 soft_depends_on: [OVE_ARCH004]
 provides: ["port:EventBus", "contract:EventEnvelope", "lib:event-bus", "lib:define-event"]
 needs: []

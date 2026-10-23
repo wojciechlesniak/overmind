@@ -7,7 +7,7 @@ size: M
 priority: P0
 mvp: true
 status: todo
-depends_on: [OVE_TEST001, OVE_ARCH004, OVE_ARCH007, OVE_ARCH012, OVE_ARCH013, OVE_ARCH014, OVE_ARCH015]
+depends_on: [OVE_TEST001, OVE_ARCH004, OVE_ARCH056, OVE_ARCH012, OVE_ARCH013, OVE_ARCH014, OVE_ARCH015]
 soft_depends_on: [OVE_ARCH010]
 provides: ["lib:test-utils", "lib:fake-clock", "lib:builders", "lib:memory-logger", "lib:fake-ports", "pkg:testing", "lib:fake-keychain", "lib:test-utilities"]
 needs: ["port:Clock", "port:IdGenerator", "port:Logger", "port:AtomicFileWriter", "port:ProcessRunner", "port:Keychain", "port:Sandbox", "port:ServiceManager", "port:Notifier", "port:Translator"]
