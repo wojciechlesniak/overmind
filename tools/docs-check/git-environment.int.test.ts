@@ -49,6 +49,8 @@ it.each(["index", "selection"])(
         [
           join(repository, "node_modules/vitest/vitest.mjs"),
           "run",
+          "--config",
+          "tools/vitest.config.ts",
           "tools/docs-check/run.test.ts",
           "tools/docs-check/targets.test.ts",
           "--maxWorkers",
