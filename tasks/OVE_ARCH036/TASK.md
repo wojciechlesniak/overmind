@@ -131,3 +131,8 @@ The first four content criteria are supported by those actual checks. The final 
 remains unchecked: native lifecycle, fresh exact-head hosted/security and independent whole
 reviews, followed by actual post-DEVELOP verification, are still required. No parent ARCH002,
 future relocation-batch, runtime isolation or release acceptance is claimed.
+
+The later 42dde85 staging-claim push failed its 30000ms policy-matrix unit test;
+that RED remains separate from the earlier full/shard PASS. Root's finite shared
+[fixture-startup repair](../_proposals/OVE_ARCH036-policy-fixture-startup.md) preserves
+all 44 real checks and policies. At this pre-execution checkpoint, corrected focus and publication gates remain pending.

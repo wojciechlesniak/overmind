@@ -197,8 +197,8 @@ it("desktop and Markdown policies require the configuration approval label", () 
           }),
         );
         const result = spawnSync(
-          resolve(root, "node_modules/.bin/tsx"),
-          [resolve(root, "tools/ci/config-integrity.ts")],
+          process.execPath,
+          ["--import", import.meta.resolve("tsx"), resolve(root, "tools/ci/config-integrity.ts")],
           {
             cwd: fixture,
             env: { ...env, GITHUB_EVENT_PATH: path },
