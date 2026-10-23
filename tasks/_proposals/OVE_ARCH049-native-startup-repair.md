@@ -42,3 +42,31 @@ license/audit/SBOM/build checks and independent whole Standards/Spec review.
 The new exact PR head and actual merged DEVELOP must each pass the complete
 native integration job and existing hosted gates. Retain every failed run;
 remaining failures require further diagnosis rather than a relaxed test.
+
+## Measured verification checkpoint
+
+At source checkpoint `fc9b80b`, the new fresh-process tests first failed all
+three cases on the unchanged eager import. After the correction, the original
+33 registry cases and all 11 documentation integration cases passed. In the
+updated focused run, both inherited-parent cases completed below two seconds;
+the unchanged 5000 ms parent and 10000 ms child limits remained in force.
+
+Reproduce the affected existing cases with:
+
+```bash
+pnpm exec vitest run --config vitest.int.config.ts tools/docs-check/git-environment.int.test.ts tools/docs-check/registry.int.test.ts
+```
+
+The ordinary publication hooks passed full typecheck, lint and 1467 unit tests
+in 122 files. Eleven applicable local checks passed: task-index generation,
+dependency and license policies, production-high/all-critical audits, implemented
+architecture, history/tree secrets, SBOM, build and documentation. Production
+audit reported no known vulnerabilities; the full audit retained one allowed
+low finding and both secret scans retained their existing Keychain warning.
+
+Whole Standards and Spec reviews each reported zero findings at that source
+checkpoint. This evidence update changes no production or test bytes. Initial
+PR creation/label events produced superseded cancelled workflows; those remain
+cancelled and are not reported as test passes. The final head still requires
+fresh whole reviews and every real hosted gate, including all 123 native cases
+in 30 files. No full-suite resolution, sole cause or task completion is claimed.
