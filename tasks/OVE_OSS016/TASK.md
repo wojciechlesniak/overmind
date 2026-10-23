@@ -81,7 +81,7 @@ Git objects, metadata and paths remain untrusted data. Preserve canonical path/s
 - [x] Equal validated refs eliminate redundant per-record `rev-list` calls; fresh regressions prove all historical denials and original resource/query budgets remain intact.
 - [x] Divergent, merged, empty, malformed and repeated-invocation cases retain correct original semantics, including unpublished accepted-body authorization.
 - [x] Original public archive-history cases and applicable full integration, unit, type/lint/build, security/dependency/license/audit/secrets/SBOM and implemented architecture checks pass without weakening assertions, deadlines, workers or policy.
-- [ ] Independent whole Spec/Standards reviews and exact-head required hosted gates pass before normal finish/integration; no legacy migration or consumer acceptance is claimed here.
+- [x] Independent whole Spec/Standards reviews and exact-head required hosted gates pass before normal finish/integration; no legacy migration or consumer acceptance is claimed here.
 
 ## 12. Test plan
 
@@ -102,4 +102,4 @@ The three owned source/test files are byte-identical to the reviewed source brid
 
 At repaired DEVELOP `9d8e5f0`, all 123 native integration cases in 30 files passed with exact test identities and runtime verified. On this continuation, real typecheck, owned lint/format, all 41 ADR unit cases and 11 focused integration cases passed, including the original complete/missing/tampered archive cases at unchanged 3000 ms child and 15000 ms case limits. Dependency/license, production-high/all-critical audits, implemented architecture, history/tree secret scans, SBOM, build and docs checks passed. Ordinary staging publication also ran the repository hooks. No dependencies or policy changed.
 
-Current in-review head still requires fresh whole Standards/Spec review and its own complete hosted checks before the final lifecycle transition and integration. The last acceptance item remains unchecked until that evidence exists. Neither OSS014 migration nor any consumer task is accepted here.
+Exact in-review head `4e88fd4` passed fresh independent whole Standards/Spec reviews and every required hosted check, including 123/123 native integration cases in 30 files with exact identities and runtime verified. The unchanged native finish command performed the DONE transition. Final evidence-head reviews, hosted gates and actual post-DEVELOP verification remain required before integration acceptance. Neither OSS014 migration nor any consumer task is accepted here.
