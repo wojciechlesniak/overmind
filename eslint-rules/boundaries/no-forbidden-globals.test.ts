@@ -29,6 +29,20 @@ function check(code: string, path = "packages/domain/src", test = false) {
 }
 describe("OVE_ARCH020: forbidden ambient capabilities", () => {
   const denied = [
+    "const holder = {}; const alias = holder; const other = alias; other.clock = Date; new holder.clock();",
+    "const holder = {}; const alias = holder; alias['clock'] = Date; new holder.clock();",
+    "const holder = {nested: {}}; const alias = holder.nested; alias.clock = Date; new holder.nested.clock();",
+    "const holder = {nested: {}}; const {nested: alias} = holder; alias.clock = Date; new holder.nested.clock();",
+    "let holder = {}; const alias = holder; holder = alias; alias.clock = Date; new holder.clock();",
+    "const holder = {}; const alias = (holder as typeof holder); alias.clock = Date; new holder.clock();",
+    "new Date(...[...[]]);",
+    "new Date(...[...[...[]]]);",
+    "new Date(...unknownArguments);",
+    "Date.constructor(source);",
+    "Date['constructor'](source);",
+    "const D = Date; D.constructor(source);",
+    "const expose = () => globalThis; consume(expose());",
+    "const expose = () => ({ value: globalThis }); consume(expose());",
     "const [,D] = [,Date]; new D();",
     "const holder = {}; const alias = holder; alias.clock = Date; new holder.clock();",
     "new Date(...[]);",
@@ -95,6 +109,19 @@ describe("OVE_ARCH020: forbidden ambient capabilities", () => {
     });
   }
   for (const code of [
+    "const holder = {}; const alias = holder; alias.clock = Date; new holder.clock(0);",
+    "const holder = {}; const alias = holder; const other = alias; other.clock = Date; new holder.clock(0);",
+    "const holder = {}; const alias = holder; alias['clock'] = Date; new holder.clock(0);",
+    "const holder = {nested: {}}; const alias = holder.nested; alias.clock = Date; new holder.nested.clock(0);",
+    "const holder = {nested: {}}; const {nested: alias} = holder; alias.clock = Date; new holder.nested.clock(0);",
+    "let holder = {}; const alias = holder; holder = alias; alias.clock = Date; new holder.clock(0);",
+    "const holder = {}; const alias = (holder as typeof holder); alias.clock = Date; new holder.clock(0);",
+    "const box = {}; box.clock = Date; new box.clock(0);",
+    "const box = {}; box.clock = Date; const alias = box; new alias.clock(0);",
+    "new Date(...[...[0]]);",
+    "new Date(...[,]);",
+    "new Date(...([...[0]] as const));",
+    "const Date = { constructor: (source: string) => source }; Date.constructor(source);",
     "new (<DateConstructor>Date)(0);",
     "const [,D] = [,Date]; new D(0);",
     "new Date('2020-01-01');",
@@ -134,6 +161,17 @@ describe("OVE_ARCH020: forbidden ambient capabilities", () => {
     expect(
       check("console.log('fixture');").map((message) => [message.messageId, message.column]),
     ).toEqual([["BOUNDARY_FORBIDDEN_GLOBAL", 1]]);
+  });
+  it("denies indirect Function construction when ordinary Date access is allowed", () => {
+    for (const code of [
+      "Date.constructor(source);",
+      "Date['constructor'](source);",
+      "Date[key](source);",
+    ]) {
+      expect(
+        check(code, "packages/adapters/system/src").map((message) => message.messageId),
+      ).toEqual(["BOUNDARY_FORBIDDEN_GLOBAL"]);
+    }
   });
   it("reads package-specific canonical policy", () => {
     expect(check("Date.now(); Math.random();", "packages/adapters/system/src")).toEqual([]);

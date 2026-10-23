@@ -48,6 +48,24 @@ const wrapper = (node: Node): boolean =>
   node.type === "ChainExpression" ||
   (node.type.startsWith("TS") && child(node, "expression") !== undefined);
 
+/** A spread contributes an argument only when its literal contents prove one exists. */
+function suppliesArgument(node: Node): boolean {
+  if (node.type !== "SpreadElement") {
+    return true;
+  }
+  let value = child(node, "argument");
+  while (value && wrapper(value)) {
+    value = child(value, "expression");
+  }
+  const elements = value?.type === "ArrayExpression" ? value["elements"] : undefined;
+  return (
+    Array.isArray(elements) &&
+    elements.some(
+      (element: unknown) => element === null || (isNode(element) && suppliesArgument(element)),
+    )
+  );
+}
+
 /** Decide capabilities from ESLint's own lexical scopes, independently of standalone analysis. */
 export function noForbiddenGlobals(root: string): Rule.RuleModule {
   return {
@@ -82,6 +100,9 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     path: entry.replace(/^new /u, "").replace(/\(\)$/u, "").split("."),
   }));
   const roots = new Set(patterns.map((pattern) => pattern.path[0]));
+  if (roots.has("Function")) {
+    roots.add("Date"); // Date.constructor is the intrinsic Function constructor.
+  }
   const nodes: Node[] = [];
   const visit = (node: Node) => {
     nodes.push(node);
@@ -132,7 +153,12 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     select: readonly string[] = [],
     path: readonly string[] = [],
   ) => {
-    if (target.type === "Identifier") {
+    if (wrapper(target)) {
+      const expression = child(target, "expression");
+      if (expression) {
+        add(expression, value, select, path);
+      }
+    } else if (target.type === "Identifier") {
       const variable = lookup(target);
       if (variable) {
         writes.set(variable, [...(writes.get(variable) ?? []), { target: path, value, select }]);
@@ -193,6 +219,15 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
       value
     ) {
       add(target, value);
+    }
+  }
+  // Receiver aliases share slots; resolution's visited set bounds the reverse edges.
+  for (const [variable, values] of [...writes]) {
+    const binding = variable.identifiers[0];
+    if (isNode(binding)) {
+      for (const alias of values.filter((value) => value.target.length === 0)) {
+        add(alias.value, binding, [], alias.select);
+      }
     }
   }
   const resolves = (
@@ -289,12 +324,17 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
       return child(parent, "init") === node;
     }
     if (parent.type === "AssignmentExpression") {
-      return child(parent, "right") === node;
+      return (
+        child(parent, "right") === node ||
+        (child(parent, "left") === node && parent["operator"] === "=")
+      );
     }
     return (
       !["CallExpression", "NewExpression", "ReturnStatement", "ExpressionStatement"].includes(
         parent.type,
-      ) && aliasSource(parent)
+      ) &&
+      parent.type !== "ArrowFunctionExpression" &&
+      aliasSource(parent)
     );
   };
   const reported = new Set<Node>();
@@ -318,7 +358,11 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
         child(parent, "callee") === use
           ? parent
           : undefined;
-      const paths = resolves(use);
+      const paths = resolves(use).map((path) =>
+        path[0] === "Date" && (path[1] === "constructor" || path[1] === "*")
+          ? ["Function", ...path.slice(2)]
+          : path,
+      );
       const denied = paths.some((path) =>
         patterns.some((pattern) => {
           if (!path.length) {
@@ -333,11 +377,7 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
               path.length === 1 &&
               (call
                 ? call.type === "CallExpression" ||
-                  children(call, "arguments").every(
-                    (argument) =>
-                      argument.type === "SpreadElement" &&
-                      !children(child(argument, "argument") ?? argument, "elements").length,
-                  )
+                  !children(call, "arguments").some(suppliesArgument)
                 : !aliasSource(use))
             );
           }
