@@ -143,7 +143,7 @@ and stop dependent work; no retries, assertion weakening or budget increases.
       live-hook sentinel stays absent and original lifecycle/security guards pass.
 - [x] Packaging outputs, signing, reproducibility, receipt/size/checksum rules and
       dependency policies remain unchanged; the guide states the limited behavior.
-- [ ] Required full types/lint/unit/integration/security checks and independent
+- [x] Required full types/lint/unit/integration/security checks and independent
       Standards/Spec reviews pass for exact final heads before normal DEVELOP merge.
 
 ## 12. Test plan
@@ -214,4 +214,10 @@ The original author worktree and claim remain preserved. Ordinary rebase retaine
 
 On this continuation, real typecheck and lint passed before focused tests. All 66 marker assertion cases and all 9 unchanged macOS integration cases in the foundation-hooks, packaging and symbolication files passed, with exact native case identities checked. Source/executable sentinels, inherited environment, signature, size, reproducibility, cleanup and live-PID safeguards retain their original assertions and deadlines. Dependency, license, production-high/all-critical audits, implemented architecture, history/tree secret scans, SBOM, build and docs checks passed. No dependency or security policy changed.
 
-These local results do not establish current-head hosted or independent whole-review acceptance. The final criterion remains pending until that exact evidence exists. The actual DEVELOP commit-message failure and separate documentation fixture timeout remain recorded and require resolved integration evidence. No physical isolation, product penetration harness, ARCH036 or parent boundary-tool acceptance is claimed.
+At that in-review checkpoint, local results alone did not establish hosted or independent whole-review acceptance. The final criterion remained pending until exact in-review evidence existed. The actual DEVELOP commit-message failure and separate documentation fixture timeout remain recorded and require resolved integration evidence. No physical isolation, product penetration harness, ARCH036 or parent boundary-tool acceptance is claimed.
+
+### Native completion and final integration checkpoint (2026-10-23)
+
+Exact in-review head `797ff6f` passed both independent whole reviews and all four first-attempt hosted workflows, including all 123 native integration cases in 30 files with exact identities, pinned runtime and artifact digest verified. The unchanged native finish command completed DONE at staging head `b08c37c`; it is not repeated. All seven existing author/date/messages and the original claim nonce were preserved by ordinary rebase onto the documentation startup repair merged at `95e529a`. All eight owned source/configuration blobs remain unchanged.
+
+Historical DEVELOP `996a8d1` and ARCH055 native failures remain failed records. The finite documentation correction changes no marker verifier, packaging assertion, deadline or dependency policy. This final Task evidence head still requires its own complete hosted checks and independent whole reviews. The actual repaired DEVELOP post checks must pass before any normal integration; no earlier failed result is reclassified as green, and no release-isolation or consumer/parent acceptance is claimed here.
