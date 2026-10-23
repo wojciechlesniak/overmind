@@ -77,10 +77,10 @@ Git objects, metadata and paths remain untrusted data. Preserve canonical path/s
 
 ## 11. Acceptance criteria
 
-- [ ] Actual before/after public timing and Git counts are retained with exact source pins, raw results and original failed receipts; no unconfirmed cause is presented as fact.
-- [ ] Equal validated refs eliminate redundant per-record `rev-list` calls; fresh regressions prove all historical denials and original resource/query budgets remain intact.
-- [ ] Divergent, merged, empty, malformed and repeated-invocation cases retain correct original semantics, including unpublished accepted-body authorization.
-- [ ] Original public archive-history cases and applicable full integration, unit, type/lint/build, security/dependency/license/audit/secrets/SBOM and implemented architecture checks pass without weakening assertions, deadlines, workers or policy.
+- [x] Actual before/after public timing and Git counts are retained with exact source pins, raw results and original failed receipts; no unconfirmed cause is presented as fact.
+- [x] Equal validated refs eliminate redundant per-record `rev-list` calls; fresh regressions prove all historical denials and original resource/query budgets remain intact.
+- [x] Divergent, merged, empty, malformed and repeated-invocation cases retain correct original semantics, including unpublished accepted-body authorization.
+- [x] Original public archive-history cases and applicable full integration, unit, type/lint/build, security/dependency/license/audit/secrets/SBOM and implemented architecture checks pass without weakening assertions, deadlines, workers or policy.
 - [ ] Independent whole Spec/Standards reviews and exact-head required hosted gates pass before normal finish/integration; no legacy migration or consumer acceptance is claimed here.
 
 ## 12. Test plan
@@ -95,3 +95,11 @@ OSS006 must be merged first. Add OSS016 as a hard dependency of future OSS014 be
 
 - Preflight fixture measurements: complete public CLI 2001 ms, 30 `rev-list` calls totaling 638 ms; tampered public CLI 1663 ms, two `rev-list` calls totaling 36.8 ms and the expected denial. Both finished within 3000 ms; no repeated full-suite PASS or sole-cause claim follows.
 - This candidate has measured value for the complete case but may not resolve the tampered timeout. If evidence requires broader work, stop the affected implementation and register its finite owning scope; do not widen this task or relax a gate.
+
+### Verification evidence (2026-10-23)
+
+The three owned source/test files are byte-identical to the reviewed source bridge merged in PR #1031. The validated-base optimization retains all original history checks; query-count, denial and resource-budget regressions remain unchanged. Original RED/GREEN, before/after query/timing evidence and failed timeout receipts are retained in the approved source handoff. No sole-cause claim follows.
+
+At repaired DEVELOP `9d8e5f0`, all 123 native integration cases in 30 files passed with exact test identities and runtime verified. On this continuation, real typecheck, owned lint/format, all 41 ADR unit cases and 11 focused integration cases passed, including the original complete/missing/tampered archive cases at unchanged 3000 ms child and 15000 ms case limits. Dependency/license, production-high/all-critical audits, implemented architecture, history/tree secret scans, SBOM, build and docs checks passed. Ordinary staging publication also ran the repository hooks. No dependencies or policy changed.
+
+Current in-review head still requires fresh whole Standards/Spec review and its own complete hosted checks before the final lifecycle transition and integration. The last acceptance item remains unchecked until that evidence exists. Neither OSS014 migration nor any consumer task is accepted here.
