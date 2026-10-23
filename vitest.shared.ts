@@ -1,7 +1,4 @@
-import { existsSync, readdirSync, realpathSync } from "node:fs";
-import { dirname, isAbsolute, relative, resolve } from "node:path";
-import { pathToFileURL } from "node:url";
-import { z } from "zod";
+import { resolve } from "node:path";
 
 export const coverageThresholds = {
   core: { lines: 90, functions: 90, branches: 85, statements: 90 },
@@ -47,55 +44,5 @@ export function sharedConfig(options: {
       setupFiles: [resolve(root, "tools/vitest-setup/setup-node.ts")],
       env: { TZ: "UTC", LANG: "C.UTF-8" },
     },
-  };
-}
-export async function packageCoverage() {
-  const directories = ["apps", "packages", "packages/adapters"].flatMap((parent) =>
-    readdirSync(resolve(root, parent), { withFileTypes: true })
-      .filter((entry) => entry.isDirectory())
-      .map((entry) => resolve(root, parent, entry.name)),
-  );
-  directories.push(resolve(root, "tools"));
-  const thresholds: Record<
-    string,
-    { lines: number; functions: number; branches: number; statements: number }
-  > = {};
-  for (const directory of directories) {
-    const configFile = resolve(directory, "vitest.config.ts");
-    if (!existsSync(configFile)) {
-      continue;
-    }
-    const file = realpathSync(configFile);
-    const distance = relative(realpathSync(root), file);
-    if (distance.startsWith("..") || isAbsolute(distance)) {
-      throw new Error("Test configuration escapes repository");
-    }
-    const namespace: unknown = await import(pathToFileURL(file).href);
-    const metadata = z
-      .object({
-        coverageThreshold: z.object({
-          lines: z.number(),
-          functions: z.number(),
-          branches: z.number(),
-          statements: z.number(),
-        }),
-      })
-      .parse(namespace);
-    thresholds[`${relative(root, dirname(file))}/src/**`] = metadata.coverageThreshold;
-  }
-  return {
-    provider: "v8" as const,
-    reporter: ["text-summary", "lcov", "json-summary"] as ["text-summary", "lcov", "json-summary"],
-    reportsDirectory: resolve(root, "coverage"),
-    include: ["**/src/**/*.{ts,tsx}"],
-    exclude: [
-      "**/*.test.*",
-      "**/*.stories.*",
-      "**/fixtures/**",
-      "**/*.generated.ts",
-      "**/index.ts",
-      "**/src-tauri/**",
-    ],
-    thresholds,
   };
 }
