@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: in_review
+status: done
 depends_on: ["OVE_SETUP017", "OVE_ARCH016", "OVE_ARCH032", "OVE_ARCH034", "OVE_OSS016"]
 soft_depends_on: []
 provides: ["lib:engine-foundation-verification"]
