@@ -6,7 +6,7 @@ kind: infra
 size: XS
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: ["OVE_ARCH018", "OVE_ARCH019"]
 soft_depends_on: []
 provides: ["lib:boundary-builtin-rule"]
@@ -77,10 +77,10 @@ Unknown policy, unsafe files and malformed inputs deny through the existing prer
 
 ## 11. Acceptance criteria
 
-- [ ] Required bare, node-prefixed and subpath builtins deny with the exact diagnostic ID.
-- [ ] Exact Tauri bridge location passes; similarly named and external platform locations deny.
-- [ ] Canonical policy and both shared prerequisites are reused without duplicated traversal or exceptions.
-- [ ] Real applicable tests/security, independent whole Standards/Spec and exact-head hosted checks pass before ordinary DEVELOP merge.
+- [x] Required bare, node-prefixed and subpath builtins deny with the exact diagnostic ID.
+- [x] Exact Tauri bridge location passes; similarly named and external platform locations deny.
+- [x] Canonical policy and both shared prerequisites are reused without duplicated traversal or exceptions.
+- [x] Real applicable tests/security, independent whole Standards/Spec and exact-head hosted checks pass before ordinary DEVELOP merge.
 
 ## 12. Test plan
 
@@ -98,3 +98,10 @@ An existing unclaimed WIP may supply source bytes only after a real atomic child
 
 No new behavior or size waiver is approved. Existing ARCH020 history, tests and four original criteria remain intact.
 The parent verifies both factories only after this child is merged and done; it is never completed by registration alone.
+
+
+### Verified implementation (2026-10-23)
+
+At source checkpoint `b4ce235f6846c3ffe9e1a2a7ce6eafd77a6ee143`, 30 focused cases, typecheck/lint, 1631 full tests and eleven applicable local checks passed. At exact in-review checkpoint `5ba8618670fa1e1657d6b92b1deb19b14ce767c8`, normal publication hooks passed typecheck/lint and 1631 tests; both fresh independent whole reviews and all four first-attempt hosted workflows passed. Its digest-bound native artifact verified 123 exact cases across 30 files and all 37 source pins. Evidence: PR #1047; strict receipt SHA256 `80dcd79571e60c0f64b53c3dfb2f5b8de63e9d800acd363eb3b6b2552954f93d`.
+
+Native DONE completed once at `0332066c24c354fcc8d6f36582564369f37053f6` with normal hooks and ordinary publication. This documentation followup records those performed checkpoints; its final head still requires fresh whole reviews, exact-head hosted checks and actual post-DEVELOP verification before integration. The low development advisory, Keychain/documentation warnings and five unavailable foundation commands remain disclosed in the PR. Parent ARCH020/ARCH002, physical isolation, product penetration, risk and release acceptance remain separate.
