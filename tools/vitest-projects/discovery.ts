@@ -20,6 +20,7 @@ export const workspaceProjects = [
   "packages/adapters/providers",
   "packages/adapters/herdr",
   "packages/contracts",
+  "packages/adapters/system",
 ] as const;
 export const pluginProject = "eslint-rules/boundaries";
 function present(path: string): boolean {

@@ -37,6 +37,7 @@ const configurations = [
   "packages/adapters/providers/vitest.config.ts",
   "packages/adapters/herdr/vitest.config.ts",
   "packages/contracts/vitest.config.ts",
+  "packages/adapters/system/vitest.config.ts",
 ];
 it("admits every configured project exactly once", () => {
   const root = realpathSync(mkdtempSync(join(tmpdir(), "ove036-discovery-")));
@@ -77,8 +78,8 @@ it.each(workspaceConfigs)(
     mkdirSync(dirname(moved), { recursive: true });
     renameSync(resolve(root, file), moved);
     const actual = discoverProjects(root);
-    expect(actual).toHaveLength(18);
-    expect(new Set(actual).size).toBe(18);
+    expect(actual).toHaveLength(19);
+    expect(new Set(actual).size).toBe(19);
     expect(actual).toContain(moved);
     expect(actual).not.toContain(resolve(root, file));
   },
@@ -133,10 +134,10 @@ it("requires the separate plugin and canonical root", () => {
   expect(() => discoverProjects(root)).toThrow();
 });
 const repository = resolve(import.meta.dirname, "../..");
-it("preserves all17 original coverage budgets and the real18-project inventory", () => {
+it("preserves all17 original coverage budgets and the real19-project inventory", () => {
   const projects = discoverProjects(repository);
-  expect(projects).toHaveLength(18);
-  expect(new Set(projects).size).toBe(18);
+  expect(projects).toHaveLength(19);
+  expect(new Set(projects).size).toBe(19);
   expect(packageCoverage(repository).thresholds).toEqual({
     "tools/src/**": {
       lines: 70,
@@ -235,6 +236,12 @@ it("preserves all17 original coverage budgets and the real18-project inventory",
       statements: 80,
     },
     "packages/contracts/src/**": {
+      lines: 80,
+      functions: 80,
+      branches: 75,
+      statements: 80,
+    },
+    "packages/adapters/system/src/**": {
       lines: 80,
       functions: 80,
       branches: 75,
