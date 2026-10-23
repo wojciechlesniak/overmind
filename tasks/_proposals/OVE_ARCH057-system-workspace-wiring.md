@@ -44,12 +44,18 @@ all original 17 workspace threshold keys plus system, all denial/compiler/covera
 and actual two-shard union proofs. ARCH045's statuses and four criteria keep the
 same meaning; only their inventory counts include the actual new workspace.
 
+ARCH053 already depends on ARCH045. Its final activation requirement retains
+exactly 19 test projects (17 products, Tools and boundary-rules); only that
+obsolete count changes. Its owns, status, five acceptance criteria, actual
+activation, generated-source, security, hook and denial requirements remain
+unchanged. Historical SETUP001/002/004 and ARCH018/036 checkpoint counts remain.
+
 ## Scope and proof limits
 
 ARCH057 has seven owned source/test files and exactly seven Root shared paths;
 its lifecycle TASK makes 15 paths. Measure changed non-test lines before review,
 retaining the roughly 400-line/two-package limit; this is no size waiver. Separate
-registration contains only these six TASKs, this proposal and native-generated
+registration contains only these seven TASKs, this proposal and native-generated
 INDEX/DEPENDENCIES; generate those with existing tools, never hand-edit them.
 ARCH007 retains every requirement and all seven acceptance criteria, including
 actual system/fake shared suites through TEST002/003. No runtime, parent, physical
