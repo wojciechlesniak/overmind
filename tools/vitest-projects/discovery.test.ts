@@ -16,6 +16,7 @@ import { dirname, join, resolve } from "node:path";
 import { afterEach, expect, it } from "vitest";
 import { discoverProjects } from "./discovery.ts";
 import { packageCoverage } from "./coverage.ts";
+import * as systemConfig from "../../packages/adapters/system/vitest.config.ts";
 import { spawnSync } from "node:child_process";
 import { isolatedGitEnvironment } from "../hooks/git-test-environment.ts";
 const configurations = [
@@ -135,6 +136,13 @@ it("requires the separate plugin and canonical root", () => {
 });
 const repository = resolve(import.meta.dirname, "../..");
 it("preserves all17 original coverage budgets and the real19-project inventory", () => {
+  expect(systemConfig).toMatchObject({
+    default: {
+      root: resolve(repository, "packages/adapters/system"),
+      test: { name: "adapter-system", environment: "node" },
+    },
+    coverageThreshold: { lines: 80, functions: 80, branches: 75, statements: 80 },
+  });
   const projects = discoverProjects(repository);
   expect(projects).toHaveLength(19);
   expect(new Set(projects).size).toBe(19);
