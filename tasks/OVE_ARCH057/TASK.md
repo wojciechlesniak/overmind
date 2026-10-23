@@ -34,7 +34,9 @@ ARCH007 defines the behavior and retains actual TEST002/003 system/fake acceptan
 
 - System package scaffold and real UlidIdGenerator implementation.
 - Public adapter export and usage documentation.
-- Finite integrator additions to root TypeScript references and the native lockfile.
+- Workspace wiring applied only by the Root integrator in the seven paths from
+  [the wiring proposal](../_proposals/OVE_ARCH057-system-workspace-wiring.md).
+  Author owns remain unchanged; the author never edits those shared files.
 
 ## 4. Out of scope
 
@@ -55,8 +57,11 @@ No permissions, security-gate, dependency-version or feature-scope changes.
    never hide failures or modify test budgets to achieve a result.
 6. Add no external dependency or new ambient permission. The system package has
    existing workspace:* contracts/application dependencies and the shared test config.
-7. Root references and lockfile are integrator-owned, native-generated changes only,
-   with exact diff review; never hand-edit the lockfile.
+7. Root alone applies the proposal's seven shared paths: root TS references, native
+   lockfile, skeleton, discovery, static coverage, discovery tests and coverage fixture.
+   Preserve all old graphs, exports, projects, thresholds and denials; generate the
+   lockfile with pinned pnpm, never by hand. Discovery/coverage additions require
+   actual ARCH036 merge and post-green first. Include system in every final gate.
 
 ## 6. Design notes
 
@@ -94,7 +99,10 @@ independent Standards/Spec/hosted reviews must pass before ordinary DEVELOP merg
 
 ## 13. Parallelization notes
 
-Use one claimed isolated worktree; integrator wiring follows the finite proposal.
+Use one claimed isolated worktree. Root applies only the proposal's seven shared
+paths through isolated integration; author owns do not widen. Initial root TS,
+lockfile and skeleton wiring may precede 036. The remaining four paths follow
+actual 036 merge/post-green; no source publication omits system tests or coverage.
 
 ## 14. Open questions and assumptions
 

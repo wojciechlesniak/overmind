@@ -12,7 +12,7 @@ soft_depends_on: []
 provides: ["lib:vitest-relocation-batch-three"]
 needs: ["lib:vitest-relocation-batch-two"]
 owns: ["packages/workflow-runtime/vitest.config.ts", "tools/vitest-projects/packages/workflow-runtime/vitest.config.ts", "packages/adapters/herdr/vitest.config.ts", "tools/vitest-projects/packages/adapters/herdr/vitest.config.ts", "tools/vitest-projects/discovery.ts", "tools/vitest-projects/discovery.test.ts", "tools/vitest-projects/coverage.ts", "packages/adapters/keychain-macos/vitest.config.ts", "tools/vitest-projects/packages/adapters/keychain-macos/vitest.config.ts", "packages/adapters/notifications-macos/vitest.config.ts", "tools/vitest-projects/packages/adapters/notifications-macos/vitest.config.ts"]
-reads: ["tasks/OVE_ARCH002/TASK.md", "docs/architecture/boundaries.json", "docs/architecture/ARCHITECTURE.md", "tasks/CONVENTIONS.md", "tasks/OVE_SETUP004/TASK.md"]
+reads: ["tasks/OVE_ARCH002/TASK.md", "docs/architecture/boundaries.json", "docs/architecture/ARCHITECTURE.md", "tasks/CONVENTIONS.md", "tasks/OVE_SETUP004/TASK.md", "tasks/_proposals/OVE_ARCH057-system-workspace-wiring.md"]
 design: none
 design_source: ""
 spec_refs: ["SPECIFICATION 13", "SPECIFICATION 19"]
@@ -46,7 +46,7 @@ No acceptance of OVE_ARCH002 or replay of its preserved bulk implementation; kee
 2. Each config root remains the absolute ORIGINAL product directory, never the Tools destination. Preserve its sharedConfig setup and export the same coverageThreshold metadata.
 3. Keep literal coverage groups (lines/functions/branches/statements): core90/90/85/90, infrastructure80/80/75/80, ui70/70/65/70. Coverage keys remain <package>/src/**; no aggregate rescue between packages.
 4. Keep src/**/*.test.{ts,tsx} and test/**/*.test.{ts,tsx} inclusion, **/*.int.test.ts exclusion, setup-node/per-file DOM behavior, TZ=UTC, LANG=C.UTF-8, globals:false, retry0, passWithNoTests:false and original worker/deadline settings.
-5. Update exactly these four selected paths/static coverage imports in036 discovery. At every boundary each of16 products has exactlyone old/new config; missing and duplicate must deny. Retain Tools plus boundary-rules for18 total projects, without duplicate workspace registrations.
+5. Update exactly these four selected paths/static coverage imports in036 discovery. At every boundary each of 17 products has exactly one old/new config; missing and duplicate must deny. Retain Tools plus boundary-rules for 19 total projects, without duplicate workspace registrations.
 6. Keep all configs checked in the root test compiler and excluded from Tools production compile only by the dedicated config subtree; no product ambient/global/import exception.
 7. Run the real four selected projects and actual two-shard union/parity reports; retain every other project and all configured CI shard/coverage regressions unchanged.
 
@@ -87,7 +87,7 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 ## 11. Acceptance criteria
 
 - [ ] All four names/environments/original source roots and exact thresholds match the table in requirement1; both old/new copies never coexist.
-- [ ] Discovery negative cases still reject missing/duplicate/symlink/wrong-root configs and actual root has18 projects once each.
+- [ ] Discovery negative cases still reject missing/duplicate/symlink/wrong-root configs and actual root has 19 projects once each.
 - [ ] Original includes/excludes/setup/timezone/deadlines/coverage source globs remain exact; root test/production typing separation passes.
 - [ ] Two actual shards include each original test ID once and selected projects retain all real tests, with no omitted other workspace.
 - [ ] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.

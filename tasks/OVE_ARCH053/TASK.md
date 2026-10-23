@@ -47,7 +47,7 @@ No acceptance of OVE_ARCH002 or replay of its preserved bulk implementation; kee
 3. Add actual sequential Lefthook pre-push check:boundaries after typecheck,lint,test, and change its real fixture expectation to those exact FOUR commands in the same change; abort on first failure remains.
 4. Integrate tools/boundaries/ci-job.yml into the existing required architecture job/aggregate path; actual checker failure/missing command/removal/skip/allowed-failure cannot report ci-success. Do not create an always-green stub or drop required integrations.
 5. Protect root/plugin/checker/matrix, moved build/Vite/Vitest and existing package-engine/errors/docs paths in CODEOWNERS/config gate. Preserve config-change,lint-config-change,hooks-change protections and actual negative workflow/label tests.
-6. Update AGENTS command availability only when the real tool runs; maintain exact 18 test projects and all existing source/coverage/security policies. Add actual forbidden generated-source ESLint test without replacing merged OVE_ARCH003 tiny CLI regressions.
+6. Update AGENTS command availability only when the real tool runs; maintain exactly 19 test projects (17 products, Tools and boundary-rules) and all existing source/coverage/security policies. Add actual forbidden generated-source ESLint test without replacing merged OVE_ARCH003 tiny CLI regressions.
 7. Pass actual root lint/boundaries/full applicable gates on the completed integrated repository. OVE_ARCH002 still owns final exact acceptance/runtime and separate real violating scratch PR; do not mark it done here.
 
 ## 6. Design notes
