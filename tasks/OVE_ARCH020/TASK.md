@@ -7,11 +7,11 @@ size: S
 priority: P0
 mvp: true
 status: todo
-depends_on: ["OVE_ARCH018"]
+depends_on: ["OVE_ARCH018", "OVE_ARCH059"]
 soft_depends_on: []
 provides: ["lib:boundary-capability-rules"]
-needs: ["lib:boundary-eslint-resolution"]
-owns: ["eslint-rules/boundaries/no-forbidden-builtins.ts", "eslint-rules/boundaries/no-forbidden-globals.ts", "eslint-rules/boundaries/no-forbidden-builtins.test.ts", "eslint-rules/boundaries/no-forbidden-globals.test.ts"]
+needs: ["lib:boundary-eslint-resolution", "lib:boundary-builtin-rule"]
+owns: ["eslint-rules/boundaries/no-forbidden-globals.ts", "eslint-rules/boundaries/no-forbidden-globals.test.ts"]
 reads: ["tasks/OVE_ARCH002/TASK.md", "docs/architecture/boundaries.json", "docs/architecture/ARCHITECTURE.md", "tasks/CONVENTIONS.md", "tasks/OVE_SETUP004/TASK.md"]
 design: none
 design_source: ""
@@ -32,7 +32,8 @@ This task provides one independently verifiable prerequisite; OVE_ARCH002 retain
 
 ## 3. Scope (in)
 
-Implement only the exact API/data/caller requirements below and the enumerated owns paths.
+Implement the ambient rule in the enumerated owns paths; integrate the builtin factory supplied by ARCH059.
+All six original requirements and all four original acceptance criteria remain the aggregate contract.
 Shared paths require the integrator and affected owner to approve the exact finite integration.
 
 ## 4. Out of scope
@@ -42,7 +43,7 @@ No acceptance of OVE_ARCH002 or replay of its preserved bulk implementation; kee
 
 ## 5. Detailed requirements
 
-1. Implement noForbiddenBuiltins(root) and noForbiddenGlobals(root) as separate RuleModule factories; read forbidden capabilities from the canonical policy, not a second allowlist.
+1. Integrate noForbiddenBuiltins(root) from merged ARCH059 and implement noForbiddenGlobals(root) as separate RuleModule factories; read forbidden capabilities from the canonical policy, not a second allowlist.
 2. Normalize node: and bare builtin forms, including fs/promises, process spawning, network, threads and randomness. Report BOUNDARY_FORBIDDEN_BUILTIN; blocked @tauri/platform package reports BOUNDARY_FORBIDDEN_PACKAGE.
 3. Desktop/ui-kit cannot import any node:*; @tauri-apps/* is allowed only inside the exact desktop/src/shared/platform/tauri segment subtree. A similarly named prefix outside it is denied.
 4. Globals include Date.now, zero-arg new Date, Math.random, process.env, fetch, console members, timers, eval and Function constructors. Cover named/global-object aliases, computed access and bare global-object capability escapes.
@@ -97,3 +98,8 @@ Exact overlapping shared paths have sequential writers; wait for the owner, neve
 Registration alone supplies no implementation or acceptance proof; claim only after the definition lands on DEVELOP.
 Measured scope and line/move/generated-doc metrics belong in the external manifest/PR, not recursive TASK text.
 OVE_ARCH002 retains all nine original criteria, including actual hosted forbidden-import and aggregate rejection.
+
+
+### Size-preserving split (2026-10-23)
+
+ARCH059 owns the two builtin files; this task owns the two ambient files and retains every original acceptance criterion. Preserve the existing claim, nonce and WIP history. Publish the aggregate only after ARCH059 is merged and done, then rebase normally; identical child files must disappear from this task diff. No partial parent acceptance, policy exception or test reduction is supplied.

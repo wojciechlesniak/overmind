@@ -54,9 +54,9 @@ unchanged. Historical SETUP001/002/004 and ARCH018/036 checkpoint counts remain.
 
 ARCH057 has seven owned source/test files and exactly seven Root shared paths;
 its lifecycle TASK makes 15 paths. Measure changed non-test lines before review,
-retaining the roughly 400-line/two-package limit; this is no size waiver. Separate
-registration contains only these seven TASKs, this proposal and native-generated
-INDEX/DEPENDENCIES; generate those with existing tools, never hand-edit them.
+retaining the roughly 400-line/two-package limit; this is no size waiver. The System portion of Root registration contains these seven TASKs and this proposal;
+the independent ARCH020 factory split has its own bounded allocation. Both use only
+native-generated INDEX/DEPENDENCIES; generate them with existing tools, never hand-edit them.
 ARCH007 retains every requirement and all seven acceptance criteria, including
 actual system/fake shared suites through TEST002/003. No runtime, parent, physical
 isolation or release acceptance is supplied by registration or a source checkpoint.
