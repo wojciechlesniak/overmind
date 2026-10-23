@@ -108,12 +108,22 @@ export function audit(expected: Expected, labels: Label[], reader: Reader, repo:
         throw new Error("Missing ruleset");
       }
       const reply = get(`${base}/rulesets/${String(id)}`);
+      if (!reply.ok) {
+        rows.push(
+          compare(
+            `ruleset.${policy.name}`,
+            "active with required rules",
+            reply.invalid ? "malformed" : undefined,
+          ),
+        );
+        continue;
+      }
       check(`${policy.name}.target`, policy.target, reply, "target");
       check(`${policy.name}.enforcement`, "active", reply, "enforcement");
       check(`${policy.name}.bypass_actors`, policy.bypass, reply, "bypass_actors");
       check(`${policy.name}.include`, policy.include, reply, "conditions.ref_name.include");
       check(`${policy.name}.exclude`, [], reply, "conditions.ref_name.exclude");
-      const detail = reply.ok ? record(reply.value) : {};
+      const detail = record(reply.value);
       const defined = records(detail["rules"]);
       for (const rule of policy.rules) {
         const [kind, ...path] = rule.path.split(".");
@@ -206,7 +216,9 @@ export function audit(expected: Expected, labels: Label[], reader: Reader, repo:
         [{ name: "v*", type: "tag" }],
         branches.ok
           ? records(branches.value).map((item) => ({ name: item["name"], type: item["type"] }))
-          : undefined,
+          : branches.invalid
+            ? "malformed"
+            : undefined,
       ),
     );
   } catch {
@@ -243,7 +255,9 @@ export function audit(expected: Expected, labels: Label[], reader: Reader, repo:
         ? records(secrets.value)
             .map((item) => item["name"])
             .toSorted()
-        : undefined;
+        : secrets.invalid
+          ? "malformed"
+          : undefined;
       rows.push(compare(`environment.${name}.secret_names`, allowed.toSorted(), names));
     }
     if (!environments.ok) {
@@ -296,7 +310,9 @@ export function audit(expected: Expected, labels: Label[], reader: Reader, repo:
           compare(
             name,
             expected.allowedRepositorySecrets.toSorted(),
-            items?.map((item) => item["name"]).toSorted(),
+            !reply.ok && reply.invalid
+              ? "malformed"
+              : items?.map((item) => item["name"]).toSorted(),
           ),
         );
       }

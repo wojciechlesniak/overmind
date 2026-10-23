@@ -143,3 +143,30 @@ job as drift. A fully configured personal repository still needs explicit Owner
 verification of manual 2FA/permissions and dependency graph controls; strict API
 mode cannot fabricate those observations. `--allow-unknown` cannot waive known
 setting drift, missing labels or malformed returned metadata.
+
+### Integration refresh and regression evidence (2026-10-23)
+
+The existing implementation was rebased on DEVELOP without changing its scope.
+The package-script conflict preserves the current Tauri/ADR/agent commands and
+adds only the two settings commands. The original three commits remain available
+on the local recovery branch `codex/backup-setup018-20261023`.
+
+Independent Standards and Spec reviews found that malformed paginated security
+metadata could become waivable unknowns, while unavailable ruleset details were
+misreported as known drift. Five new public-audit regression cases first failed;
+the correction preserves malformed replies as non-waivable drift and ordinary
+permission failures as unknown. All 19 settings tests subsequently passed.
+
+Typecheck, lint and owned-source formatting passed. The verified tree secret
+scanner reported zero findings and one existing Keychain warning. Two ordinary
+full-suite attempts retained process-fixture failures, including the existing
+30-second configuration-gate timeout; their unchanged scoped recheck passed.
+The complete suite then passed all 1559 tests in 127 files with one worker,
+unchanged timeouts, assertions, inventory and retry-zero policy. Ordinary push
+hooks and fresh exact-head reviews remain required at publication.
+
+The real GET-only audit still exited 1: 72 passes, 37 known drifts and 9 unknowns,
+including the absent `pr-gate`. No live settings, labels or permissions were
+changed. Outside-contributor fork evidence, Owner-applied settings, reviewed
+manual controls and actual label application remain open; this task stays
+in_review and its PR stays draft.

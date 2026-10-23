@@ -344,3 +344,42 @@ it("missing approval labels are known drift rather than waivable unknown", () =>
   expect(rows.find((row) => row.setting === "label.config-change")?.status).toBe("drift");
   expect(exitCode(rows, true)).toBe(1);
 });
+
+it.each([
+  ["environments/release/deployment-branch-policies", "release.tags"],
+  ["environments/release/secrets", "environment.release.secret_names"],
+  ["environments/preview/secrets", "environment.preview.secret_names"],
+  ["actions/secrets", "repository.secret_names"],
+])("malformed security collection %s cannot be waived as unknown", (path, setting) => {
+  const fixture = configured();
+  const malformed = ghReader(() => "{invalid");
+  const reader: Reader = {
+    request(method, endpoint) {
+      return endpoint.startsWith(`repos/test/repo/${path}?`)
+        ? malformed.request(method, endpoint)
+        : fixture.reader.request(method, endpoint);
+    },
+  };
+  const rows = audit(expected, labels, reader, "test/repo");
+  expect(rows.find((row) => row.setting === setting)?.status).toBe("drift");
+  expect(exitCode(rows, true)).toBe(1);
+});
+
+it("unavailable ruleset details remain unknown while malformed details cannot be waived", () => {
+  for (const invalid of [false, true]) {
+    const fixture = configured();
+    const reader: Reader = {
+      request(method, endpoint) {
+        return /^repos\/test\/repo\/rulesets\/\d+$/u.test(endpoint)
+          ? { ok: false, reason: "Unavailable detail", ...(invalid ? { invalid: true } : {}) }
+          : fixture.reader.request(method, endpoint);
+      },
+    };
+    const rows = audit(expected, labels, reader, "test/repo");
+    expect(rows.find((row) => row.setting === "ruleset.main")?.status).toBe(
+      invalid ? "drift" : "unknown",
+    );
+    expect(exitCode(rows)).toBe(1);
+    expect(exitCode(rows, true)).toBe(invalid ? 1 : 0);
+  }
+});
