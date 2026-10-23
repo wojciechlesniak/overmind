@@ -21,6 +21,7 @@ import * as telegramConfig from "../../packages/adapters/telegram/vitest.config.
 import * as providersConfig from "../../packages/adapters/providers/vitest.config.ts";
 import * as herdrConfig from "../../packages/adapters/herdr/vitest.config.ts";
 import * as contractsConfig from "../../packages/contracts/vitest.config.ts";
+import * as systemConfig from "../../packages/adapters/system/vitest.config.ts";
 const namespaces: Readonly<Record<string, unknown>> = {
   tools: toolsConfig,
   "eslint-rules/boundaries": boundaryRulesConfig,
@@ -40,6 +41,7 @@ const namespaces: Readonly<Record<string, unknown>> = {
   "packages/adapters/providers": providersConfig,
   "packages/adapters/herdr": herdrConfig,
   "packages/contracts": contractsConfig,
+  "packages/adapters/system": systemConfig,
 };
 const threshold = z.object({
   lines: z.number(),
