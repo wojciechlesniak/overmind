@@ -7,7 +7,7 @@ size: S
 priority: P0
 mvp: true
 status: todo
-depends_on: [OVE_ARCH003, OVE_ARCH007, OVE_ARCH004]
+depends_on: [OVE_ARCH003, OVE_ARCH056, OVE_ARCH004]
 soft_depends_on: [OVE_SEC004]
 provides: ["port:ProcessRunner", "lib:process-runner"]
 needs: []

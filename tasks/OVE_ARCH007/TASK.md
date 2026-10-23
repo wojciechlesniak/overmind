@@ -7,11 +7,11 @@ size: S
 priority: P0
 mvp: true
 status: todo
-depends_on: [OVE_ARCH001, OVE_ARCH003]
+depends_on: [OVE_ARCH001, OVE_ARCH003, OVE_ARCH056, OVE_ARCH057, OVE_ARCH058, OVE_TEST002, OVE_TEST003]
 soft_depends_on: []
-provides: ["port:Clock", "port:IdGenerator", "lib:ids", "contract:EntityId"]
+provides: []
 needs: []
-owns: ["packages/contracts/src/kernel/ids.ts", "packages/application/src/ports/Clock.ts", "packages/application/src/ports/IdGenerator.ts", "packages/adapters/system/src/clock/**", "packages/adapters/system/src/ids/**"]
+owns: ["packages/adapters/system/test/ids-clock-acceptance.test.ts"]
 reads: ["docs/architecture/ARCHITECTURE.md"]
 design: none
 design_source: ""
@@ -44,7 +44,7 @@ Event sourcing in SQLite (ADR 0019, spec 12) needs sortable, unique, collision-s
 
 ## 5. Detailed requirements
 
-1. **Id format.** `<prefix>_<ULID>` where `ULID` is 26 chars Crockford base32, e.g. `run_01JC8Z3Q7M5V9K2X4T6W8Y0ABC`. Prefix registry (initial): `ws` Workspace, `agt` Agent, `run` Run, `nex` NodeExecution, `wfl` Workflow, `wfv` WorkflowVersion, `tsk` Task, `lan` Lane, `brd` Board, `dsc` Discussion, `dec` Decision, `msg` ChatMessage, `amg` AgentMessage, `cnv` Conversation, `apr` ApprovalRequest, `acr` AccessRequest, `aud` AuditEvent, `evt` domain event, `skl` Skill, `skv` SkillVersion, `art` Artifact, `con` Connection, `ntf` Notification, `req` request/correlation id, `rul` OwnerRule. Areas add prefixes in their own file; the registry test enforces 3-letter lowercase and uniqueness.
+1. **Id format.** `<prefix>_<ULID>` where `ULID` is 26 chars Crockford base32, e.g. `run_01JC8Z3Q7M5V9K2X4T6W8Y0ABC`. Prefix registry (initial): `wsp` Workspace, `agt` Agent, `run` Run, `nex` NodeExecution, `wfl` Workflow, `wfv` WorkflowVersion, `tsk` Task, `lan` Lane, `brd` Board, `dsc` Discussion, `dec` Decision, `msg` ChatMessage, `amg` AgentMessage, `cnv` Conversation, `apr` ApprovalRequest, `acr` AccessRequest, `aud` AuditEvent, `evt` domain event, `skl` Skill, `skv` SkillVersion, `art` Artifact, `con` Connection, `ntf` Notification, `req` request/correlation id, `rul` OwnerRule. Areas add prefixes in their own file; the registry test enforces 3-letter lowercase and uniqueness.
 2. Types: `type EntityId<P extends string> = string & { readonly __prefix: P }` plus zod `entityId('run')` that validates prefix and ULID alphabet/length (26, first char <= `7`), and `parseEntityId`. Ids are opaque to clients except for prefix checks.
 3. `IdGenerator`:
    ```ts
@@ -53,15 +53,21 @@ Event sourcing in SQLite (ADR 0019, spec 12) needs sortable, unique, collision-s
    The system implementation is monotonic: ids generated within the same millisecond increase (increment the random part), and clock regression never produces a smaller id than the previous one (keeps last timestamp). Randomness from `node:crypto.randomBytes` inside the adapter only.
 4. `Clock`:
    ```ts
+   export interface CancellationSignal {
+     readonly aborted: boolean;
+     addEventListener(type: 'abort', listener: () => void, opts?: { once?: boolean }): void;
+     removeEventListener(type: 'abort', listener: () => void): void;
+   }
    export interface Clock {
      now(): Date;                        // wall clock
      nowIso(): string;                   // UTC ISO-8601 with ms, 'Z'
      monotonicMs(): number;              // performance.now()-like, never decreases
-     sleep(ms: number, opts?: { signal?: AbortSignal }): Promise<void>;
-     setTimer(fn: () => void, ms: number): Cancel;      // one-shot
-     setInterval(fn: () => void, ms: number): Cancel;
+     sleep(ms: number, opts?: { signal?: CancellationSignal }): Promise<void>;
+     setTimer(fn: () => void, ms: number, opts?: { ref?: boolean }): Cancel;      // one-shot
+     setInterval(fn: () => void, ms: number, opts?: { ref?: boolean }): Cancel;
    }
    ```
+   `CancellationSignal` is structurally compatible with native AbortSignal and deterministic fakes; it preserves aborted state and abort listener attachment/removal without DOM or Node types in application.
    `sleep` rejects with `internal.cancelled` (AppError) on abort. Timers are cancelled idempotently. `unref` semantics: timers do not keep the engine process alive unless created through `setTimer(..., { ref: true })` (explicit).
 5. Persisted timestamps are ISO-8601 UTC strings produced by `nowIso()`; do not store local time. The UI formats with the user's locale and time zone.
 6. Domain functions that need time receive it as a parameter (`now: Date`) or via an injected `Clock` in use cases. Domain code never imports the port directly (domain has no application dependency); use cases pass `clock.now()` into domain calls.
@@ -117,3 +123,12 @@ Very small and on the critical path: merge interfaces and branded ids first, the
 
 - ASSUMPTION: custom ULID implementation (about 60 lines) to avoid a dependency; if `ulid` npm package is preferred, justify in the PR (MIT, small) and wrap it behind the same adapter.
 - ASSUMPTION: prefix list above is the initial registry; areas add more through `id-prefixes/<area>.ts`.
+
+
+The Owner-delegated 2026-10-23 split assigns production source to ARCH056-058.
+This parent retains every original requirement and all seven original acceptance
+criteria, including actual system/fake parity through TEST002/003. It owns the final
+public integration registration and evidence, not duplicate production implementations.
+Both timer kinds default to ref:false and accept the optional explicit ref:true.
+ARCH056 supplies contracts/ports, ARCH057 actual ULID generation and ARCH058 the
+actual Clock with ARCH004 logging. These prerequisites are not final parent acceptance.

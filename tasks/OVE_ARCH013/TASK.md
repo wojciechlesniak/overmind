@@ -7,7 +7,7 @@ size: S
 priority: P0
 mvp: true
 status: todo
-depends_on: [OVE_ARCH003, OVE_ARCH007]
+depends_on: [OVE_ARCH003, OVE_ARCH056]
 soft_depends_on: []
 provides: ["port:AtomicFileWriter", "lib:atomic-fs"]
 needs: []

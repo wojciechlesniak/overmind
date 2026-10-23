@@ -7,7 +7,7 @@ size: M
 priority: P0
 mvp: true
 status: todo
-depends_on: [OVE_ARCH003, OVE_ARCH007, OVE_ARCH013]
+depends_on: [OVE_ARCH003, OVE_ARCH056, OVE_ARCH013]
 soft_depends_on: []
 provides: ["lib:data-dir", "lib:config", "contract:AppConfig", "port:ConfigStore", "lib:data-directory-layout"]
 needs: ["port:AtomicFileWriter"]
