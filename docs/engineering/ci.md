@@ -175,6 +175,9 @@ macos-26 ARM64 hosted runner at the exact PR head and on DEVELOP pushes. Its
 `native-integration` check is required by the integrator in addition to all existing
 gates. It rejects empty, skipped, failed or inconsistent native JSON reports and
 retains the head/runtime/report artifacts for seven days. Reproduce with
-`VITEST_MAX_WORKERS=1 pnpm test:int`; no timeout, retry or worker policy changes.
+`pnpm exec tsx tools/secret-scan/install.ts all` followed by
+`VITEST_MAX_WORKERS=1 pnpm test:int`; the existing installer verifies pinned
+scanner binaries and default rules before tests enforce their network denial.
+No timeout, retry or worker policy changes.
 Standard runners are free while this repository is public; private execution is
 denied. This VM is not physical-isolation or nested-virtualization evidence.

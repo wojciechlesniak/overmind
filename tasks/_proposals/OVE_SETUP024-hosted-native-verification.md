@@ -29,3 +29,11 @@ repositories: https://docs.github.com/en/actions/reference/runners/github-hosted
 The job refuses private-repository execution rather than incur private minutes.
 This hosted VM does not supply nested virtualization or physical escape evidence;
 SETUP021/TEST007 and the release isolation block remain unchanged.
+
+The first hosted run, 39941061724, retained 113 passed, two failed and five pending
+tests. The fresh runner lacked verified scanner binaries/default rules; test
+network denial and offline configuration checks failed closed. Prewarm those
+existing checksum-pinned resources through the existing install CLI before the
+unchanged full command. This fixes preparation, preserves the failed evidence and
+does not relax test network restrictions. Packaging, symbolication and ADR cases
+passed that run with their original deadlines; the whole suite was not accepted.

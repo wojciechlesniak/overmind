@@ -43,6 +43,7 @@ jobs:
           git rev-parse HEAD > "$RUNNER_TEMP/native-integration/head.txt"
           node --version > "$RUNNER_TEMP/native-integration/node.txt"
           pnpm --version > "$RUNNER_TEMP/native-integration/pnpm.txt"
+          pnpm exec tsx tools/secret-scan/install.ts all
           pnpm test:int --reporter=json --outputFile="$NATIVE_REPORT"
           node --input-type=module <<'NODE'
           import { readFileSync, statSync } from 'node:fs';
