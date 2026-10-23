@@ -172,7 +172,10 @@ export function checkHistory(
     }
     const sources = git.readBlobs(requests);
     for (const { record, prefix, pathspec, commits, published } of plans) {
-      const integrated = new Set(git.run(["rev-list", base, "--", pathspec]).trim().split("\n"));
+      const integrated =
+        head === base
+          ? new Set(commits)
+          : new Set(git.run(["rev-list", base, "--", pathspec]).trim().split("\n"));
       if (published.length > 1) {
         throw new Error("Published ADR identity is ambiguous");
       }
