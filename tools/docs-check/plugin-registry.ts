@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import { execFileSync } from "node:child_process";
 import { realpath } from "node:fs/promises";
-import * as ts from "typescript";
 import { Files } from "../adr/files.ts";
 import { isolatedGitEnvironment } from "../hooks/git-test-environment.ts";
 import { MAX_DOCUMENT_BYTES, readRepositoryFile } from "./files.ts";
@@ -83,6 +82,10 @@ async function admitPluginPaths(
 ): Promise<readonly string[]> {
   try {
     const paths = documentationPluginPaths(inventory);
+    if (paths.length === 0) {
+      return paths;
+    }
+    const ts = await import("typescript");
     for (const path of paths) {
       const source = await readRepositoryFile(root, path, true);
       const parsed = ts.transpileModule(source, {
