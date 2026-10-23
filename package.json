@@ -32,7 +32,7 @@
     "check:deps": "tsx tools/deps-policy/run.ts",
     "check:tasks": "tsx tools/tasks/lint.ts",
     "check:owns": "tsx tools/tasks/check-owns.ts",
-    "check:docs": "tsx tools/docs-check/run.ts",
+    "check:docs": "node --import tsx tools/docs-check/run.ts",
     "check:headers": "tsx tools/check-headers/run.ts",
     "check:contracts": "tsx tools/gen-contracts/check-additive.ts",
     "gen:contracts": "tsx tools/gen-contracts/run.ts",
