@@ -177,3 +177,46 @@ describe("OVE_ARCH020: forbidden ambient capabilities", () => {
     expect(check("Date.now(); Math.random();", "packages/adapters/system/src")).toEqual([]);
   });
 });
+
+const keyWrappers = [
+  (value: string) => `(${value})`,
+  (value: string) => `(${value} as const)`,
+  (value: string) => `(<string>${value})`,
+  (value: string) => `(${value}!)`,
+  (value: string) => `(${value} satisfies string)`,
+];
+describe("OVE_ARCH020: computed key precision", () => {
+  for (const wrap of keyWrappers) {
+    const allowed = [
+      `Math[${wrap('"floor"')}](1.5);`,
+      `globalThis[${wrap('"Math"')}].floor(1.5);`,
+      `const { [${wrap('"floor"')}]: floor } = Math; floor(1.5);`,
+      `const box = {[${wrap('"clock"')}]: Date}; new box.clock(0);`,
+    ];
+    for (const code of allowed) {
+      it(`retains precise deterministic computed key ${code}`, () => {
+        expect(check(code)).toEqual([]);
+      });
+    }
+    const denied = [
+      `Math[${wrap('"random"')}]();`,
+      `globalThis[${wrap('"Math"')}].random();`,
+      `const { [${wrap('"random"')}]: draw } = Math; draw();`,
+      `const box = {[${wrap('"clock"')}]: Date}; new box.clock();`,
+      `const method = "floor"; Math[${wrap("method")}](1.5);`,
+    ];
+    for (const code of denied) {
+      it(`retains denied computed capability ${code}`, () => {
+        const messages = check(code);
+        expect(messages.length).toBeGreaterThan(0);
+        expect(messages.every((message) => message.messageId === "BOUNDARY_FORBIDDEN_GLOBAL")).toBe(
+          true,
+        );
+        expect(
+          new Set(messages.map((message) => `${String(message.line)}:${String(message.column)}`))
+            .size,
+        ).toBe(messages.length);
+      });
+    }
+  }
+});

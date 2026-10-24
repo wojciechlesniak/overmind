@@ -19,7 +19,17 @@ const children = (node: Node, key: string): Node[] => {
   const value = node[key];
   return Array.isArray(value) ? value.filter(isNode) : [];
 };
+const wrapper = (node: Node): boolean =>
+  node.type === "ChainExpression" ||
+  (node.type.startsWith("TS") && child(node, "expression") !== undefined);
+function unwrap(node: Node | undefined): Node | undefined {
+  while (node && wrapper(node)) {
+    node = child(node, "expression");
+  }
+  return node;
+}
 function key(node: Node | undefined): string {
+  node = unwrap(node);
   if (node?.type === "Identifier") {
     return typeof node["name"] === "string" ? node["name"] : "*";
   }
@@ -39,14 +49,11 @@ function key(node: Node | undefined): string {
   }
   return "*";
 }
-const memberKey = (node: Node): string =>
-  node["computed"] === true && child(node, "property")?.type === "Identifier"
-    ? "*"
-    : key(child(node, "property"));
+const memberKey = (node: Node, field = "property"): string => {
+  const property = unwrap(child(node, field));
+  return node["computed"] === true && property?.type === "Identifier" ? "*" : key(property);
+};
 const globalObjects = new Set(["globalThis", "global", "window", "self"]);
-const wrapper = (node: Node): boolean =>
-  node.type === "ChainExpression" ||
-  (node.type.startsWith("TS") && child(node, "expression") !== undefined);
 
 /** A spread contributes an argument only when its literal contents prove one exists. */
 function suppliesArgument(node: Node): boolean {
@@ -184,9 +191,7 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
           add(
             binding,
             value,
-            property.type === "RestElement"
-              ? select
-              : [...select, property["computed"] === true ? "*" : key(child(property, "key"))],
+            property.type === "RestElement" ? select : [...select, memberKey(property, "key")],
             path,
           );
         }
@@ -281,7 +286,7 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
         if (property.type === "SpreadElement") {
           return resolves(child(property, "argument"), select, seen);
         }
-        const name = property["computed"] === true ? "*" : key(child(property, "key"));
+        const name = memberKey(property, "key");
         return !select.length || select[0] === "*" || name === "*" || name === select[0]
           ? resolves(child(property, "value"), select.slice(1), seen)
           : [];
