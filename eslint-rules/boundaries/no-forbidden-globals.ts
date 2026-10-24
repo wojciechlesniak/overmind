@@ -4,10 +4,11 @@ import { environment } from "./resolve-package.ts";
 
 type Node = JSSyntaxElement & Readonly<Record<string, unknown>>;
 type Variable = ReturnType<SourceCode["getScope"]>["variables"][number];
+type Selection = string | { readonly restOffset: number };
 interface Write {
   readonly target: readonly string[];
   readonly value: Node;
-  readonly select: readonly string[];
+  readonly select: readonly Selection[];
 }
 const isNode = (value: unknown): value is Node =>
   typeof value === "object" && value !== null && "type" in value && typeof value.type === "string";
@@ -60,10 +61,7 @@ function suppliesArgument(node: Node): boolean {
   if (node.type !== "SpreadElement") {
     return true;
   }
-  let value = child(node, "argument");
-  while (value && wrapper(value)) {
-    value = child(value, "expression");
-  }
+  const value = unwrap(child(node, "argument"));
   const elements = value?.type === "ArrayExpression" ? value["elements"] : undefined;
   return (
     Array.isArray(elements) &&
@@ -157,7 +155,7 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
   const add = (
     target: Node,
     value: Node,
-    select: readonly string[] = [],
+    select: readonly Selection[] = [],
     path: readonly string[] = [],
   ) => {
     if (wrapper(target)) {
@@ -206,7 +204,7 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
               add(
                 binding,
                 value,
-                [...select, element.type === "RestElement" ? "*" : String(index)],
+                [...select, element.type === "RestElement" ? { restOffset: index } : String(index)],
                 path,
               );
             }
@@ -219,7 +217,7 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     const target = child(node, node.type === "VariableDeclarator" ? "id" : "left");
     const value = child(node, node.type === "VariableDeclarator" ? "init" : "right");
     if (
-      (node.type === "VariableDeclarator" || node.type === "AssignmentExpression") &&
+      ["VariableDeclarator", "AssignmentExpression", "AssignmentPattern"].includes(node.type) &&
       target &&
       value
     ) {
@@ -231,13 +229,18 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     const binding = variable.identifiers[0];
     if (isNode(binding)) {
       for (const alias of values.filter((value) => value.target.length === 0)) {
-        add(alias.value, binding, [], alias.select);
+        const path = alias.select.filter(
+          (segment): segment is string => typeof segment === "string",
+        );
+        if (path.length === alias.select.length) {
+          add(alias.value, binding, [], path);
+        }
       }
     }
   }
   const resolves = (
     node: Node | undefined,
-    select: readonly string[] = [],
+    select: readonly Selection[] = [],
     seen = new Set<Variable>(),
   ): string[][] => {
     if (!node) {
@@ -273,10 +276,11 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
       });
       if (!runtime(variable)) {
         const name = node["name"];
+        const path = select.map((segment) => (typeof segment === "string" ? segment : "*"));
         if (typeof name === "string" && globalObjects.has(name)) {
-          values.push([...select]);
+          values.push(path);
         } else if (typeof name === "string" && roots.has(name)) {
-          values.push([name, ...select]);
+          values.push([name, ...path]);
         }
       }
       return values;
@@ -294,9 +298,16 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     }
     if (node.type === "ArrayExpression") {
       const elements = node["elements"];
+      let offset = 0;
+      while (typeof select[0] === "object") {
+        offset += select[0].restOffset;
+        select = select.slice(1);
+      }
       return Array.isArray(elements)
         ? elements.flatMap((value: unknown, index) =>
-            isNode(value) && (!select.length || select[0] === "*" || select[0] === String(index))
+            isNode(value) &&
+            index >= offset &&
+            (!select.length || select[0] === "*" || select[0] === String(index - offset))
               ? resolves(value, select.slice(1), seen)
               : [],
           )
@@ -328,7 +339,7 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     if (parent.type === "VariableDeclarator") {
       return child(parent, "init") === node;
     }
-    if (parent.type === "AssignmentExpression") {
+    if (parent.type === "AssignmentExpression" || parent.type === "AssignmentPattern") {
       return (
         child(parent, "right") === node ||
         (child(parent, "left") === node && parent["operator"] === "=")
@@ -363,11 +374,19 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
         child(parent, "callee") === use
           ? parent
           : undefined;
-      const paths = resolves(use).map((path) =>
-        path[0] === "Date" && (path[1] === "constructor" || path[1] === "*")
-          ? ["Function", ...path.slice(2)]
-          : path,
-      );
+      const paths = resolves(use).map((path) => {
+        if (path[0] !== "Date") {
+          return path;
+        }
+        // Date and its static methods are intrinsic functions even where time is permitted.
+        let index = ["now", "parse", "UTC"].includes(path[1] ?? "") ? 2 : 1;
+        while (["call", "apply", "bind"].includes(path[index] ?? "")) {
+          index++;
+        }
+        return path[index] === "constructor" || path[index] === "*"
+          ? ["Function", ...path.slice(index + 1)]
+          : path;
+      });
       const denied = paths.some((path) =>
         patterns.some((pattern) => {
           if (!path.length) {

@@ -220,3 +220,180 @@ describe("OVE_ARCH020: computed key precision", () => {
     }
   }
 });
+
+describe("OVE_ARCH020: review regression cases", () => {
+  const cases = [
+    {
+      code: "const [...ctors] = [Date]; new ctors[0]();",
+      allowed: false,
+      path: "packages/domain/src",
+    },
+    {
+      code: "const [...ctors] = [Date]; new ctors[0](0);",
+      allowed: true,
+      path: "packages/domain/src",
+    },
+    {
+      code: "const [,...ctors] = [LocalDate,Date]; new ctors[0]();",
+      allowed: false,
+      path: "packages/domain/src",
+    },
+    {
+      code: "const [,...ctors] = [LocalDate,Date]; new ctors[0](0);",
+      allowed: true,
+      path: "packages/domain/src",
+    },
+    {
+      code: "let ctors; [...ctors] = [Date]; new ctors[0]();",
+      allowed: false,
+      path: "packages/domain/src",
+    },
+    {
+      code: "let ctors; [...ctors] = [Date]; new ctors[0](0);",
+      allowed: true,
+      path: "packages/domain/src",
+    },
+    {
+      code: "const [...ctors] = [Date]; const D = ctors[0]; new D();",
+      allowed: false,
+      path: "packages/domain/src",
+    },
+    {
+      code: "const [...ctors] = [Date]; const D = ctors[0]; new D(0);",
+      allowed: true,
+      path: "packages/domain/src",
+    },
+    {
+      code: "function fixed(D = Date) { return new D(0); } fixed();",
+      allowed: true,
+      path: "packages/domain/src",
+    },
+    {
+      code: "function fixed(D = Date) { return new D(); } fixed();",
+      allowed: false,
+      path: "packages/domain/src",
+    },
+    {
+      code: "function fixed(D = globalThis.Date) { return new D(0); } fixed();",
+      allowed: true,
+      path: "packages/domain/src",
+    },
+    {
+      code: "function fixed(D = globalThis.Date) { return new D(); } fixed();",
+      allowed: false,
+      path: "packages/domain/src",
+    },
+    {
+      code: "const fixed = (D = Date) => new D(0); fixed();",
+      allowed: true,
+      path: "packages/domain/src",
+    },
+    {
+      code: "const fixed = (D = Date) => new D(); fixed();",
+      allowed: false,
+      path: "packages/domain/src",
+    },
+    {
+      code: "function clock(D = Date) { return D.now(); } clock();",
+      allowed: false,
+      path: "packages/domain/src",
+    },
+    {
+      code: "function local(Date: {new(v?:number): unknown}, D = Date) { return new D(); }",
+      allowed: true,
+      path: "packages/domain/src",
+    },
+    {
+      code: "function local(D = class {}) { return new D(); } local();",
+      allowed: true,
+      path: "packages/domain/src",
+    },
+    {
+      code: "Date.now.constructor(source);",
+      allowed: false,
+      path: "packages/adapters/system/src",
+    },
+    {
+      code: 'Date["now"]["constructor"](source);',
+      allowed: false,
+      path: "packages/adapters/system/src",
+    },
+    {
+      code: "const clock = Date.now; clock.constructor(source);",
+      allowed: false,
+      path: "packages/adapters/system/src",
+    },
+    {
+      code: 'const {now: clock} = Date; clock["constructor"](source);',
+      allowed: false,
+      path: "packages/adapters/system/src",
+    },
+    {
+      code: "const {constructor: build} = Date.now; build(source);",
+      allowed: false,
+      path: "packages/adapters/system/src",
+    },
+    {
+      code: "Date.parse.constructor(source);",
+      allowed: false,
+      path: "packages/adapters/system/src",
+    },
+    {
+      code: "Date.UTC.constructor(source);",
+      allowed: false,
+      path: "packages/adapters/system/src",
+    },
+    {
+      code: "const Date = {now: {constructor: (value: string) => value}}; Date.now.constructor(source);",
+      allowed: true,
+      path: "packages/adapters/system/src",
+    },
+    {
+      code: 'Date.now(); Date.parse("2020-01-01"); Date.UTC(2020,0,1);',
+      allowed: true,
+      path: "packages/adapters/system/src",
+    },
+    {
+      code: "const clock = Date.now; clock();",
+      allowed: true,
+      path: "packages/adapters/system/src",
+    },
+  ] as const;
+  for (const { code, allowed, path } of cases) {
+    it(`${allowed ? "permits deterministic or local" : "denies ambient"} review regression ${code}`, () => {
+      const messages = check(code, path);
+      if (allowed) {
+        expect(messages).toEqual([]);
+      } else {
+        expect(messages.length).toBeGreaterThan(0);
+        expect(messages.every((message) => message.messageId === "BOUNDARY_FORBIDDEN_GLOBAL")).toBe(
+          true,
+        );
+        expect(
+          new Set(messages.map((message) => `${String(message.line)}:${String(message.column)}`))
+            .size,
+        ).toBe(messages.length);
+      }
+    });
+  }
+});
+
+describe("OVE_ARCH020: review rest precision controls", () => {
+  for (const code of [
+    "const [,...ctors] = [Date,LocalDate]; new ctors[0]();",
+    "const [...ctors] = [Date,LocalDate]; new ctors[1]();",
+  ]) {
+    it(`preserves the exact copied rest element ${code}`, () => {
+      expect(check(code)).toEqual([]);
+    });
+  }
+  for (const method of ["call", "apply", "bind"]) {
+    it(`denies Date method intrinsic ${method} constructor`, () => {
+      expect(
+        check(`Date.now.${method}.constructor(source);`, "packages/adapters/system/src").map(
+          (message) => message.messageId,
+        ),
+      ).toEqual(["BOUNDARY_FORBIDDEN_GLOBAL"]);
+    });
+  }
+});
