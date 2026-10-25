@@ -397,3 +397,53 @@ describe("OVE_ARCH020: review rest precision controls", () => {
     });
   }
 });
+
+describe("OVE_ARCH020: Date prototype identity", () => {
+  const denied = [
+    "new Date.prototype.constructor();",
+    "Date.prototype.constructor(0);",
+    'new Date["prototype"]["constructor"]();',
+    "new (globalThis.Date.prototype.constructor)();",
+    "const D = Date.prototype.constructor; new D();",
+    "const {constructor: D} = Date.prototype; new D();",
+    "new Date.prototype.constructor.prototype.constructor();",
+    "const D = Date.prototype.constructor.bind(null); new D();",
+    "Date.prototype.constructor.now();",
+    "const box = {D: Date.prototype.constructor}; new box.D();",
+  ];
+  for (const code of denied) {
+    it(`denies the known ambient identity ${code}`, () => {
+      expect(check(code).map((message) => message.messageId)).toEqual([
+        "BOUNDARY_FORBIDDEN_GLOBAL",
+      ]);
+    });
+  }
+  for (const code of [
+    "Date.prototype.constructor.constructor(source);",
+    "Date.prototype.constructor.now.constructor(source);",
+  ]) {
+    it(`denies intrinsic Function access where ordinary time is allowed ${code}`, () => {
+      expect(
+        check(code, "packages/adapters/system/src").map((message) => message.messageId),
+      ).toEqual(["BOUNDARY_FORBIDDEN_GLOBAL"]);
+    });
+  }
+  const allowed = [
+    "new Date.prototype.constructor(0);",
+    'new Date["prototype"]["constructor"]("2020-01-01");',
+    "const D = Date.prototype.constructor; new D(0);",
+    "new Date.prototype.constructor.prototype.constructor(0);",
+    "new Date.prototype.constructor(...[0]);",
+    "Date.prototype.constructor.parse('2020-01-01');",
+    "const Date = {prototype: {constructor: class Local {}}}; new Date.prototype.constructor();",
+    "function local(Date: {prototype: {constructor: new () => unknown}}) { new Date.prototype.constructor(); }",
+  ];
+  for (const code of allowed) {
+    it(`preserves deterministic arguments or a runtime shadow ${code}`, () => {
+      expect(check(code)).toEqual([]);
+    });
+  }
+  it("preserves the existing System time permission", () => {
+    expect(check("new Date.prototype.constructor();", "packages/adapters/system/src")).toEqual([]);
+  });
+});

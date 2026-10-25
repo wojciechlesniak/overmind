@@ -378,6 +378,10 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
         if (path[0] !== "Date") {
           return path;
         }
+        // The intrinsic prototype constructor is Date itself; preserve its remaining path.
+        while (path[1] === "prototype" && path[2] === "constructor") {
+          path = ["Date", ...path.slice(3)];
+        }
         // Date and its static methods are intrinsic functions even where time is permitted.
         let index = ["now", "parse", "UTC"].includes(path[1] ?? "") ? 2 : 1;
         while (["call", "apply", "bind"].includes(path[index] ?? "")) {
