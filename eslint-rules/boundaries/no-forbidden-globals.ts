@@ -613,12 +613,18 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
         while (["call", "apply", "bind"].includes(path[index] ?? "")) {
           index++;
         }
+        const dateInvocation =
+          call?.type === "CallExpression" &&
+          path.length > 1 &&
+          path.slice(1).every((segment) => segment === "call" || segment === "apply");
         return {
           ...origin,
           path:
             path[index] === "constructor" || path[index] === "*"
               ? ["Function", ...path.slice(index + 1)]
-              : path,
+              : dateInvocation
+                ? ["Date"]
+                : path,
         };
       });
       const denied = origins.some(({ path, boundArgument }) =>

@@ -977,3 +977,143 @@ describe("OVE_ARCH020: intrinsic bound Date arguments", () => {
     });
   }
 });
+
+describe("OVE_ARCH020: intrinsic Date call and apply invocations", () => {
+  const cases = [
+    ["direct:call", "Date.call(null, 0);", true, "packages/domain/src"],
+    ["direct:computed-call", 'Date["call"](null, 0);', true, "packages/domain/src"],
+    ["direct:apply", "Date.apply(null, [0]);", true, "packages/domain/src"],
+    ["direct:computed-apply", 'Date["apply"](null, [0]);', true, "packages/domain/src"],
+    ["global:call", "globalThis.Date.call(null, 0);", true, "packages/domain/src"],
+    ["global:computed-call", 'globalThis.Date["call"](null, 0);', true, "packages/domain/src"],
+    ["global:apply", "globalThis.Date.apply(null, [0]);", true, "packages/domain/src"],
+    ["global:computed-apply", 'globalThis.Date["apply"](null, [0]);', true, "packages/domain/src"],
+    ["prototype:call", "Date.prototype.constructor.call(null, 0);", true, "packages/domain/src"],
+    [
+      "prototype:computed-call",
+      'Date.prototype.constructor["call"](null, 0);',
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "prototype:apply",
+      "Date.prototype.constructor.apply(null, [0]);",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "prototype:computed-apply",
+      'Date.prototype.constructor["apply"](null, [0]);',
+      true,
+      "packages/domain/src",
+    ],
+    ["bound:call", "const D = Date.bind(null, 0); D.call(null, 0);", true, "packages/domain/src"],
+    [
+      "bound:computed-call",
+      'const D = Date.bind(null, 0); D["call"](null, 0);',
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "bound:apply",
+      "const D = Date.bind(null, 0); D.apply(null, [0]);",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "bound:computed-apply",
+      'const D = Date.bind(null, 0); D["apply"](null, [0]);',
+      true,
+      "packages/domain/src",
+    ],
+    ["zero-bound-call", "const D = Date.bind(null); D.call(null);", true, "packages/domain/src"],
+    [
+      "rebound-call",
+      "const D = Date.bind(null, 0); const E = D.bind(null); E.call(null);",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "rebound-apply",
+      "const D = Date.bind(null); const E = D.bind(null, 0); E.apply(null, []);",
+      true,
+      "packages/domain/src",
+    ],
+    ["immediate-bound-call", "Date.bind(null, 0).call(null);", true, "packages/domain/src"],
+    ["immediate-bound-apply", "Date.bind(null, 0).apply(null, []);", true, "packages/domain/src"],
+    [
+      "container-call",
+      "const box = {D: Date.bind(null, 0)}; box.D.call(null);",
+      true,
+      "packages/domain/src",
+    ],
+    ["call-chain", "Date.call.call(Date, null);", true, "packages/domain/src"],
+    ["apply-call-chain", "Date.apply.call(Date, null, []);", true, "packages/domain/src"],
+    ["call-apply-chain", "Date.call.apply(Date, [null]);", true, "packages/domain/src"],
+    ["fixed-new-direct", "new Date(0);", false, "packages/domain/src"],
+    ["fixed-new-bound", "const D = Date.bind(null, 0); new D();", false, "packages/domain/src"],
+    [
+      "fixed-new-rebound",
+      "const D = Date.bind(null, 0); const E = D.bind(null); new E();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "local-shadow",
+      "function local(Date) { Date.call(null); Date.apply(null, []); }",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "local-object",
+      "const Date = {call(){},apply(){}}; Date.call(null); Date.apply(null,[]);",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "local-alias",
+      "const D = function local() {}; D.call(null); D.apply(null, []);",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "bare-escape-pure-bind-call",
+      "const D = Date.bind.call(Date, null, 0);",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "bare-escape-pure-bind-apply",
+      "const D = Date.bind.apply(Date, [null, 0]);",
+      true,
+      "packages/domain/src",
+    ],
+    ["static-now-call", "Date.now.call(null);", true, "packages/domain/src"],
+    ["intrinsic-Function", 'Date.call.constructor("fixture");', true, "packages/domain/src"],
+    [
+      "wrapped-known-call",
+      "const D = Date.bind(null,0); (D.call as unknown)(null);",
+      true,
+      "packages/domain/src",
+    ],
+  ] as const;
+  for (const [label, code, denied, path] of cases) {
+    it(`preserves intrinsic Date invocation facts ${label}`, () => {
+      const messages = check(code, path);
+      if (denied) {
+        expect(messages.length, label).toBeGreaterThan(0);
+        expect(
+          messages.every((message) => message.messageId === "BOUNDARY_FORBIDDEN_GLOBAL"),
+          label,
+        ).toBe(true);
+        expect(
+          new Set(messages.map((message) => `${String(message.line)}:${String(message.column)}`))
+            .size,
+          label,
+        ).toBe(messages.length);
+      } else {
+        expect(messages, label).toEqual([]);
+      }
+    });
+  }
+});
