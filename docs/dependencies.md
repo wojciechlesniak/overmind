@@ -1,6 +1,6 @@
 # Dependency policy and register
 
-Verified on: 2026-10-17
+Verified on: 2026-10-25
 
 The catalog is the exact source of pins. Registry latest is evidence, never an
 instruction to upgrade. This review retains the Owner-approved SETUP006 tooling
@@ -23,6 +23,15 @@ hardlinks and source symlinks; admitted dependency symlinks stay inside the
 canonical local store. Frozen locks, exact versions, release-age, license and
 checksum checks, audit thresholds and disabled build scripts remain unchanged.
 See [pnpm packageImportMethod](https://pnpm.io/settings/node-modules#packageimportmethod).
+
+The 2026-10-25 maintenance review updates only happy-dom 21.0.4, fast-uri 3.1.9
+and KaTeX 0.18.2 to remediate six development-only advisories. Other registry-latest
+cells retain their earlier review snapshots; this is not a blanket registry refresh.
+The latter two packages stay transitive: exact old-version override selectors have
+register justifications below, without new direct dependencies or policy exceptions.
+All three releases exceed the unchanged 72-hour minimum and retain allowed MIT or
+BSD-3-Clause licensing. Actual installed-graph audits and compatibility checks are
+required before integration; publisher metadata alone is not acceptance evidence.
 
 ## Compatibility matrix
 
@@ -57,7 +66,7 @@ See [pnpm packageImportMethod](https://pnpm.io/settings/node-modules#packageimpo
 | eslint-plugin-boundaries | 7.2.0 | 7.2.0 | npm eslint-plugin-boundaries@7.2.0 | Reserved catalog pin; not yet installed. Owning task rechecks peers and full license graph. |
 | eslint-plugin-react-refresh | 0.5.7 | 0.5.7 | npm eslint-plugin-react-refresh@0.5.7 | Installed dev tool. |
 | globals | 17.13.0 | 17.13.0 | npm globals@17.13.0 | Installed dev tool. |
-| happy-dom | 21.0.1 | 21.0.3 | npm happy-dom@21.0.1 | Approved MIT replacement for the denied jsdom transitive graph; unit DOM evaluation/network loading disabled. |
+| happy-dom | 21.0.4 | 21.0.4 | npm happy-dom@21.0.4; reviewed 2026-10-25 | Fix GHSA-834v-8h66-3h79; unit DOM evaluation/network loading remains disabled. |
 | lefthook | 2.2.1 | 2.2.2 | npm lefthook@2.2.1 | Retain2.2.1; no install build scripts allowed. |
 | markdownlint | 0.41.1 | 0.41.1 | npm markdownlint@0.41.1; official programmatic API | Owner-approved direct core for OVE_OSS004; same core as CLI2 0.23.3, avoids denied PSF-2.0 and vulnerable braces. |
 | markdownlint-cli2 | 0.23.3 | 0.23.3 | npm markdownlint-cli2@0.23.3 | Uninstalled reserve: blocked by argparse PSF-2.0 and HIGH GHSA-vfj7-8cjw-p6xm; no exception approved. |
@@ -211,12 +220,17 @@ solution or obtain an explicit policy decision; no exception is created here.
 - License: MIT
 - Used by: overmind (dev)
 - Added by: OVE_SETUP005
-- Value: Parse and enforce actual Conventional Commits and task references at commit time.
-- Maintenance cost: Upstream-driven release cadence; review every update. 4 npm publisher maintainers; pinned unpacked size 37 KiB.
-- Alternatives considered: A bespoke regex hook; keep the tested official parser.
-- Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
-- Last reviewed: 2026-10-16
+- Value: Parse and enforce actual Conventional Commits and task references at commit time. The exact fast-uri 3.1.9 transitive repair removes four URI advisories through existing AJV without upgrading commitlint.
+- Maintenance cost: Upstream-driven release cadence; review every update. 4 npm publisher maintainers; pinned unpacked size 37 KiB. Fastify-maintained patch with no runtime dependencies; its six published maintainers are a subset of the earlier ten, and the official release records trusted publishing. Recheck the old-version selector when AJV updates.
+- Alternatives considered: A bespoke regex hook; keep the tested official parser. Retaining fast-uri 3.1.8 keeps known findings; replacing commitlint/AJV or their URI parser expands scope.
+- Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows. The fast-uri repair retains BSD-3-Clause, adds no install script and changes URI rejection semantics; actual valid/invalid commitlint checks remain mandatory.
+- Last reviewed: 2026-10-25
 - Source: <https://registry.npmjs.org/@commitlint%2Fcli/21.2.3>
+- Justifies: overrides.fast-uri@3.1.8
+- Override target: fast-uri 3.1.9 (dev transitive; not a direct dependency)
+- Override license: BSD-3-Clause
+- Override source: <https://registry.npmjs.org/fast-uri/3.1.9>
+- Override changelog: <https://github.com/fastify/fast-uri/releases/tag/v3.1.9>
 
 ### @commitlint/config-conventional
 
@@ -532,16 +546,18 @@ solution or obtain an explicit policy decision; no exception is created here.
 
 ### happy-dom
 
-- Version: 21.0.1
+- Version: 21.0.4
 - License: MIT
 - Used by: overmind (dev)
 - Added by: OVE_SETUP006
 - Value: Provide MIT DOM unit tests with script evaluation and external loading disabled.
-- Maintenance cost: Upstream-driven release cadence; review every update. 1 npm publisher maintainers; pinned unpacked size 8952 KiB.
+- Maintenance cost: Upstream-driven release cadence; review every update. 1 npm publisher maintainers; pinned unpacked size 9185190 bytes.
 - Alternatives considered: jsdom was rejected by the unchanged transitive-license gate; real browser behavior stays in Playwright.
 - Risk: Install scripts: none declared directly. Transitive scripts remain denied; tooling may use native code/network only in approved CI/helper flows.
-- Last reviewed: 2026-10-16
-- Source: <https://registry.npmjs.org/happy-dom/21.0.1>
+- Last reviewed: 2026-10-25
+- Source: <https://registry.npmjs.org/happy-dom/21.0.4>
+
+- Changelog: <https://github.com/capricorn86/happy-dom/releases/tag/v21.0.4>
 
 ### lefthook
 
@@ -575,12 +591,18 @@ solution or obtain an explicit policy decision; no exception is created here.
 - License: MIT
 - Used by: overmind (dev)
 - Added by: OVE_OSS004
-- Value: Enforce prescribed Markdown semantics through the official API; exact core embedded in CLI2 0.23.3, narrow Owner decision confirmed 2026-10-17 (Europe/Warsaw).
-- Maintenance cost: Review pinned upstream API and generated graph on updates; checker owns file enumeration and reviewed JSON configuration.
-- Alternatives considered: CLI2 0.23.3 is blocked by denied argparse PSF-2.0 and an unpatched HIGH braces advisory; Prettier alone cannot enforce Markdown semantics.
-- Risk: No install scripts in the isolated 49-package MIT graph. Full audit disclosed one LOW KaTeX advisory; no finding is suppressed or waived. Whole-project gates remain mandatory.
-- Last reviewed: 2026-10-17
+- Value: Enforce prescribed Markdown semantics through the official API; exact core embedded in CLI2 0.23.3, narrow Owner decision confirmed 2026-10-17 (Europe/Warsaw). The exact KaTeX 0.18.2 transitive repair addresses GHSA-238p-pmpm-9mq7 while retaining the approved lint/parser engine.
+- Maintenance cost: Review pinned upstream API and generated graph on updates; checker owns file enumeration and reviewed JSON configuration. Existing KaTeX maintainers and commander 8 dependency remain. Review the public rendering API and minor-release changes whenever the exact selector changes.
+- Alternatives considered: CLI2 0.23.3 is blocked by denied argparse PSF-2.0 and an unpatched HIGH braces advisory; Prettier alone cannot enforce Markdown semantics. KaTeX 0.16.47 remains affected; replacing markdownlint or the math extension expands behavior; vulnerability suppression and license exceptions are rejected.
+- Risk: No install scripts in the isolated 49-package MIT graph. The historical LOW KaTeX advisory is addressed by the exact transitive 0.18.2 override below; no finding is suppressed or waived. Whole-project gates remain mandatory. KaTeX 0.18.0 changes internal CSS class prefixes; the repository consumes math tokens/headings and has no KaTeX CSS, class allowlist or bundled math renderer. Actual public math rendering, project parsing, malformed math and trust denial must pass. Its publisher prepare:husky script is not authorized to run; dependency builds remain denied.
+- Last reviewed: 2026-10-25
 - Source: <https://github.com/DavidAnson/markdownlint/blob/v0.41.1/README.md#api>
+- Justifies: overrides.katex@0.16.47
+- Override target: katex 0.18.2 (dev transitive; not a direct dependency)
+- Override license: MIT
+- Override source: <https://registry.npmjs.org/katex/0.18.2>
+- Override changelog: <https://github.com/KaTeX/KaTeX/releases/tag/v0.18.2>
+- Override breaking changes: <https://github.com/KaTeX/KaTeX/releases/tag/v0.18.0>
 
 ### oxlint
 
@@ -1146,8 +1168,8 @@ pins/checksums remain the publisher-verified values from SETUP006/007; a pin doe
 not authorize arbitrary future releases. herdr/container CLI pins remain SETUP015.
 
 The pnpm12 configuration uses allowBuilds, not the removed onlyBuiltDependencies
-setting. Both current build entries are false; no overrides, patches, license or
-release-age exceptions are present. Pure-layer approvals are explicit, defaulting
+setting. All current build entries remain false. Two exact transitive development overrides
+are justified below; no patches, license or release-age exceptions are present. Pure-layer approvals are explicit, defaulting
 to zod only. Package code cannot select an alternate registry or a git/tarball URL.
 
 SETUP006's installed-tree license command is authoritative and includes production
