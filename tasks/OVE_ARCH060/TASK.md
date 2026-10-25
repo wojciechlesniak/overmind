@@ -132,12 +132,12 @@ Two equal descriptors may exist: the later generator detects duplicate exports.
 
 ## 11. Acceptance criteria
 
-- [ ] All three factories preserve schema identity, inference and literal names.
-- [ ] Owned metadata is immutable and independent; no Zod freezing or registry.
-- [ ] Valid scopes/flags pass; every denied combination and malformed shape fails.
-- [ ] All stated bounds and accessor/symbol non-evaluation have real tests.
-- [ ] Public seed exports work with existing exports preserved; no deep/barrel workaround.
-- [ ] Documentation distinguishes metadata from every open ARCH008/ARCH010 gate.
+- [x] All three factories preserve schema identity, inference and literal names.
+- [x] Owned metadata is immutable and independent; no Zod freezing or registry.
+- [x] Valid scopes/flags pass; every denied combination and malformed shape fails.
+- [x] All stated bounds and accessor/symbol non-evaluation have real tests.
+- [x] Public seed exports work with existing exports preserved; no deep/barrel workaround.
+- [x] Documentation distinguishes metadata from every open ARCH008/ARCH010 gate.
 
 ## 12. Test plan
 
