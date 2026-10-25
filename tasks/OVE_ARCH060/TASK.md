@@ -6,7 +6,7 @@ kind: contract
 size: S
 priority: P0
 mvp: true
-status: todo
+status: in_progress
 depends_on: [OVE_ARCH001, OVE_SETUP002, OVE_ARCH003]
 soft_depends_on: []
 provides: ["lib:contract-metadata"]
