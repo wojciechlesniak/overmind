@@ -6,7 +6,7 @@ kind: infra
 size: M
 priority: P0
 mvp: true
-status: todo
+status: in_progress
 depends_on: [OVE_SETUP001, OVE_SETUP002, OVE_SETUP003, OVE_SETUP004, OVE_SETUP008]
 soft_depends_on: [OVE_ARCH002]
 provides: [lib:ui-kit-scaffold, lib:storybook]
