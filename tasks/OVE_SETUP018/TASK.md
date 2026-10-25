@@ -6,7 +6,7 @@ kind: security
 size: S
 priority: P0
 mvp: true
-status: todo
+status: in_review
 depends_on: [OVE_SETUP006]
 soft_depends_on: [OVE_OSS003, OVE_SETUP007, OVE_SETUP014]
 provides: ["lib:repo-settings", "lib:repo-labels", "lib:branch-protection-spec"]
@@ -22,6 +22,11 @@ adr_refs: [13, 25]
 ---
 
 # OVE_SETUP018: GitHub repository settings, rulesets, labels and a read-only settings audit
+
+## Implementation claim
+
+Claimed-By: Codex ove016_settings
+Claimed-At: 2026-10-16T19:13:30Z
 
 ## 1. Summary
 
@@ -90,12 +95,12 @@ The set of required check names is read from the workflow files by the audit (jo
 
 - [ ] A real PR from a separate outside-contributor fork runs hosted CI with a read-only token and no secrets and cannot start a self-hosted isolation job; record actual workflow evidence.
 
-- [ ] `docs/engineering/repository-settings.md` lists every setting in requirements 1-8 with value, rationale and verification command.
+- [x] `docs/engineering/repository-settings.md` lists every setting in requirements 1-8 with value, rationale and verification command.
 - [ ] `pnpm settings:audit` against a correctly configured repository exits 0; flipping one setting (for example allowing merge commits) makes it exit 1 naming the setting.
-- [ ] The audit sends only GET requests (unit test on the wrapper) and prints no token.
+- [x] The audit sends only GET requests (unit test on the wrapper) and prints no token.
 - [ ] `expected.json` required checks all exist as jobs in `.github/workflows` (test).
-- [ ] `pnpm settings:labels` dry run lists labels to create; `--apply` creates them.
-- [ ] The doc includes the bootstrap order and the single-maintainer exceptions.
+- [x] `pnpm settings:labels` dry run lists labels to create; `--apply` creates them.
+- [x] The doc includes the bootstrap order and the single-maintainer exceptions.
 
 ## 12. Test plan
 
@@ -118,3 +123,115 @@ Parallel with OVE_OSS003. Hotspot: `expected.json` changes whenever a new workfl
 The Owner-approved SETUP006 sequence transfers real outside-contributor fork verification here, after a separate writable fork/account is available. Static workflow checks and mocked gate/API tests are foundation evidence only. Verify the deployed CI/security workflows, actual token permissions and denied self-hosted execution without exposing token or secret values.
 
 Source: tasks/_proposals/OVE_SETUP006-acceptance-sequence.md.
+
+
+### Implementation and operational acceptance (2026-10-16)
+
+The implementation is ready for independent review; this task is not done.
+`tools/repo-settings/` supplies the exact expected state, labels, paginated GET-only
+operator audit, pure comparison/label planning, explicit-only label writes, and
+recorded-response/negative tests. No dependencies or live settings were changed.
+Root script additions are coordinated in
+`tasks/_proposals/OVE_SETUP018-shared-integration.md`.
+
+Actual local audit exited 1 on repository drift; label dry run exited 0 and planned
+18 creates/metadata updates, retaining all extras. No `--apply` was run. GitHub
+GET inspection found no forks and no external-fork PRs in any state. A real fork
+run, Owner-applied settings and reviewed live audit remain required. `pr-gate`
+is not yet delivered by OSS003, and the inventory reports that missing required
+job as drift. A fully configured personal repository still needs explicit Owner
+verification of manual 2FA/permissions and dependency graph controls; strict API
+mode cannot fabricate those observations. `--allow-unknown` cannot waive known
+setting drift, missing labels or malformed returned metadata.
+
+### Integration refresh and regression evidence (2026-10-23)
+
+The existing implementation was rebased on DEVELOP without changing its scope.
+The package-script conflict preserves the current Tauri/ADR/agent commands and
+adds only the two settings commands. The original three commits remain available
+on the local recovery branch `codex/backup-setup018-20261023`.
+
+Independent Standards and Spec reviews found that malformed paginated security
+metadata could become waivable unknowns, while unavailable ruleset details were
+misreported as known drift. Five new public-audit regression cases first failed;
+the correction preserves malformed replies as non-waivable drift and ordinary
+permission failures as unknown. All 19 settings tests subsequently passed.
+
+Typecheck, lint and owned-source formatting passed. The verified tree secret
+scanner reported zero findings and one existing Keychain warning. Two ordinary
+full-suite attempts retained process-fixture failures, including the existing
+30-second configuration-gate timeout; their unchanged scoped recheck passed.
+The complete suite then passed all 1559 tests in 127 files with one worker,
+unchanged timeouts, assertions, inventory and retry-zero policy. Ordinary push
+hooks and fresh exact-head reviews remain required at publication.
+
+The real GET-only audit still exited 1: 72 passes, 37 known drifts and 9 unknowns,
+including the absent `pr-gate`. No live settings, labels or permissions were
+changed. Outside-contributor fork evidence, Owner-applied settings, reviewed
+manual controls and actual label application remain open; this task stays
+in_review and its PR stays draft.
+
+### Local-first Owner sequence and integration refresh (2026-10-25)
+
+The Owner explicitly prioritized an application running locally on their computer
+and deferred release preparation until later. Actual `release` environment setup
+and Apple credential provisioning are future work, not prerequisites for local
+development. Keep the future release security targets; do not create placeholders
+or claim production release readiness. This sequencing does not waive the real
+outside-contributor fork criterion or the missing OSS003 `pr-gate`.
+
+The implementation rebased cleanly onto DEVELOP after the reviewed public-service
+startup correction (PR1050, integration commit `3d67c65`). Typecheck, lint,
+formatting, all 19 settings tests and all 1652 unit tests in 130 files passed.
+The actual native run retained 100 passes and 23 failures. The macOS power log
+records clamshell sleep 38 seconds after native start, followed by maintenance
+sleep/wake cycles. One unchanged failing public ADR case subsequently passed on
+the awake host; this is scoped evidence, not a full native-suite pass.
+
+License/dependency policy, production audit, real secret scans, SBOM, build,
+documentation and agent checks passed. Secret scans reported zero findings and
+one existing Keychain warning. The development audit reported six advisories
+(three low, two moderate, one high); coordinated dependency maintenance is
+separate. The ADR checker rejected the existing legacy ADR 0001 filename and
+metadata; its migration belongs to the coordinated ADR/documentation work.
+The real settings audit still exited 1, and the label dry run planned 18 metadata
+changes while retaining extras. No live label/settings writes were performed.
+Operational acceptance and final exact-head native/publication checks remain open.
+
+### Actual label application (2026-10-25)
+
+The real dry run's 18 metadata operations were applied through the existing
+explicit `pnpm settings:labels --apply` command: 12 creates and six updates.
+Fresh paginated GitHub GETs verified all 21 target labels and unchanged extras;
+the total changed from 70 to 82 labels. No label was deleted or assigned to an
+issue/PR, and no branch protection, Actions permission or release setting changed.
+The operation used the shared CPU lock followed by the integration lock, with
+before/after GET evidence. The first operator evidence wrapper stopped before
+writes because it compared hex color letter case; its corrected comparison
+matches the existing label tool. Both results are retained.
+
+### Awake-host native replay (2026-10-25)
+
+After the confirmed host-sleep interruption and the successful scoped ADR probe,
+one full native run on an awake host passed all 123 cases in 30 files in 366
+seconds, with zero failures, skips or todo cases. The power log recorded no sleep
+transition during that run. All case identities and inherited control pins
+matched; only this task's two additive root scripts changed the package control
+pin. Test files, assertions, timeouts, worker settings and retry policy remained
+unchanged. The source stayed clean throughout, and the earlier failed run remains
+preserved. A future integration rebase still requires its own exact-head checks.
+
+### Owner-approved tooling integration phase (2026-10-25)
+
+The Owner explicitly authorized merging the tools while leaving repository-settings
+acceptance and the real outside-contributor fork run open for later. This is a
+phased integration decision, not evidence that those criteria passed. The task
+stays `in_review`; the unchecked operational criteria above, including the missing
+OSS003 `pr-gate`, stay open. Actual release provisioning remains deferred under
+the local-first sequence.
+
+Integrate the reviewed tools only after real tests, security checks and independent
+Standards and Spec reviews pass for the exact source head. Publish through the
+normal task-finish review path without `--done`; do not claim full task completion
+or change live protections to manufacture a green operational audit. The existing
+audit must continue reporting known drift and unavailable observations honestly.
