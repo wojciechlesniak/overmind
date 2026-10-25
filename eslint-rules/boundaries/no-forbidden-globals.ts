@@ -4,7 +4,8 @@ import { environment } from "./resolve-package.ts";
 
 type Node = JSSyntaxElement & Readonly<Record<string, unknown>>;
 type Variable = ReturnType<SourceCode["getScope"]>["variables"][number];
-type Selection = string | { readonly restOffset: number };
+type Bounds = readonly [number, number];
+type Selection = string | { readonly restOffset: number } | { readonly arrayIndex: Bounds };
 interface Write {
   readonly target: readonly string[];
   readonly value: Node;
@@ -238,7 +239,210 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
       }
     }
   }
+  interface ValueSelection {
+    readonly value: Node;
+    readonly select: readonly Selection[];
+  }
+  const arrayIndex = (segment: string): number | undefined => {
+    const index = Number(segment);
+    return Number.isInteger(index) && index >= 0 && index < 2 ** 32 - 1 && String(index) === segment
+      ? index
+      : undefined;
+  };
+  const selectionMatches = (segment: string, selected: Selection | undefined): boolean => {
+    if (segment === "*" || selected === "*" || segment === selected) {
+      return true;
+    }
+    const index = arrayIndex(segment);
+    return (
+      typeof selected === "object" &&
+      "arrayIndex" in selected &&
+      index !== undefined &&
+      index >= selected.arrayIndex[0] &&
+      index <= selected.arrayIndex[1]
+    );
+  };
+  const writtenValues = (
+    variable: Variable | undefined,
+    select: readonly Selection[],
+  ): ValueSelection[] =>
+    (variable ? (writes.get(variable) ?? []) : [])
+      .filter(
+        (write) =>
+          !write.target.length ||
+          !select.length ||
+          write.target.every((segment, index) => selectionMatches(segment, select[index])),
+      )
+      .map((write) => ({
+        value: write.value,
+        select: [...write.select, ...select.slice(write.target.length)],
+      }));
+  const objectValues = (node: Node, select: readonly Selection[]): ValueSelection[] =>
+    children(node, "properties").flatMap((property) => {
+      const spread = property.type === "SpreadElement";
+      const value = child(property, spread ? "argument" : "value");
+      const name = memberKey(property, "key");
+      return value &&
+        (spread || !select.length || select[0] === "*" || name === "*" || name === select[0])
+        ? [{ value, select: spread ? select : select.slice(1) }]
+        : [];
+    });
+  const widthCache = new Map<Node, Map<string, Bounds>>();
+  function arrayBounds(
+    node: Node | undefined,
+    select: readonly Selection[] = [],
+    seen = new Set<Variable>(),
+  ): Bounds {
+    node = unwrap(node);
+    if (!node) {
+      return [0, Infinity];
+    }
+    const cacheKey = JSON.stringify(select);
+    const cached = widthCache.get(node)?.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
+    let choices: Bounds[] = [];
+    if (node.type === "MemberExpression") {
+      choices = [arrayBounds(child(node, "object"), [memberKey(node), ...select], seen)];
+    } else if (node.type === "Identifier") {
+      const variable = lookup(node);
+      if (variable && !seen.has(variable)) {
+        const next = new Set(seen).add(variable);
+        choices = writtenValues(variable, select).map(({ value, select: selected }) =>
+          arrayBounds(value, selected, next),
+        );
+      }
+    } else if (node.type === "ObjectExpression" && select.length) {
+      choices = objectValues(node, select).map(({ value, select: selected }) =>
+        arrayBounds(value, selected, seen),
+      );
+    } else if (node.type === "ArrayExpression") {
+      if (select.length) {
+        choices = arrayValues(node, select, seen).map(({ value, select: selected }) =>
+          arrayBounds(value, selected, seen),
+        );
+      } else {
+        let min = 0;
+        let max = 0;
+        const elements = node["elements"];
+        if (Array.isArray(elements)) {
+          for (const value of elements) {
+            const width: Bounds =
+              isNode(value) && value.type === "SpreadElement"
+                ? arrayBounds(child(value, "argument"), [], seen)
+                : [1, 1];
+            min += width[0];
+            max += width[1];
+          }
+          choices = [[min, max]];
+        }
+      }
+    } else if (
+      ["ConditionalExpression", "LogicalExpression", "AssignmentExpression"].includes(node.type)
+    ) {
+      choices = ["consequent", "alternate", "left", "right"].flatMap((field) => {
+        const value = child(node, field);
+        return value ? [arrayBounds(value, select, seen)] : [];
+      });
+    } else if (node.type === "SequenceExpression") {
+      choices = [arrayBounds(children(node, "expressions").at(-1), select, seen)];
+    }
+    const bounds: Bounds = choices.length
+      ? [Math.min(...choices.map(([min]) => min)), Math.max(...choices.map(([, max]) => max))]
+      : [0, Infinity];
+    if (Number.isFinite(bounds[1])) {
+      const cache = widthCache.get(node) ?? new Map<string, Bounds>();
+      cache.set(cacheKey, bounds);
+      widthCache.set(node, cache);
+    }
+    return bounds;
+  }
+  function arrayValues(
+    node: Node,
+    select: readonly Selection[],
+    seen: Set<Variable>,
+  ): ValueSelection[] {
+    let restOffset = 0;
+    while (typeof select[0] === "object" && "restOffset" in select[0]) {
+      restOffset += select[0].restOffset;
+      select = select.slice(1);
+    }
+    const head = select[0];
+    let range: Bounds | undefined = restOffset ? [restOffset, Infinity] : undefined;
+    if (typeof head === "object" && "arrayIndex" in head) {
+      range = [head.arrayIndex[0] + restOffset, head.arrayIndex[1] + restOffset];
+    } else if (typeof head === "string" && head !== "*") {
+      const index = arrayIndex(head);
+      if (index === undefined) {
+        return [];
+      }
+      range = [index + restOffset, index + restOffset];
+    }
+    const elements = node["elements"];
+    const selected: ValueSelection[] = [];
+    let min = 0;
+    let max = 0;
+    if (Array.isArray(elements)) {
+      for (const value of elements) {
+        if (isNode(value) && value.type === "SpreadElement") {
+          const argument = child(value, "argument");
+          const relative: Bounds | undefined = range
+            ? [Math.max(0, range[0] - max), range[1] - min]
+            : undefined;
+          if (argument && (!relative || relative[1] >= 0)) {
+            selected.push({
+              value: argument,
+              select: relative ? [{ arrayIndex: relative }, ...select.slice(1)] : select,
+            });
+          }
+          const width = arrayBounds(argument, [], seen);
+          min += width[0];
+          max += width[1];
+        } else {
+          if (isNode(value) && (!range || (range[0] <= max && range[1] >= min))) {
+            selected.push({ value, select: select.slice(1) });
+          }
+          min += 1;
+          max += 1;
+        }
+      }
+    }
+    return selected;
+  }
+  const variableIds = new Map(
+    source.scopeManager.scopes
+      .flatMap((scope) => scope.variables)
+      .map((variable, index) => [variable, index]),
+  );
+  const resolutionCache = new Map<Node, Map<string, string[][]>>();
   const resolves = (
+    node: Node | undefined,
+    select: readonly Selection[] = [],
+    seen = new Set<Variable>(),
+  ): string[][] => {
+    if (!node) {
+      return [];
+    }
+    const cacheKey = JSON.stringify([
+      select,
+      [...seen].map((variable) => variableIds.get(variable)),
+    ]);
+    const cache = resolutionCache.get(node) ?? new Map<string, string[][]>();
+    const cached = cache.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
+    const paths = [
+      ...new Map(
+        resolveNode(node, select, seen).map((path) => [JSON.stringify(path), path]),
+      ).values(),
+    ];
+    cache.set(cacheKey, paths);
+    resolutionCache.set(node, cache);
+    return paths;
+  };
+  const resolveNode = (
     node: Node | undefined,
     select: readonly Selection[] = [],
     seen = new Set<Variable>(),
@@ -261,19 +465,9 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
       if (variable) {
         next.add(variable);
       }
-      const values = (variable ? (writes.get(variable) ?? []) : []).flatMap((write) => {
-        if (
-          write.target.length &&
-          select.length &&
-          !write.target.every(
-            (segment, index) =>
-              segment === "*" || select[index] === "*" || segment === select[index],
-          )
-        ) {
-          return [];
-        }
-        return resolves(write.value, [...write.select, ...select.slice(write.target.length)], next);
-      });
+      const values = writtenValues(variable, select).flatMap(({ value, select: selected }) =>
+        resolves(value, selected, next),
+      );
       if (!runtime(variable)) {
         const name = node["name"];
         const path = select.map((segment) => (typeof segment === "string" ? segment : "*"));
@@ -286,32 +480,14 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
       return values;
     }
     if (node.type === "ObjectExpression") {
-      return children(node, "properties").flatMap((property) => {
-        if (property.type === "SpreadElement") {
-          return resolves(child(property, "argument"), select, seen);
-        }
-        const name = memberKey(property, "key");
-        return !select.length || select[0] === "*" || name === "*" || name === select[0]
-          ? resolves(child(property, "value"), select.slice(1), seen)
-          : [];
-      });
+      return objectValues(node, select).flatMap(({ value, select: selected }) =>
+        resolves(value, selected, seen),
+      );
     }
     if (node.type === "ArrayExpression") {
-      const elements = node["elements"];
-      let offset = 0;
-      while (typeof select[0] === "object") {
-        offset += select[0].restOffset;
-        select = select.slice(1);
-      }
-      return Array.isArray(elements)
-        ? elements.flatMap((value: unknown, index) =>
-            isNode(value) &&
-            index >= offset &&
-            (!select.length || select[0] === "*" || select[0] === String(index - offset))
-              ? resolves(value, select.slice(1), seen)
-              : [],
-          )
-        : [];
+      return arrayValues(node, select, seen).flatMap(({ value, select: selected }) =>
+        resolves(value, selected, seen),
+      );
     }
     if (
       ["ConditionalExpression", "LogicalExpression", "AssignmentExpression"].includes(node.type)
@@ -379,7 +555,7 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
           return path;
         }
         // The intrinsic prototype constructor is Date itself; preserve its remaining path.
-        while (path[1] === "prototype" && path[2] === "constructor") {
+        while (path[1] === "prototype" && ["constructor", "*"].includes(path[2] ?? "")) {
           path = ["Date", ...path.slice(3)];
         }
         // Date and its static methods are intrinsic functions even where time is permitted.

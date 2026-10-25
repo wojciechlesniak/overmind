@@ -447,3 +447,346 @@ describe("OVE_ARCH020: Date prototype identity", () => {
     expect(check("new Date.prototype.constructor();", "packages/adapters/system/src")).toEqual([]);
   });
 });
+
+describe("OVE_ARCH020: runtime spread positions and computed prototype origins", () => {
+  const cases = [
+    ["spread:inline", "const list = [...[Date]]; new list[0]();", true, "packages/domain/src"],
+    [
+      "spread:empty-before",
+      "const list = [...[], Date]; new list[0]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:empty-control",
+      "class LocalDate {} const list = [...[], Date, LocalDate]; new list[1]();",
+      false,
+      "packages/domain/src",
+    ],
+    ["spread:prefix", "const list = [0, ...[Date]]; new list[1]();", true, "packages/domain/src"],
+    [
+      "spread:prefix-control",
+      "const list = [0, ...[Date]]; new list[0]();",
+      false,
+      "packages/domain/src",
+    ],
+    ["spread:suffix", "const list = [...[0], Date]; new list[1]();", true, "packages/domain/src"],
+    [
+      "spread:suffix-control",
+      "const list = [...[0], Date]; new list[0]();",
+      false,
+      "packages/domain/src",
+    ],
+    ["spread:nested", "const list = [...[...[Date]]]; new list[0]();", true, "packages/domain/src"],
+    ["spread:hole", "const list = [...[, Date]]; new list[1]();", true, "packages/domain/src"],
+    [
+      "spread:hole-control",
+      "const list = [...[, Date]]; new list[0]();",
+      false,
+      "packages/domain/src",
+    ],
+    ["spread:fixed", "const list = [...[Date]]; new list[0](0);", false, "packages/domain/src"],
+    [
+      "spread:shadow",
+      "function local(Date) { const list = [...[Date]]; new list[0](); }",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "spread:named",
+      "const source = [Date]; const list = [...source]; new list[0]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:alias",
+      "const source = [Date]; const alias = source; const list = [...alias]; new list[0]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:named-offset",
+      "const source = [0, Date]; const list = [...source]; new list[1]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:named-offset-control",
+      "const source = [0, Date]; const list = [...source]; new list[0]();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "spread:twice",
+      "const source = [Date]; const list = [...source, ...source]; new list[1]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:gap-control",
+      "const source = [Date]; const list = [...source, 0, ...source]; new list[1]();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "spread:gap-after",
+      "const source = [Date]; const list = [...source, 0, ...source]; new list[2]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:named-empty",
+      "const source = []; const list = [...source, Date]; new list[0]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:named-suffix-control",
+      "const source = [0]; const list = [...source, Date]; new list[0]();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "spread:named-suffix",
+      "const source = [0]; const list = [...source, Date]; new list[1]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:member-write",
+      "const box = {}; box.source = [Date]; const list = [...box.source]; new list[0]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:member-literal",
+      "const box = { source: [Date] }; const list = [...box.source]; new list[0]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:member-alias",
+      "const box = {}; const alias = box; alias.source = [Date]; const list = [...box.source]; new list[0]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:member-selection",
+      "const box = {}; ({ source: box.source } = { source: [Date] }); const list = [...box.source]; new list[0]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:nested-selection",
+      "const box = [[Date]]; const list = [...box[0]]; new list[0]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:different-receiver",
+      "const box = {}; const other = {}; other.source = [Date]; const list = [...box.source]; new list[0]();",
+      false,
+      "packages/domain/src",
+    ],
+    ["spread:unknown", "const list = [...unknown]; new list[0]();", false, "packages/domain/src"],
+    [
+      "spread:unknown-prefix",
+      "const list = [...unknown, Date]; new list[0]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:unknown-before-known",
+      "const source = [0, Date]; const list = [...unknown, ...source]; new list[0]();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "spread:unknown-before-known-offset",
+      "const source = [0, Date]; const list = [...unknown, ...source]; new list[1]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:trailing-unknown",
+      "const list = [Date, ...unknown]; new list[0]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:cycle-empty",
+      "let source = []; source = [...source]; const list = [...source]; new list[0]();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "spread:cycle-known",
+      "let source = [Date]; source = [...source]; const list = [...source]; new list[0]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:noncanonical",
+      'const list = [...[0, Date]]; new list["01"]();',
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "spread:rest-preservation",
+      "const [, ...list] = [0, ...[Date]]; new list[0]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:rest-control",
+      "const [, ...list] = [Date, ...[0]]; new list[0]();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "spread:compact-graph",
+      "const a0 = [Date]; const a1 = [...a0, ...a0]; const a2 = [...a1, ...a1]; const a3 = [...a2, ...a2]; const a4 = [...a3, ...a3]; const a5 = [...a4, ...a4]; const a6 = [...a5, ...a5]; const a7 = [...a6, ...a6]; const a8 = [...a7, ...a7]; const a9 = [...a8, ...a8]; const a10 = [...a9, ...a9]; const a11 = [...a10, ...a10]; const a12 = [...a11, ...a11]; const a13 = [...a12, ...a12]; const a14 = [...a13, ...a13]; const a15 = [...a14, ...a14]; const a16 = [...a15, ...a15]; const a17 = [...a16, ...a16]; const a18 = [...a17, ...a17]; const a19 = [...a18, ...a18]; const a20 = [...a19, ...a19]; const a21 = [...a20, ...a20]; const a22 = [...a21, ...a21]; const a23 = [...a22, ...a22]; const a24 = [...a23, ...a23]; const a25 = [...a24, ...a24]; const a26 = [...a25, ...a25]; const a27 = [...a26, ...a26]; const a28 = [...a27, ...a27]; const a29 = [...a28, ...a28]; const a30 = [...a29, ...a29]; const a31 = [...a30, ...a30]; const a32 = [...a31, ...a31]; const a33 = [...a32, ...a32]; const a34 = [...a33, ...a33]; const a35 = [...a34, ...a34]; const a36 = [...a35, ...a35]; new a36[4294967294]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "prototype:dynamic",
+      'const key = "constructor"; new (Date.prototype[key] as typeof Date)();',
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "prototype:fixed",
+      'const key = "constructor"; new (Date.prototype[key] as typeof Date)(0);',
+      false,
+      "packages/domain/src",
+    ],
+    ["prototype:alias", "const D = Date.prototype[key]; new D();", true, "packages/domain/src"],
+    [
+      "prototype:alias-fixed",
+      "const D = Date.prototype[key]; new D(0);",
+      false,
+      "packages/domain/src",
+    ],
+    ["prototype:call", "Date.prototype[key](0);", true, "packages/domain/src"],
+    [
+      "prototype:shadow",
+      "function local(Date) { new Date.prototype[key](); }",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "prototype:local-object",
+      "const Date = {prototype:{constructor:class {}}}; new Date.prototype[key]();",
+      false,
+      "packages/domain/src",
+    ],
+    ["prototype:not-class", "new Date.prototype();", false, "packages/domain/src"],
+    ["prototype:known-method", 'new Date.prototype["getTime"]();', false, "packages/domain/src"],
+    [
+      "prototype:system-permitted",
+      "new Date.prototype[key]();",
+      false,
+      "packages/adapters/system/src",
+    ],
+    [
+      "prototype:system-Function",
+      'Date.prototype[key].constructor("fixture");',
+      true,
+      "packages/adapters/system/src",
+    ],
+    [
+      "spread:wrapped-parenthesis",
+      "const list = [...([Date])]; new list[0]();",
+      true,
+      "packages/domain/src",
+    ],
+    ["prototype:wrapped-parenthesis", "new (Date.prototype[key])();", true, "packages/domain/src"],
+    [
+      "spread:wrapped-as",
+      "const list = [...([Date] as unknown)]; new list[0]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "prototype:wrapped-as",
+      "new (Date.prototype[key] as unknown)();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:wrapped-assertion",
+      "const list = [...(<unknown>[Date])]; new list[0]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "prototype:wrapped-assertion",
+      "new (<unknown>Date.prototype[key])();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:wrapped-non-null",
+      "const list = [...([Date]!)]; new list[0]();",
+      true,
+      "packages/domain/src",
+    ],
+    ["prototype:wrapped-non-null", "new (Date.prototype[key]!)();", true, "packages/domain/src"],
+    [
+      "spread:wrapped-satisfies",
+      "const list = [...([Date] satisfies unknown)]; new list[0]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "prototype:wrapped-satisfies",
+      "new (Date.prototype[key] satisfies unknown)();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:numeric-member-write",
+      "const source = []; source[0] = Date; const list = [...source]; new list[0]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "spread:numeric-member-control",
+      "const source = []; source[0] = Date; const list = [...source]; new list[1]();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "spread:nonnumeric-member-control",
+      'const source = []; source["01"] = Date; const list = [...source]; new list[0]();',
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "spread:nested-numeric-write",
+      "const box = { source: [] }; box.source[0] = Date; const list = [...box.source]; new list[0]();",
+      true,
+      "packages/domain/src",
+    ],
+  ] as const;
+  for (const [label, code, denied, path] of cases) {
+    it(`preserves runtime spread and computed prototype origin ${label}`, () => {
+      const messages = check(code, path);
+      if (denied) {
+        expect(messages.length, label).toBeGreaterThan(0);
+        expect(
+          messages.every((message) => message.messageId === "BOUNDARY_FORBIDDEN_GLOBAL"),
+          label,
+        ).toBe(true);
+        expect(
+          new Set(messages.map((message) => `${String(message.line)}:${String(message.column)}`))
+            .size,
+          label,
+        ).toBe(messages.length);
+      } else {
+        expect(messages, label).toEqual([]);
+      }
+    });
+  }
+});
