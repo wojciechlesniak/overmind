@@ -1117,3 +1117,98 @@ describe("OVE_ARCH020: intrinsic Date call and apply invocations", () => {
     });
   }
 });
+
+describe("OVE_ARCH020: guaranteed named Date arguments", () => {
+  const cases = [
+    ["direct", "new Date(...[0]);", false, "packages/domain/src"],
+    ["named", "const args = [0] as const; new Date(...args);", false, "packages/domain/src"],
+    [
+      "alias",
+      "const args = [0] as const; const alias = args; new Date(...alias);",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "wrapped",
+      "const args = ([0] satisfies readonly [number]); new Date(...(args as readonly [number]));",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "typed-initializer",
+      "const args: readonly [number] = [0]; new Date(...args);",
+      false,
+      "packages/domain/src",
+    ],
+    ["member", "const box = {args:[0]}; new Date(...box.args);", false, "packages/domain/src"],
+    ["empty", "const args = [] as const; new Date(...args);", true, "packages/domain/src"],
+    [
+      "unknown",
+      "function local(args: readonly number[]) { new Date(...args); }",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "fixed-bind-args",
+      "const args = [null,0] as const; const D = Date.bind(...args); new D();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "shadow",
+      "function local(Date) { const args = [0] as const; new Date(...args); }",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "named-empty-alias",
+      "const args = [] as const; const alias = args; new Date(...alias);",
+      true,
+      "packages/domain/src",
+    ],
+    ["known-hole", "const args = [,] as const; new Date(...args);", false, "packages/domain/src"],
+    [
+      "conditional-maybe-empty",
+      "const args = flag ? [] : [0]; new Date(...args);",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "conditional-always-fixed",
+      "const args = flag ? [0] : [1]; new Date(...args);",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "named-bind-this-only",
+      "const args = [null] as const; const D = Date.bind(...args); new D();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "named-bind-empty-prefix",
+      "const args = [] as const; const D = Date.bind(...args, 0); new D();",
+      true,
+      "packages/domain/src",
+    ],
+  ] as const;
+  for (const [label, code, denied, path] of cases) {
+    it(`preserves guaranteed Date argument facts ${label}`, () => {
+      const messages = check(code, path);
+      if (denied) {
+        expect(messages.length, label).toBeGreaterThan(0);
+        expect(
+          messages.every((message) => message.messageId === "BOUNDARY_FORBIDDEN_GLOBAL"),
+          label,
+        ).toBe(true);
+        expect(
+          new Set(messages.map((message) => `${String(message.line)}:${String(message.column)}`))
+            .size,
+          label,
+        ).toBe(messages.length);
+      } else {
+        expect(messages, label).toEqual([]);
+      }
+    });
+  }
+});

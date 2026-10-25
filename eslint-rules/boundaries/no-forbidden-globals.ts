@@ -61,25 +61,6 @@ const memberKey = (node: Node, field = "property"): string => {
 };
 const globalObjects = new Set(["globalThis", "global", "window", "self"]);
 
-/** Count only guaranteed arguments, saturating at the two slots needed by bind. */
-function suppliedArguments(node: Node): number {
-  if (node.type !== "SpreadElement") {
-    return 1;
-  }
-  const value = unwrap(child(node, "argument"));
-  const elements = value?.type === "ArrayExpression" ? value["elements"] : undefined;
-  let count = 0;
-  if (Array.isArray(elements)) {
-    for (const element of elements) {
-      count += element === null ? 1 : isNode(element) ? suppliedArguments(element) : 0;
-      if (count >= 2) {
-        return 2;
-      }
-    }
-  }
-  return count;
-}
-
 /** Decide capabilities from ESLint's own lexical scopes, independently of standalone analysis. */
 export function noForbiddenGlobals(root: string): Rule.RuleModule {
   return {
@@ -447,6 +428,8 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     }
     return selected;
   }
+  const suppliedArguments = (node: Node): number =>
+    node.type === "SpreadElement" ? Math.min(2, arrayBounds(child(node, "argument"))?.[0] ?? 0) : 1;
   const resolutionCache = new Map<Node, Map<string, Origin[]>>();
   const resolves = (
     node: Node | undefined,
