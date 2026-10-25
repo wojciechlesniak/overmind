@@ -6,7 +6,7 @@ kind: feature
 size: M
 priority: P0
 mvp: true
-status: todo
+status: in_progress
 depends_on: [OVE_ARCH003]
 soft_depends_on: [OVE_WFRT001]
 provides: ["contract:PortSchema", "lib:port-schema-validator", "lib:port-schema-compat"]
