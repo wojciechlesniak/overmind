@@ -554,13 +554,16 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
       aliasSource(parent)
     );
   };
+  const inTypeQuery = (node: Node | undefined): boolean =>
+    node !== undefined && (node.type === "TSTypeQuery" || inTypeQuery(child(node, "parent")));
   const reported = new Set<Node>();
   for (const scope of source.scopeManager.scopes) {
     for (const reference of scope.references) {
       if (
         !reference.isRead() ||
         ("isValueReference" in reference && reference.isValueReference === false) ||
-        !isNode(reference.identifier)
+        !isNode(reference.identifier) ||
+        inTypeQuery(reference.identifier)
       ) {
         continue;
       }
