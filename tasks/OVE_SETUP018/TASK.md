@@ -209,3 +209,14 @@ The operation used the shared CPU lock followed by the integration lock, with
 before/after GET evidence. The first operator evidence wrapper stopped before
 writes because it compared hex color letter case; its corrected comparison
 matches the existing label tool. Both results are retained.
+
+### Awake-host native replay (2026-10-25)
+
+After the confirmed host-sleep interruption and the successful scoped ADR probe,
+one full native run on an awake host passed all 123 cases in 30 files in 366
+seconds, with zero failures, skips or todo cases. The power log recorded no sleep
+transition during that run. All case identities and inherited control pins
+matched; only this task's two additive root scripts changed the package control
+pin. Test files, assertions, timeouts, worker settings and retry policy remained
+unchanged. The source stayed clean throughout, and the earlier failed run remains
+preserved. A future integration rebase still requires its own exact-head checks.
