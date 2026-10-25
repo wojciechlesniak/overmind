@@ -6,7 +6,7 @@ kind: infra
 size: M
 priority: P0
 mvp: true
-status: todo
+status: in_progress
 depends_on: [OVE_ARCH001, OVE_SETUP002]
 soft_depends_on: [OVE_ARCH003, OVE_SETUP006]
 provides: ["lib:contract-pipeline", "lib:contract-check", "contract:RouteContract", "contract:ApiVersion"]
