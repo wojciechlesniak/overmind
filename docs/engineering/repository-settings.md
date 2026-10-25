@@ -8,8 +8,9 @@ control matched; exit 1 means drift or an unknown control. `--allow-unknown` onl
 acknowledges unreadable/manual controls for this run; it never ignores known drift.
 The audit refuses CI execution, accepts only GET, paginates metadata, suppresses
 raw API errors and never reads secret values. `--repo owner/name` selects another
-GitHub.com repository. A 403/404, rate limit, malformed reply or pagination limit
-is unknown and cannot silently pass.
+GitHub.com repository. A 403/404, rate limit or pagination limit is unknown and
+cannot silently pass. Malformed returned metadata is drift; `--allow-unknown`
+cannot waive it.
 
 ## Branches, reviews and releases
 
@@ -69,6 +70,13 @@ runner provisioning remain separate mandatory boundaries (SETUP006/021).
 | Issues and Discussions on; Wiki and Projects off; forks allowed; default master | Keep one reviewed source of truth for project documentation and public contribution. | repository has_issues, has_discussions, has_wiki, has_projects, allow_forking, default_branch |
 
 ## Release environment and secret boundaries
+
+The Owner's decision on 2026-10-25 prioritizes running the application locally
+on their computer. Actual release environment setup, Apple credentials and
+release preparation are deferred until a later stage. The requirements below
+remain the future release target. Their absence does not block local development;
+production release remains unavailable until its real gates pass. Do not create
+placeholder secrets or treat a local build as signing/notarization evidence.
 
 UI: Settings > Environments > release. Require the Owner
 `wojciechlesniak` as reviewer, zero wait timer, admin bypass false, selected

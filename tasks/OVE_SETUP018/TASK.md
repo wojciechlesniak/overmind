@@ -170,3 +170,30 @@ including the absent `pr-gate`. No live settings, labels or permissions were
 changed. Outside-contributor fork evidence, Owner-applied settings, reviewed
 manual controls and actual label application remain open; this task stays
 in_review and its PR stays draft.
+
+### Local-first Owner sequence and integration refresh (2026-10-25)
+
+The Owner explicitly prioritized an application running locally on their computer
+and deferred release preparation until later. Actual `release` environment setup
+and Apple credential provisioning are future work, not prerequisites for local
+development. Keep the future release security targets; do not create placeholders
+or claim production release readiness. This sequencing does not waive the real
+outside-contributor fork criterion or the missing OSS003 `pr-gate`.
+
+The implementation rebased cleanly onto DEVELOP after the reviewed public-service
+startup correction (PR1050, integration commit `3d67c65`). Typecheck, lint,
+formatting, all 19 settings tests and all 1652 unit tests in 130 files passed.
+The actual native run retained 100 passes and 23 failures. The macOS power log
+records clamshell sleep 38 seconds after native start, followed by maintenance
+sleep/wake cycles. One unchanged failing public ADR case subsequently passed on
+the awake host; this is scoped evidence, not a full native-suite pass.
+
+License/dependency policy, production audit, real secret scans, SBOM, build,
+documentation and agent checks passed. Secret scans reported zero findings and
+one existing Keychain warning. The development audit reported six advisories
+(three low, two moderate, one high); coordinated dependency maintenance is
+separate. The ADR checker rejected the existing legacy ADR 0001 filename and
+metadata; its migration belongs to the coordinated ADR/documentation work.
+The real settings audit still exited 1, and the label dry run planned 18 metadata
+changes while retaining extras. No live label/settings writes were performed.
+Operational acceptance and final exact-head native/publication checks remain open.
