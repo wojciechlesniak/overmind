@@ -215,6 +215,7 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     }
   }
   const directWrites = new Set(writes.keys());
+  const directAssignments = new Set([...writes.values()].flat());
   // Receiver aliases share slots; resolution's visited set bounds the reverse edges.
   for (const [variable, values] of [...writes]) {
     const binding = variable.identifiers[0];
@@ -232,6 +233,7 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
   interface ValueSelection {
     readonly value: Node;
     readonly select: readonly Selection[];
+    readonly write?: Write;
   }
   const arrayIndex = (segment: string): number | undefined => {
     const index = Number(segment);
@@ -264,6 +266,7 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
           write.target.every((segment, index) => selectionMatches(segment, select[index])),
       )
       .map((write) => ({
+        write,
         value: write.value,
         select: [...write.select, ...select.slice(write.target.length)],
       }));
@@ -289,19 +292,25 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     node: Node | undefined,
     select: readonly Selection[] = [],
     seen = new Set<Variable>(),
+    asLengthValue = false,
   ): Bounds | undefined {
     node = unwrap(node);
     if (!node) {
       return [0, Infinity];
     }
-    const cacheKey = queryKey(select, seen);
+    const cacheKey = JSON.stringify([queryKey(select, seen), asLengthValue]);
     const cached = widthCache.get(node)?.get(cacheKey);
     if (cached) {
       return cached;
     }
     let choices: (Bounds | undefined)[] = [[0, Infinity]];
     if (node.type === "MemberExpression") {
-      choices = [arrayBounds(child(node, "object"), [memberKey(node), ...select], seen)];
+      const object = child(node, "object");
+      choices = [
+        asLengthValue && memberKey(node) === "length" && !select.length
+          ? arrayBounds(object, [], seen)
+          : arrayBounds(object, [memberKey(node), ...select], seen, asLengthValue),
+      ];
     } else if (node.type === "Identifier") {
       const variable = lookup(node);
       if (variable && seen.has(variable)) {
@@ -311,8 +320,8 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
       if (variable) {
         next.add(variable);
       }
-      choices = writtenValues(variable, select).map(({ value, select: selected }) =>
-        arrayBounds(value, selected, next),
+      choices = writtenValues(variable, select).map(({ value, select: selected, write }) =>
+        arrayBounds(value, selected, next, asLengthValue || write?.target.at(-1) === "length"),
       );
       if (
         !variable ||
@@ -322,7 +331,11 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
           const segment = write.target[select.length];
           return (
             segment !== undefined &&
-            (segment === "*" || arrayIndex(segment) !== undefined) &&
+            (segment === "*" ||
+              arrayIndex(segment) !== undefined ||
+              (segment === "length" &&
+                directAssignments.has(write) &&
+                (arrayBounds(write.value, write.select, next, true)?.[0] ?? 0) === 0)) &&
             select.every((selected, index) => selectionMatches(write.target[index] ?? "", selected))
           );
         })
@@ -331,14 +344,14 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
       }
     } else if (node.type === "ObjectExpression" && select.length) {
       choices = objectValues(node, select).map(({ value, select: selected }) =>
-        arrayBounds(value, selected, seen),
+        arrayBounds(value, selected, seen, asLengthValue),
       );
     } else if (node.type === "ArrayExpression") {
       if (select.length) {
         choices = arrayValues(node, select, seen).map(({ value, select: selected }) =>
-          arrayBounds(value, selected, seen),
+          arrayBounds(value, selected, seen, asLengthValue),
         );
-      } else {
+      } else if (!asLengthValue) {
         let min = 0;
         let max = 0;
         const elements = node["elements"];
@@ -355,14 +368,23 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
         }
       }
     } else if (
+      asLengthValue &&
+      node.type === "Literal" &&
+      typeof node["value"] === "number" &&
+      Number.isInteger(node["value"]) &&
+      node["value"] >= 0 &&
+      node["value"] <= 2 ** 32 - 1
+    ) {
+      choices = [[node["value"], node["value"]]];
+    } else if (
       ["ConditionalExpression", "LogicalExpression", "AssignmentExpression"].includes(node.type)
     ) {
       choices = ["consequent", "alternate", "left", "right"].flatMap((field) => {
         const value = child(node, field);
-        return value ? [arrayBounds(value, select, seen)] : [];
+        return value ? [arrayBounds(value, select, seen, asLengthValue)] : [];
       });
     } else if (node.type === "SequenceExpression") {
-      choices = [arrayBounds(children(node, "expressions").at(-1), select, seen)];
+      choices = [arrayBounds(children(node, "expressions").at(-1), select, seen, asLengthValue)];
     }
     // An absent property or a visited alias is no fact, unlike a genuinely unknown value.
     const known = choices.filter((choice): choice is Bounds => choice !== undefined);

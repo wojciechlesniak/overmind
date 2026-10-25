@@ -1212,3 +1212,166 @@ describe("OVE_ARCH020: guaranteed named Date arguments", () => {
     });
   }
 });
+
+describe("OVE_ARCH020: array length argument guarantees", () => {
+  const cases = [
+    [
+      "empty-length",
+      "const args=[0]; const empty: []=[]; args.length=empty.length; new Date(...args);",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "direct-zero",
+      "const args=[0]; args.length=0; new Date(...args);",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "computed-zero",
+      "const args=[0]; args['length']=0; new Date(...args);",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "aliased-zero",
+      "const args=[0]; const alias=args; alias.length=0; new Date(...args);",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "named-empty-length",
+      "const args=[0]; const empty: []=[]; const zero=empty.length; args.length=zero; new Date(...args);",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "computed-empty-length",
+      "const args=[0]; const empty: []=[]; args['length']=empty['length']; new Date(...args);",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "aliased-empty-length",
+      "const args=[0]; const empty: []=[]; const alias=args; alias.length=empty.length; new Date(...args);",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "unknown-length",
+      "function use(length: number) { const args=[0]; args.length=length; new Date(...args); }",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "unknown-key",
+      "function use(key: string) { const args=[0]; args[key]=0; new Date(...args); }",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "unchanged-nonempty",
+      "const args=[0] as const; new Date(...args);",
+      false,
+      "packages/domain/src",
+    ],
+    ["unchanged-empty", "const args=[] as const; new Date(...args);", true, "packages/domain/src"],
+    [
+      "nonempty-length",
+      "const args=[0]; const other=[1]; args.length=other.length; new Date(...args);",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "bound-empty-length",
+      "const args=[null,0]; const empty: []=[]; args.length=empty.length; const D=Date.bind(...args); new D();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "bound-nonempty",
+      "const args=[null,0] as const; const D=Date.bind(...args); new D();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "literal-nonempty",
+      "const args=[0]; args.length=1; new Date(...args);",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "named-nonempty-length",
+      "const args=[0]; const other=[1]; const one=other.length; args.length=one; new Date(...args);",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "nested-empty",
+      "const box={args:[0]}; const empty=[]; box.args.length=empty.length; new Date(...box.args);",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "nested-nonempty",
+      "const box={args:[0]}; const other=[1]; box.args.length=other.length; new Date(...box.args);",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "bound-truncated-one",
+      "const args=[null,0]; args.length=1; const D=Date.bind(...args); new D();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "bound-preserved-two",
+      "const args=[null,0]; const other=[1,2]; args.length=other.length; const D=Date.bind(...args); new D();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "coerced-zero-array",
+      "const args=[0]; args.length=[0]; new Date(...args);",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "named-coerced-zero-array",
+      "const args=[0]; const zero=[0]; args.length=zero; new Date(...args);",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "unknown-computed-rhs",
+      "const args=[0]; const empty=[]; args.length=empty[key]; new Date(...args);",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "local-shadow",
+      "function local(Date){const args=[0];const empty=[];args.length=empty.length;new Date(...args);}",
+      false,
+      "packages/domain/src",
+    ],
+  ] as const;
+  for (const [label, code, denied, path] of cases) {
+    it(`preserves array length argument facts ${label}`, () => {
+      const messages = check(code, path);
+      if (denied) {
+        expect(messages.length, label).toBeGreaterThan(0);
+        expect(
+          messages.every((message) => message.messageId === "BOUNDARY_FORBIDDEN_GLOBAL"),
+          label,
+        ).toBe(true);
+        expect(
+          new Set(messages.map((message) => `${String(message.line)}:${String(message.column)}`))
+            .size,
+          label,
+        ).toBe(messages.length);
+      } else {
+        expect(messages, label).toEqual([]);
+      }
+    });
+  }
+});
