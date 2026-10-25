@@ -1,7 +1,8 @@
 import { execFileSync, spawnSync } from "node:child_process";
+import { realpathSync, statSync } from "node:fs";
 import { cp, mkdir, mkdtemp, readFile, rm, symlink, unlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
+import { dirname, isAbsolute, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect, it } from "vitest";
 import { isolatedGitEnvironment } from "../hooks/git-test-environment.ts";
@@ -42,9 +43,21 @@ async function fixture(check: (root: string) => Promise<void>): Promise<void> {
 }
 function cli(root: string, args: string[] = []) {
   const start = performance.now();
-  const result = spawnSync("corepack", ["pnpm", "check:docs", ...args], {
+  const activeManager = process.env["npm_execpath"];
+  if (!activeManager || !isAbsolute(activeManager)) {
+    throw new Error("The active pinned pnpm entry is unavailable.");
+  }
+  const manager = realpathSync(activeManager);
+  if (!statSync(manager).isFile()) {
+    throw new Error("The active pinned pnpm entry is unavailable.");
+  }
+  const result = spawnSync(manager, ["check:docs", ...args], {
     cwd: root,
-    env: isolatedGitEnvironment(),
+    env: {
+      ...isolatedGitEnvironment(),
+      NODE_COMPILE_CACHE: join(root, ".node-compile-cache"),
+      ...(process.env["NODE_V8_COVERAGE"] ? { NODE_DISABLE_COMPILE_CACHE: "1" } : {}),
+    },
     encoding: "utf8",
     timeout: 10000,
   });
