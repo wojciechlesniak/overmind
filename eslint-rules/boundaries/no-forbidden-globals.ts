@@ -225,6 +225,7 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
       add(target, value);
     }
   }
+  const directWrites = new Set(writes.keys());
   // Receiver aliases share slots; resolution's visited set bounds the reverse edges.
   for (const [variable, values] of [...writes]) {
     const binding = variable.identifiers[0];
@@ -287,31 +288,50 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
         ? [{ value, select: spread ? select : select.slice(1) }]
         : [];
     });
+  const variableIds = new Map(
+    source.scopeManager.scopes
+      .flatMap((scope) => scope.variables)
+      .map((variable, index) => [variable, index]),
+  );
   const widthCache = new Map<Node, Map<string, Bounds>>();
   function arrayBounds(
     node: Node | undefined,
     select: readonly Selection[] = [],
     seen = new Set<Variable>(),
-  ): Bounds {
+  ): Bounds | undefined {
     node = unwrap(node);
     if (!node) {
       return [0, Infinity];
     }
-    const cacheKey = JSON.stringify(select);
+    const cacheKey = JSON.stringify([
+      select,
+      [...seen].map((variable) => variableIds.get(variable)),
+    ]);
     const cached = widthCache.get(node)?.get(cacheKey);
     if (cached) {
       return cached;
     }
-    let choices: Bounds[] = [];
+    let choices: (Bounds | undefined)[] = [[0, Infinity]];
     if (node.type === "MemberExpression") {
       choices = [arrayBounds(child(node, "object"), [memberKey(node), ...select], seen)];
     } else if (node.type === "Identifier") {
       const variable = lookup(node);
-      if (variable && !seen.has(variable)) {
-        const next = new Set(seen).add(variable);
-        choices = writtenValues(variable, select).map(({ value, select: selected }) =>
-          arrayBounds(value, selected, next),
-        );
+      if (variable && seen.has(variable)) {
+        return undefined; // A reverse alias edge adds no width fact of its own.
+      }
+      const next = new Set(seen);
+      if (variable) {
+        next.add(variable);
+      }
+      choices = writtenValues(variable, select).map(({ value, select: selected }) =>
+        arrayBounds(value, selected, next),
+      );
+      if (
+        !variable ||
+        !directWrites.has(variable) ||
+        variable.defs.some((definition) => definition.type === "Parameter")
+      ) {
+        choices.push([0, Infinity]);
       }
     } else if (node.type === "ObjectExpression" && select.length) {
       choices = objectValues(node, select).map(({ value, select: selected }) =>
@@ -330,7 +350,7 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
           for (const value of elements) {
             const width: Bounds =
               isNode(value) && value.type === "SpreadElement"
-                ? arrayBounds(child(value, "argument"), [], seen)
+                ? (arrayBounds(child(value, "argument"), [], seen) ?? [0, Infinity])
                 : [1, 1];
             min += width[0];
             max += width[1];
@@ -348,10 +368,12 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     } else if (node.type === "SequenceExpression") {
       choices = [arrayBounds(children(node, "expressions").at(-1), select, seen)];
     }
-    const bounds: Bounds = choices.length
-      ? [Math.min(...choices.map(([min]) => min)), Math.max(...choices.map(([, max]) => max))]
-      : [0, Infinity];
-    if (Number.isFinite(bounds[1])) {
+    // An absent property or a visited alias is no fact, unlike a genuinely unknown value.
+    const known = choices.filter((choice): choice is Bounds => choice !== undefined);
+    const bounds: Bounds | undefined = known.length
+      ? [Math.min(...known.map(([min]) => min)), Math.max(...known.map(([, max]) => max))]
+      : undefined;
+    if (bounds && Number.isFinite(bounds[1])) {
       const cache = widthCache.get(node) ?? new Map<string, Bounds>();
       cache.set(cacheKey, bounds);
       widthCache.set(node, cache);
@@ -396,7 +418,7 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
               select: relative ? [{ arrayIndex: relative }, ...select.slice(1)] : select,
             });
           }
-          const width = arrayBounds(argument, [], seen);
+          const width = arrayBounds(argument, [], seen) ?? [0, Infinity];
           min += width[0];
           max += width[1];
         } else {
@@ -410,11 +432,6 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     }
     return selected;
   }
-  const variableIds = new Map(
-    source.scopeManager.scopes
-      .flatMap((scope) => scope.variables)
-      .map((variable, index) => [variable, index]),
-  );
   const resolutionCache = new Map<Node, Map<string, string[][]>>();
   const resolves = (
     node: Node | undefined,

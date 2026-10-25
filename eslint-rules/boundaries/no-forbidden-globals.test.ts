@@ -769,6 +769,48 @@ describe("OVE_ARCH020: runtime spread positions and computed prototype origins",
       true,
       "packages/domain/src",
     ],
+    [
+      "width:named-alias-negative",
+      "const source = [0]; const alias = source; const list = [...alias, Date]; new list[0]();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "width:named-alias-suffix",
+      "const source = [0]; const alias = source; const list = [...alias, Date]; new list[1]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "width:written-member-negative",
+      "const box = {}; box.source = [0]; const list = [...box.source, Date]; new list[0]();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "width:written-member-suffix",
+      "const box = {}; box.source = [0]; const list = [...box.source, Date]; new list[1]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "width:written-receiver-alias-negative",
+      "const box = {}; const alias = box; alias.source = [0]; const list = [...box.source, Date]; new list[0]();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "width:known-empty-member",
+      "const box = {}; box.source = []; const list = [...box.source, Date]; new list[0]();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "width:unknown-source",
+      "function local(unknown) { let source = [0]; source = unknown; const list = [...source, Date]; new list[0](); }",
+      true,
+      "packages/domain/src",
+    ],
   ] as const;
   for (const [label, code, denied, path] of cases) {
     it(`preserves runtime spread and computed prototype origin ${label}`, () => {
