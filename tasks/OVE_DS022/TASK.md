@@ -11,8 +11,8 @@ depends_on: [OVE_DS001, OVE_DS003, OVE_DS005, OVE_DS008, OVE_DS012]
 soft_depends_on: []
 provides: [ui:Divider, ui:SectionLabel, ui:Kbd, ui:TextLink, ui:PathText, ui:VisuallyHidden]
 needs: []
-owns: [packages/ui-kit/src/typography/Divider/**, packages/ui-kit/src/typography/SectionLabel/**, packages/ui-kit/src/typography/Kbd/**, packages/ui-kit/src/typography/TextLink/**, packages/ui-kit/src/typography/PathText/**, packages/ui-kit/src/typography/VisuallyHidden/**, packages/ui-kit/src/internal/safeHref.ts, packages/ui-kit/src/internal/__tests__/safeHref.test.ts]
-reads: []
+owns: [packages/ui-kit/src/typography/Divider/**, packages/ui-kit/src/typography/SectionLabel/**, packages/ui-kit/src/typography/Kbd/**, packages/ui-kit/src/typography/TextLink/**, packages/ui-kit/src/typography/PathText/**, packages/ui-kit/src/typography/VisuallyHidden/**]
+reads: [tasks/OVE_DS110/TASK.md]
 design: design.png
 design_source: "Tray#tray/menu (dividers, shortcut '⌘O', section groups); mono labels"
 spec_refs: [SPECIFICATION 13]
@@ -23,7 +23,7 @@ adr_refs: []
 
 ## 1. Summary
 
-Small text and separator helpers used on every screen: `Divider` (4 variants), `SectionLabel` (the 10px mono caps label, 69 uses), `Kbd` (shortcut), `TextLink` (underlined link with a safe `href`), `PathText` (mono path with ellipsis and full-value tooltip fallback) and `VisuallyHidden`. Also the shared `safeHref()` utility.
+Small text and separator helpers used on every screen: `Divider` (4 variants), `SectionLabel` (the 10px mono caps label, 69 uses), `Kbd` (shortcut), `TextLink` (underlined link with a safe `href`), `PathText` (mono path with ellipsis and full-value tooltip fallback) and `VisuallyHidden`. Reuse the shared `safeHref()` utility from OVE_DS110.
 
 ## 2. Context
 
@@ -31,7 +31,7 @@ Inventory B19 to B21, B24. The mocks hide input labels with a 1x1 clipped elemen
 
 ## 3. Scope (in)
 
-- Six components and `safeHref` (pure function in `src/internal/`, also used by DS part 2 Markdown preview).
+- Six components consuming OVE_DS110's private `safeHref` helper, also used by DS part 2 Markdown preview.
 - Stories and tests.
 
 ## 4. Out of scope
@@ -74,7 +74,7 @@ Text styles via CSS variables from OVE_DS004/005; colours from OVE_DS002/003.
 
 ## 9. Security and safety
 
-ui-kit is presentation only: no network, filesystem, storage, `eval`, `new Function` or `dangerouslySetInnerHTML` anywhere (lint rule `react/no-danger` set to error in OVE_DS001). Every string arrives as a prop and is rendered as a React text node, never as HTML, so Agent, repository, document or Telegram content that an app shows through this component cannot inject markup. Colour is never the only carrier of meaning (state, Visibility, severity always come with a word or glyph, `docs/design/styl-wizualny.md` rules). The component takes no secrets and logs nothing (`console.*` is a lint error in `src/`). `safeHref` is a security control (links come from Agents, Skills and imported docs): unit tests include `JavaScript:alert(1)`, ` java\tscript:`, `&#106;avascript:`, `data:text/html`, protocol-relative `//evil`, and mixed-case schemes; `//host` is allowed only when `allowProtocolRelative` is true (default false). External links always get `rel="noopener noreferrer"`.
+ui-kit is presentation only: no network, filesystem, storage, `eval`, `new Function` or `dangerouslySetInnerHTML` anywhere (lint rule `react/no-danger` set to error in OVE_DS001). Every string arrives as a prop and is rendered as a React text node, never as HTML, so Agent, repository, document or Telegram content that an app shows through this component cannot inject markup. Colour is never the only carrier of meaning (state, Visibility, severity always come with a word or glyph, `docs/design/styl-wizualny.md` rules). The component takes no secrets and logs nothing (`console.*` is a lint error in `src/`). `safeHref` is a security control (links come from Agents, Skills and imported docs): unit tests include `JavaScript:alert(1)`, ` java\tscript:`, `&#106;avascript:`, `data:text/html`, protocol-relative `//evil`, and mixed-case schemes; Protocol-relative references remain rejected by the canonical helper. External links always get `rel="noopener noreferrer"`.
 
 ## 10. Errors and edge cases
 
@@ -106,7 +106,7 @@ ui-kit is presentation only: no network, filesystem, storage, `eval`, `new Funct
 
 ## 13. Parallelization notes
 
-After OVE_DS001 and the token tasks are merged, this task can run in parallel with every other primitive task: each owns its own folder under `packages/ui-kit/src/<group>/<Component>/` and nothing else. Conflict hotspots: none, because the barrel `src/index.ts`, `tokens.css` and the Storybook index are generated (OVE_DS039) and must not be edited by hand. If a missing token or icon is needed, write a proposal in `tasks/_proposals/OVE_DS0xx-<name>.md` instead of editing the token or icon files of another task. `safeHref` is consumed later by DS part 2; keep its signature stable: `safeHref(input: string, opts?: { allowProtocolRelative?: boolean }): string | null`.
+After OVE_DS001 and the token tasks are merged, this task can run in parallel with every other primitive task: each owns its own folder under `packages/ui-kit/src/<group>/<Component>/` and nothing else. Conflict hotspots: none, because the barrel `src/index.ts`, `tokens.css` and the Storybook index are generated (OVE_DS039) and must not be edited by hand. If a missing token or icon is needed, write a proposal in `tasks/_proposals/OVE_DS0xx-<name>.md` instead of editing the token or icon files of another task. Reuse the canonical OVE_DS110 signature `safeHref(href: string | undefined): string | undefined`; invalid links return undefined. Do not duplicate validation or widen it with a protocol-relative option.
 
 ## 14. Open questions and assumptions
 

@@ -7,11 +7,11 @@ size: M
 priority: P0
 mvp: true
 status: todo
-depends_on: [OVE_SETUP001, OVE_SETUP002, OVE_SETUP003, OVE_SETUP004, OVE_SETUP008]
+depends_on: [OVE_SETUP001, OVE_SETUP002, OVE_SETUP003, OVE_SETUP004, OVE_SETUP008, OVE_DS110]
 soft_depends_on: [OVE_ARCH002]
 provides: [lib:ui-kit-scaffold, lib:storybook]
 needs: []
-owns: [packages/ui-kit/package.json, packages/ui-kit/tsconfig.json, packages/ui-kit/tsconfig.build.json, packages/ui-kit/vite.config.ts, packages/ui-kit/vitest.config.ts, packages/ui-kit/eslint.config.js, packages/ui-kit/.storybook/**, packages/ui-kit/README.md, packages/ui-kit/src/styles.css, packages/ui-kit/src/internal/**, packages/ui-kit/src/types/**, packages/ui-kit/src/__guards__/**, packages/ui-kit/test/**]
+owns: [packages/ui-kit/package.json, packages/ui-kit/tsconfig.json, packages/ui-kit/tsconfig.build.json, packages/ui-kit/vite.config.ts, packages/ui-kit/vitest.config.ts, packages/ui-kit/eslint.config.js, packages/ui-kit/.storybook/**, packages/ui-kit/README.md, packages/ui-kit/src/styles.css, packages/ui-kit/src/internal/storyMatrix.tsx, packages/ui-kit/src/types/**, packages/ui-kit/src/__guards__/**, packages/ui-kit/test/**]
 reads: []
 design: none
 design_source: ""
