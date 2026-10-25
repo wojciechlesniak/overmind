@@ -2,15 +2,15 @@
 
 This is the target configuration, not a claim that it is deployed. The Owner
 applies settings through GitHub's UI; this task supplies no admin credential and
-never applies rulesets or settings. Run `pnpm settings:audit` locally after setup
+the audit never applies rulesets or settings. Run `pnpm settings:audit` locally after setup
 and monthly, using your existing `gh auth` session. Exit 0 means every observable
 control matched; exit 1 means drift or an unknown control. `--allow-unknown` only
 acknowledges unreadable/manual controls for this run; it never ignores known drift.
 The audit refuses CI execution, accepts only GET, paginates metadata, suppresses
 raw API errors and never reads secret values. `--repo owner/name` selects another
-GitHub.com repository. A 403/404, rate limit or pagination limit is unknown and
-cannot silently pass. Malformed returned metadata is drift; `--allow-unknown`
-cannot waive it.
+GitHub.com repository. An unavailable endpoint or rate limit is unknown and
+cannot silently pass. Malformed returned metadata or an exhausted pagination
+limit is drift; `--allow-unknown` cannot waive it.
 
 ## Branches, reviews and releases
 
@@ -103,8 +103,8 @@ description plus the existing `lint-config-change` approval control. Run
 `pnpm settings:labels` for a read-only plan. Only explicit `--apply` allows POST
 (create) and PATCH (metadata update); DELETE is never implemented. Existing extra
 labels, including backlog area/priority labels, are reported and retained. The
-security label is for public tracking only after disclosure. This task does not
-apply labels or settings; a write failure stops the label tool and a rerun safely
+security label is for public tracking only after disclosure. The explicit label
+operator command applies metadata only; a write failure stops it and a rerun safely
 recomputes remaining operations.
 
 The audit always reports organization/2FA and dependency-graph manual controls as
@@ -155,6 +155,15 @@ labels, accounts, runners or secrets were changed by this task. The actual audit
 changes while retaining extras. The 14 focused tests, strict TypeScript and
 ESLint checks passed. No real label apply was performed. OSS003 `pr-gate` and the actual external-fork run are still
 missing; the implementation is ready for review, operational acceptance is open.
+
+Label operation on 2026-10-25: the real dry run planned 18 changes; explicit
+`pnpm settings:labels --apply` created 12 labels and updated six labels' metadata.
+A subsequent paginated GET verified all 21 expected labels, 82 total labels
+(previously 70), and unchanged extra labels. This operation did not assign labels
+to issues or PRs, approve protected changes, or change repository protections.
+The release setup sequence is deferred under the Owner's local-first decision
+above. Missing `pr-gate`, actual outside-contributor evidence and other observable
+settings drift still prevent full operational acceptance.
 
 Primary references (verified 2026-10-16):
 [Rulesets REST](https://docs.github.com/en/rest/repos/rules),

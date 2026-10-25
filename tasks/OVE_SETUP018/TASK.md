@@ -99,7 +99,7 @@ The set of required check names is read from the workflow files by the audit (jo
 - [ ] `pnpm settings:audit` against a correctly configured repository exits 0; flipping one setting (for example allowing merge commits) makes it exit 1 naming the setting.
 - [x] The audit sends only GET requests (unit test on the wrapper) and prints no token.
 - [ ] `expected.json` required checks all exist as jobs in `.github/workflows` (test).
-- [ ] `pnpm settings:labels` dry run lists labels to create; `--apply` creates them.
+- [x] `pnpm settings:labels` dry run lists labels to create; `--apply` creates them.
 - [x] The doc includes the bootstrap order and the single-maintainer exceptions.
 
 ## 12. Test plan
@@ -197,3 +197,15 @@ metadata; its migration belongs to the coordinated ADR/documentation work.
 The real settings audit still exited 1, and the label dry run planned 18 metadata
 changes while retaining extras. No live label/settings writes were performed.
 Operational acceptance and final exact-head native/publication checks remain open.
+
+### Actual label application (2026-10-25)
+
+The real dry run's 18 metadata operations were applied through the existing
+explicit `pnpm settings:labels --apply` command: 12 creates and six updates.
+Fresh paginated GitHub GETs verified all 21 target labels and unchanged extras;
+the total changed from 70 to 82 labels. No label was deleted or assigned to an
+issue/PR, and no branch protection, Actions permission or release setting changed.
+The operation used the shared CPU lock followed by the integration lock, with
+before/after GET evidence. The first operator evidence wrapper stopped before
+writes because it compared hex color letter case; its corrected comparison
+matches the existing label tool. Both results are retained.
