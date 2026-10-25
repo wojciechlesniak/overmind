@@ -44,27 +44,24 @@ export function readMetadataRecord(
 /** Read dense plain arrays through data descriptors, without calling input iterators/getters. */
 export function readMetadataArray(value: unknown, maximum: number): readonly unknown[] | undefined {
   try {
-    if (
-      !Array.isArray(value) ||
-      Object.getPrototypeOf(value) !== Array.prototype ||
-      value.length > maximum
-    ) {
+    if (!Array.isArray(value) || Object.getPrototypeOf(value) !== Array.prototype) {
+      return undefined;
+    }
+    const length: unknown = Object.getOwnPropertyDescriptor(value, "length")?.value;
+    if (typeof length !== "number" || !Number.isInteger(length) || length < 0 || length > maximum) {
       return undefined;
     }
     const descriptors = Object.getOwnPropertyDescriptors(value);
     if (
-      Reflect.ownKeys(descriptors).length !== value.length + 1 ||
-      Array.from({ length: value.length }, (_, index) => descriptors[String(index)]).some(
+      Reflect.ownKeys(descriptors).length !== length + 1 ||
+      Array.from({ length: length }, (_, index) => descriptors[String(index)]).some(
         (descriptor) =>
           descriptor === undefined || !descriptor.enumerable || !("value" in descriptor),
       )
     ) {
       return undefined;
     }
-    return Array.from(
-      { length: value.length },
-      (_, index): unknown => descriptors[String(index)]?.value,
-    );
+    return Array.from({ length: length }, (_, index): unknown => descriptors[String(index)]?.value);
   } catch {
     return undefined;
   }

@@ -80,3 +80,51 @@ describe("public contract metadata seed", () => {
     }
   });
 });
+
+describe("public metadata array descriptor reads", () => {
+  for (const field of ["errors", "tags", "scope"] as const) {
+    const definition = () => ({
+      id: "probe.route",
+      method: "GET" as const,
+      path: "/v1/probe",
+      response: z.string(),
+      errors: [],
+      scope: ["owner"] as const,
+      idempotency: "none" as const,
+      summary: "Probe route",
+      tags: [],
+      stability: "stable" as const,
+    });
+
+    it(`rejects extra ${field} metadata without reading a proxy length property`, () => {
+      let calls = 0;
+      const entries = new Proxy(Object.assign(["owner"], { extra: true }), {
+        get(target, key, receiver): unknown {
+          if (key === "length") {
+            calls += 1;
+          }
+          return Reflect.get(target, key, receiver);
+        },
+      });
+      expect(() => defineRoute({ ...definition(), [field]: entries })).toThrow(
+        "Invalid route metadata.",
+      );
+      expect(calls).toBe(0);
+    });
+
+    it(`copies valid ${field} through descriptors without reading proxy properties`, () => {
+      let calls = 0;
+      const entries = new Proxy(["owner"], {
+        get() {
+          calls += 1;
+          throw new Error("Ordinary property access is not declarative validation");
+        },
+      });
+      const route = defineRoute({ ...definition(), [field]: entries });
+      expect(route.contractMeta[field]).toEqual(["owner"]);
+      expect(Object.is(route.contractMeta[field], entries)).toBe(false);
+      expect(Object.isFrozen(route.contractMeta[field])).toBe(true);
+      expect(calls).toBe(0);
+    });
+  }
+});
