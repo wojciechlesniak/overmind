@@ -409,10 +409,11 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
       for (const value of elements) {
         if (isNode(value) && value.type === "SpreadElement") {
           const argument = child(value, "argument");
+          const width = arrayBounds(argument, [], seen) ?? [0, Infinity];
           const relative: Bounds | undefined = range
-            ? [Math.max(0, range[0] - max), range[1] - min]
+            ? [Math.max(0, range[0] - max), Math.min(range[1] - min, width[1] - 1)]
             : undefined;
-          if (argument && (!relative || relative[1] >= 0)) {
+          if (argument && (!relative || relative[0] <= relative[1])) {
             selected.push({
               value: argument,
               select: relative ? [{ arrayIndex: relative }, ...select.slice(1)] : select,
