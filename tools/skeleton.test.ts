@@ -39,6 +39,7 @@ expectedEdges["adapter-telegram"] = ["api-client", "application", "contracts"];
 expectedEdges["engine"] = Object.keys(expectedEdges).filter(
   (name) => !["desktop", "tools", "api-client", "ui-kit"].includes(name),
 );
+expectedEdges["adapter-system"] = ["application", "contracts"];
 
 function assertInternalEdges(name: string, dependencies: Record<string, string> = {}) {
   assert.deepEqual(
@@ -65,8 +66,8 @@ function collectManifests(directory = root): string[] {
 }
 const manifestPaths = collectManifests();
 
-test("all 17 packages encode exactly the required Clean Architecture graph", async () => {
-  assert.equal(manifestPaths.length, 17);
+test("all 18 packages encode exactly the required Clean Architecture graph", async () => {
+  assert.equal(manifestPaths.length, 18);
   const names = manifestPaths.map((path) => readJson(path).name.replace("@overmind/", "")).sort();
   assert.deepEqual(names, Object.keys(expectedEdges).sort());
   for (const path of manifestPaths) {
@@ -95,6 +96,10 @@ test("all 17 packages encode exactly the required Clean Architecture graph", asy
       assert.deepEqual(contracts.ok(1), { ok: true, value: 1 });
       assert.equal(contracts.fromThrown("foreign failure").code, "internal.unexpected");
       assert.equal(contracts.isKnownCode("internal.unexpected"), true);
+    } else if (name === "adapter-system") {
+      const system = await import("../packages/adapters/system/src/index.ts");
+      assert.deepEqual(Object.keys(system), ["UlidIdGenerator"]);
+      assert.equal(typeof system.UlidIdGenerator, "function");
     } else {
       assert.match(
         source,

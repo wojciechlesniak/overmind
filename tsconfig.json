@@ -51,6 +51,9 @@
     },
     {
       "path": "./tools"
+    },
+    {
+      "path": "./packages/adapters/system"
     }
   ]
 }
