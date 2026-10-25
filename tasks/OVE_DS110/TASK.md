@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: done
 depends_on: [OVE_SETUP001, OVE_SETUP002, OVE_SETUP003, OVE_SETUP004, OVE_SETUP008]
 soft_depends_on: [OVE_ARCH002]
 provides: ["lib:ui-kit-utilities"]
@@ -111,11 +111,11 @@ transitions. Fail safely without hidden side effects or console workarounds.
 
 ## 11. Acceptance criteria
 
-- [ ] All seven modules preserve the specified types and remain private.
-- [ ] Ref cleanup, controlled state and motion subscriptions pass real behavior tests.
-- [ ] Development diagnostics obey the exact value-free sink contract; production is silent.
-- [ ] The URL abuse table and valid references pass, including backslash/host controls.
-- [ ] Current broad, full, security and independent whole reviews pass before integration.
+- [x] All seven modules preserve the specified types and remain private.
+- [x] Ref cleanup, controlled state and motion subscriptions pass real behavior tests.
+- [x] Development diagnostics obey the exact value-free sink contract; production is silent.
+- [x] The URL abuse table and valid references pass, including backslash/host controls.
+- [x] Current broad, full, security and independent whole reviews pass before integration.
 
 ## 12. Test plan
 
