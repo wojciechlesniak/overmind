@@ -7,11 +7,11 @@ size: M
 priority: P0
 mvp: true
 status: todo
-depends_on: [OVE_ARCH001, OVE_SETUP002]
+depends_on: [OVE_ARCH001, OVE_SETUP002, OVE_ARCH060]
 soft_depends_on: [OVE_ARCH003, OVE_SETUP006]
 provides: ["lib:contract-pipeline", "lib:contract-check", "contract:RouteContract", "contract:ApiVersion"]
 needs: []
-owns: ["tools/contracts/**", "packages/contracts/src/api/define-route.ts", "packages/contracts/src/version.ts", "packages/contracts/snapshots/VERSION.json", "packages/contracts/.gitignore", "packages/api-client/src/generated/.gitignore", "docs/architecture/contracts-pipeline.md"]
+owns: ["tools/contracts/**", "packages/contracts/src/version.ts", "packages/contracts/snapshots/VERSION.json", "packages/contracts/.gitignore", "packages/api-client/src/generated/.gitignore", "docs/architecture/contracts-pipeline.md"]
 reads: ["docs/architecture/ARCHITECTURE.md"]
 design: none
 design_source: ""
