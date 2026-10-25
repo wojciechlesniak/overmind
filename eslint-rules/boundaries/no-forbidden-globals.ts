@@ -419,7 +419,6 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
               select: relative ? [{ arrayIndex: relative }, ...select.slice(1)] : select,
             });
           }
-          const width = arrayBounds(argument, [], seen) ?? [0, Infinity];
           min += width[0];
           max += width[1];
         } else {
