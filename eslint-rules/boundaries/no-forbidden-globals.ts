@@ -329,7 +329,15 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
       if (
         !variable ||
         !directWrites.has(variable) ||
-        variable.defs.some((definition) => definition.type === "Parameter")
+        variable.defs.some((definition) => definition.type === "Parameter") ||
+        writes.get(variable)?.some((write) => {
+          const segment = write.target[select.length];
+          return (
+            segment !== undefined &&
+            (segment === "*" || arrayIndex(segment) !== undefined) &&
+            select.every((selected, index) => selectionMatches(write.target[index] ?? "", selected))
+          );
+        })
       ) {
         choices.push([0, Infinity]);
       }
@@ -549,7 +557,11 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
   const reported = new Set<Node>();
   for (const scope of source.scopeManager.scopes) {
     for (const reference of scope.references) {
-      if (!reference.isRead() || !isNode(reference.identifier)) {
+      if (
+        !reference.isRead() ||
+        ("isValueReference" in reference && reference.isValueReference === false) ||
+        !isNode(reference.identifier)
+      ) {
         continue;
       }
       let use: Node = reference.identifier;
