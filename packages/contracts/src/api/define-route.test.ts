@@ -390,3 +390,67 @@ for (const field of ["scope", "errors", "tags"] as const) {
     );
   });
 }
+
+describe("route metadata descriptor snapshot", () => {
+  for (const firstShape of ["accessor", "non-enumerable"] as const) {
+    it(`rejects an optional query whose captured descriptor is ${firstShape}`, () => {
+      const schema = z.string();
+      let descriptorReads = 0;
+      let getterCalls = 0;
+      const input = new Proxy(
+        { ...definition(), query: schema },
+        {
+          getOwnPropertyDescriptor(target, key) {
+            if (key === "query") {
+              descriptorReads += 1;
+              if (descriptorReads === 1) {
+                return firstShape === "accessor"
+                  ? {
+                      configurable: true,
+                      enumerable: true,
+                      get() {
+                        getterCalls += 1;
+                        return schema;
+                      },
+                    }
+                  : { configurable: true, enumerable: false, writable: true, value: schema };
+              }
+            }
+            return Reflect.getOwnPropertyDescriptor(target, key);
+          },
+        },
+      );
+      expect(() => defineRoute(input)).toThrow("Invalid route metadata.");
+      expect(getterCalls).toBe(0);
+    });
+  }
+
+  it("preserves a captured query schema even if a subsequent descriptor would differ", () => {
+    const schema = z.string();
+    let descriptorReads = 0;
+    let getterCalls = 0;
+    const input = new Proxy(
+      { ...definition(), query: schema },
+      {
+        getOwnPropertyDescriptor(target, key) {
+          if (key === "query") {
+            descriptorReads += 1;
+            if (descriptorReads > 1) {
+              return {
+                configurable: true,
+                enumerable: true,
+                get() {
+                  getterCalls += 1;
+                  return z.number();
+                },
+              };
+            }
+          }
+          return Reflect.getOwnPropertyDescriptor(target, key);
+        },
+      },
+    );
+    expect(defineRoute(input).contractMeta.query).toBe(schema);
+    expect(getterCalls).toBe(0);
+  });
+});

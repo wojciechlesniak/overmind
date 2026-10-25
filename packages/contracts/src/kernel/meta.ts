@@ -19,7 +19,7 @@ export function readMetadataRecord(
     const keys = Reflect.ownKeys(descriptors);
     if (
       keys.some((key) => {
-        const descriptor = Object.getOwnPropertyDescriptor(value, key);
+        const descriptor = typeof key === "string" ? descriptors[key] : undefined;
         return (
           typeof key !== "string" ||
           !fields.has(key) ||
