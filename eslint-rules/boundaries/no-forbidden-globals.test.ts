@@ -1375,3 +1375,117 @@ describe("OVE_ARCH020: array length argument guarantees", () => {
     });
   }
 });
+
+describe("OVE_ARCH020: array mutation argument guarantees", () => {
+  const cases = [
+    ["pop", "const args=[0]; args.pop(); new Date(...args);", true],
+    ["splice", "const args=[0]; args.splice(0); new Date(...args);", true],
+    ["shift", "const args=[0]; args.shift(); new Date(...args);", true],
+    ["computed-pop", "const args=[0]; args['pop'](); new Date(...args);", true],
+    ["alias-pop", "const args=[0]; const alias=args; alias.pop(); new Date(...args);", true],
+    ["member-pop", "const args=[0]; const box={args}; box.args.pop(); new Date(...args);", true],
+    ["opaque", "const args=[0]; opaque(args); new Date(...args);", true],
+    [
+      "local-mutation",
+      "function clear(value: number[]) {value.length=0;} const args=[0]; clear(args); new Date(...args);",
+      true,
+    ],
+    ["object-escape", "const args=[0]; const box={args}; opaque(box); new Date(...args);", true],
+    [
+      "bound-mutation",
+      "const args=[null,0]; args.splice(0); const D=Date.bind(...args); new D();",
+      true,
+    ],
+    ["explicit-fixed", "const args=[0]; args.pop(); new Date(0,...args);", false],
+    [
+      "unrelated-mutation",
+      "const args=[0]; const other=[1]; other.pop(); new Date(...args);",
+      false,
+    ],
+    [
+      "unrelated-escape",
+      "const args=[0]; const other=[1]; opaque(other); new Date(...args);",
+      false,
+    ],
+    ["unchanged", "const args=[0] as const; new Date(...args);", false],
+    ["bound-fixed", "const D=Date.bind(null,0); const args=[0]; opaque(args); new D();", false],
+    [
+      "local-shadow",
+      "class Date {constructor(...args: number[]) {}} const args=[0]; args.pop(); new Date(...args);",
+      false,
+    ],
+    ["empty", "const args=[] as const; new Date(...args);", true],
+    ["unknown", "function use(args: number[]) {new Date(...args);}", true],
+    [
+      "member-opaque",
+      "const args=[0]; const box={args}; opaque(box.args); new Date(...args);",
+      true,
+    ],
+    [
+      "nested-container-opaque",
+      "const args=[0]; const box={nested:{args}}; opaque(box); new Date(...args);",
+      true,
+    ],
+    [
+      "computed-member-opaque",
+      "const args=[0]; const box={args}; opaque(box['args']); new Date(...args);",
+      true,
+    ],
+    [
+      "captured-alias-pop",
+      "const args=[0]; const box={args}; const alias=box.args; alias.pop(); new Date(...args);",
+      true,
+    ],
+    ["wrapped-pop", "const args=[0]; (args as number[]).pop(); new Date(...args);", true],
+    ["array-containing-escape", "const args=[0]; opaque([args]); new Date(...args);", true],
+    ["spread-array-elements-escape", "const args=[0]; opaque(...[args]); new Date(...args);", true],
+    [
+      "spread-object-escape",
+      "const args=[0]; const box={args}; opaque({...box}); new Date(...args);",
+      true,
+    ],
+    ["closure-escape", "const args=[0]; opaque(() => args); new Date(...args);", true],
+    ["constructor-escape", "const args=[0]; new Unknown(args); new Date(...args);", true],
+    ["conditional-escape", "const args=[0]; opaque(flag ? args : []); new Date(...args);", true],
+    ["sequence-escape", "const args=[0]; opaque((0,args)); new Date(...args);", true],
+    [
+      "unrelated-member-mutation",
+      "const args=[0]; const box={other:[1]}; box.other.pop(); new Date(...args);",
+      false,
+    ],
+    ["array-copy-escape", "const args=[0]; opaque([...args]); new Date(...args);", false],
+    [
+      "array-copy-pop",
+      "const args=[0]; const copy=[...args]; copy.pop(); new Date(...args);",
+      false,
+    ],
+    ["object-copy-escape", "const args=[0]; opaque({...args}); new Date(...args);", false],
+    ["scalar-spread-escape", "const args=[0]; opaque(...args); new Date(...args);", false],
+    ["scalar-element-escape", "const args=[0]; opaque(args[0]); new Date(...args);", false],
+    [
+      "unescaped-structural-alias",
+      "const args=[0]; const box={args}; const alias=box.args; new Date(...alias);",
+      false,
+    ],
+    ["unescaped-nested-array", "const args=[0]; const box=[args]; new Date(...box[0]);", false],
+    [
+      "fixed-bind-literal-spread",
+      "const args=[null,0]; const D=Date.bind(...args); new D();",
+      false,
+    ],
+    [
+      "fixed-bind-copy-spread",
+      "const args=[null,0]; const D=Date.bind(...[...args]); new D();",
+      false,
+    ],
+  ] as const;
+  for (const [label, code, denied] of cases) {
+    it(`preserves array mutation argument facts ${label}`, () => {
+      const messages = check(code);
+      expect(messages.some((message) => message.fatal)).toBe(false);
+      expect(messages.some((message) => message.messageId === "BOUNDARY_FORBIDDEN_GLOBAL")).toBe(
+        denied,
+      );
+    });
+  }
+});

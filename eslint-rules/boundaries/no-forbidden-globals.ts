@@ -287,6 +287,48 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
   );
   const queryKey = (select: readonly Selection[], seen: ReadonlySet<Variable>): string =>
     JSON.stringify([select, [...seen].map((variable) => variableIds.get(variable))]);
+  // Project canonical assignments and container slots once for every analysis consumer.
+  function projectedValues(
+    node: Node,
+    select: readonly Selection[],
+    seen: Set<Variable>,
+  ): (ValueSelection & { readonly seen: Set<Variable> })[] | undefined {
+    let values: ValueSelection[] | undefined;
+    let next = seen;
+    if (wrapper(node)) {
+      const value = child(node, "expression");
+      values = value ? [{ value, select }] : [];
+    } else if (node.type === "MemberExpression") {
+      const value = child(node, "object");
+      values = value ? [{ value, select: [memberKey(node), ...select] }] : [];
+    } else if (node.type === "Identifier") {
+      const variable = lookup(node);
+      if (variable && seen.has(variable)) {
+        return [];
+      }
+      next = new Set(seen);
+      if (variable) {
+        next.add(variable);
+      }
+      values = writtenValues(variable, select);
+    } else if (node.type === "ObjectExpression") {
+      values = objectValues(node, select);
+    } else if (node.type === "ArrayExpression") {
+      values = arrayValues(node, select, seen);
+    } else if (
+      ["ConditionalExpression", "LogicalExpression", "AssignmentExpression"].includes(node.type)
+    ) {
+      values = ["consequent", "alternate", "left", "right"].flatMap((field) => {
+        const value = child(node, field);
+        return value ? [{ value, select }] : [];
+      });
+    } else if (node.type === "SequenceExpression") {
+      const value = children(node, "expressions").at(-1);
+      values = value ? [{ value, select }] : [];
+    }
+    return values?.map((value) => ({ ...value, seen: next }));
+  }
+  const exposedArrays = new Set<Node>();
   const widthCache = new Map<Node, Map<string, Bounds>>();
   function arrayBounds(
     node: Node | undefined,
@@ -320,8 +362,9 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
       if (variable) {
         next.add(variable);
       }
-      choices = writtenValues(variable, select).map(({ value, select: selected, write }) =>
-        arrayBounds(value, selected, next, asLengthValue || write?.target.at(-1) === "length"),
+      choices = (projectedValues(node, select, seen) ?? []).map(
+        ({ value, select: selected, write, seen: visited }) =>
+          arrayBounds(value, selected, visited, asLengthValue || write?.target.at(-1) === "length"),
       );
       if (
         !variable ||
@@ -343,15 +386,17 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
         choices.push([0, Infinity]);
       }
     } else if (node.type === "ObjectExpression" && select.length) {
-      choices = objectValues(node, select).map(({ value, select: selected }) =>
-        arrayBounds(value, selected, seen, asLengthValue),
+      choices = (projectedValues(node, select, seen) ?? []).map(
+        ({ value, select: selected, seen: visited }) =>
+          arrayBounds(value, selected, visited, asLengthValue),
       );
     } else if (node.type === "ArrayExpression") {
       if (select.length) {
-        choices = arrayValues(node, select, seen).map(({ value, select: selected }) =>
-          arrayBounds(value, selected, seen, asLengthValue),
+        choices = (projectedValues(node, select, seen) ?? []).map(
+          ({ value, select: selected, seen: visited }) =>
+            arrayBounds(value, selected, visited, asLengthValue),
         );
-      } else if (!asLengthValue) {
+      } else if (!asLengthValue && !exposedArrays.has(node)) {
         let min = 0;
         let max = 0;
         const elements = node["elements"];
@@ -376,15 +421,13 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
       node["value"] <= 2 ** 32 - 1
     ) {
       choices = [[node["value"], node["value"]]];
-    } else if (
-      ["ConditionalExpression", "LogicalExpression", "AssignmentExpression"].includes(node.type)
-    ) {
-      choices = ["consequent", "alternate", "left", "right"].flatMap((field) => {
-        const value = child(node, field);
-        return value ? [arrayBounds(value, select, seen, asLengthValue)] : [];
-      });
-    } else if (node.type === "SequenceExpression") {
-      choices = [arrayBounds(children(node, "expressions").at(-1), select, seen, asLengthValue)];
+    } else {
+      const values = projectedValues(node, select, seen);
+      if (values) {
+        choices = values.map(({ value, select: selected, seen: visited }) =>
+          arrayBounds(value, selected, visited, asLengthValue),
+        );
+      }
     }
     // An absent property or a visited alias is no fact, unlike a genuinely unknown value.
     const known = choices.filter((choice): choice is Bounds => choice !== undefined);
@@ -450,6 +493,95 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     }
     return selected;
   }
+  const references = source.scopeManager.scopes.flatMap((scope) =>
+    scope.references.flatMap((reference) =>
+      reference.isRead() && isNode(reference.identifier) ? [reference.identifier] : [],
+    ),
+  );
+  const identityCache = new Map<Node, Map<string, ReadonlySet<Node>>>();
+  const arrayIdentities = (
+    node: Node | undefined,
+    select: readonly Selection[] = [],
+    seen = new Set<Variable>(),
+  ): ReadonlySet<Node> => {
+    node = unwrap(node);
+    if (!node) {
+      return new Set();
+    }
+    const cacheKey = queryKey(select, seen);
+    const cached = identityCache.get(node)?.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
+    const arrays = new Set<Node>();
+    const container = ["ArrayExpression", "ObjectExpression"].includes(node.type) && !select.length;
+    if (container && node.type === "ArrayExpression") {
+      arrays.add(node);
+    }
+    const values = projectedValues(node, container ? ["*"] : select, seen);
+    if (values) {
+      for (const { value, select: selected, seen: visited } of values) {
+        for (const array of arrayIdentities(value, selected, visited)) {
+          arrays.add(array);
+        }
+      }
+    } else {
+      // Unknown escape syntax may capture a known container; retain that identity.
+      const range = node["range"];
+      for (const reference of references) {
+        const referenceRange = reference.range;
+        if (
+          Array.isArray(range) &&
+          Array.isArray(referenceRange) &&
+          typeof range[0] === "number" &&
+          typeof range[1] === "number" &&
+          typeof referenceRange[0] === "number" &&
+          typeof referenceRange[1] === "number" &&
+          range[0] <= referenceRange[0] &&
+          referenceRange[1] <= range[1]
+        ) {
+          for (const array of arrayIdentities(reference, [], seen)) {
+            arrays.add(array);
+          }
+        }
+      }
+    }
+    const cache = identityCache.get(node) ?? new Map<string, ReadonlySet<Node>>();
+    cache.set(cacheKey, arrays);
+    identityCache.set(node, cache);
+    return arrays;
+  };
+  const effects: { readonly value: Node; readonly select: readonly Selection[] }[] = [];
+  for (const node of nodes) {
+    if (["CallExpression", "NewExpression"].includes(node.type)) {
+      const callee = unwrap(child(node, "callee"));
+      const receiver = callee?.type === "MemberExpression" ? child(callee, "object") : undefined;
+      if (receiver) {
+        effects.push({ value: receiver, select: [] });
+      }
+      for (const argument of children(node, "arguments")) {
+        const spread = argument.type === "SpreadElement";
+        const value = spread ? child(argument, "argument") : argument;
+        if (value) {
+          effects.push({ value, select: spread ? ["*"] : [] });
+        }
+      }
+    }
+  }
+  // Effects only add identities from the finite syntax tree. Unknown widths may expose
+  // further selected slots, so repeat until no literal container can be added.
+  let previousSize = -1;
+  while (previousSize !== exposedArrays.size) {
+    previousSize = exposedArrays.size;
+    widthCache.clear();
+    identityCache.clear();
+    for (const { value, select } of effects) {
+      for (const array of arrayIdentities(value, select)) {
+        exposedArrays.add(array);
+      }
+    }
+  }
+  widthCache.clear();
   const suppliedArguments = (node: Node): number =>
     node.type === "SpreadElement" ? Math.min(2, arrayBounds(child(node, "argument"))?.[0] ?? 0) : 1;
   const resolutionCache = new Map<Node, Map<string, Origin[]>>();
@@ -484,23 +616,13 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     if (!node) {
       return [];
     }
-    if (wrapper(node)) {
-      return resolves(child(node, "expression"), select, seen);
-    }
-    if (node.type === "MemberExpression") {
-      return resolves(child(node, "object"), [memberKey(node), ...select], seen);
-    }
     if (node.type === "Identifier") {
       const variable = lookup(node);
       if (variable && seen.has(variable)) {
         return [];
       }
-      const next = new Set(seen);
-      if (variable) {
-        next.add(variable);
-      }
-      const values = writtenValues(variable, select).flatMap(({ value, select: selected }) =>
-        resolves(value, selected, next),
+      const values = (projectedValues(node, select, seen) ?? []).flatMap(
+        ({ value, select: selected, seen: visited }) => resolves(value, selected, visited),
       );
       if (!runtime(variable)) {
         const name = node["name"];
@@ -512,26 +634,6 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
         }
       }
       return values;
-    }
-    if (node.type === "ObjectExpression") {
-      return objectValues(node, select).flatMap(({ value, select: selected }) =>
-        resolves(value, selected, seen),
-      );
-    }
-    if (node.type === "ArrayExpression") {
-      return arrayValues(node, select, seen).flatMap(({ value, select: selected }) =>
-        resolves(value, selected, seen),
-      );
-    }
-    if (
-      ["ConditionalExpression", "LogicalExpression", "AssignmentExpression"].includes(node.type)
-    ) {
-      return ["consequent", "alternate", "left", "right"].flatMap((field) =>
-        resolves(child(node, field), select, seen),
-      );
-    }
-    if (node.type === "SequenceExpression") {
-      return resolves(children(node, "expressions").at(-1), select, seen);
     }
     if (node.type === "CallExpression") {
       const callee = unwrap(child(node, "callee"));
@@ -547,7 +649,9 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
         }));
       }
     }
-    return [];
+    return (projectedValues(node, select, seen) ?? []).flatMap(
+      ({ value, select: selected, seen: visited }) => resolves(value, selected, visited),
+    );
   };
   const aliasSource = (node: Node): boolean => {
     const parent = child(node, "parent");
