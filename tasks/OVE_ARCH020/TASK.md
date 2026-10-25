@@ -6,7 +6,7 @@ kind: infra
 size: S
 priority: P0
 mvp: true
-status: todo
+status: in_review
 depends_on: ["OVE_ARCH018", "OVE_ARCH059"]
 soft_depends_on: []
 provides: ["lib:boundary-capability-rules"]
@@ -77,9 +77,9 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 
 ## 11. Acceptance criteria
 
-- [ ] Bare/node-prefixed/subpath builtins and unsafe platform locations fail exact IDs; exact Tauri bridge location passes.
-- [ ] All listed ambient capabilities, aliases and computed constructors fail; runtime shadows and fixed-argument Date positives pass.
-- [ ] Cross-file/ambient names cannot hide globals, and no test exemption or duplicate member diagnostic appears.
+- [x] Bare/node-prefixed/subpath builtins and unsafe platform locations fail exact IDs; exact Tauri bridge location passes.
+- [x] All listed ambient capabilities, aliases and computed constructors fail; runtime shadows and fixed-argument Date positives pass.
+- [x] Cross-file/ambient names cannot hide globals, and no test exemption or duplicate member diagnostic appears.
 - [ ] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
 
 ## 12. Test plan
