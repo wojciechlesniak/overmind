@@ -1489,3 +1489,153 @@ describe("OVE_ARCH020: array mutation argument guarantees", () => {
     });
   }
 });
+
+describe("OVE_ARCH020: relative length argument guarantees", () => {
+  const cases = [
+    ["relative-minus", "const args=[0]; args.length -= 1; new Date(...args);", true],
+    ["computed-relative-minus", 'const args=[0]; args["length"] -= 1; new Date(...args);', true],
+    [
+      "alias-relative-minus",
+      "const args=[0]; const alias=args; alias.length -= 1; new Date(...args);",
+      true,
+    ],
+    ["post-decrement", "const args=[0]; args.length--; new Date(...args);", true],
+    ["pre-decrement", "const args=[0]; --args.length; new Date(...args);", true],
+    [
+      "bound-post-decrement",
+      "const args=[null,0]; args.length--; const D=Date.bind(...args); new D();",
+      true,
+    ],
+    ["relative-plus-negative", "const args=[0]; args.length += -1; new Date(...args);", true],
+    ["unchanged-fixed", "const args=[0]; new Date(...args);", false],
+    ["explicit-fixed", "const args=[0]; args.length--; new Date(0,...args);", false],
+    ["known-empty", "const args=[]; new Date(...args);", true],
+    [
+      "capture-member-update",
+      "const args=[0]; const box={args}; box.args.length--; new Date(...args);",
+      true,
+    ],
+    [
+      "capture-member-relative",
+      "const args=[0]; const box={args}; box.args.length-=1; new Date(...args);",
+      true,
+    ],
+    [
+      "capture-nested-update",
+      "const args=[0]; const box={nested:{args}}; --box.nested.args.length; new Date(...args);",
+      true,
+    ],
+    [
+      "capture-computed-update",
+      "const args=[0]; const box={args}; box['args']['length']--; new Date(...args);",
+      true,
+    ],
+    [
+      "capture-wrapped-update",
+      "const args=[0]; const box={args}; (box.args as number[]).length--; new Date(...args);",
+      true,
+    ],
+    [
+      "capture-bound-relative",
+      "const args=[null,0]; const box={args}; box.args.length-=2; const D=Date.bind(...args); new D();",
+      true,
+    ],
+    [
+      "capture-explicit-fixed",
+      "const args=[0]; const box={args}; box.args.length--; new Date(0,...args);",
+      false,
+    ],
+    [
+      "capture-unrelated-update",
+      "const args=[0]; const box={other:[1]}; box.other.length--; new Date(...args);",
+      false,
+    ],
+    [
+      "captured-zero",
+      "const args=[0]; const box={args}; box.args.length=0; new Date(...args);",
+      true,
+    ],
+    [
+      "captured-empty-length",
+      "const args=[0]; const empty: []=[]; const box={args}; box.args.length=empty.length; new Date(...args);",
+      true,
+    ],
+    [
+      "captured-positive",
+      "const args=[0]; const box={args}; box.args.length=1; new Date(...args);",
+      false,
+    ],
+    [
+      "captured-positive-length",
+      "const args=[0]; const other=[1]; const box={args}; box.args.length=other.length; new Date(...args);",
+      false,
+    ],
+    [
+      "wrapped-relative-rhs",
+      "const args=[0]; args.length -= (1 as number); new Date(...args);",
+      true,
+    ],
+    [
+      "wrapped-update-target",
+      "const args=[0]; (args as number[]).length--; new Date(...args);",
+      true,
+    ],
+    [
+      "unknown-computed-update",
+      "function use(key: string) {const args=[0]; args[key]--; new Date(...args);}",
+      true,
+    ],
+    ["multiply-empty", "const args=[0]; args.length *= 0; new Date(...args);", true],
+    ["bitwise-empty", "const args=[0]; args.length ^= 1; new Date(...args);", true],
+    ["shift-empty", "const args=[0]; args.length >>= 1; new Date(...args);", true],
+    [
+      "scalar-update-length",
+      "const args=[0]; let length=1; length--; args.length=length; new Date(...args);",
+      true,
+    ],
+    [
+      "captured-alias-update",
+      "const args=[0]; const box={args}; const alias=box.args; alias.length--; new Date(...args);",
+      true,
+    ],
+    [
+      "unknown-captured-length",
+      "function use(length: number) {const args=[0]; const box={args}; box.args.length=length; new Date(...args);}",
+      true,
+    ],
+    [
+      "effect-dependent-length",
+      "const args=[0]; const box={args}; const other=[1]; box.args.length=other.length; other.pop(); new Date(...args);",
+      true,
+    ],
+    [
+      "nested-scalar-control",
+      "const args=[0]; const other={length:1}; other.length--; new Date(...args);",
+      false,
+    ],
+    [
+      "runtime-shadow-control",
+      "class Date {constructor(...args: number[]) {}} const args=[0]; args.length--; new Date(...args);",
+      false,
+    ],
+    [
+      "fixed-bind-control",
+      "const D=Date.bind(null,0); const args=[0]; args.length--; new D();",
+      false,
+    ],
+    [
+      "unrelated-relative-control",
+      "const args=[0]; const other=[1]; other.length-=1; new Date(...args);",
+      false,
+    ],
+  ] as const;
+  for (const [label, code, denied] of cases) {
+    it(`preserves relative length argument facts ${label}`, () => {
+      const messages = check(code);
+      expect(messages.some((message) => message.fatal)).toBe(false);
+      expect(messages.some((message) => message.messageId === "BOUNDARY_FORBIDDEN_GLOBAL")).toBe(
+        denied,
+      );
+    });
+  }
+});

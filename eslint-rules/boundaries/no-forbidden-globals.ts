@@ -142,6 +142,7 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     variable?.defs.some((definition) => isNode(definition.node) && !ambient(definition.node)) ??
     false;
   const writes = new Map<Variable, Write[]>();
+  const unprovenValues = new Set<Node>();
   const add = (
     target: Node,
     value: Node,
@@ -204,13 +205,27 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     }
   };
   for (const node of nodes) {
-    const target = child(node, node.type === "VariableDeclarator" ? "id" : "left");
-    const value = child(node, node.type === "VariableDeclarator" ? "init" : "right");
+    const update = node.type === "UpdateExpression";
+    const target = child(
+      node,
+      update ? "argument" : node.type === "VariableDeclarator" ? "id" : "left",
+    );
+    const value = update
+      ? node
+      : child(node, node.type === "VariableDeclarator" ? "init" : "right");
     if (
-      ["VariableDeclarator", "AssignmentExpression", "AssignmentPattern"].includes(node.type) &&
+      [
+        "VariableDeclarator",
+        "AssignmentExpression",
+        "AssignmentPattern",
+        "UpdateExpression",
+      ].includes(node.type) &&
       target &&
       value
     ) {
+      if (update || (node.type === "AssignmentExpression" && node["operator"] !== "=")) {
+        unprovenValues.add(unwrap(value) ?? value);
+      }
       add(target, value);
     }
   }
@@ -337,7 +352,7 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     asLengthValue = false,
   ): Bounds | undefined {
     node = unwrap(node);
-    if (!node) {
+    if (!node || unprovenValues.has(node)) {
       return [0, Infinity];
     }
     const cacheKey = JSON.stringify([queryKey(select, seen), asLengthValue]);
@@ -551,7 +566,11 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     identityCache.set(node, cache);
     return arrays;
   };
-  const effects: { readonly value: Node; readonly select: readonly Selection[] }[] = [];
+  const effects: {
+    readonly value: Node;
+    readonly select: readonly Selection[];
+    readonly lengthValue?: Node;
+  }[] = [];
   for (const node of nodes) {
     if (["CallExpression", "NewExpression"].includes(node.type)) {
       const callee = unwrap(child(node, "callee"));
@@ -567,6 +586,19 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
         }
       }
     }
+    if (["AssignmentExpression", "UpdateExpression"].includes(node.type)) {
+      const target = unwrap(child(node, node.type === "UpdateExpression" ? "argument" : "left"));
+      const receiver = target?.type === "MemberExpression" ? child(target, "object") : undefined;
+      if (target && receiver && ["length", "*"].includes(memberKey(target))) {
+        const value =
+          node.type === "AssignmentExpression" &&
+          node["operator"] === "=" &&
+          memberKey(target) === "length"
+            ? child(node, "right")
+            : undefined;
+        effects.push({ value: receiver, select: [], ...(value ? { lengthValue: value } : {}) });
+      }
+    }
   }
   // Effects only add identities from the finite syntax tree. Unknown widths may expose
   // further selected slots, so repeat until no literal container can be added.
@@ -575,7 +607,10 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     previousSize = exposedArrays.size;
     widthCache.clear();
     identityCache.clear();
-    for (const { value, select } of effects) {
+    for (const { value, select, lengthValue } of effects) {
+      if (lengthValue && (arrayBounds(lengthValue, [], new Set(), true)?.[0] ?? 0) > 0) {
+        continue;
+      }
       for (const array of arrayIdentities(value, select)) {
         exposedArrays.add(array);
       }
