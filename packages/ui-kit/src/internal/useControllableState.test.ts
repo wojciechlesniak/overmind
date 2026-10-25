@@ -187,3 +187,54 @@ describe("batched controllable state requests", () => {
     expect(onChange).toHaveBeenCalledExactlyOnceWith(6);
   });
 });
+
+describe("cached controllable state requests", () => {
+  it("uses the committed callback from a previously retained setter", () => {
+    const first = vi.fn();
+    const second = vi.fn();
+    const { result, rerender } = renderHook(
+      ({ onChange }) => useControllableState({ defaultValue: 0, onChange }),
+      { initialProps: { onChange: first } },
+    );
+    const setter = result.current[1];
+    rerender({ onChange: second });
+    act(() => {
+      setter(1);
+    });
+    expect(first).not.toHaveBeenCalled();
+    expect(second).toHaveBeenCalledExactlyOnceWith(1);
+    expect(result.current[0]).toBe(1);
+  });
+
+  it("compares a retained controlled setter with the current provided value", () => {
+    const onChange = vi.fn();
+    const { result, rerender } = renderHook(
+      ({ value }) => useControllableState({ value, defaultValue: 0, onChange }),
+      { initialProps: { value: 1 } },
+    );
+    const setter = result.current[1];
+    rerender({ value: 2 });
+    act(() => {
+      setter(2);
+    });
+    expect(onChange).not.toHaveBeenCalled();
+    expect(result.current[0]).toBe(2);
+  });
+
+  it("does not mutate hidden uncontrolled state after a committed switch to controlled", () => {
+    const onChange = vi.fn();
+    const { result, rerender } = renderHook(
+      ({ value }) => useControllableState({ value, defaultValue: 0, onChange }),
+      { initialProps: { value: undefined as number | undefined } },
+    );
+    const setter = result.current[1];
+    rerender({ value: 2 });
+    act(() => {
+      setter(3);
+    });
+    expect(result.current[0]).toBe(2);
+    expect(onChange).toHaveBeenCalledExactlyOnceWith(3);
+    rerender({ value: undefined });
+    expect(result.current[0]).toBe(0);
+  });
+});

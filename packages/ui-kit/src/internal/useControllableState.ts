@@ -32,10 +32,10 @@ export function useControllableState<T>({
     currentValue = value;
   }
 
-  const pendingValue = useRef(currentValue);
+  const latest = useRef({ mode, value: currentValue, onChange });
   useLayoutEffect(() => {
-    pendingValue.current = currentValue;
-  }, [currentValue]);
+    latest.current = { mode, value: currentValue, onChange };
+  }, [currentValue, mode, onChange]);
 
   useEffect(() => {
     const from = previousMode.current;
@@ -47,19 +47,17 @@ export function useControllableState<T>({
     }
   }, [mode, onModeChange]);
 
-  const setValue = useCallback(
-    (next: T) => {
-      if (Object.is(next, mode === "uncontrolled" ? pendingValue.current : currentValue)) {
-        return;
-      }
-      if (mode === "uncontrolled") {
-        pendingValue.current = next;
-        setUncontrolledValue(() => next);
-      }
-      onChange?.(next);
-    },
-    [currentValue, mode, onChange],
-  );
+  const setValue = useCallback((next: T) => {
+    const state = latest.current;
+    if (Object.is(next, state.value)) {
+      return;
+    }
+    if (state.mode === "uncontrolled") {
+      state.value = next;
+      setUncontrolledValue(() => next);
+    }
+    state.onChange?.(next);
+  }, []);
 
   return [currentValue, setValue];
 }
