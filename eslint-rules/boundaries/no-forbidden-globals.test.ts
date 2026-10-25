@@ -1639,3 +1639,173 @@ describe("OVE_ARCH020: relative length argument guarantees", () => {
     });
   }
 });
+
+describe("OVE_ARCH020: captured bound argument minimums", () => {
+  const cases = [
+    [
+      "captured-bound-shrink",
+      "const args=[null,0]; const box={args}; box.args.length=1; const D=Date.bind(...args); new D();",
+      true,
+    ],
+    [
+      "computed-bound-shrink",
+      'const args=[null,0]; const box={args}; box["args"]["length"]=1; const D=Date.bind(...args); new D();',
+      true,
+    ],
+    [
+      "alias-bound-shrink",
+      "const args=[null,0]; const box={args}; const alias=box.args; alias.length=1; const D=Date.bind(...args); new D();",
+      true,
+    ],
+    [
+      "nested-bound-shrink",
+      "const args=[null,0]; const box={inner:{args}}; box.inner.args.length=1; const D=Date.bind(...args); new D();",
+      true,
+    ],
+    [
+      "direct-shrink-control",
+      "const args=[null,0]; args.length=1; const D=Date.bind(...args); new D();",
+      true,
+    ],
+    [
+      "captured-preserved-two-control",
+      "const args=[null,0]; const box={args}; box.args.length=2; const D=Date.bind(...args); new D();",
+      false,
+    ],
+    [
+      "explicit-fixed-control",
+      "const args=[null,0]; const box={args}; box.args.length=1; const D=Date.bind(...args); new D(0);",
+      false,
+    ],
+    ["unchanged-bound-control", "const args=[null,0]; const D=Date.bind(...args); new D();", false],
+    [
+      "ordinary-captured-one-control",
+      "const args=[0]; const box={args}; box.args.length=1; new Date(...args);",
+      false,
+    ],
+    [
+      "length-from-one",
+      "const args=[null,0]; const box={args}; const one=[0]; box.args.length=one.length; const D=Date.bind(...args); new D();",
+      true,
+    ],
+    [
+      "length-from-two",
+      "const args=[null,0]; const box={args}; const two=[null,0]; box.args.length=two.length; const D=Date.bind(...args); new D();",
+      false,
+    ],
+    [
+      "wrapped-length-value",
+      "const args=[null,0]; const box={args}; box.args.length=(1 as number); const D=Date.bind(...args); new D();",
+      true,
+    ],
+    [
+      "wrapped-receiver",
+      "const args=[null,0]; const box={args}; (box.args as unknown[]).length=1; const D=Date.bind(...args); new D();",
+      true,
+    ],
+    [
+      "non-null-receiver",
+      "const args=[null,0]; const box={args}; box.args!.length=1; const D=Date.bind(...args); new D();",
+      true,
+    ],
+    [
+      "named-scalar-one",
+      "const args=[null,0]; const box={args}; const one=1; box.args.length=one; const D=Date.bind(...args); new D();",
+      true,
+    ],
+    [
+      "conditional-minimum-one",
+      "const args=[null,0]; const box={args}; box.args.length=flag?1:2; const D=Date.bind(...args); new D();",
+      true,
+    ],
+    [
+      "conditional-minimum-two",
+      "const args=[null,0]; const box={args}; box.args.length=flag?2:3; const D=Date.bind(...args); new D();",
+      false,
+    ],
+    [
+      "multiple-widths",
+      "const args=[null,0]; const box={args}; box.args.length=1; box.args.length=2; const D=Date.bind(...args); new D();",
+      true,
+    ],
+    [
+      "unknown-effect-dominates-positive",
+      "const args=[null,0]; const box={args}; box.args.length=2; args.pop(); const D=Date.bind(...args); new D();",
+      true,
+    ],
+    [
+      "unknown-key-remains-unproven",
+      "function use(key: string) {const args=[null,0]; const box={args}; box.args[key]=2; const D=Date.bind(...args); new D();}",
+      true,
+    ],
+    [
+      "empty-not-promoted-one",
+      "const args=[]; const box={args}; box.args.length=1; new Date(...args);",
+      true,
+    ],
+    [
+      "empty-not-promoted-two",
+      "const args=[]; const box={args}; box.args.length=2; const D=Date.bind(...args); new D();",
+      true,
+    ],
+    [
+      "one-not-promoted-two",
+      "const args=[null]; const box={args}; box.args.length=2; const D=Date.bind(...args); new D();",
+      true,
+    ],
+    [
+      "preserved-alias-two",
+      "const args=[null,0]; const box={args}; const alias=box.args; alias.length=2; const D=Date.bind(...args); new D();",
+      false,
+    ],
+    [
+      "three-shrinks-to-two",
+      "const args=[null,0,1]; const box={args}; box.args.length=2; const D=Date.bind(...args); new D();",
+      false,
+    ],
+    [
+      "ordinary-one-remains-fixed",
+      "const args=[0,1]; const box={args}; box.args.length=1; new Date(...args);",
+      false,
+    ],
+    [
+      "unrelated-shrink",
+      "const args=[null,0]; const box={other:[null,0]}; box.other.length=1; const D=Date.bind(...args); new D();",
+      false,
+    ],
+    [
+      "explicit-fixed-spread",
+      "const args=[null,0]; const box={args}; box.args.length=1; new Date(0,...args);",
+      false,
+    ],
+    [
+      "existing-fixed-bind",
+      "const D=Date.bind(null,0); const args=[null,0]; const box={args}; box.args.length=1; new D();",
+      false,
+    ],
+    [
+      "effect-dependent-assigned-minimum",
+      "const args=[null,0]; const box={args}; const other=[null,0]; box.args.length=other.length; other.pop(); const D=Date.bind(...args); new D();",
+      true,
+    ],
+    [
+      "nested-preserved-two",
+      "const args=[null,0]; const box={nested:{args}}; box.nested.args.length=2; const D=Date.bind(...args); new D();",
+      false,
+    ],
+    [
+      "runtime-shadow",
+      "class Date {constructor(...args: unknown[]) {}} const args=[null,0]; const box={args}; box.args.length=1; new Date(...args);",
+      false,
+    ],
+  ] as const;
+  for (const [label, code, denied] of cases) {
+    it(`preserves captured bound argument facts ${label}`, () => {
+      const messages = check(code);
+      expect(messages.some((message) => message.fatal)).toBe(false);
+      expect(messages.some((message) => message.messageId === "BOUNDARY_FORBIDDEN_GLOBAL")).toBe(
+        denied,
+      );
+    });
+  }
+});

@@ -343,7 +343,7 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     }
     return values?.map((value) => ({ ...value, seen: next }));
   }
-  const exposedArrays = new Set<Node>();
+  const arrayMinimums = new Map<Node, number>();
   const widthCache = new Map<Node, Map<string, Bounds>>();
   function arrayBounds(
     node: Node | undefined,
@@ -411,7 +411,7 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
           ({ value, select: selected, seen: visited }) =>
             arrayBounds(value, selected, visited, asLengthValue),
         );
-      } else if (!asLengthValue && !exposedArrays.has(node)) {
+      } else if (!asLengthValue) {
         let min = 0;
         let max = 0;
         const elements = node["elements"];
@@ -425,6 +425,10 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
             max += width[1];
           }
           choices = [[min, max]];
+        }
+        const minimum = arrayMinimums.get(node);
+        if (minimum !== undefined) {
+          choices.push([minimum, Infinity]);
         }
       }
     } else if (
@@ -600,19 +604,21 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
       }
     }
   }
-  // Effects only add identities from the finite syntax tree. Unknown widths may expose
-  // further selected slots, so repeat until no literal container can be added.
-  let previousSize = -1;
-  while (previousSize !== exposedArrays.size) {
-    previousSize = exposedArrays.size;
+  // The finite literal identities retain only lower guarantees, clamped by their
+  // existing widths. Unknown widths may expose further slots, so propagate to stability.
+  let changed = true;
+  while (changed) {
+    changed = false;
     widthCache.clear();
     identityCache.clear();
     for (const { value, select, lengthValue } of effects) {
-      if (lengthValue && (arrayBounds(lengthValue, [], new Set(), true)?.[0] ?? 0) > 0) {
-        continue;
-      }
+      const minimum = lengthValue ? (arrayBounds(lengthValue, [], new Set(), true)?.[0] ?? 0) : 0;
       for (const array of arrayIdentities(value, select)) {
-        exposedArrays.add(array);
+        const lower = Math.min(minimum, arrayBounds(array)?.[0] ?? 0);
+        if (lower < (arrayMinimums.get(array) ?? Infinity)) {
+          arrayMinimums.set(array, lower);
+          changed = true;
+        }
       }
     }
   }
