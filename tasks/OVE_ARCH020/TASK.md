@@ -78,7 +78,7 @@ A genuine prerequisite/test failure remains recorded and stops dependent work; o
 ## 11. Acceptance criteria
 
 - [x] Bare/node-prefixed/subpath builtins and unsafe platform locations fail exact IDs; exact Tauri bridge location passes.
-- [x] All listed ambient capabilities, aliases and computed constructors fail; runtime shadows and fixed-argument Date positives pass.
+- [ ] All listed ambient capabilities, aliases and computed constructors fail; runtime shadows and fixed-argument Date positives pass.
 - [x] Cross-file/ambient names cannot hide globals, and no test exemption or duplicate member diagnostic appears.
 - [ ] Applicable CONVENTIONS Definition of Done, independent Standards/Spec review and fresh exact-head hosted gates pass before normal DEVELOP merge.
 

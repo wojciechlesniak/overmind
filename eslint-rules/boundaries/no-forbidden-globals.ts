@@ -6,6 +6,10 @@ type Node = JSSyntaxElement & Readonly<Record<string, unknown>>;
 type Variable = ReturnType<SourceCode["getScope"]>["variables"][number];
 type Bounds = readonly [number, number];
 type Selection = string | { readonly restOffset: number } | { readonly arrayIndex: Bounds };
+interface Origin {
+  readonly path: readonly string[];
+  readonly boundArgument?: boolean;
+}
 interface Write {
   readonly target: readonly string[];
   readonly value: Node;
@@ -57,19 +61,23 @@ const memberKey = (node: Node, field = "property"): string => {
 };
 const globalObjects = new Set(["globalThis", "global", "window", "self"]);
 
-/** A spread contributes an argument only when its literal contents prove one exists. */
-function suppliesArgument(node: Node): boolean {
+/** Count only guaranteed arguments, saturating at the two slots needed by bind. */
+function suppliedArguments(node: Node): number {
   if (node.type !== "SpreadElement") {
-    return true;
+    return 1;
   }
   const value = unwrap(child(node, "argument"));
   const elements = value?.type === "ArrayExpression" ? value["elements"] : undefined;
-  return (
-    Array.isArray(elements) &&
-    elements.some(
-      (element: unknown) => element === null || (isNode(element) && suppliesArgument(element)),
-    )
-  );
+  let count = 0;
+  if (Array.isArray(elements)) {
+    for (const element of elements) {
+      count += element === null ? 1 : isNode(element) ? suppliedArguments(element) : 0;
+      if (count >= 2) {
+        return 2;
+      }
+    }
+  }
+  return count;
 }
 
 /** Decide capabilities from ESLint's own lexical scopes, independently of standalone analysis. */
@@ -293,6 +301,8 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
       .flatMap((scope) => scope.variables)
       .map((variable, index) => [variable, index]),
   );
+  const queryKey = (select: readonly Selection[], seen: ReadonlySet<Variable>): string =>
+    JSON.stringify([select, [...seen].map((variable) => variableIds.get(variable))]);
   const widthCache = new Map<Node, Map<string, Bounds>>();
   function arrayBounds(
     node: Node | undefined,
@@ -303,10 +313,7 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     if (!node) {
       return [0, Infinity];
     }
-    const cacheKey = JSON.stringify([
-      select,
-      [...seen].map((variable) => variableIds.get(variable)),
-    ]);
+    const cacheKey = queryKey(select, seen);
     const cached = widthCache.get(node)?.get(cacheKey);
     if (cached) {
       return cached;
@@ -440,27 +447,24 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     }
     return selected;
   }
-  const resolutionCache = new Map<Node, Map<string, string[][]>>();
+  const resolutionCache = new Map<Node, Map<string, Origin[]>>();
   const resolves = (
     node: Node | undefined,
     select: readonly Selection[] = [],
     seen = new Set<Variable>(),
-  ): string[][] => {
+  ): Origin[] => {
     if (!node) {
       return [];
     }
-    const cacheKey = JSON.stringify([
-      select,
-      [...seen].map((variable) => variableIds.get(variable)),
-    ]);
-    const cache = resolutionCache.get(node) ?? new Map<string, string[][]>();
+    const cacheKey = queryKey(select, seen);
+    const cache = resolutionCache.get(node) ?? new Map<string, Origin[]>();
     const cached = cache.get(cacheKey);
     if (cached) {
       return cached;
     }
     const paths = [
       ...new Map(
-        resolveNode(node, select, seen).map((path) => [JSON.stringify(path), path]),
+        resolveNode(node, select, seen).map((origin) => [JSON.stringify(origin), origin]),
       ).values(),
     ];
     cache.set(cacheKey, paths);
@@ -471,7 +475,7 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
     node: Node | undefined,
     select: readonly Selection[] = [],
     seen = new Set<Variable>(),
-  ): string[][] => {
+  ): Origin[] => {
     if (!node) {
       return [];
     }
@@ -497,9 +501,9 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
         const name = node["name"];
         const path = select.map((segment) => (typeof segment === "string" ? segment : "*"));
         if (typeof name === "string" && globalObjects.has(name)) {
-          values.push(path);
+          values.push({ path });
         } else if (typeof name === "string" && roots.has(name)) {
-          values.push([name, ...path]);
+          values.push({ path: [name, ...path] });
         }
       }
       return values;
@@ -525,9 +529,17 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
       return resolves(children(node, "expressions").at(-1), select, seen);
     }
     if (node.type === "CallExpression") {
-      const callee = child(node, "callee");
+      const callee = unwrap(child(node, "callee"));
       if (callee?.type === "MemberExpression" && memberKey(callee) === "bind") {
-        return resolves(child(callee, "object"), select, seen);
+        const boundArgument =
+          children(node, "arguments").reduce(
+            (count, argument) => count + suppliedArguments(argument),
+            0,
+          ) > 1;
+        return resolves(child(callee, "object"), select, seen).map((origin) => ({
+          ...origin,
+          boundArgument: origin.boundArgument === true || boundArgument,
+        }));
       }
     }
     return [];
@@ -571,7 +583,12 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
       let parent = child(use, "parent");
       while (
         parent &&
-        ((parent.type === "MemberExpression" && child(parent, "object") === use) || wrapper(parent))
+        ((parent.type === "MemberExpression" && child(parent, "object") === use) ||
+          wrapper(parent) ||
+          (parent.type === "CallExpression" &&
+            child(parent, "callee") === use &&
+            unwrap(use)?.type === "MemberExpression" &&
+            memberKey(unwrap(use) ?? use) === "bind"))
       ) {
         use = parent;
         parent = child(use, "parent");
@@ -582,9 +599,10 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
         child(parent, "callee") === use
           ? parent
           : undefined;
-      const paths = resolves(use).map((path) => {
+      const origins = resolves(use).map((origin) => {
+        let { path } = origin;
         if (path[0] !== "Date") {
-          return path;
+          return origin;
         }
         // The intrinsic prototype constructor is Date itself; preserve its remaining path.
         while (path[1] === "prototype" && ["constructor", "*"].includes(path[2] ?? "")) {
@@ -595,11 +613,15 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
         while (["call", "apply", "bind"].includes(path[index] ?? "")) {
           index++;
         }
-        return path[index] === "constructor" || path[index] === "*"
-          ? ["Function", ...path.slice(index + 1)]
-          : path;
+        return {
+          ...origin,
+          path:
+            path[index] === "constructor" || path[index] === "*"
+              ? ["Function", ...path.slice(index + 1)]
+              : path,
+        };
       });
-      const denied = paths.some((path) =>
+      const denied = origins.some(({ path, boundArgument }) =>
         patterns.some((pattern) => {
           if (!path.length) {
             return !aliasSource(use);
@@ -613,7 +635,7 @@ function capabilityUses(source: SourceCode, forbidden: readonly string[]): reado
               path.length === 1 &&
               (call
                 ? call.type === "CallExpression" ||
-                  !children(call, "arguments").some(suppliesArgument)
+                  (!boundArgument && !children(call, "arguments").some(suppliedArguments))
                 : !aliasSource(use))
             );
           }

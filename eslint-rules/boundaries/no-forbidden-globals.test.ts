@@ -832,3 +832,148 @@ describe("OVE_ARCH020: runtime spread positions and computed prototype origins",
     });
   }
 });
+
+describe("OVE_ARCH020: intrinsic bound Date arguments", () => {
+  const cases = [
+    ["direct:named-zero", "const D = Date.bind(null); new D();", true, "packages/domain/src"],
+    ["direct:named-fixed", "const D = Date.bind(null, 0); new D();", false, "packages/domain/src"],
+    ["direct:immediate-zero", "new (Date.bind(null))();", true, "packages/domain/src"],
+    ["direct:immediate-fixed", "new (Date.bind(null, 0))();", false, "packages/domain/src"],
+    ["computed:named-zero", 'const D = Date["bind"](null); new D();', true, "packages/domain/src"],
+    [
+      "computed:named-fixed",
+      'const D = Date["bind"](null, 0); new D();',
+      false,
+      "packages/domain/src",
+    ],
+    ["computed:immediate-zero", 'new (Date["bind"](null))();', true, "packages/domain/src"],
+    ["computed:immediate-fixed", 'new (Date["bind"](null, 0))();', false, "packages/domain/src"],
+    [
+      "global:named-zero",
+      "const D = globalThis.Date.bind(null); new D();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "global:named-fixed",
+      "const D = globalThis.Date.bind(null, 0); new D();",
+      false,
+      "packages/domain/src",
+    ],
+    ["global:immediate-zero", "new (globalThis.Date.bind(null))();", true, "packages/domain/src"],
+    [
+      "global:immediate-fixed",
+      "new (globalThis.Date.bind(null, 0))();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "prototype:named-zero",
+      "const D = Date.prototype.constructor.bind(null); new D();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "prototype:named-fixed",
+      "const D = Date.prototype.constructor.bind(null, 0); new D();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "prototype:immediate-zero",
+      "new (Date.prototype.constructor.bind(null))();",
+      true,
+      "packages/domain/src",
+    ],
+    [
+      "prototype:immediate-fixed",
+      "new (Date.prototype.constructor.bind(null, 0))();",
+      false,
+      "packages/domain/src",
+    ],
+    ["this-is-not-date", "const D = Date.bind(0); new D();", true, "packages/domain/src"],
+    ["outer-fixed", "new (Date.bind(null))(0);", false, "packages/domain/src"],
+    [
+      "named-rebind-fixed-first",
+      "const D = Date.bind(null, 0); const E = D.bind(null); new E();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "named-rebind-fixed-later",
+      "const D = Date.bind(null); const E = D.bind(null, 0); new E();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "immediate-rebind-fixed-first",
+      "new (Date.bind(null, 0).bind(null))();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "immediate-rebind-fixed-later",
+      "new (Date.bind(null).bind(null, 0))();",
+      false,
+      "packages/domain/src",
+    ],
+    ["immediate-rebind-zero", "new (Date.bind(null).bind(null))();", true, "packages/domain/src"],
+    ["bound-call-still-time", "const D = Date.bind(null, 0); D();", true, "packages/domain/src"],
+    ["prefix-empty-spread", "new (Date.bind(...[], null, 0))();", false, "packages/domain/src"],
+    ["literal-spread-fixed", "new (Date.bind(...[null, 0]))();", false, "packages/domain/src"],
+    ["literal-spread-only-this", "new (Date.bind(...[null]))();", true, "packages/domain/src"],
+    ["unknown-spread-one-known", "new (Date.bind(...unknown, 0))();", true, "packages/domain/src"],
+    [
+      "unknown-spread-two-known",
+      "new (Date.bind(...unknown, null, 0))();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "local-shadow",
+      "function local(Date) { new (Date.bind(null))(); }",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "local-object",
+      "const Date = {bind(){return class {}}}; new (Date.bind(null))();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "named-container",
+      "const box = {D: Date.bind(null, 0)}; const [D] = [box.D]; new D();",
+      false,
+      "packages/domain/src",
+    ],
+    [
+      "global-alias",
+      "const root = globalThis; const D = root.Date.bind(null,0); new D();",
+      false,
+      "packages/domain/src",
+    ],
+    ["wrapped-immediate", "new ((Date.bind(null)) as typeof Date)();", true, "packages/domain/src"],
+    ["static-method-denied", "Date.now.bind(null, 0)();", true, "packages/domain/src"],
+    ["Function-denied", 'new (Function.bind(null, "fixture"))();', true, "packages/domain/src"],
+  ] as const;
+  for (const [label, code, denied, path] of cases) {
+    it(`preserves bound Date argument facts ${label}`, () => {
+      const messages = check(code, path);
+      if (denied) {
+        expect(messages.length, label).toBeGreaterThan(0);
+        expect(
+          messages.every((message) => message.messageId === "BOUNDARY_FORBIDDEN_GLOBAL"),
+          label,
+        ).toBe(true);
+        expect(
+          new Set(messages.map((message) => `${String(message.line)}:${String(message.column)}`))
+            .size,
+          label,
+        ).toBe(messages.length);
+      } else {
+        expect(messages, label).toEqual([]);
+      }
+    });
+  }
+});
