@@ -13,3 +13,6 @@ export {
   sanitisedRelativePath,
 } from "./errors/safe-details.ts";
 export * from "./kernel/ids.ts";
+export { defineEntity, defineEventMetadata } from "./kernel/meta.ts";
+export { defineRoute } from "./api/define-route.ts";
+export type { RouteDefinition, RouteMethod, RouteAudience } from "./api/define-route.ts";
