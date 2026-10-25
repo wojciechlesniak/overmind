@@ -220,3 +220,18 @@ matched; only this task's two additive root scripts changed the package control
 pin. Test files, assertions, timeouts, worker settings and retry policy remained
 unchanged. The source stayed clean throughout, and the earlier failed run remains
 preserved. A future integration rebase still requires its own exact-head checks.
+
+### Owner-approved tooling integration phase (2026-10-25)
+
+The Owner explicitly authorized merging the tools while leaving repository-settings
+acceptance and the real outside-contributor fork run open for later. This is a
+phased integration decision, not evidence that those criteria passed. The task
+stays `in_review`; the unchecked operational criteria above, including the missing
+OSS003 `pr-gate`, stay open. Actual release provisioning remains deferred under
+the local-first sequence.
+
+Integrate the reviewed tools only after real tests, security checks and independent
+Standards and Spec reviews pass for the exact source head. Publish through the
+normal task-finish review path without `--done`; do not claim full task completion
+or change live protections to manufacture a green operational audit. The existing
+audit must continue reporting known drift and unavailable observations honestly.

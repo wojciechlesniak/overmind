@@ -165,6 +165,13 @@ The release setup sequence is deferred under the Owner's local-first decision
 above. Missing `pr-gate`, actual outside-contributor evidence and other observable
 settings drift still prevent full operational acceptance.
 
+On 2026-10-25, the Owner explicitly authorized integration of the tested tools
+while deferring repository-settings acceptance and the real outside-contributor
+fork run. Tooling integration requires exact-head tests, security checks and
+independent code/specification reviews. It does not complete SETUP018: the task
+remains `in_review`, operational criteria remain unchecked, and the audit continues
+to report actual drift and unknowns. Future release provisioning remains deferred.
+
 Primary references (verified 2026-10-16):
 [Rulesets REST](https://docs.github.com/en/rest/repos/rules),
 [Actions permissions REST](https://docs.github.com/en/rest/actions/permissions),
