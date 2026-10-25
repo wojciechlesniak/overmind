@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 /// <reference types="vite/client" />
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 type ControlMode = "controlled" | "uncontrolled";
 
@@ -24,13 +24,18 @@ export function useControllableState<T>({
   onChange,
   onModeChange,
 }: ControllableStateOptions<T>): readonly [T, (next: T) => void] {
-  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
+  const [uncontrolledValue, setUncontrolledValue] = useState<T>(() => defaultValue);
   const mode: ControlMode = value === undefined ? "uncontrolled" : "controlled";
   const previousMode = useRef(mode);
   let currentValue = uncontrolledValue;
   if (value !== undefined) {
     currentValue = value;
   }
+
+  const pendingValue = useRef(currentValue);
+  useLayoutEffect(() => {
+    pendingValue.current = currentValue;
+  }, [currentValue]);
 
   useEffect(() => {
     const from = previousMode.current;
@@ -44,11 +49,12 @@ export function useControllableState<T>({
 
   const setValue = useCallback(
     (next: T) => {
-      if (Object.is(next, currentValue)) {
+      if (Object.is(next, mode === "uncontrolled" ? pendingValue.current : currentValue)) {
         return;
       }
       if (mode === "uncontrolled") {
-        setUncontrolledValue(next);
+        pendingValue.current = next;
+        setUncontrolledValue(() => next);
       }
       onChange?.(next);
     },

@@ -103,3 +103,87 @@ describe("useControllableState", () => {
     expect(result.current[0]).toBeNull();
   });
 });
+
+describe("batched controllable state requests", () => {
+  it("applies a complete uncontrolled round trip in one commit", () => {
+    const onChange = vi.fn();
+    const { result } = renderHook(() => useControllableState({ defaultValue: 0, onChange }));
+    act(() => {
+      result.current[1](1);
+      result.current[1](0);
+    });
+    expect(result.current[0]).toBe(0);
+    expect(onChange.mock.calls).toEqual([[1], [0]]);
+  });
+
+  it("emits one change for repeated pending uncontrolled values", () => {
+    const onChange = vi.fn();
+    const { result } = renderHook(() => useControllableState({ defaultValue: 0, onChange }));
+    act(() => {
+      result.current[1](1);
+      result.current[1](1);
+    });
+    expect(result.current[0]).toBe(1);
+    expect(onChange).toHaveBeenCalledExactlyOnceWith(1);
+  });
+
+  it("preserves the round trip under StrictMode without duplicate notifications", () => {
+    const onChange = vi.fn();
+    const { result } = renderHook(() => useControllableState({ defaultValue: 0, onChange }), {
+      wrapper: ({ children }) => createElement(StrictMode, null, children),
+    });
+    act(() => {
+      result.current[1](1);
+      result.current[1](0);
+    });
+    expect(result.current[0]).toBe(0);
+    expect(onChange.mock.calls).toEqual([[1], [0]]);
+  });
+
+  it("preserves function-valued state without invoking its values", () => {
+    const initial = vi.fn(() => 1);
+    const next = vi.fn(() => 2);
+    const onChange = vi.fn();
+    const { result } = renderHook(() =>
+      useControllableState<() => number>({ defaultValue: initial, onChange }),
+    );
+    expect(result.current[0]).toBe(initial);
+    act(() => {
+      result.current[1](next);
+    });
+    expect(result.current[0]).toBe(next);
+    expect(initial).not.toHaveBeenCalled();
+    expect(next).not.toHaveBeenCalled();
+    expect(onChange).toHaveBeenCalledExactlyOnceWith(next);
+  });
+
+  it("uses the current callback for a batched request after rerender", () => {
+    const first = vi.fn();
+    const second = vi.fn();
+    const { result, rerender } = renderHook(
+      ({ onChange }) => useControllableState({ defaultValue: 0, onChange }),
+      { initialProps: { onChange: first } },
+    );
+    rerender({ onChange: second });
+    act(() => {
+      result.current[1](1);
+      result.current[1](0);
+    });
+    expect(first).not.toHaveBeenCalled();
+    expect(second.mock.calls).toEqual([[1], [0]]);
+    expect(result.current[0]).toBe(0);
+  });
+
+  it("keeps the provided prop authoritative when the controlled host ignores a request", () => {
+    const onChange = vi.fn();
+    const { result } = renderHook(() =>
+      useControllableState({ value: 5, defaultValue: 0, onChange }),
+    );
+    act(() => {
+      result.current[1](6);
+      result.current[1](5);
+    });
+    expect(result.current[0]).toBe(5);
+    expect(onChange).toHaveBeenCalledExactlyOnceWith(6);
+  });
+});
